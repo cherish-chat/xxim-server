@@ -13,3 +13,14 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+.idea
+*.iml
+*.DS_Store
+*.jpg
+*.png
+*.gif
+*.jpeg
+*.zip
+*.tar
+*.gz
+*local*.*

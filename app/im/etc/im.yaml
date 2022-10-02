@@ -1,0 +1,44 @@
+Name: im.rpc
+ListenOn: :24000
+Mode: dev
+
+Log:
+  ServiceName: im.rpc
+  Level: info
+
+Telemetry: # 链路追踪
+  Name: im.rpc
+  Endpoint: http://127.0.0.1:14268/api/traces # 追踨服务地址
+  Sampler: 1.0
+  Batcher: jaeger
+
+Redis: # redis 配置
+  Host: localhost:6379
+  Pass: "123456"
+  DB: 6
+
+Mongo: # mongo 配置
+  Uri: mongodb://localhost/admin
+  Database: xxim
+  Collections:
+    Msg: msg
+
+TDMQProducers:
+  Storage:
+    Token: ""
+    VpcUrl: ""
+    Topic: ""
+    SendTimeout: 3000
+    ProducerName: "im.rpc"
+
+TDMQConsumers:
+  Storage:
+    Token: ""
+    VpcUrl: ""
+    Topic: ""
+    SubName: "im"
+    ConsumerName:
+    SubInitialPosition: 0
+    SubType: 1 # 0: Exclusive, 1: Shared, 2: Failover, 3: Key_Shared
+    EnableRetry: true
+    ReceiverQueueSize: 10

@@ -1,0 +1,72 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+message MsgData {
+  message OfflinePush{
+    bool   enable = 1; // 是否开启离线推送
+    string title = 2; // 一般是昵称
+    string desc = 3; // 一般是消息内容
+    string ex = 4; // 扩展字段
+    string iOSPushSound = 5; // iOS推送声音
+    bool   iOSBadgeCount = 6; // iOS角标
+    repeated string atUserIds = 7; // 当 atUserIds 不为空时，只推送给这些用户
+  }
+  message MsgOptions {
+    bool  storage = 1; // 消息是否存储
+    bool  updateConv = 2; // 是否更新会话列表 重新渲染
+    int32 unreadOpt = 3; // 未读数处理方式 0:不处理 1:累加 2:清零
+    bool  rewrite = 4; // 是否覆盖消息 通过 clientMsgId
+  }
+  message Conv {
+    string id = 1; // 会话id
+    bytes  info = 2; // 会话信息
+  }
+  enum ContentType {
+    Text = 0; // 文本
+    Image = 1; // 图片
+    Audio = 2; // 语音
+    Video = 3; // 视频
+    File = 4; // 文件
+    Location = 5; // 位置
+    Command = 6; // 命令
+    Typing = 7; // 正在输入
+    HaveRead = 8; // 已读回执
+    Revoked = 9; // 消息撤回
+    UserCard = 10; // 用户名片
+    GroupCard = 11; // 群名片
+    Gift = 12; // 礼物
+  }
+  string clientMsgId = 1; // 客户端生成的消息id
+  string serverMsgId = 2; // 服务端生成的消息id
+  string senderId = 3; // 发送者id
+  bytes  senderInfo = 4; // 发送者信息
+  ContentType contentType = 5; // 消息类型
+  bytes content = 6; // 消息内容
+  int64 clientTime = 7; // 客户端发送时间
+  int64 serverTime = 8; // 服务端接收时间
+  uint32 seq = 9; // 消息序号
+  OfflinePush offlinePush = 10; // 离线推送相关
+  MsgOptions msgOptions = 11; // 消息选项
+  bytes ex = 12; // 扩展字段
+  repeated Conv convList = 13; // 会话列表
+  repeated string excludeUIds = 14; // 排除的用户id列表 (有可能用户把这条消息屏蔽了)
+}
+message SendMsgReq {
+  string   selfId = 1; // 自己的id
+  repeated MsgData msgDataList = 2; // 多条消息
+  optional int64 sendAt = 3; // 定时发送消息的时间 毫秒级时间戳 只能是未来的时间 否则会立即发送
+  string   platform = 4; // 平台 格式：${平台号}@${平台id} 例如：PC@123456
+  string   appVersion = 5; // app版本
+  string   deviceModel = 6; // 设备型号
+  string ips = 7; // ip地址 逗号分隔
+}
+message SendMsgResp {
+  string failedReason = 1; // 失败原因
+}
+message MsgToMQData {
+  repeated MsgData msgDataList = 1; // 多条消息
+}
+service imService {
+  //SendMsg 发送消息到 pulsar
+  rpc sendMsg(SendMsgReq) returns (SendMsgResp) {}
+}
