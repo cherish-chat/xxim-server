@@ -118,3 +118,64 @@ func TestLoginLogic2(t *testing.T) {
 	}
 	t.Logf("resp: %+v", resp.String())
 }
+
+// TestUpdateUserLogic1 更新用户信息
+func TestUpdateUserLogic1(t *testing.T) {
+	selfId := "TestSendMsgLogic1"
+	xxService := xxService()
+	resp, err := xxService.UpdateUser(ctx, &pb.UpdateUserReq{
+		Base: &pb.BaseReq{
+			SelfId:      selfId,
+			Platform:    "Test",
+			AppVersion:  "v0.0.1",
+			DeviceModel: "Mac",
+			Ips:         "123.113.102.114",
+			DeviceId:    "TestLoginLogic1",
+		},
+		UserData: &pb.UserData{
+			Id:           selfId,
+			Nickname:     "修改后的昵称",
+			Avatar:       "https://www.baidu.com",
+			Xb:           "1",
+			Birthday:     "2000-01-02",
+			Signature:    "修改后的签名",
+			Tags:         []string{"修改后的标签"},
+			Password:     "1234567",
+			RegisterInfo: nil,
+			IsRobot:      false,
+			IsGuest:      false,
+			IsAdmin:      false,
+			IsOfficial:   false,
+			UnbanTime:    "",
+			AdminRemark:  "",
+			Ex:           nil,
+		},
+	})
+	if err != nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	t.Logf("resp: %+v", resp.String())
+}
+
+// TestSearchUserLogic1 搜索用户
+func TestSearchUserLogic1(t *testing.T) {
+	selfId := "TestSendMsgLogic1"
+	xxService := xxService()
+	resp, err := xxService.SearchUser(ctx, &pb.SearchUserReq{
+		Base: &pb.BaseReq{
+			SelfId:      selfId,
+			Platform:    "Test",
+			AppVersion:  "v0.0.1",
+			DeviceModel: "Mac",
+			Ips:         "123.113.102.114",
+			DeviceId:    "TestLoginLogic1",
+		},
+		Keyword:  "称",
+		Page:     1,
+		PageSize: 10,
+	})
+	if err != nil {
+		t.Fatalf("GetUser failed: %v", err)
+	}
+	t.Logf("resp: %+v", resp.String())
+}
