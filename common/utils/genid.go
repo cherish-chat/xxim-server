@@ -35,6 +35,10 @@ func GenId() string {
 	return Md5(uniquePodId + <-c)
 }
 
+func GenIdInt64() int64 {
+	return nd.Generate().Int64()
+}
+
 func Md5(s string) string {
 	h := md5.New()
 	h.Write([]byte(s))

@@ -36,7 +36,7 @@ func NewImServiceClient(cc grpc.ClientConnInterface) ImServiceClient {
 
 func (c *imServiceClient) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
 	out := new(SendMsgResp)
-	err := c.cc.Invoke(ctx, "/pb.imService/sendMsg", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.imService/SendMsg", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func _ImService_SendMsg_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.imService/sendMsg",
+		FullMethod: "/pb.imService/SendMsg",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ImServiceServer).SendMsg(ctx, req.(*SendMsgReq))
@@ -98,7 +98,7 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ImServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "sendMsg",
+			MethodName: "SendMsg",
 			Handler:    _ImService_SendMsg_Handler,
 		},
 	},

@@ -86,7 +86,7 @@ func (l *ConsumerStorage) consumeMsg(ctx context.Context, _ string, _ string, pa
 				ContentType: msgData.ContentType,
 				OfflinePush: msgData.OfflinePush,
 				MsgOptions:  msgData.MsgOptions,
-				Ex:          msgData.Ex,
+				Ex:          dbmodel.NewMsgEx(msgData.Ex),
 				ExcludeUIds: msgData.ExcludeUIds,
 				DeletedAt:   0,
 			}

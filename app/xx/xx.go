@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/cherish-chat/xxim-server/app/im/internal/config"
-	"github.com/cherish-chat/xxim-server/app/im/internal/server"
-	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/xx/internal/config"
+	"github.com/cherish-chat/xxim-server/app/xx/internal/server"
+	"github.com/cherish-chat/xxim-server/app/xx/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -27,12 +27,10 @@ func main() {
 	logx.DisableStat()
 
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewImServiceServer(ctx)
-
-	svr.IMServer()
+	svr := server.NewXxServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterImServiceServer(grpcServer, svr)
+		pb.RegisterXxServiceServer(grpcServer, svr)
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

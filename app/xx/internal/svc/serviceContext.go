@@ -2,45 +2,27 @@ package svc
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/im/internal/config"
+	"github.com/cherish-chat/xxim-server/app/xx/internal/config"
 	"github.com/cherish-chat/xxim-server/common/dbmodel"
-	"github.com/cherish-chat/xxim-server/common/xmq"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/go-redis/redis/v8"
 	"github.com/qiniu/qmgo"
-	_ "github.com/qiniu/qmgo"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	storageProducer *xmq.TDMQProducer
-	storageConsumer *xmq.TDMQConsumer
-	mongoClient     *qmgo.Client
-	mongoDatabase   *qmgo.Database
-	msgCollection   *qmgo.Collection
-	userCollection  *qmgo.Collection
-	redis           redis.UniversalClient
+	Config         config.Config
+	mongoClient    *qmgo.Client
+	mongoDatabase  *qmgo.Database
+	msgCollection  *qmgo.Collection
+	userCollection *qmgo.Collection
+	redis          redis.UniversalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 	}
-}
-
-func (c *ServiceContext) StorageProducer() *xmq.TDMQProducer {
-	if c.storageProducer == nil {
-		c.storageProducer = xmq.NewTDMQProducer(c.Config.TDMQProducers.Storage)
-	}
-	return c.storageProducer
-}
-
-func (c *ServiceContext) StorageConsumer() *xmq.TDMQConsumer {
-	if c.storageConsumer == nil {
-		c.storageConsumer = xmq.NewTDMQConsumer(c.Config.TDMQConsumers.Storage)
-	}
-	return c.storageConsumer
 }
 
 func (c *ServiceContext) MongoClient() *qmgo.Client {
@@ -68,6 +50,14 @@ func (c *ServiceContext) MsgCollection() *qmgo.Collection {
 		dbmodel.InitMsg(c.msgCollection)
 	}
 	return c.msgCollection
+}
+
+func (c *ServiceContext) UserCollection() *qmgo.Collection {
+	if c.userCollection == nil {
+		c.userCollection = c.MongoDatabase().Collection(c.Config.Mongo.Collections.User)
+		dbmodel.InitUser(c.userCollection)
+	}
+	return c.userCollection
 }
 
 func (c *ServiceContext) Redis() redis.UniversalClient {

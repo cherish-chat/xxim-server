@@ -13,6 +13,7 @@ import (
 )
 
 type (
+	BaseReq             = pb.BaseReq
 	MsgData             = pb.MsgData
 	MsgData_Conv        = pb.MsgData_Conv
 	MsgData_MsgOptions  = pb.MsgData_MsgOptions

@@ -5,6 +5,9 @@ go 1.19
 require (
 	github.com/apache/pulsar-client-go v0.8.1
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20220907060842-b2ba5d58e48d
 	github.com/qiniu/qmgo v1.1.2
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.509
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.509
@@ -12,6 +15,7 @@ require (
 	go.mongodb.org/mongo-driver v1.10.2
 	go.opentelemetry.io/otel v1.10.0
 	go.opentelemetry.io/otel/trace v1.10.0
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	google.golang.org/grpc v1.49.0
 	google.golang.org/protobuf v1.28.1
 )
@@ -37,7 +41,6 @@ require (
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -92,7 +95,6 @@ require (
 	go.uber.org/automaxprocs v1.5.1 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect

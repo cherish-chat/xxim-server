@@ -1,0 +1,279 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "im.proto";
+/******************************************** -- model -- ********************************************/
+message UserData {
+  message RegisterInfo {
+    string platform = 1; // 平台
+    string time = 2; // 注册时间 2006-01-02 15:04:05
+    string ip = 3; // 注册ip
+    string device = 4; // 注册设备
+    string deviceId = 5; // 注册设备
+    string registerSource = 6; // 注册来源
+    string salt = 7; // 密码盐
+    // 国家+省+市+区
+    string ipCountry = 11; // ip国家
+    string ipProvince = 12; // ip省
+    string ipCity = 13; // ip市
+    string ipDistrict = 14; // ip区
+  }
+  string id = 1; // 用户id 只能是 英文/数字/下划线
+  string nickname = 2; // 昵称
+  string avatar = 3; // 头像
+  string xb = 4; // 性别 空字符:未知 1:男 2:女
+  string birthday = 5; // 生日 2006-01-02
+  string signature = 6; // 个性签名
+  repeated string tags = 7; // 个性标签
+  string password = 8; // 密码
+  RegisterInfo registerInfo = 9; // 注册时间 2006-01-02 15:04:05
+  bool isRobot = 10; // 是否机器人
+  bool isGuest = 11; // 是否游客 通过deviceId生成的用户
+  bool isAdmin = 12; // 是否管理员
+  bool isOfficial = 13; // 是否官方账号
+  string unbanTime = 14; // 解禁时间 2006-01-02 15:04:05
+  string adminRemark = 15; // 管理员在后台设置的备注
+  bytes ex = 101; // 扩展字段
+}
+message ConvMemberData {
+  string id = 1; // 用户id
+  string nickname = 3; // 用户群昵称
+  string avatar = 4; // 用户群头像
+  string joinTime = 5; // 加入时间 2006-01-02 15:04:05
+  string unbanTime = 6; // 解禁言时间 2006-01-02 15:04:05
+  string role = 7; // 角色 空字符串:普通成员 1:群主 2:管理员 3:游客
+  // 只给这个用户显示的会话信息
+  string convId = 11; // 会话id
+  string convRemark = 12; // 该用户设置的会话备注
+  string convAvatar = 13; // 该用户设置的会话头像
+  bool   isFold = 14; // 该用户是否折叠会话 收入群助手
+  string recvOpt = 15; // 该用户的消息接收选项 空字符串:接收并通知 1:接收不通知 2:屏蔽
+  bool   isPinned = 16; // 该用户是否置顶会话
+  bytes  convEx = 17; // 该用户设置的会话扩展字段
+  uint32 minSeq = 21; // 该用户的最小消息序号
+  uint32 maxSeq = 22; // 该用户的最大消息序号
+  // 扩展字段
+  bytes  ex = 101; // 其他扩展字段
+}
+message GroupData {
+  string id = 1; // 群id 只能是 英文/数字/下划线
+  string name = 2; // 群名称
+  string avatar = 3; // 群头像
+  string desc = 4; // 群描述
+  string owner = 5; // 群主id
+  repeated ConvMemberData members = 6; // 会话成员列表
+  string createTime = 7; // 创建时间 2006-01-02 15:04:05
+  string groupType = 8; // 群类型 空字符串:用户默认内置群(用户向好友公布自己的状态) 1:用户自建群
+  string adminRemark = 11; // 管理员在后台设置的备注
+  bool allMuted = 12; // 是否全员禁言
+  repeated MsgData msgDataList = 13; // 群公告
+  uint32 minSeq = 21; // 该群的最小消息序号
+  uint32 maxSeq = 22; // 该群的最大消息序号
+  bytes ex = 101; // 扩展字段
+}
+message FriendData {
+  string id = 1; // 用户1id-用户2id 两个用户id用-连接 string排序
+  ConvMemberData creator = 2; // 创建者
+  ConvMemberData other = 3; // 好友
+  string createTime = 4; // 创建时间 2006-01-02 15:04:05
+  uint32 minSeq = 21; // 该好友的最小消息序号
+  uint32 maxSeq = 22; // 该好友的最大消息序号
+  bytes ex = 101; // 扩展字段
+}
+/******************************************** -- model -- ********************************************/
+
+//RegisterReq 注册请求
+message RegisterReq {
+  BaseReq base = 1; // 基础请求
+  UserData userData = 101; // 用户信息
+}
+//RegisterResp 注册响应
+message RegisterResp {
+  string failedReason = 1; // 失败原因
+  UserData userData = 2; // 用户信息
+}
+//GetUserReq 获取用户信息请求
+message GetUserReq {
+  BaseReq base = 1; // 基础请求
+  repeated string userIdList = 101; // 用户id列表
+}
+//GetUserResp 获取用户信息响应
+message GetUserResp {
+  repeated UserData userDataList = 1; // 用户信息列表
+  string failedReason = 2; // 失败原因
+}
+//LoginReq 登录请求
+message LoginReq {
+  BaseReq base = 1; // 基础请求
+  string userId = 101; // 用户id
+  string password = 102; // 密码
+}
+//LoginResp 登录响应
+message LoginResp {
+  string failedReason = 1; // 失败原因
+  UserData userData = 2; // 用户信息
+  string token = 3; // token
+}
+//UpdateUserReq 更新用户信息请求
+message UpdateUserReq {
+  BaseReq base = 1; // 基础请求
+  UserData userData = 101; // 用户信息
+}
+//UpdateUserResp 更新用户信息响应
+message UpdateUserResp {
+  string failedReason = 1; // 失败原因
+  UserData userData = 2; // 用户信息
+}
+//SearchUserReq 搜索用户请求
+message SearchUserReq {
+  BaseReq base = 1; // 基础请求
+  string keyword = 101; // 关键字
+  int32 page = 102; // 页码
+  int32 pageSize = 103; // 每页数量
+}
+//SearchUserResp 搜索用户响应
+message SearchUserResp {
+  string failedReason = 1; // 失败原因
+  repeated UserData userDataList = 2; // 用户信息列表
+  int32 total = 3; // 总数
+}
+//GetFriendReq 获取好友请求
+message GetFriendReq {
+  BaseReq base = 1; // 基础请求
+  string userId = 101; // 用户id
+}
+//GetFriendResp 获取好友响应
+message GetFriendResp {
+  string failedReason = 1; // 失败原因
+  repeated UserData userDataList = 2; // 用户信息列表
+}
+//CreateFriendReq 创建好友请求
+message CreateFriendReq {
+  BaseReq base = 1; // 基础请求
+  FriendData friendData = 101; // 好友信息
+}
+//CreateFriendResp 创建好友响应
+message CreateFriendResp {
+  string failedReason = 1; // 失败原因
+}
+//UpdateFriendReq 更新好友请求
+message UpdateFriendReq {
+  BaseReq base = 1; // 基础请求
+  FriendData friendData = 101; // 好友信息
+}
+//UpdateFriendResp 更新好友响应
+message UpdateFriendResp {
+  string failedReason = 1; // 失败原因
+}
+//DeleteFriendReq 删除好友请求
+message DeleteFriendReq {
+  BaseReq base = 1; // 基础请求
+  FriendData friendData = 101; // 好友信息
+}
+//DeleteFriendResp 删除好友响应
+message DeleteFriendResp {
+  string failedReason = 1; // 失败原因
+}
+//CreateGroupReq 创建群组请求
+message CreateGroupReq {
+  BaseReq base = 1; // 基础请求
+  GroupData groupData = 101; // 群信息
+  repeated string userIdList = 102; // 创建时添加的用户id列表
+}
+//CreateGroupResp 创建群组响应
+message CreateGroupResp {
+  string failedReason = 1; // 失败原因
+  GroupData groupData = 2; // 群信息
+}
+//GetGroupReq 获取群组请求
+message GetGroupReq {
+  BaseReq base = 1; // 基础请求
+  repeated string groupIdList = 101; // 群id列表
+}
+//GetGroupResp 获取群组响应
+message GetGroupResp {
+  string failedReason = 1; // 失败原因
+  repeated GroupData groupDataList = 2; // 群信息列表
+}
+//InviteGroupReq 邀请加入群组请求
+message InviteGroupReq {
+  BaseReq base = 1; // 基础请求
+  string groupId = 101; // 群id
+  repeated string userIdList = 102; // 用户id列表
+}
+//InviteGroupResp 邀请加入群组响应
+message InviteGroupResp {
+  string failedReason = 1; // 失败原因
+}
+//UpdateGroupReq 更新群组请求
+message UpdateGroupReq {
+  BaseReq base = 1; // 基础请求
+  GroupData groupData = 101; // 群信息
+}
+//UpdateGroupResp 更新群组响应
+message UpdateGroupResp {
+  string failedReason = 1; // 失败原因
+}
+//QuitGroupMemberReq 退出群组请求
+message QuitGroupMemberReq {
+  BaseReq base = 1; // 基础请求
+  string groupId = 101; // 群id
+}
+//QuitGroupMemberResp 退出群组响应
+message QuitGroupMemberResp {
+  string failedReason = 1; // 失败原因
+}
+//KickGroupMemberReq 踢出群组请求
+message KickGroupMemberReq {
+  BaseReq base = 1; // 基础请求
+  string groupId = 101; // 群id
+  repeated string userIdList = 102; // 用户id列表
+}
+//KickGroupMemberResp 踢出群组响应
+message KickGroupMemberResp {
+  string failedReason = 1; // 失败原因
+}
+//ClearGroupMemberReq 清空群组成员请求
+message ClearGroupMemberReq {
+  BaseReq base = 1; // 基础请求
+  string groupId = 101; // 群id
+}
+//ClearGroupMemberResp 清空群组成员响应
+message ClearGroupMemberResp {
+  string failedReason = 1; // 失败原因
+}
+
+service xxService {
+  //Register 注册用户
+  rpc Register(RegisterReq) returns (RegisterResp) {}
+  //GetUser 获取用户信息
+  rpc GetUser(GetUserReq) returns (GetUserResp) {}
+  //Login 登录
+  rpc Login(LoginReq) returns (LoginResp) {}
+  //UpdateUser 更新用户信息
+  rpc UpdateUser(UpdateUserReq) returns (UpdateUserResp) {}
+  //SearchUser 搜索用户
+  rpc SearchUser(SearchUserReq) returns (SearchUserResp) {}
+  //GetFriend 获取好友
+  rpc GetFriend(GetFriendReq) returns (GetFriendResp) {}
+  //CreateFriend 添加好友
+  rpc CreateFriend(CreateFriendReq) returns (CreateFriendResp) {}
+  //UpdateFriend 更新好友
+  rpc UpdateFriend(UpdateFriendReq) returns (UpdateFriendResp) {}
+  //DeleteFriend 删除好友
+  rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
+  //CreateGroup 创建群组
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
+  //GetGroup 获取群组
+  rpc GetGroup(GetGroupReq) returns (GetGroupResp) {}
+  //InviteGroup 邀请加入群组
+  rpc InviteGroup(InviteGroupReq) returns (InviteGroupResp) {}
+  //UpdateGroup 更新群组
+  rpc UpdateGroup(UpdateGroupReq) returns (UpdateGroupResp) {}
+  //QuitGroupMember 退出群组
+  rpc QuitGroupMember(QuitGroupMemberReq) returns (QuitGroupMemberResp) {}
+  //KickGroupMember 踢出群组
+  rpc KickGroupMember(KickGroupMemberReq) returns (KickGroupMemberResp) {}
+  //ClearGroupMember 清空群组成员
+  rpc ClearGroupMember(ClearGroupMemberReq) returns (ClearGroupMemberResp) {}
+}

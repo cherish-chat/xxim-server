@@ -1,6 +1,7 @@
 syntax = "proto3";
 package pb;
 option go_package = "./pb";
+/******************************************** -- model -- ********************************************/
 message MsgData {
   message OfflinePush{
     bool   enable = 1; // 是否开启离线推送
@@ -51,22 +52,30 @@ message MsgData {
   repeated Conv convList = 13; // 会话列表
   repeated string excludeUIds = 14; // 排除的用户id列表 (有可能用户把这条消息屏蔽了)
 }
-message SendMsgReq {
-  string   selfId = 1; // 自己的id
-  repeated MsgData msgDataList = 2; // 多条消息
-  optional int64 sendAt = 3; // 定时发送消息的时间 毫秒级时间戳 只能是未来的时间 否则会立即发送
-  string   platform = 4; // 平台 格式：${平台号}@${平台id} 例如：PC@123456
-  string   appVersion = 5; // app版本
-  string   deviceModel = 6; // 设备型号
-  string ips = 7; // ip地址 逗号分隔
-}
-message SendMsgResp {
-  string failedReason = 1; // 失败原因
-}
 message MsgToMQData {
   repeated MsgData msgDataList = 1; // 多条消息
 }
+/******************************************** -- model -- ********************************************/
+//BaseReq 基础请求
+message BaseReq {
+  string selfId = 1; // 自己的id
+  string platform = 2; // 平台 格式：${平台号}@${平台id} 例如：PC@123456
+  string appVersion = 3; // app版本
+  string deviceModel = 4; // 设备型号
+  string deviceId = 5; // 设备id
+  string ips = 6; // ip地址 逗号分隔
+}
+//SendMsgReq 发送消息请求
+message SendMsgReq {
+  BaseReq base = 1; // 基础请求
+  optional int64 sendAt = 2; // 定时发送消息的时间 毫秒级时间戳 只能是未来的时间 否则会立即发送
+  repeated MsgData msgDataList = 101; // 多条消息
+}
+//SendMsgResp 发送消息响应
+message SendMsgResp {
+  string failedReason = 1; // 失败原因
+}
 service imService {
   //SendMsg 发送消息到 pulsar
-  rpc sendMsg(SendMsgReq) returns (SendMsgResp) {}
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp) {}
 }

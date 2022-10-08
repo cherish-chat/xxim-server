@@ -24,7 +24,13 @@ func TestSendMsgLogic1(t *testing.T) {
 	selfId := "TestSendMsgLogic1"
 	imService := imService()
 	resp, err := imService.SendMsg(ctx, &imservice.SendMsgReq{
-		SelfId: selfId,
+		Base: &pb.BaseReq{
+			SelfId:      selfId,
+			Platform:    "Test",
+			AppVersion:  "v0.0.1",
+			DeviceModel: "Mac",
+			Ips:         "111.111.111.111",
+		},
 		MsgDataList: []*pb.MsgData{{
 			ClientMsgId: utils.GenId(),
 			ServerMsgId: "",
@@ -62,11 +68,7 @@ func TestSendMsgLogic1(t *testing.T) {
 			}},
 			ExcludeUIds: nil,
 		}},
-		SendAt:      utils.Int64Ptr(utils.GetNowMilli() + 63*1000),
-		Platform:    "Test",
-		AppVersion:  "v0.0.1",
-		DeviceModel: "Mac",
-		Ips:         "111.111.111.111",
+		SendAt: utils.Int64Ptr(utils.GetNowMilli() + 63*1000),
 	})
 	if err != nil {
 		t.Fatalf("send msg failed: %v", err)
@@ -79,7 +81,13 @@ func TestSendMsgLogic2(t *testing.T) {
 	selfId := "TestSendMsgLogic2"
 	imService := imService()
 	resp, err := imService.SendMsg(ctx, &imservice.SendMsgReq{
-		SelfId: selfId,
+		Base: &pb.BaseReq{
+			SelfId:      selfId,
+			Platform:    "Test",
+			AppVersion:  "v0.0.1",
+			DeviceModel: "Mac",
+			Ips:         "111.111.111.111",
+		},
 		MsgDataList: []*pb.MsgData{{
 			ClientMsgId: utils.GenId(),
 			ServerMsgId: "",
@@ -117,11 +125,7 @@ func TestSendMsgLogic2(t *testing.T) {
 			}},
 			ExcludeUIds: nil,
 		}},
-		SendAt:      nil,
-		Platform:    "Test",
-		AppVersion:  "v0.0.1",
-		DeviceModel: "Mac",
-		Ips:         "111.111.111.111",
+		SendAt: nil,
 	})
 	if err != nil {
 		t.Fatalf("send msg failed: %v", err)

@@ -2,6 +2,7 @@ package dbmodel
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/qiniu/qmgo"
 	qopt "github.com/qiniu/qmgo/options"
@@ -22,10 +23,11 @@ type (
 		ContentType pb.MsgData_ContentType  `bson:"contentType"`  // 消息类型
 		OfflinePush *pb.MsgData_OfflinePush `bson:"offline_push"` // 离线推送
 		MsgOptions  *pb.MsgData_MsgOptions  `bson:"msg_options"`  // 消息选项
-		Ex          []byte                  `bson:"ex,omitempty"` // 扩展字段
+		Ex          MsgEx                   `bson:"ex,omitempty"` // 扩展字段
 		ExcludeUIds []string                `bson:"excludeUIds"`  // 排除的用户id
 		DeletedAt   int64                   `bson:"deletedAt"`    // 删除时间
 	}
+	MsgEx struct{}
 )
 
 func InitMsg(c *qmgo.Collection) {
@@ -35,4 +37,10 @@ func InitMsg(c *qmgo.Collection) {
 	}, {
 		Key: []string{"+clientMsgId"},
 	}})
+}
+
+func NewMsgEx(bytes []byte) MsgEx {
+	ex := MsgEx{}
+	_ = json.Unmarshal(bytes, &ex)
+	return ex
 }

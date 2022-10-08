@@ -35,11 +35,11 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 	msg := &pb.MsgToMQData{MsgDataList: in.MsgDataList}
 	bytes, _ := proto.Marshal(msg)
 	var options = []xmq.ProducerOptFunc{xmq.ProduceWithProperties(map[string]string{
-		"selfId":      in.SelfId,
-		"platform":    in.Platform,
-		"appVersion":  in.AppVersion,
-		"deviceModel": in.DeviceModel,
-		"ips":         in.Ips,
+		"selfId":      in.Base.SelfId,
+		"platform":    in.Base.Platform,
+		"appVersion":  in.Base.AppVersion,
+		"deviceModel": in.Base.DeviceModel,
+		"ips":         in.Base.Ips,
 	})}
 	if in.SendAt != nil {
 		if *in.SendAt > utils.GetNowMilli()+60000 {

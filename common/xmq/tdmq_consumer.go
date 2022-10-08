@@ -78,7 +78,7 @@ func (p *TDMQConsumer) Consume(
 		traceId, _ := receive.Properties()["traceId"]
 		xtrace.RunWithTrace(
 			traceId,
-			fmt.Sprintf("tdmqconsumer/topic:%s/subname:%s/consumername:%s", p.Config.Topic, p.Config.SubName, p.Config.ConsumerName),
+			fmt.Sprintf("tdmqconsumer/topic:%s/subname:%s/consumername:%s", receive.Topic(), p.Config.SubName, p.Config.ConsumerName),
 			func(ctx context.Context) {
 				err := f(ctx, receive.Topic(), receive.Key(), receive.Payload())
 				if err != nil {
