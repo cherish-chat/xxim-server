@@ -1,0 +1,15 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+
+// 服务器通过websocket发送给客户端的消息体
+message PushBody {
+  // 推送事件
+  enum Event {
+    pushMsg = 0; // 推送消息
+    convChange = 1; // 会话变更
+    systemNotice = 2; // 系统通知
+  }
+  Event event = 1;
+  bytes data = 2;
+}

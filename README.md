@@ -33,6 +33,7 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * 当用户不在线时，通过厂商推送（极光、腾讯、Mob）将消息推送给用户
 * 用户的每个会话都可以设置消息接收选项（接收、不接收、接收但不提醒）
 * 不限人数的群聊
+* 端对端加密
 
 <img src="https://github.com/cherish-chat/xx-doc/blob/master/doc/images/xxim.jpg" alt="feature" width="1500" />
 
