@@ -1,7 +1,7 @@
 # xxim-server
 
 <p align="center">
-<img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/main/doc/images/xxim.jpg">
+<img align="center" width="150px" src="https://github.com/cherish-chat/xx-doc/blob/master/doc/images/xxim.jpg">
 </p>
 
 xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是为了让每个人都能使用自己的IM APP，不需要再使用令人不爽的第三方IM APP。xxim-server是一个开源项目，欢迎大家一起来完善它。
@@ -34,7 +34,7 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * 用户的每个会话都可以设置消息接收选项（接收、不接收、接收但不提醒）
 * 不限人数的群聊
 
-<img src="https://raw.githubusercontent.com/zeromicro/zero-doc/main/doc/images/architecture-en.png" alt="Architecture" width="1500" />
+<img src="https://github.com/cherish-chat/xx-doc/blob/master/doc/images/xxim.jpg" alt="feature" width="1500" />
 
 ## xxim的背景
 
@@ -63,38 +63,16 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 
 <img width="1067" alt="image" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/main/doc/images/xxim.jpg">
 
-## Benchmark
+## 文档
 
-![benchmark](https://raw.githubusercontent.com/zeromicro/zero-doc/main/doc/images/benchmark.png)
+* [文档](https://github.com/cherish-chat/xx-doc/blob/master/doc/images/xxim.jpg)
+* [xxim客户端](https://github.com/cherish-chat/xx-doc/blob/master/doc/images/xxim.jpg)
 
-[Checkout the test code](https://github.com/smallnest/go-web-framework-benchmark)
+## discord
 
-## Documents
 
-* [Documents](https://go-zero.dev/)
-* [Rapid development of microservice systems](https://github.com/zeromicro/zero-doc/blob/main/doc/shorturl-en.md)
-* [Rapid development of microservice systems - multiple RPCs](https://github.com/zeromicro/zero-doc/blob/main/docs/zero/bookstore-en.md)
-* [Examples](https://github.com/zeromicro/zero-examples)
+## 点点star! ⭐
 
-##  Chat group
+如果你喜欢或正在使用这个项目来学习或开始你的解决方案，请给它一个星。谢谢！
 
-Join the chat via https://discord.gg/4JQvC5A4Fe
-
-##  Cloud Native Landscape
-
-<p float="left">
-<img src="https://landscape.cncf.io/images/left-logo.svg" width="150"/>&nbsp;&nbsp;&nbsp;
-<img src="https://landscape.cncf.io/images/right-logo.svg" width="200"/>
-</p>
-
-go-zero enlisted in the [CNCF Cloud Native Landscape](https://landscape.cncf.io/?selected=go-zero).
-
-## Give a Star! ⭐
-
-If you like or are using this project to learn or start your solution, please give it a star. Thanks!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=zeromicro/go-zero&type=Date)](#go-zero)
-
-## Buy me a coffee
-
-<a href="https://www.buymeacoffee.com/kevwan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+[![Star History Chart](https://api.star-history.com/svg?repos=cherish-chat/xxim-server&type=Date)](#xxim-server)
