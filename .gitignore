@@ -22,6 +22,8 @@
 *.ico
 *.svg
 
-*_local.*
+*local*.*
 *.log
 *.log.*
+
+*local/
