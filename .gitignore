@@ -27,3 +27,4 @@
 *.log.*
 
 *local/
+*local_*/
