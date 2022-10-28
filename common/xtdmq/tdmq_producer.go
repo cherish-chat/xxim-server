@@ -66,7 +66,6 @@ func (p *TDMQProducer) init() {
 		panic(err)
 	}
 	p.client = client
-	GetApiClient(p.ProducerConfig.TopicName, p.Config)
 	// 使用客户端创建生产者
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
 		// topic完整路径，格式为persistent://集群（租户）ID/命名空间/Topic名称

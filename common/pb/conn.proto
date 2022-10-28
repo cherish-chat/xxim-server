@@ -1,0 +1,35 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+// 服务器通过websocket发送给客户端的消息体
+message ConnMQBody {
+  // 推送事件
+  enum Event {
+    // 给某些用户推送消息
+    SEND_MSG_TO_USERS = 0;
+    // 强制断开用户连接
+    FORCE_DISCONNECT = 1;
+  }
+  Event event = 1;
+  bytes data = 2;
+}
+
+message MQForceDisconnectData {
+  repeated string userIds = 1;
+  int32 code = 2;
+  string msg = 3;
+}
+
+message MQSendMsgToUsersData {
+  enum MsgType {
+    MSGDATALIST = 0; // MsgDataList
+  }
+  message Msg {
+    MsgType msgType = 1;
+    bytes payload = 2;
+  }
+  repeated string userIds = 1;
+  Msg msg = 2;
+}
