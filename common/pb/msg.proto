@@ -1,0 +1,92 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+// 服务器通过websocket发送给客户端的消息体
+message MsgMQBody {
+  // 推送事件
+  enum Event {
+    // 插入消息并推送消息
+    SendMsgListSync = 0;
+  }
+  Event event = 1;
+  bytes data = 2;
+}
+
+message MsgData {
+  message OfflinePush {
+    string title = 1;
+    string content = 2;
+    string sound = 3;
+    string badge = 4;
+    string payload = 5;
+  }
+  message Options {
+    // 是否需要离线推送
+    bool offlinePush = 1;
+    // 服务端是否需要保存消息
+    bool storageForServer = 2;
+    // 客户端是否需要保存消息
+    bool storageForClient = 3;
+    // 消息是否需要计入未读数
+    bool unreadCount = 4;
+    // 是否需要解密 （端对端加密技术，服务端无法解密）
+    bool needDecrypt = 5;
+  }
+  message Ext {
+    // at
+    repeated string at = 1; // at全体为["...", "all", ...]
+    string source = 2; // 消息来源
+    string version = 3; // 消息版本
+    // 发送者使用的平台
+    string platform = 4;
+    // 发送者的设备id
+    string deviceId = 5;
+    // 发送者使用的客户端版本
+    string clientVersion = 6;
+  }
+  message Receiver {
+    optional string userId = 1; // 单聊时为对方的userId
+    optional string groupId = 2; // 群聊时为群组id
+    optional string groupToUserId = 3; // 群转单聊id
+  }
+  string clientMsgId = 1;
+  string serverMsgId = 2;
+  int64 clientTime = 3;
+  int64 serverTime = 4;
+
+  string sender = 11; // 发送者id
+  string senderInfo = 12; // 发送者信息
+  string senderConvInfo = 13; // 发送者在会话中的信息
+
+  ConvType convType = 21; // 会话类型
+  Receiver receiver = 22; // 接收者id (单聊时为对方id, 群聊时为群id)
+
+  ContentType contentType = 31; // 消息内容类型
+  bytes content = 32; // 消息内容
+  int64 seq = 33; // 消息序号 会话内唯一且递增
+
+  Options options = 41; // 消息选项
+  OfflinePush offlinePush = 42; // 离线推送
+
+  Ext ext = 100;
+}
+
+message MsgDataList {
+  repeated MsgData msgDataList = 1;
+}
+
+message SendMsgListReq {
+  Requester requester = 1;
+  repeated MsgData msgDataList = 2;
+  // options
+  // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
+  optional int64 deliverAfter = 3;
+}
+
+service msgService {
+  rpc InsertMsgDataList(MsgDataList) returns (CommonResp) {}
+  rpc SendMsgListSync(SendMsgListReq) returns (CommonResp) {} // 同步发送消息 成功后立刻能拉取到消息
+  rpc SendMsgListAsync(SendMsgListReq) returns (CommonResp) {} // 异步发送消息 成功后只能等待推送
+}
