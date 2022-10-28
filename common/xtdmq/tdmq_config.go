@@ -6,13 +6,8 @@ import (
 )
 
 type TDMQConfig struct {
-	Token     string // 角色Token
-	VpcUrl    string // 私有网络接入地址
-	Namespace string // 命名空间
-	ClusterId string // 集群名称
-	SecretId  string `json:",optional"` // 腾讯云 SecretId
-	SecretKey string `json:",optional"` // 腾讯云 SecretKey
-	Region    string `json:",optional"` // 腾讯云 地域 ap-guangzhou/ap-shanghai/ap-beijing/ap-hongkong ...
+	Token  string // 角色Token
+	VpcUrl string // 私有网络接入地址
 }
 
 type TDMQProducerConfig struct {
@@ -23,7 +18,7 @@ type TDMQProducerConfig struct {
 
 type TDMQConsumerConfig struct {
 	TopicName    string // 主题名称
-	SubName      string // 订阅名
+	SubName      string `json:",optional"` // 订阅名
 	ConsumerName string `json:",optional"` // 消费者名称
 	// 设置consumer初始接收消息的位置，可选参数为： 0:Latest 1:Earliest
 	SubInitialPosition int `json:",default=0,options=0|1"`
@@ -66,10 +61,6 @@ func (c TDMQConsumerConfig) GetConsumerName() string {
 		panic("env:POD_NAME is not set")
 	}
 	return c.ConsumerName
-}
-
-func (c TDMQConsumerConfig) GetTopicName(clusterName string, namespace string) string {
-	return clusterName + "/" + namespace + "/" + c.TopicName
 }
 
 func (c TDMQProducerConfig) GetProducerName() string {
