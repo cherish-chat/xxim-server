@@ -1,0 +1,20 @@
+Tencent:
+  SecretId: ""
+  SecretKey: ""
+  Region: "ap-guangzhou"
+  TDMQ:
+    Namespace: "dev"
+    ClusterName: "xx"
+    Topics:
+      Push:
+        Partition: 3
+        SubName: ws
+      Internal:
+        Partition: 3
+        SubName: im
+      UpsertMsg:
+        Partition: 3
+        SubName: conv
+StatefulSets:
+  Im:
+    MaxPod: 3
