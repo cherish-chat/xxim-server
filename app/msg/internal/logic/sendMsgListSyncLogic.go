@@ -36,12 +36,7 @@ func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.Commo
 	}
 	// 推送给相关的在线用户
 	xtrace.StartFuncSpan(l.ctx, "PushMsgListLogic.PushMsgList", func(ctx context.Context) {
-		singleMsgList := make([]*pb.MsgData, 0)
-		for _, msgData := range in.MsgDataList {
-			if msgData.ConvType == pb.ConvType_SINGLE {
-			}
-			singleMsgList = append(singleMsgList, msgData)
-		}
+
 	})
 	return &pb.CommonResp{}, nil
 }

@@ -36,3 +36,13 @@ func (s *MsgServiceServer) SendMsgListAsync(ctx context.Context, in *pb.SendMsgL
 	l := logic.NewSendMsgListAsyncLogic(ctx, s.svcCtx)
 	return l.SendMsgListAsync(in)
 }
+
+func (s *MsgServiceServer) BatchSendMsgSync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+	l := logic.NewBatchSendMsgSyncLogic(ctx, s.svcCtx)
+	return l.BatchSendMsgSync(in)
+}
+
+func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+	l := logic.NewBatchSendMsgAsyncLogic(ctx, s.svcCtx)
+	return l.BatchSendMsgAsync(in)
+}

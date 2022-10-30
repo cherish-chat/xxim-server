@@ -13,9 +13,9 @@ import (
 )
 
 type (
+	BatchSendMsgReq     = pb.BatchSendMsgReq
 	MsgData             = pb.MsgData
 	MsgDataList         = pb.MsgDataList
-	MsgData_Ext         = pb.MsgData_Ext
 	MsgData_OfflinePush = pb.MsgData_OfflinePush
 	MsgData_Options     = pb.MsgData_Options
 	MsgData_Receiver    = pb.MsgData_Receiver
@@ -26,6 +26,8 @@ type (
 		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error)
 		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
+		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultMsgService struct {
@@ -52,4 +54,14 @@ func (m *defaultMsgService) SendMsgListSync(ctx context.Context, in *SendMsgList
 func (m *defaultMsgService) SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.SendMsgListAsync(ctx, in, opts...)
+}
+
+func (m *defaultMsgService) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.BatchSendMsgSync(ctx, in, opts...)
+}
+
+func (m *defaultMsgService) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.BatchSendMsgAsync(ctx, in, opts...)
 }
