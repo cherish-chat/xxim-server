@@ -4,16 +4,26 @@ import (
 	"context"
 	"fmt"
 	"github.com/apache/pulsar-client-go/pulsar"
+	"github.com/cherish-chat/xxim-server/common/xredis"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	_ "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq/v20200217"
 	"github.com/zeromicro/go-zero/core/logx"
+	zedis "github.com/zeromicro/go-zero/core/stores/redis"
 	"time"
 )
 
 type ConsumeFunc func(ctx context.Context, topic string, msgKey string, payload []byte) error
 type ConsumeOpt struct {
+	rc *zedis.Redis
 }
 type ConsumerOptFunc func(options *ConsumeOpt)
+
+func ConsumerWithRc(rc *zedis.Redis) ConsumerOptFunc {
+	return func(options *ConsumeOpt) {
+		options.rc = rc
+	}
+}
 
 type TDMQConsumer struct {
 	Config         TDMQConfig
@@ -86,7 +96,19 @@ func (p *TDMQConsumer) Consume(
 				if err != nil {
 					// 消费失败，重试
 					// https://cloud.tencent.com/document/product/1179/49607
-					p.consumer.Nack(receive)
+					if options.rc != nil {
+						key := rediskey.MQRetryCount(traceId)
+						count, err := xredis.IncrEx(options.rc, ctx, key, 24*60*60, 1)
+						if err != nil {
+							logx.Errorf("redis incr error:%v", err)
+						}
+						if count == 12 {
+							// 重试12次，放弃，TODO 告警
+						}
+						p.consumer.ReconsumeLater(receive, GetRetryDelay(count))
+					} else {
+						p.consumer.Nack(receive)
+					}
 				} else {
 					// 消费成功，确认消费
 					p.consumer.Ack(receive)
@@ -94,4 +116,27 @@ func (p *TDMQConsumer) Consume(
 			},
 		)
 	}
+}
+
+var retryDelayMap = map[int64]time.Duration{
+	0:  1 * time.Second,
+	1:  10 * time.Second,
+	2:  10 * time.Second,
+	3:  10 * time.Second,
+	4:  10 * time.Second,
+	5:  10 * time.Second,
+	6:  20 * time.Second,
+	7:  20 * time.Second,
+	8:  20 * time.Second,
+	9:  20 * time.Second,
+	10: 30 * time.Second,
+	11: 30 * time.Second,
+	12: 30 * time.Second,
+}
+
+func GetRetryDelay(times int64) time.Duration {
+	if times >= 12 {
+		return retryDelayMap[12]
+	}
+	return retryDelayMap[times]
 }
