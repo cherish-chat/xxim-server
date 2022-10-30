@@ -44,7 +44,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		l.Errorf("BatchSendMsgSync error: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
-	xtrace.StartFuncSpan(l.ctx, "BatchSendMsgSync.MHSetLua", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "BatchSendMsgSync.MHSet", func(ctx context.Context) {
 		var kvs []xmgo.MHSetKv
 		for _, userId := range in.UserIdList {
 			convId := msgmodel.SingleConvId(in.MsgData.Sender, userId)
@@ -82,7 +82,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		err = xmgo.MHSet(l.svcCtx.Mongo().Collection(&xmgo.MHSetKv{}), l.ctx, kvs...)
 	})
 	if err != nil {
-		l.Errorf("redis MHSetLua error: %v", err)
+		l.Errorf("redis MHSet error: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
 	// TODO 推送
