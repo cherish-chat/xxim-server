@@ -25,6 +25,8 @@ type MsgServiceClient interface {
 	InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error)
 	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
+	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type msgServiceClient struct {
@@ -62,6 +64,24 @@ func (c *msgServiceClient) SendMsgListAsync(ctx context.Context, in *SendMsgList
 	return out, nil
 }
 
+func (c *msgServiceClient) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgSync", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgAsync", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -69,6 +89,8 @@ type MsgServiceServer interface {
 	InsertMsgDataList(context.Context, *MsgDataList) (*CommonResp, error)
 	SendMsgListSync(context.Context, *SendMsgListReq) (*CommonResp, error)
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error)
+	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
+	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -84,6 +106,12 @@ func (UnimplementedMsgServiceServer) SendMsgListSync(context.Context, *SendMsgLi
 }
 func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsgListAsync not implemented")
+}
+func (UnimplementedMsgServiceServer) BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgSync not implemented")
+}
+func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgAsync not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -152,6 +180,42 @@ func _MsgService_SendMsgListAsync_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_BatchSendMsgSync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchSendMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BatchSendMsgSync(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/BatchSendMsgSync",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BatchSendMsgSync(ctx, req.(*BatchSendMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_BatchSendMsgAsync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchSendMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BatchSendMsgAsync(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/BatchSendMsgAsync",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BatchSendMsgAsync(ctx, req.(*BatchSendMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +234,14 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMsgListAsync",
 			Handler:    _MsgService_SendMsgListAsync_Handler,
+		},
+		{
+			MethodName: "BatchSendMsgSync",
+			Handler:    _MsgService_BatchSendMsgSync_Handler,
+		},
+		{
+			MethodName: "BatchSendMsgAsync",
+			Handler:    _MsgService_BatchSendMsgAsync_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

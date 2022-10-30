@@ -16,7 +16,7 @@ type Client struct {
 	*qmgo.Client
 	config        Config
 	database      *qmgo.Database
-	CollectionMap sync.Map
+	collectionMap sync.Map
 }
 
 func NewClient(
@@ -37,12 +37,12 @@ func NewClient(
 		Client:        mongoClient,
 		config:        cfg,
 		database:      mongoClient.Database(cfg.Database),
-		CollectionMap: sync.Map{},
+		collectionMap: sync.Map{},
 	}
 }
 
 func (c *Client) Collection(i ICollection) *qmgo.Collection {
-	if v, ok := c.CollectionMap.Load(i.CollectionName()); ok {
+	if v, ok := c.collectionMap.Load(i.CollectionName()); ok {
 		return v.(*qmgo.Collection)
 	} else {
 		collection := c.database.Collection(i.CollectionName())
@@ -51,7 +51,7 @@ func (c *Client) Collection(i ICollection) *qmgo.Collection {
 			logx.Errorf("create collection index err: %v", err)
 			panic(err)
 		}
-		c.CollectionMap.Store(i.CollectionName(), collection)
+		c.collectionMap.Store(i.CollectionName(), collection)
 		return collection
 	}
 }

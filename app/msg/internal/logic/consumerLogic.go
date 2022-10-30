@@ -3,8 +3,10 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 )
 
 type ConsumerLogic struct {
@@ -29,7 +31,7 @@ func (l *ConsumerLogic) Start() {
 		ReceiverQueueSize:  l.svcCtx.Config.TDMQ.ReceiverQueueSize,
 		IsBroadcast:        false,
 	})
-	err := pushConsumer.Consume(context.Background(), l.Consumer)
+	err := pushConsumer.Consume(context.Background(), l.Consumer, xtdmq.ConsumerWithRc(l.svcCtx.Redis()))
 	if err != nil {
 		l.Errorf("pushConsumer.Consume error: %v", err)
 		panic(err)
@@ -37,6 +39,37 @@ func (l *ConsumerLogic) Start() {
 }
 
 func (l *ConsumerLogic) Consumer(ctx context.Context, topic string, key string, payload []byte) error {
-	// TODO: 业务逻辑
+	body := &pb.MsgMQBody{}
+	err := proto.Unmarshal(payload, body)
+	if err != nil {
+		l.Errorf("proto.Unmarshal error: %v", err)
+		return err
+	}
+	switch body.Event {
+	case pb.MsgMQBody_SendMsgListSync:
+		sendMsgListSyncReq := &pb.SendMsgListReq{}
+		err = proto.Unmarshal(body.Data, sendMsgListSyncReq)
+		if err != nil {
+			l.Errorf("proto.Unmarshal error: %v", err)
+			return err
+		}
+		_, err = NewSendMsgListSyncLogic(ctx, l.svcCtx).SendMsgListSync(sendMsgListSyncReq)
+		if err != nil {
+			l.Errorf("SendMsgListSyncLogic.SendMsgListSync error: %v", err)
+			return err
+		}
+	case pb.MsgMQBody_BatchSendMsgSync:
+		batchSendMsgSyncReq := &pb.BatchSendMsgReq{}
+		err = proto.Unmarshal(body.Data, batchSendMsgSyncReq)
+		if err != nil {
+			l.Errorf("proto.Unmarshal error: %v", err)
+			return err
+		}
+		_, err = NewBatchSendMsgSyncLogic(ctx, l.svcCtx).BatchSendMsgSync(batchSendMsgSyncReq)
+		if err != nil {
+			l.Errorf("BatchSendMsgSyncLogic.BatchSendMsgSync error: %v", err)
+			return err
+		}
+	}
 	return nil
 }

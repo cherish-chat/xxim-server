@@ -37,7 +37,6 @@ message Requester {
 enum ConvType {
   SINGLE = 0; // 单聊
   GROUP = 1; // 群聊
-  GROUP_TO_SINGLE = 2; // 群转单聊 收到这种消息，应该把消息的receiver.userId设置为当前用户的id 重设seq为当前会话seq
 }
 
 enum ContentType {

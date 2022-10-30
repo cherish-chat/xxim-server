@@ -9,6 +9,7 @@ message MsgMQBody {
   enum Event {
     // 插入消息并推送消息
     SendMsgListSync = 0;
+    BatchSendMsgSync = 1;
   }
   Event event = 1;
   bytes data = 2;
@@ -18,9 +19,7 @@ message MsgData {
   message OfflinePush {
     string title = 1;
     string content = 2;
-    string sound = 3;
-    string badge = 4;
-    string payload = 5;
+    string payload = 3;
   }
   message Options {
     // 是否需要离线推送
@@ -33,23 +32,12 @@ message MsgData {
     bool unreadCount = 4;
     // 是否需要解密 （端对端加密技术，服务端无法解密）
     bool needDecrypt = 5;
-  }
-  message Ext {
-    // at
-    repeated string at = 1; // at全体为["...", "all", ...]
-    string source = 2; // 消息来源
-    string version = 3; // 消息版本
-    // 发送者使用的平台
-    string platform = 4;
-    // 发送者的设备id
-    string deviceId = 5;
-    // 发送者使用的客户端版本
-    string clientVersion = 6;
+    // 是否需要重新渲染会话
+    bool updateConv = 6;
   }
   message Receiver {
     optional string userId = 1; // 单聊时为对方的userId
     optional string groupId = 2; // 群聊时为群组id
-    optional string groupToUserId = 3; // 群转单聊id
   }
   string clientMsgId = 1;
   string serverMsgId = 2;
@@ -60,8 +48,9 @@ message MsgData {
   string senderInfo = 12; // 发送者信息
   string senderConvInfo = 13; // 发送者在会话中的信息
 
-  ConvType convType = 21; // 会话类型
-  Receiver receiver = 22; // 接收者id (单聊时为对方id, 群聊时为群id)
+  Receiver receiver = 21; // 接收者id (单聊时为对方id, 群聊时为群id)
+  string convId = 22; // 会话id
+  repeated string atUsers = 23;   // 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
 
   ContentType contentType = 31; // 消息内容类型
   bytes content = 32; // 消息内容
@@ -70,7 +59,7 @@ message MsgData {
   Options options = 41; // 消息选项
   OfflinePush offlinePush = 42; // 离线推送
 
-  Ext ext = 100;
+  bytes ext = 100;
 }
 
 message MsgDataList {
@@ -82,11 +71,23 @@ message SendMsgListReq {
   repeated MsgData msgDataList = 2;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int64 deliverAfter = 3;
+  optional int64 deliverAfter = 11;
+}
+
+message BatchSendMsgReq {
+  Requester requester = 1;
+  MsgData msgData = 2;
+  repeated string userIdList = 3; // 接收者id列表
+  repeated string groupIdList = 4; // 群组id列表
+  // options
+  // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
+  optional int64 deliverAfter = 11;
 }
 
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (CommonResp) {}
   rpc SendMsgListSync(SendMsgListReq) returns (CommonResp) {} // 同步发送消息 成功后立刻能拉取到消息
   rpc SendMsgListAsync(SendMsgListReq) returns (CommonResp) {} // 异步发送消息 成功后只能等待推送
+  rpc BatchSendMsgSync(BatchSendMsgReq) returns (CommonResp) {} // 批量同步发送消息
+  rpc BatchSendMsgAsync(BatchSendMsgReq) returns (CommonResp) {} // 批量异步发送消息
 }

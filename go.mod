@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/apache/pulsar-client-go v0.9.0
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/qiniu/qmgo v1.1.4
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519
