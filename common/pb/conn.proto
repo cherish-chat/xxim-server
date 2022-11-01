@@ -7,29 +7,68 @@ import "common.proto";
 message ConnMQBody {
   // 推送事件
   enum Event {
-    // 给某些用户推送消息
-    SEND_MSG_TO_USERS = 0;
-    // 强制断开用户连接
-    FORCE_DISCONNECT = 1;
+    Unknown = 0;
   }
   Event event = 1;
   bytes data = 2;
 }
 
-message MQForceDisconnectData {
-  repeated string userIds = 1;
-  int32 code = 2;
-  string msg = 3;
+message ConnParam {
+  string userId = 1;
+  string token = 2;
+  string deviceId = 3;
+  string platform = 4;
+  string ips = 5;
+  string networkUsed = 6;
+  map<string, string> headers = 7;
+  string podIp = 8;
 }
 
-message MQSendMsgToUsersData {
-  enum MsgType {
-    MSGDATALIST = 0; // MsgDataList
-  }
-  message Msg {
-    MsgType msgType = 1;
-    bytes payload = 2;
-  }
+// 获取用户的连接 可以用userId、platforms、devices过滤
+message GetUserConnReq {
   repeated string userIds = 1;
-  Msg msg = 2;
+  repeated string platforms = 2;
+  repeated string devices = 3;
+}
+
+message GetUserConnResp {
+  CommonResp commonResp = 1;
+  repeated ConnParam connParams = 2;
+}
+
+message KickUserConnReq {
+  GetUserConnReq getUserConnReq = 1; // 搜索用户的连接
+}
+
+message KickUserConnResp {
+  CommonResp commonResp = 1;
+}
+
+enum PushEvent {
+  PushMsgDataList = 0;
+}
+
+message PushBody {
+  PushEvent event = 1;
+  bytes data = 2;
+}
+
+message SendMsgReq {
+  GetUserConnReq getUserConnReq = 1; // 搜索用户的连接
+  PushEvent event = 2;
+  bytes data = 3; // 发送的数据
+}
+
+message SendMsgResp {
+  CommonResp commonResp = 1;
+  // 发送成功的连接
+  repeated ConnParam successConnParams = 2;
+  // 发送失败的连接
+  repeated ConnParam failedConnParams = 3;
+}
+
+service connService {
+  rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
+  rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
 }

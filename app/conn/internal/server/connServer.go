@@ -17,7 +17,8 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 		svcCtx: svcCtx,
 	}
 	server := ws.NewServer(svcCtx)
-	l := logic.GetServerLogic(svcCtx)
+	logic.InitConnLogic(svcCtx)
+	l := logic.GetConnLogic()
 	server.SetBeforeConnect(l.BeforeConnect)
 	server.SetAddSubscriber(l.AddSubscriber)
 	server.SetDeleteSubscriber(l.DeleteSubscriber)
@@ -27,6 +28,5 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 }
 
 func (s *ConnServer) Start() {
-	go logic.NewConsumerLogic(s.svcCtx).Start()
 	s.Server.Start()
 }
