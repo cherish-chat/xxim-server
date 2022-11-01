@@ -24,6 +24,8 @@ type (
 	MsgData_Options           = pb.MsgData_Options
 	MsgData_Receiver          = pb.MsgData_Receiver
 	MsgMQBody                 = pb.MsgMQBody
+	PushMissingMsgListReq     = pb.PushMissingMsgListReq
+	PushMsgListReq            = pb.PushMsgListReq
 	SendMsgListReq            = pb.SendMsgListReq
 
 	MsgService interface {
@@ -32,6 +34,8 @@ type (
 		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+		PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
+		PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
 		GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error)
 		// GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
@@ -72,6 +76,16 @@ func (m *defaultMsgService) BatchSendMsgSync(ctx context.Context, in *BatchSendM
 func (m *defaultMsgService) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.BatchSendMsgAsync(ctx, in, opts...)
+}
+
+func (m *defaultMsgService) PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.PushMsgList(ctx, in, opts...)
+}
+
+func (m *defaultMsgService) PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.PushMissingMsgList(ctx, in, opts...)
 }
 
 // GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息

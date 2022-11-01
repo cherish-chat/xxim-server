@@ -52,7 +52,7 @@ func NewServer(
 }
 
 func (s *Server) Start() error {
-	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", s.svcCtx.Config.Host, s.svcCtx.Config.Port))
+	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", s.svcCtx.Config.Websocket.Host, s.svcCtx.Config.Websocket.Port))
 	if err != nil {
 		return err
 	}
@@ -93,9 +93,11 @@ func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {
 
 func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	logger := logx.WithContext(r.Context())
-	headers := make(map[string]any)
+	headers := make(map[string]string)
 	for k, v := range r.Header {
-		headers[k] = v
+		if len(v) > 0 {
+			headers[k] = v[0]
+		}
 	}
 	param := types.ConnParam{
 		UserId:      r.URL.Query().Get("userId"),

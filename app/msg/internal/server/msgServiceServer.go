@@ -47,6 +47,16 @@ func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSe
 	return l.BatchSendMsgAsync(in)
 }
 
+func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListReq) (*pb.CommonResp, error) {
+	l := logic.NewPushMsgListLogic(ctx, s.svcCtx)
+	return l.PushMsgList(in)
+}
+
+func (s *MsgServiceServer) PushMissingMsgList(ctx context.Context, in *pb.PushMissingMsgListReq) (*pb.CommonResp, error) {
+	l := logic.NewPushMissingMsgListLogic(ctx, s.svcCtx)
+	return l.PushMissingMsgList(in)
+}
+
 // GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
 func (s *MsgServiceServer) GetSingleMsgListBySeq(ctx context.Context, in *pb.GetSingleMsgListBySeqReq) (*pb.GetSingleMsgListBySeqResp, error) {
 	l := logic.NewGetSingleMsgListBySeqLogic(ctx, s.svcCtx)

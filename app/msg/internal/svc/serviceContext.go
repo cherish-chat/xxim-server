@@ -1,10 +1,13 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conn/connservice"
+	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -12,12 +15,16 @@ type ServiceContext struct {
 	msgProducer *xtdmq.TDMQProducer
 	zedis       *redis.Redis
 	mongo       *xmgo.Client
+	imService   imservice.ImService
+	ConnPodsMgr *connservice.ConnPodsMgr
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	s := &ServiceContext{
 		Config: c,
 	}
+	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
+	return s
 }
 
 func (s *ServiceContext) MsgProducer() *xtdmq.TDMQProducer {
@@ -39,4 +46,11 @@ func (s *ServiceContext) Mongo() *xmgo.Client {
 		s.mongo = xmgo.NewClient(s.Config.Mongo)
 	}
 	return s.mongo
+}
+
+func (s *ServiceContext) ImService() imservice.ImService {
+	if s.imService == nil {
+		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc))
+	}
+	return s.imService
 }

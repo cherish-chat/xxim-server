@@ -26,11 +26,11 @@ type MsgBytes struct {
 	Msg    []byte
 }
 type ConnParam struct {
-	UserId      string         // uid
-	Token       string         // token
-	DeviceId    string         // 设备id
-	Platform    string         // ios, android, web, pc, mac, linux, windows
-	Ips         string         // ip
-	NetworkUsed string         // 4G/5G/WIFI
-	Headers     map[string]any // 其他参数
+	UserId      string            // uid
+	Token       string            // token
+	DeviceId    string            // 设备id
+	Platform    string            // ios, android, web, pc, mac, linux, windows
+	Ips         string            // ip
+	NetworkUsed string            // 4G/5G/WIFI
+	Headers     map[string]string // 其他参数
 }

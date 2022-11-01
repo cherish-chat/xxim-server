@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -19,22 +20,430 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 推送事件
+type ImMQBody_Event int32
+
+const (
+	ImMQBody_Unknown ImMQBody_Event = 0
+)
+
+// Enum value maps for ImMQBody_Event.
+var (
+	ImMQBody_Event_name = map[int32]string{
+		0: "Unknown",
+	}
+	ImMQBody_Event_value = map[string]int32{
+		"Unknown": 0,
+	}
+)
+
+func (x ImMQBody_Event) Enum() *ImMQBody_Event {
+	p := new(ImMQBody_Event)
+	*p = x
+	return p
+}
+
+func (x ImMQBody_Event) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ImMQBody_Event) Descriptor() protoreflect.EnumDescriptor {
+	return file_im_proto_enumTypes[0].Descriptor()
+}
+
+func (ImMQBody_Event) Type() protoreflect.EnumType {
+	return &file_im_proto_enumTypes[0]
+}
+
+func (x ImMQBody_Event) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ImMQBody_Event.Descriptor instead.
+func (ImMQBody_Event) EnumDescriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{0, 0}
+}
+
+type ImMQBody struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Event ImMQBody_Event `protobuf:"varint,1,opt,name=event,proto3,enum=pb.ImMQBody_Event" json:"event"`
+	Data  []byte         `protobuf:"bytes,2,opt,name=data,proto3" json:"data"`
+}
+
+func (x *ImMQBody) Reset() {
+	*x = ImMQBody{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_im_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ImMQBody) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImMQBody) ProtoMessage() {}
+
+func (x *ImMQBody) ProtoReflect() protoreflect.Message {
+	mi := &file_im_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImMQBody.ProtoReflect.Descriptor instead.
+func (*ImMQBody) Descriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ImMQBody) GetEvent() ImMQBody_Event {
+	if x != nil {
+		return x.Event
+	}
+	return ImMQBody_Unknown
+}
+
+func (x *ImMQBody) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type BeforeConnectReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConnParam *ConnParam `protobuf:"bytes,1,opt,name=connParam,proto3" json:"connParam"`
+}
+
+func (x *BeforeConnectReq) Reset() {
+	*x = BeforeConnectReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_im_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BeforeConnectReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeforeConnectReq) ProtoMessage() {}
+
+func (x *BeforeConnectReq) ProtoReflect() protoreflect.Message {
+	mi := &file_im_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeforeConnectReq.ProtoReflect.Descriptor instead.
+func (*BeforeConnectReq) Descriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *BeforeConnectReq) GetConnParam() *ConnParam {
+	if x != nil {
+		return x.ConnParam
+	}
+	return nil
+}
+
+type BeforeConnectResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" json:"code"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg"`
+}
+
+func (x *BeforeConnectResp) Reset() {
+	*x = BeforeConnectResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_im_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BeforeConnectResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeforeConnectResp) ProtoMessage() {}
+
+func (x *BeforeConnectResp) ProtoReflect() protoreflect.Message {
+	mi := &file_im_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeforeConnectResp.ProtoReflect.Descriptor instead.
+func (*BeforeConnectResp) Descriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BeforeConnectResp) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *BeforeConnectResp) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type AfterConnectReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConnParam   *ConnParam `protobuf:"bytes,1,opt,name=connParam,proto3" json:"connParam"`
+	ConnectedAt int64      `protobuf:"varint,2,opt,name=connectedAt,proto3" json:"connectedAt"`
+}
+
+func (x *AfterConnectReq) Reset() {
+	*x = AfterConnectReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_im_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AfterConnectReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AfterConnectReq) ProtoMessage() {}
+
+func (x *AfterConnectReq) ProtoReflect() protoreflect.Message {
+	mi := &file_im_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AfterConnectReq.ProtoReflect.Descriptor instead.
+func (*AfterConnectReq) Descriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *AfterConnectReq) GetConnParam() *ConnParam {
+	if x != nil {
+		return x.ConnParam
+	}
+	return nil
+}
+
+func (x *AfterConnectReq) GetConnectedAt() int64 {
+	if x != nil {
+		return x.ConnectedAt
+	}
+	return 0
+}
+
+type AfterDisconnectReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConnParam      *ConnParam `protobuf:"bytes,1,opt,name=connParam,proto3" json:"connParam"`
+	ConnectedAt    int64      `protobuf:"varint,2,opt,name=connectedAt,proto3" json:"connectedAt"`
+	DisconnectedAt int64      `protobuf:"varint,3,opt,name=disconnectedAt,proto3" json:"disconnectedAt"`
+}
+
+func (x *AfterDisconnectReq) Reset() {
+	*x = AfterDisconnectReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_im_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AfterDisconnectReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AfterDisconnectReq) ProtoMessage() {}
+
+func (x *AfterDisconnectReq) ProtoReflect() protoreflect.Message {
+	mi := &file_im_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AfterDisconnectReq.ProtoReflect.Descriptor instead.
+func (*AfterDisconnectReq) Descriptor() ([]byte, []int) {
+	return file_im_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AfterDisconnectReq) GetConnParam() *ConnParam {
+	if x != nil {
+		return x.ConnParam
+	}
+	return nil
+}
+
+func (x *AfterDisconnectReq) GetConnectedAt() int64 {
+	if x != nil {
+		return x.ConnectedAt
+	}
+	return 0
+}
+
+func (x *AfterDisconnectReq) GetDisconnectedAt() int64 {
+	if x != nil {
+		return x.DisconnectedAt
+	}
+	return 0
+}
+
 var File_im_proto protoreflect.FileDescriptor
 
 var file_im_proto_rawDesc = []byte{
 	0x0a, 0x08, 0x69, 0x6d, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x70, 0x62, 0x1a, 0x0c,
 	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x09, 0x6d, 0x73,
-	0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0a, 0x63, 0x6f, 0x6e, 0x6e, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x22, 0x5e, 0x0a, 0x08, 0x49, 0x6d, 0x4d, 0x51, 0x42, 0x6f, 0x64, 0x79, 0x12,
+	0x28, 0x0a, 0x05, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12,
+	0x2e, 0x70, 0x62, 0x2e, 0x49, 0x6d, 0x4d, 0x51, 0x42, 0x6f, 0x64, 0x79, 0x2e, 0x45, 0x76, 0x65,
+	0x6e, 0x74, 0x52, 0x05, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74,
+	0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x14, 0x0a,
+	0x05, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x6e, 0x6b, 0x6e, 0x6f, 0x77,
+	0x6e, 0x10, 0x00, 0x22, 0x3f, 0x0a, 0x10, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f, 0x6e,
+	0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e,
+	0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x52, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x22, 0x39, 0x0a, 0x11, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f,
+	0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a,
+	0x03, 0x6d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6d, 0x73, 0x67, 0x22,
+	0x60, 0x0a, 0x0f, 0x41, 0x66, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52,
+	0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6e, 0x6e, 0x50,
+	0x61, 0x72, 0x61, 0x6d, 0x52, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x12,
+	0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41,
+	0x74, 0x22, 0x8b, 0x01, 0x0a, 0x12, 0x41, 0x66, 0x74, 0x65, 0x72, 0x44, 0x69, 0x73, 0x63, 0x6f,
+	0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x6e,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62,
+	0x2e, 0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x52, 0x09, 0x63, 0x6f, 0x6e, 0x6e,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74,
+	0x65, 0x64, 0x41, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x6e,
+	0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x26, 0x0a, 0x0e, 0x64, 0x69, 0x73, 0x63, 0x6f,
+	0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x0e, 0x64, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x32,
+	0xac, 0x02, 0x0a, 0x09, 0x69, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a,
+	0x0d, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x12, 0x14,
+	0x2e, 0x70, 0x62, 0x2e, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63,
+	0x74, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x70, 0x62, 0x2e, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65,
+	0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x33, 0x0a, 0x0c, 0x41,
+	0x66, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x12, 0x13, 0x2e, 0x70, 0x62,
+	0x2e, 0x41, 0x66, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x71,
+	0x1a, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x39, 0x0a, 0x0f, 0x41, 0x66, 0x74, 0x65, 0x72, 0x44, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e,
+	0x65, 0x63, 0x74, 0x12, 0x16, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x66, 0x74, 0x65, 0x72, 0x44, 0x69,
+	0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x0e, 0x2e, 0x70, 0x62,
+	0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x39, 0x0a, 0x0c, 0x4b,
+	0x69, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x12, 0x13, 0x2e, 0x70, 0x62,
+	0x2e, 0x4b, 0x69, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x52, 0x65, 0x71,
+	0x1a, 0x14, 0x2e, 0x70, 0x62, 0x2e, 0x4b, 0x69, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x43, 0x6f,
+	0x6e, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x36, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65,
+	0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x12, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x55, 0x73,
+	0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x52, 0x65, 0x71, 0x1a, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x47,
+	0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x42, 0x06,
+	0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
-var file_im_proto_goTypes = []interface{}{}
+var (
+	file_im_proto_rawDescOnce sync.Once
+	file_im_proto_rawDescData = file_im_proto_rawDesc
+)
+
+func file_im_proto_rawDescGZIP() []byte {
+	file_im_proto_rawDescOnce.Do(func() {
+		file_im_proto_rawDescData = protoimpl.X.CompressGZIP(file_im_proto_rawDescData)
+	})
+	return file_im_proto_rawDescData
+}
+
+var file_im_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_im_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_im_proto_goTypes = []interface{}{
+	(ImMQBody_Event)(0),        // 0: pb.ImMQBody.Event
+	(*ImMQBody)(nil),           // 1: pb.ImMQBody
+	(*BeforeConnectReq)(nil),   // 2: pb.BeforeConnectReq
+	(*BeforeConnectResp)(nil),  // 3: pb.BeforeConnectResp
+	(*AfterConnectReq)(nil),    // 4: pb.AfterConnectReq
+	(*AfterDisconnectReq)(nil), // 5: pb.AfterDisconnectReq
+	(*ConnParam)(nil),          // 6: pb.ConnParam
+	(*KickUserConnReq)(nil),    // 7: pb.KickUserConnReq
+	(*GetUserConnReq)(nil),     // 8: pb.GetUserConnReq
+	(*CommonResp)(nil),         // 9: pb.CommonResp
+	(*KickUserConnResp)(nil),   // 10: pb.KickUserConnResp
+	(*GetUserConnResp)(nil),    // 11: pb.GetUserConnResp
+}
 var file_im_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: pb.ImMQBody.event:type_name -> pb.ImMQBody.Event
+	6,  // 1: pb.BeforeConnectReq.connParam:type_name -> pb.ConnParam
+	6,  // 2: pb.AfterConnectReq.connParam:type_name -> pb.ConnParam
+	6,  // 3: pb.AfterDisconnectReq.connParam:type_name -> pb.ConnParam
+	2,  // 4: pb.imService.BeforeConnect:input_type -> pb.BeforeConnectReq
+	4,  // 5: pb.imService.AfterConnect:input_type -> pb.AfterConnectReq
+	5,  // 6: pb.imService.AfterDisconnect:input_type -> pb.AfterDisconnectReq
+	7,  // 7: pb.imService.KickUserConn:input_type -> pb.KickUserConnReq
+	8,  // 8: pb.imService.GetUserConn:input_type -> pb.GetUserConnReq
+	3,  // 9: pb.imService.BeforeConnect:output_type -> pb.BeforeConnectResp
+	9,  // 10: pb.imService.AfterConnect:output_type -> pb.CommonResp
+	9,  // 11: pb.imService.AfterDisconnect:output_type -> pb.CommonResp
+	10, // 12: pb.imService.KickUserConn:output_type -> pb.KickUserConnResp
+	11, // 13: pb.imService.GetUserConn:output_type -> pb.GetUserConnResp
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_im_proto_init() }
@@ -44,18 +453,83 @@ func file_im_proto_init() {
 	}
 	file_common_proto_init()
 	file_msg_proto_init()
+	file_conn_proto_init()
+	if !protoimpl.UnsafeEnabled {
+		file_im_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ImMQBody); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_im_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BeforeConnectReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_im_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BeforeConnectResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_im_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AfterConnectReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_im_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AfterDisconnectReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_im_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   0,
+			NumEnums:      1,
+			NumMessages:   5,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_im_proto_goTypes,
 		DependencyIndexes: file_im_proto_depIdxs,
+		EnumInfos:         file_im_proto_enumTypes,
+		MessageInfos:      file_im_proto_msgTypes,
 	}.Build()
 	File_im_proto = out.File
 	file_im_proto_rawDesc = nil

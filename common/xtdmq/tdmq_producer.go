@@ -6,6 +6,9 @@ import (
 	"github.com/apache/pulsar-client-go/pulsar"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.opentelemetry.io/otel/propagation"
+	oteltrace "go.opentelemetry.io/otel/trace"
+	"strconv"
 	"time"
 )
 
@@ -94,12 +97,13 @@ func (p *TDMQProducer) Produce(
 		Payload: payload,
 		Key:     key,
 	}
+	traceId := xtrace.TraceIdFromContext(ctx)
 	if options.properties != nil {
 		tmp := *options.properties
-		tmp["traceId"] = xtrace.TraceIdFromContext(ctx)
+		tmp["traceId"] = traceId
 		msg.Properties = tmp
 	} else {
-		msg.Properties = map[string]string{"traceId": xtrace.TraceIdFromContext(ctx)}
+		msg.Properties = map[string]string{"traceId": traceId}
 	}
 	if options.deliverAfter != nil {
 		msg.DeliverAfter = *options.deliverAfter
@@ -119,7 +123,17 @@ func (p *TDMQProducer) Produce(
 		}
 		msgId = msgID.(fmt.Stringer).String()
 		return
-	})
+	},
+		xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier(map[string]string{
+			"traceId":      traceId,
+			"now":          time.Now().String(),
+			"topic":        p.ProducerConfig.TopicName,
+			"producerName": p.ProducerConfig.GetProducerName(),
+			"deliverAfter": strconv.FormatInt(int64(msg.DeliverAfter.Seconds()), 10),
+			"deliverAt":    msg.DeliverAt.String(),
+		})),
+		xtrace.StartFuncSpanWithKind(oteltrace.SpanKindProducer),
+	)
 	return msgId, err
 }
 

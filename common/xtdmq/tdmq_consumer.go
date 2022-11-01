@@ -10,6 +10,7 @@ import (
 	_ "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq/v20200217"
 	"github.com/zeromicro/go-zero/core/logx"
 	zedis "github.com/zeromicro/go-zero/core/stores/redis"
+	"go.opentelemetry.io/otel/propagation"
 	"time"
 )
 
@@ -87,7 +88,17 @@ func (p *TDMQConsumer) Consume(
 			return err
 		}
 		// 获取 traceId
-		traceId, _ := receive.Properties()["traceId"]
+		properties := receive.Properties()
+		{
+			properties["publishTime"] = receive.PublishTime().String()
+			properties["eventTime"] = receive.EventTime().String()
+			properties["now"] = time.Now().String()
+			properties["key"] = receive.Key()
+			properties["orderingKey"] = receive.OrderingKey()
+			properties["producerName"] = receive.ProducerName()
+			properties["topic"] = receive.Topic()
+		}
+		traceId, _ := properties["traceId"]
 		xtrace.RunWithTrace(
 			traceId,
 			fmt.Sprintf("tdmqconsumer/topic:%s/subname:%s/consumername:%s", p.ConsumerConfig.TopicName, p.ConsumerConfig.SubName, p.ConsumerConfig.ConsumerName),
@@ -114,6 +125,7 @@ func (p *TDMQConsumer) Consume(
 					p.consumer.Ack(receive)
 				}
 			},
+			propagation.MapCarrier(properties),
 		)
 	}
 }
