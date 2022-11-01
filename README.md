@@ -9,7 +9,6 @@ xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是�
 <div align=center>
 
 [![Go](https://github.com/cherish-chat/xxim-server/workflows/Go/badge.svg?branch=master)](https://github.com/cherish-chat/xxim-server/actions)
-[![codecov](https://codecov.io/gh/cherish-chat/xxim-server/branch/master/graph/badge.svg)](https://codecov.io/gh/cherish-chat/xxim-server)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cherish-chat/xxim-server)](https://goreportcard.com/report/github.com/cherish-chat/xxim-server)
 [![Release](https://img.shields.io/github/v/release/cherish-chat/xxim-server.svg?style=flat-square)](https://github.com/cherish-chat/xxim-server)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cherish-chat/xxim-server.svg)](https://pkg.go.dev/github.com/cherish-chat/xxim-server)
