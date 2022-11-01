@@ -29,7 +29,16 @@ func (m *MHSetKv) Indexes(c *qmgo.Collection) error {
 }
 
 func MHSet(c *qmgo.Collection, ctx context.Context, kvs ...MHSetKv) error {
-	_, err := c.InsertMany(ctx, kvs, options.InsertManyOptions{InsertManyOptions: opts.InsertMany().SetOrdered(false)})
+	// 批量 upsert
+	bulk := c.Bulk()
+	for _, kv := range kvs {
+		bulk = bulk.Upsert(bson.M{"key": kv.Key, "hk": kv.HK}, bson.M{
+			"key": kv.Key,
+			"hk":  kv.HK,
+			"v":   kv.V,
+		})
+	}
+	_, err := bulk.Run(ctx)
 	return err
 }
 

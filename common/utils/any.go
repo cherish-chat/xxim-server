@@ -1,6 +1,9 @@
 package utils
 
-import "strconv"
+import (
+	"reflect"
+	"strconv"
+)
 
 func AnyMakeSlice[T any](any []T) []T {
 	if len(any) == 0 {
@@ -45,4 +48,29 @@ func AnyToInt64(t any) int64 {
 	default:
 		return 0
 	}
+}
+
+func Set[T any](slice []T) []T {
+	m := make(map[any]struct{})
+	for _, v := range slice {
+		m[v] = struct{}{}
+	}
+
+	var results []T
+	for _, v := range slice {
+		if _, ok := m[v]; ok {
+			results = append(results, v)
+			delete(m, v)
+		}
+	}
+	return results
+}
+
+func InSlice[T any](slice []T, item T) bool {
+	for _, v := range slice {
+		if reflect.DeepEqual(v, item) {
+			return true
+		}
+	}
+	return false
 }
