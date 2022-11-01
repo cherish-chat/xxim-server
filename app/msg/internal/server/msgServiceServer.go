@@ -46,3 +46,15 @@ func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSe
 	l := logic.NewBatchSendMsgAsyncLogic(ctx, s.svcCtx)
 	return l.BatchSendMsgAsync(in)
 }
+
+// GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
+func (s *MsgServiceServer) GetSingleMsgListBySeq(ctx context.Context, in *pb.GetSingleMsgListBySeqReq) (*pb.GetSingleMsgListBySeqResp, error) {
+	l := logic.NewGetSingleMsgListBySeqLogic(ctx, s.svcCtx)
+	return l.GetSingleMsgListBySeq(in)
+}
+
+// GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
+func (s *MsgServiceServer) GetGroupMsgListBySeq(ctx context.Context, in *pb.GetGroupMsgListBySeqReq) (*pb.GetGroupMsgListBySeqResp, error) {
+	l := logic.NewGetGroupMsgListBySeqLogic(ctx, s.svcCtx)
+	return l.GetGroupMsgListBySeq(in)
+}

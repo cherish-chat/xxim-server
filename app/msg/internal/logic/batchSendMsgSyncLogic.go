@@ -37,14 +37,14 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		GroupIdList: utils.AnyMakeSlice(in.GroupIdList),
 	}
 	var err error
-	xtrace.StartFuncSpan(l.ctx, "BatchSendMsgSync.InsertOne", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "InsertOne", func(ctx context.Context) {
 		_, err = l.svcCtx.Mongo().Collection(model).InsertOne(l.ctx, model)
 	})
 	if err != nil {
 		l.Errorf("BatchSendMsgSync error: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
-	xtrace.StartFuncSpan(l.ctx, "BatchSendMsgSync.MHSet", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "MHSet", func(ctx context.Context) {
 		var kvs []xmgo.MHSetKv
 		for _, userId := range in.UserIdList {
 			convId := msgmodel.SingleConvId(in.MsgData.Sender, userId)
