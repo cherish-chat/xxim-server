@@ -3,3 +3,41 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 import "msg.proto";
+import "conn.proto";
+
+message ImMQBody {
+  // 推送事件
+  enum Event {
+    Unknown = 0;
+  }
+  Event event = 1;
+  bytes data = 2;
+}
+
+message BeforeConnectReq {
+  ConnParam connParam = 1;
+}
+
+message BeforeConnectResp {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message AfterConnectReq {
+  ConnParam connParam = 1;
+  int64 connectedAt = 2;
+}
+
+message AfterDisconnectReq {
+  ConnParam connParam = 1;
+  int64 connectedAt = 2;
+  int64 disconnectedAt = 3;
+}
+
+service imService {
+  rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
+  rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
+}
