@@ -84,10 +84,36 @@ message BatchSendMsgReq {
   optional int64 deliverAfter = 11;
 }
 
+message GetSingleMsgListBySeqReq {
+  Requester requester = 1;
+  string userId = 2;
+  repeated int64 seqList = 3;
+}
+
+message GetSingleMsgListBySeqResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2;
+}
+
+message GetGroupMsgListBySeqReq {
+  Requester requester = 1;
+  string groupId = 2;
+  repeated int64 seqList = 3;
+}
+
+message GetGroupMsgListBySeqResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (CommonResp) {}
   rpc SendMsgListSync(SendMsgListReq) returns (CommonResp) {} // 同步发送消息 成功后立刻能拉取到消息
   rpc SendMsgListAsync(SendMsgListReq) returns (CommonResp) {} // 异步发送消息 成功后只能等待推送
   rpc BatchSendMsgSync(BatchSendMsgReq) returns (CommonResp) {} // 批量同步发送消息
   rpc BatchSendMsgAsync(BatchSendMsgReq) returns (CommonResp) {} // 批量异步发送消息
+  //GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
+  rpc GetSingleMsgListBySeq(GetSingleMsgListBySeqReq) returns (GetSingleMsgListBySeqResp) {}
+  //GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
+  rpc GetGroupMsgListBySeq(GetGroupMsgListBySeqReq) returns (GetGroupMsgListBySeqResp) {}
 }

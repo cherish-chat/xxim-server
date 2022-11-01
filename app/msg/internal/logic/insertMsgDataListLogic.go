@@ -31,7 +31,7 @@ func NewInsertMsgDataListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.CommonResp, error) {
 	var models []*msgmodel.Msg
 	var err error
-	xtrace.StartFuncSpan(l.ctx, "InsertMsgDataList.GenModels", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "GenModels", func(ctx context.Context) {
 		for _, msgData := range in.MsgDataList {
 			model := msgmodel.NewMsgFromPb(msgData)
 			model.AutoConvId()

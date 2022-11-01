@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/qiniu/qmgo"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -116,6 +117,27 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 	}
 }
 
+func NewNullMsg(convId string, seq int64) *Msg {
+	return &Msg{
+		ServerMsgId:    ServerMsgId(convId, seq),
+		ConvId:         convId,
+		ClientMsgId:    "",
+		ClientTime:     0,
+		ServerTime:     0,
+		Sender:         "",
+		SenderInfo:     "",
+		SenderConvInfo: "",
+		Receiver:       MsgReceiver{},
+		AtUsers:        nil,
+		ContentType:    0,
+		Content:        nil,
+		Seq:            seq,
+		Options:        MsgOptions{},
+		OfflinePush:    nil,
+		Ext:            nil,
+	}
+}
+
 func (m *Msg) AutoConvId() *Msg {
 	if m.Receiver.GroupId == "" {
 		// 单聊
@@ -146,6 +168,45 @@ func (m *Msg) Check() *Msg {
 	return m
 }
 
+func (m *Msg) ToMsgData() *pb.MsgData {
+	offlinePush := m.OfflinePush
+	if offlinePush == nil {
+		offlinePush = &MsgOfflinePush{}
+	}
+	return &pb.MsgData{
+		ServerMsgId:    m.ServerMsgId,
+		ConvId:         m.ConvId,
+		ClientMsgId:    m.ClientMsgId,
+		ClientTime:     m.ClientTime,
+		ServerTime:     m.ServerTime,
+		Sender:         m.Sender,
+		SenderInfo:     m.SenderInfo,
+		SenderConvInfo: m.SenderConvInfo,
+		Receiver: &pb.MsgData_Receiver{
+			UserId:  &m.Receiver.UserId,
+			GroupId: &m.Receiver.GroupId,
+		},
+		AtUsers:     m.AtUsers,
+		ContentType: m.ContentType,
+		Content:     m.Content,
+		Seq:         m.Seq,
+		Options: &pb.MsgData_Options{
+			OfflinePush:      m.Options.OfflinePush,
+			StorageForServer: m.Options.StorageForServer,
+			StorageForClient: m.Options.StorageForClient,
+			UnreadCount:      m.Options.UnreadCount,
+			NeedDecrypt:      m.Options.NeedDecrypt,
+			UpdateConv:       m.Options.UpdateConv,
+		},
+		OfflinePush: &pb.MsgData_OfflinePush{
+			Title:   offlinePush.Title,
+			Content: offlinePush.Content,
+			Payload: offlinePush.Payload,
+		},
+		Ext: m.Ext,
+	}
+}
+
 func ServerMsgId(convId string, seq int64) string {
 	return convId + ConvIdSeparator + strconv.FormatInt(seq, 10)
 }
@@ -155,4 +216,22 @@ func SingleConvId(id1 string, id2 string) string {
 		return id1 + ConvIdSeparator + id2
 	}
 	return id2 + ConvIdSeparator + id1
+}
+
+func ParseSingleServerMsgId(serverMsgId string) (convId string, seq int64) {
+	arr := strings.Split(serverMsgId, ConvIdSeparator)
+	if len(arr) == 3 {
+		convId = arr[0] + ConvIdSeparator + arr[1]
+		seq, _ = strconv.ParseInt(arr[2], 10, 64)
+	}
+	return
+}
+
+func ParseGroupServerMsgId(serverMsgId string) (groupId string, seq int64) {
+	arr := strings.Split(serverMsgId, ConvIdSeparator)
+	if len(arr) == 2 {
+		groupId = arr[0]
+		seq, _ = strconv.ParseInt(arr[1], 10, 64)
+	}
+	return
 }
