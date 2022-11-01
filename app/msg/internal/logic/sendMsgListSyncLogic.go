@@ -36,7 +36,10 @@ func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.Commo
 	}
 	// 推送给相关的在线用户
 	xtrace.StartFuncSpan(l.ctx, "PushMsgList", func(ctx context.Context) {
-
+		_, err := NewPushMsgListLogic(ctx, l.svcCtx).PushMsgList(&pb.PushMsgListReq{MsgDataList: in.MsgDataList})
+		if err != nil {
+			l.Errorf("PushMsgList error: %v", err)
+		}
 	})
 	return &pb.CommonResp{}, nil
 }

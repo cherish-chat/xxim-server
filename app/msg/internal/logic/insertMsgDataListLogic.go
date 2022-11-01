@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	opts "github.com/qiniu/qmgo/options"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -35,25 +34,28 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.Comm
 		for _, msgData := range in.MsgDataList {
 			model := msgmodel.NewMsgFromPb(msgData)
 			model.AutoConvId()
-			convId := model.ConvId
-			// 给会话生成一个新的seq
-			k := rediskey.ConvKv(convId)
-			var seq int
-			seq, err = l.svcCtx.Redis().HincrbyCtx(l.ctx, k, rediskey.HKConvMaxSeq(), 1)
-			if err != nil {
-				return
+			if model.Options.StorageForServer {
+				convId := model.ConvId
+				// 给会话生成一个新的seq
+				var seq int
+				seq, err = IncrConvMaxSeq(l.svcCtx.Redis(), l.ctx, convId)
+				if err != nil {
+					return
+				}
+				model.SetSeq(int64(seq)).Check()
+				models = append(models, model)
 			}
-			model.SetSeq(int64(seq)).Check()
-			models = append(models, model)
 		}
 	})
 	if err != nil {
 		l.Errorf("InsertMsgDataList.GenModels err:%v", err)
 		return pb.NewRetryErrorResp(), err
 	}
-	_, err = l.svcCtx.Mongo().Collection(&msgmodel.Msg{}).InsertMany(l.ctx, models, opts.InsertManyOptions{
-		InsertManyOptions: options.InsertMany().SetOrdered(true),
-	})
+	if len(models) > 0 {
+		_, err = l.svcCtx.Mongo().Collection(&msgmodel.Msg{}).InsertMany(l.ctx, models, opts.InsertManyOptions{
+			InsertManyOptions: options.InsertMany().SetOrdered(true),
+		})
+	}
 	if err != nil {
 		l.Errorf("mongo InsertMany error: %v", err)
 		return pb.NewRetryErrorResp(), err

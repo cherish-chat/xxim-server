@@ -27,6 +27,8 @@ type MsgServiceClient interface {
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
+	PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
 	GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error)
 	//GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
@@ -86,6 +88,24 @@ func (c *msgServiceClient) BatchSendMsgAsync(ctx context.Context, in *BatchSendM
 	return out, nil
 }
 
+func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/PushMsgList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/PushMissingMsgList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgServiceClient) GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error) {
 	out := new(GetSingleMsgListBySeqResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/GetSingleMsgListBySeq", in, out, opts...)
@@ -113,6 +133,8 @@ type MsgServiceServer interface {
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error)
 	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
 	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
+	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
+	PushMissingMsgList(context.Context, *PushMissingMsgListReq) (*CommonResp, error)
 	//GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
 	GetSingleMsgListBySeq(context.Context, *GetSingleMsgListBySeqReq) (*GetSingleMsgListBySeqResp, error)
 	//GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
@@ -138,6 +160,12 @@ func (UnimplementedMsgServiceServer) BatchSendMsgSync(context.Context, *BatchSen
 }
 func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgAsync not implemented")
+}
+func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushMsgList not implemented")
+}
+func (UnimplementedMsgServiceServer) PushMissingMsgList(context.Context, *PushMissingMsgListReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PushMissingMsgList not implemented")
 }
 func (UnimplementedMsgServiceServer) GetSingleMsgListBySeq(context.Context, *GetSingleMsgListBySeqReq) (*GetSingleMsgListBySeqResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSingleMsgListBySeq not implemented")
@@ -248,6 +276,42 @@ func _MsgService_BatchSendMsgAsync_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_PushMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushMsgListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).PushMsgList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/PushMsgList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).PushMsgList(ctx, req.(*PushMsgListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_PushMissingMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushMissingMsgListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).PushMissingMsgList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/PushMissingMsgList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).PushMissingMsgList(ctx, req.(*PushMissingMsgListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MsgService_GetSingleMsgListBySeq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSingleMsgListBySeqReq)
 	if err := dec(in); err != nil {
@@ -310,6 +374,14 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchSendMsgAsync",
 			Handler:    _MsgService_BatchSendMsgAsync_Handler,
+		},
+		{
+			MethodName: "PushMsgList",
+			Handler:    _MsgService_PushMsgList_Handler,
+		},
+		{
+			MethodName: "PushMissingMsgList",
+			Handler:    _MsgService_PushMissingMsgList_Handler,
 		},
 		{
 			MethodName: "GetSingleMsgListBySeq",

@@ -49,9 +49,8 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		for _, userId := range in.UserIdList {
 			convId := msgmodel.SingleConvId(in.MsgData.Sender, userId)
 			// 给会话生成一个新的seq
-			k := rediskey.ConvKv(convId)
 			var seq int
-			seq, err = l.svcCtx.Redis().HincrbyCtx(l.ctx, k, rediskey.HKConvMaxSeq(), 1)
+			seq, err = IncrConvMaxSeq(l.svcCtx.Redis(), l.ctx, convId)
 			if err != nil {
 				return
 			}
@@ -65,9 +64,8 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		for _, groupId := range in.GroupIdList {
 			convId := groupId
 			// 给会话生成一个新的seq
-			k := rediskey.ConvKv(convId)
 			var seq int
-			seq, err = l.svcCtx.Redis().HincrbyCtx(l.ctx, k, rediskey.HKConvMaxSeq(), 1)
+			seq, err = IncrConvMaxSeq(l.svcCtx.Redis(), l.ctx, convId)
 			if err != nil {
 				l.Errorf("redis Hincrby error: %v", err)
 				return
