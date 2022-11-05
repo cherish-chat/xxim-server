@@ -13,33 +13,27 @@ import (
 )
 
 type (
-	BatchSendMsgReq           = pb.BatchSendMsgReq
-	GetGroupMsgListBySeqReq   = pb.GetGroupMsgListBySeqReq
-	GetGroupMsgListBySeqResp  = pb.GetGroupMsgListBySeqResp
-	GetSingleMsgListBySeqReq  = pb.GetSingleMsgListBySeqReq
-	GetSingleMsgListBySeqResp = pb.GetSingleMsgListBySeqResp
-	MsgData                   = pb.MsgData
-	MsgDataList               = pb.MsgDataList
-	MsgData_OfflinePush       = pb.MsgData_OfflinePush
-	MsgData_Options           = pb.MsgData_Options
-	MsgData_Receiver          = pb.MsgData_Receiver
-	MsgMQBody                 = pb.MsgMQBody
-	PushMissingMsgListReq     = pb.PushMissingMsgListReq
-	PushMsgListReq            = pb.PushMsgListReq
-	SendMsgListReq            = pb.SendMsgListReq
+	BatchSendMsgReq       = pb.BatchSendMsgReq
+	GetMsgListByConvIdReq = pb.GetMsgListByConvIdReq
+	GetMsgListResp        = pb.GetMsgListResp
+	MsgData               = pb.MsgData
+	MsgDataList           = pb.MsgDataList
+	MsgData_OfflinePush   = pb.MsgData_OfflinePush
+	MsgData_Options       = pb.MsgData_Options
+	MsgData_Receiver      = pb.MsgData_Receiver
+	MsgMQBody             = pb.MsgMQBody
+	PushMsgListReq        = pb.PushMsgListReq
+	SendMsgListReq        = pb.SendMsgListReq
 
 	MsgService interface {
-		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error)
+		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
 		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 		PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-		PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-		// GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
-		GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error)
-		// GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
-		GetGroupMsgListBySeq(ctx context.Context, in *GetGroupMsgListBySeqReq, opts ...grpc.CallOption) (*GetGroupMsgListBySeqResp, error)
+		// GetMsgListByConvId 通过seq拉取一个会话的消息
+		GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
 	}
 
 	defaultMsgService struct {
@@ -53,7 +47,7 @@ func NewMsgService(cli zrpc.Client) MsgService {
 	}
 }
 
-func (m *defaultMsgService) InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error) {
+func (m *defaultMsgService) InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.InsertMsgDataList(ctx, in, opts...)
 }
@@ -83,19 +77,8 @@ func (m *defaultMsgService) PushMsgList(ctx context.Context, in *PushMsgListReq,
 	return client.PushMsgList(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+// GetMsgListByConvId 通过seq拉取一个会话的消息
+func (m *defaultMsgService) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.PushMissingMsgList(ctx, in, opts...)
-}
-
-// GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
-func (m *defaultMsgService) GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error) {
-	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.GetSingleMsgListBySeq(ctx, in, opts...)
-}
-
-// GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
-func (m *defaultMsgService) GetGroupMsgListBySeq(ctx context.Context, in *GetGroupMsgListBySeqReq, opts ...grpc.CallOption) (*GetGroupMsgListBySeqResp, error) {
-	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.GetGroupMsgListBySeq(ctx, in, opts...)
+	return client.GetMsgListByConvId(ctx, in, opts...)
 }

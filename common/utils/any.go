@@ -74,3 +74,19 @@ func InSlice[T any](slice []T, item T) bool {
 	}
 	return false
 }
+
+// If 三目运算
+func If[T any](cond bool, a, b T) T {
+	if cond {
+		return a
+	}
+	return b
+}
+
+func UpdateSlice[T any](slice []T, update func(v T) T) []T {
+	var results = make([]T, 0, len(slice))
+	for _, v := range slice {
+		results = append(results, update(v))
+	}
+	return results
+}

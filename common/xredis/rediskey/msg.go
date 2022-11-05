@@ -15,3 +15,7 @@ func HKConvMaxSeq() string {
 func ConvMsgIdMapping(convId string) string {
 	return "h:conv_msgid_mapping:" + convId
 }
+
+func MsgKey(id string) string {
+	return "s:model:msg:" + id
+}

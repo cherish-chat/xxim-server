@@ -1,8 +1,11 @@
 package logic
 
 type MockSubscriber struct {
-	UserId string
-	XXX    string
+	UserId                 string
+	DeviceId               string
+	DeviceMaxSeq           int64
+	DeviceLatestUpdateTime int64
+	XXX                    string
 }
 type MockSubscribers struct {
 	Subscribers []*MockSubscriber

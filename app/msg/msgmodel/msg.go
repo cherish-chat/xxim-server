@@ -1,9 +1,12 @@
 package msgmodel
 
 import (
+	"context"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/qiniu/qmgo"
+	"github.com/qiniu/qmgo/options"
 	"strconv"
 	"strings"
 	"time"
@@ -70,6 +73,9 @@ func (m *Msg) CollectionName() string {
 }
 
 func (m *Msg) Indexes(c *qmgo.Collection) error {
+	c.CreateIndexes(context.Background(), []options.IndexModel{{
+		Key: []string{"clientMsgId"},
+	}})
 	return nil
 }
 
@@ -117,25 +123,11 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 	}
 }
 
-func NewNullMsg(convId string, seq int64) *Msg {
-	return &Msg{
-		ServerMsgId:    ServerMsgId(convId, seq),
-		ConvId:         convId,
-		ClientMsgId:    "",
-		ClientTime:     0,
-		ServerTime:     0,
-		Sender:         "",
-		SenderInfo:     "",
-		SenderConvInfo: "",
-		Receiver:       MsgReceiver{},
-		AtUsers:        nil,
-		ContentType:    0,
-		Content:        nil,
-		Seq:            seq,
-		Options:        MsgOptions{},
-		OfflinePush:    nil,
-		Ext:            nil,
-	}
+func (m *Msg) NotFound(serverId string) {
+	m.ServerMsgId = serverId
+	convId, seq := ParseConvServerMsgId(serverId)
+	m.ConvId = convId
+	m.Seq = seq
 }
 
 func (m *Msg) AutoConvId() *Msg {
@@ -207,6 +199,76 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 	}
 }
 
+func (m *Msg) ExpireSeconds() int {
+	return xredis.ExpireMinutes(5)
+}
+
+func (m *Msg) SinglePb(seq int64, uid string) *pb.MsgData {
+	convId := SingleConvId(uid, m.Sender)
+	return &pb.MsgData{
+		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
+		ServerMsgId:    ServerMsgId(convId, seq),
+		ClientTime:     m.ClientTime,
+		ServerTime:     m.ServerTime,
+		Sender:         m.Sender,
+		SenderInfo:     m.SenderInfo,
+		SenderConvInfo: m.SenderConvInfo,
+		Receiver:       &pb.MsgData_Receiver{UserId: &uid},
+		ConvId:         convId,
+		AtUsers:        m.AtUsers,
+		ContentType:    m.ContentType,
+		Content:        m.Content,
+		Seq:            seq,
+		Options: &pb.MsgData_Options{
+			OfflinePush:      m.Options.OfflinePush,
+			StorageForServer: m.Options.StorageForServer,
+			StorageForClient: m.Options.StorageForClient,
+			UnreadCount:      m.Options.UnreadCount,
+			NeedDecrypt:      m.Options.NeedDecrypt,
+			UpdateConv:       m.Options.UpdateConv,
+		},
+		OfflinePush: &pb.MsgData_OfflinePush{
+			Title:   m.OfflinePush.Title,
+			Content: m.OfflinePush.Content,
+			Payload: m.OfflinePush.Payload,
+		},
+		Ext: m.Ext,
+	}
+}
+
+func (m *Msg) GroupPb(seq int64, groupId string) *pb.MsgData {
+	convId := groupId
+	return &pb.MsgData{
+		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
+		ServerMsgId:    ServerMsgId(convId, seq),
+		ClientTime:     m.ClientTime,
+		ServerTime:     m.ServerTime,
+		Sender:         m.Sender,
+		SenderInfo:     m.SenderInfo,
+		SenderConvInfo: m.SenderConvInfo,
+		Receiver:       &pb.MsgData_Receiver{GroupId: &groupId},
+		ConvId:         convId,
+		AtUsers:        m.AtUsers,
+		ContentType:    m.ContentType,
+		Content:        m.Content,
+		Seq:            seq,
+		Options: &pb.MsgData_Options{
+			OfflinePush:      m.Options.OfflinePush,
+			StorageForServer: m.Options.StorageForServer,
+			StorageForClient: m.Options.StorageForClient,
+			UnreadCount:      m.Options.UnreadCount,
+			NeedDecrypt:      m.Options.NeedDecrypt,
+			UpdateConv:       m.Options.UpdateConv,
+		},
+		OfflinePush: &pb.MsgData_OfflinePush{
+			Title:   m.OfflinePush.Title,
+			Content: m.OfflinePush.Content,
+			Payload: m.OfflinePush.Payload,
+		},
+		Ext: m.Ext,
+	}
+}
+
 func ServerMsgId(convId string, seq int64) string {
 	return convId + ConvIdSeparator + strconv.FormatInt(seq, 10)
 }
@@ -227,6 +289,10 @@ func ParseSingleServerMsgId(serverMsgId string) (convId string, seq int64) {
 	return
 }
 
+func BatchMsgClientMsgId(clientMsgId string, convId string) string {
+	return clientMsgId + ConvIdSeparator + convId
+}
+
 func ParseGroupServerMsgId(serverMsgId string) (groupId string, seq int64) {
 	arr := strings.Split(serverMsgId, ConvIdSeparator)
 	if len(arr) == 2 {
@@ -234,4 +300,28 @@ func ParseGroupServerMsgId(serverMsgId string) (groupId string, seq int64) {
 		seq, _ = strconv.ParseInt(arr[1], 10, 64)
 	}
 	return
+}
+
+func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {
+	arr := strings.Split(serverMsgId, ConvIdSeparator)
+	if len(arr) == 2 {
+		convId = arr[0]
+		seq, _ = strconv.ParseInt(arr[1], 10, 64)
+	} else if len(arr) == 3 {
+		convId = arr[0] + ConvIdSeparator + arr[1]
+		seq, _ = strconv.ParseInt(arr[2], 10, 64)
+	}
+	return
+}
+
+func ConvIsGroup(convId string) bool {
+	return !strings.Contains(convId, ConvIdSeparator)
+}
+
+func ParseSingleConvId(convId string) (string, string) {
+	arr := strings.Split(convId, ConvIdSeparator)
+	if len(arr) == 2 {
+		return arr[0], arr[1]
+	}
+	return "", ""
 }

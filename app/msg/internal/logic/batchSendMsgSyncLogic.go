@@ -30,6 +30,8 @@ func NewBatchSendMsgSyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
 	msg := msgmodel.NewMsgFromPb(in.MsgData)
+	msg.Receiver.UserId = ""
+	msg.Receiver.GroupId = ""
 	model := &msgmodel.BatchMsg{
 		Id:          utils.GenId(),
 		Msg:         msg.Check(),
@@ -44,6 +46,8 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		l.Errorf("BatchSendMsgSync error: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
+	var uidSeqMap = make(map[string]int64)
+	var groupSeqMap = make(map[string]int64)
 	xtrace.StartFuncSpan(l.ctx, "MHSet", func(ctx context.Context) {
 		var kvs []xmgo.MHSetKv
 		for _, userId := range in.UserIdList {
@@ -60,6 +64,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 				HK:  msgId,
 				V:   model.Id,
 			})
+			uidSeqMap[userId] = int64(seq)
 		}
 		for _, groupId := range in.GroupIdList {
 			convId := groupId
@@ -76,6 +81,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 				HK:  msgId,
 				V:   model.Id,
 			})
+			groupSeqMap[groupId] = int64(seq)
 		}
 		err = xmgo.MHSet(l.svcCtx.Mongo().Collection(&xmgo.MHSetKv{}), l.ctx, kvs...)
 	})
@@ -83,6 +89,21 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 		l.Errorf("redis MHSet error: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
-	// TODO 推送
+	// 推送给相关的在线用户
+	xtrace.StartFuncSpan(l.ctx, "PushMsgList", func(ctx context.Context) {
+		msgDateList := make([]*pb.MsgData, 0, len(in.UserIdList)+len(in.GroupIdList))
+		for _, userId := range in.UserIdList {
+			m := msg.SinglePb(uidSeqMap[userId], userId)
+			msgDateList = append(msgDateList, m)
+		}
+		for _, groupId := range in.GroupIdList {
+			m := msg.GroupPb(groupSeqMap[groupId], groupId)
+			msgDateList = append(msgDateList, m)
+		}
+		_, err = NewPushMsgListLogic(ctx, l.svcCtx).PushMsgList(&pb.PushMsgListReq{MsgDataList: msgDateList})
+		if err != nil {
+			l.Errorf("PushMsgList error: %v", err)
+		}
+	})
 	return &pb.CommonResp{}, nil
 }
