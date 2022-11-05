@@ -22,17 +22,14 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MsgServiceClient interface {
-	InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error)
+	InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
 	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	//GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
-	GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error)
-	//GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
-	GetGroupMsgListBySeq(ctx context.Context, in *GetGroupMsgListBySeqReq, opts ...grpc.CallOption) (*GetGroupMsgListBySeqResp, error)
+	//GetMsgListByConvId 通过seq拉取一个会话的消息
+	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
 }
 
 type msgServiceClient struct {
@@ -43,8 +40,8 @@ func NewMsgServiceClient(cc grpc.ClientConnInterface) MsgServiceClient {
 	return &msgServiceClient{cc}
 }
 
-func (c *msgServiceClient) InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
+func (c *msgServiceClient) InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error) {
+	out := new(MsgDataList)
 	err := c.cc.Invoke(ctx, "/pb.msgService/InsertMsgDataList", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,27 +94,9 @@ func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, 
 	return out, nil
 }
 
-func (c *msgServiceClient) PushMissingMsgList(ctx context.Context, in *PushMissingMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/PushMissingMsgList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgServiceClient) GetSingleMsgListBySeq(ctx context.Context, in *GetSingleMsgListBySeqReq, opts ...grpc.CallOption) (*GetSingleMsgListBySeqResp, error) {
-	out := new(GetSingleMsgListBySeqResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/GetSingleMsgListBySeq", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgServiceClient) GetGroupMsgListBySeq(ctx context.Context, in *GetGroupMsgListBySeqReq, opts ...grpc.CallOption) (*GetGroupMsgListBySeqResp, error) {
-	out := new(GetGroupMsgListBySeqResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/GetGroupMsgListBySeq", in, out, opts...)
+func (c *msgServiceClient) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
+	out := new(GetMsgListResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetMsgListByConvId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -128,17 +107,14 @@ func (c *msgServiceClient) GetGroupMsgListBySeq(ctx context.Context, in *GetGrou
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
 type MsgServiceServer interface {
-	InsertMsgDataList(context.Context, *MsgDataList) (*CommonResp, error)
+	InsertMsgDataList(context.Context, *MsgDataList) (*MsgDataList, error)
 	SendMsgListSync(context.Context, *SendMsgListReq) (*CommonResp, error)
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error)
 	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
 	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
-	PushMissingMsgList(context.Context, *PushMissingMsgListReq) (*CommonResp, error)
-	//GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
-	GetSingleMsgListBySeq(context.Context, *GetSingleMsgListBySeqReq) (*GetSingleMsgListBySeqResp, error)
-	//GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
-	GetGroupMsgListBySeq(context.Context, *GetGroupMsgListBySeqReq) (*GetGroupMsgListBySeqResp, error)
+	//GetMsgListByConvId 通过seq拉取一个会话的消息
+	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -146,7 +122,7 @@ type MsgServiceServer interface {
 type UnimplementedMsgServiceServer struct {
 }
 
-func (UnimplementedMsgServiceServer) InsertMsgDataList(context.Context, *MsgDataList) (*CommonResp, error) {
+func (UnimplementedMsgServiceServer) InsertMsgDataList(context.Context, *MsgDataList) (*MsgDataList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertMsgDataList not implemented")
 }
 func (UnimplementedMsgServiceServer) SendMsgListSync(context.Context, *SendMsgListReq) (*CommonResp, error) {
@@ -164,14 +140,8 @@ func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSe
 func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushMsgList not implemented")
 }
-func (UnimplementedMsgServiceServer) PushMissingMsgList(context.Context, *PushMissingMsgListReq) (*CommonResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushMissingMsgList not implemented")
-}
-func (UnimplementedMsgServiceServer) GetSingleMsgListBySeq(context.Context, *GetSingleMsgListBySeqReq) (*GetSingleMsgListBySeqResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSingleMsgListBySeq not implemented")
-}
-func (UnimplementedMsgServiceServer) GetGroupMsgListBySeq(context.Context, *GetGroupMsgListBySeqReq) (*GetGroupMsgListBySeqResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMsgListBySeq not implemented")
+func (UnimplementedMsgServiceServer) GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMsgListByConvId not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -294,56 +264,20 @@ func _MsgService_PushMsgList_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_PushMissingMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushMissingMsgListReq)
+func _MsgService_GetMsgListByConvId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMsgListByConvIdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServiceServer).PushMissingMsgList(ctx, in)
+		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.msgService/PushMissingMsgList",
+		FullMethod: "/pb.msgService/GetMsgListByConvId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).PushMissingMsgList(ctx, req.(*PushMissingMsgListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MsgService_GetSingleMsgListBySeq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSingleMsgListBySeqReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServiceServer).GetSingleMsgListBySeq(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.msgService/GetSingleMsgListBySeq",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).GetSingleMsgListBySeq(ctx, req.(*GetSingleMsgListBySeqReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MsgService_GetGroupMsgListBySeq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGroupMsgListBySeqReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServiceServer).GetGroupMsgListBySeq(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.msgService/GetGroupMsgListBySeq",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).GetGroupMsgListBySeq(ctx, req.(*GetGroupMsgListBySeqReq))
+		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, req.(*GetMsgListByConvIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -380,16 +314,8 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_PushMsgList_Handler,
 		},
 		{
-			MethodName: "PushMissingMsgList",
-			Handler:    _MsgService_PushMissingMsgList_Handler,
-		},
-		{
-			MethodName: "GetSingleMsgListBySeq",
-			Handler:    _MsgService_GetSingleMsgListBySeq_Handler,
-		},
-		{
-			MethodName: "GetGroupMsgListBySeq",
-			Handler:    _MsgService_GetGroupMsgListBySeq_Handler,
+			MethodName: "GetMsgListByConvId",
+			Handler:    _MsgService_GetMsgListByConvId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

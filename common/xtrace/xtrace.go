@@ -60,9 +60,11 @@ func RunWithTrace(
 ) {
 	var attributes []attribute.KeyValue
 	attributes = append(attributes, attribute.String("traceId", traceId))
-	for _, k := range carrier.Keys() {
-		v := carrier.Get(k)
-		attributes = append(attributes, attribute.String(k, v))
+	if carrier != nil {
+		for _, k := range carrier.Keys() {
+			v := carrier.Get(k)
+			attributes = append(attributes, attribute.String(k, v))
+		}
 	}
 	tracer := otel.GetTracerProvider().Tracer(trace.TraceName)
 	traceIDFromHex, _ := oteltrace.TraceIDFromHex(traceId)

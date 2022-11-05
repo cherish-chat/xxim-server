@@ -29,35 +29,22 @@ func NewPushMsgListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PushM
 
 func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, error) {
 	var convIdMsgListMap = make(map[string]*pb.MsgDataList)
-	var pushMissingConvIds = make([]string, 0)
 	for _, msgData := range in.MsgDataList {
-		if !msgData.Options.StorageForServer {
-			if msgData.Receiver.UserId != nil {
-				msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
-			} else {
-				msgData.ConvId = *msgData.Receiver.GroupId
-			}
-			msgData.ServerTime = time.Now().UnixMilli()
-			if msgDataList, ok := convIdMsgListMap[msgData.ConvId]; ok {
-				msgDataList.MsgDataList = append(msgDataList.MsgDataList, msgData)
-			} else {
-				convIdMsgListMap[msgData.ConvId] = &pb.MsgDataList{MsgDataList: []*pb.MsgData{msgData}}
-			}
+		if msgData.Receiver.UserId != nil {
+			msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
 		} else {
-			pushMissingConvIds = append(pushMissingConvIds, msgData.ConvId)
+			msgData.ConvId = *msgData.Receiver.GroupId
+		}
+		msgData.ServerTime = time.Now().UnixMilli()
+		if msgDataList, ok := convIdMsgListMap[msgData.ConvId]; ok {
+			msgDataList.MsgDataList = append(msgDataList.MsgDataList, msgData)
+		} else {
+			convIdMsgListMap[msgData.ConvId] = &pb.MsgDataList{MsgDataList: []*pb.MsgData{msgData}}
 		}
 	}
 	if len(convIdMsgListMap) > 0 {
 		// 查询会话的订阅者并推送
 		l.batchFindAndPushMsgList(convIdMsgListMap)
-	}
-	if len(pushMissingConvIds) > 0 {
-		xtrace.StartFuncSpan(l.ctx, "pushMissingConv", func(ctx context.Context) {
-			_, err := NewPushMissingMsgListLogic(ctx, l.svcCtx).PushMissingMsgList(&pb.PushMissingMsgListReq{ConvIds: pushMissingConvIds})
-			if err != nil {
-				l.Errorf("PushMissingMsgList error: %v", err)
-			}
-		})
 	}
 	return &pb.CommonResp{}, nil
 }

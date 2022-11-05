@@ -22,7 +22,7 @@ func NewMsgServiceServer(svcCtx *svc.ServiceContext) *MsgServiceServer {
 	}
 }
 
-func (s *MsgServiceServer) InsertMsgDataList(ctx context.Context, in *pb.MsgDataList) (*pb.CommonResp, error) {
+func (s *MsgServiceServer) InsertMsgDataList(ctx context.Context, in *pb.MsgDataList) (*pb.MsgDataList, error) {
 	l := logic.NewInsertMsgDataListLogic(ctx, s.svcCtx)
 	return l.InsertMsgDataList(in)
 }
@@ -52,19 +52,8 @@ func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListRe
 	return l.PushMsgList(in)
 }
 
-func (s *MsgServiceServer) PushMissingMsgList(ctx context.Context, in *pb.PushMissingMsgListReq) (*pb.CommonResp, error) {
-	l := logic.NewPushMissingMsgListLogic(ctx, s.svcCtx)
-	return l.PushMissingMsgList(in)
-}
-
-// GetSingleMsgListBySeq 通过seq拉取一个单聊会话的消息
-func (s *MsgServiceServer) GetSingleMsgListBySeq(ctx context.Context, in *pb.GetSingleMsgListBySeqReq) (*pb.GetSingleMsgListBySeqResp, error) {
-	l := logic.NewGetSingleMsgListBySeqLogic(ctx, s.svcCtx)
-	return l.GetSingleMsgListBySeq(in)
-}
-
-// GetGroupMsgListBySeq 通过seq拉取一个群聊会话的消息
-func (s *MsgServiceServer) GetGroupMsgListBySeq(ctx context.Context, in *pb.GetGroupMsgListBySeqReq) (*pb.GetGroupMsgListBySeqResp, error) {
-	l := logic.NewGetGroupMsgListBySeqLogic(ctx, s.svcCtx)
-	return l.GetGroupMsgListBySeq(in)
+// GetMsgListByConvId 通过seq拉取一个会话的消息
+func (s *MsgServiceServer) GetMsgListByConvId(ctx context.Context, in *pb.GetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
+	l := logic.NewGetMsgListByConvIdLogic(ctx, s.svcCtx)
+	return l.GetMsgListByConvId(in)
 }
