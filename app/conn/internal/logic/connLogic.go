@@ -225,7 +225,12 @@ func (l *ConnLogic) KickUserConn(in *pb.KickUserConnReq) error {
 }
 
 func (l *ConnLogic) KickConn(c *types.UserConn) error {
-	return c.Conn.Close(1001, "kick")
+	err := c.Conn.Close(1001, "kick")
+	// 如果是 context deadline exceeded，说明连接已经断开了
+	if xerr.IsCanceled(err) {
+		return nil
+	}
+	return err
 }
 
 func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {

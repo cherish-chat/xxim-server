@@ -1,0 +1,36 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+// 登录 如果没有注册过，会暂存到临时表，等待用户确认后注册成功
+message LoginReq {
+  Requester requester = 1;
+  string id = 2; // 用户id 只能是英文和数字_，长度为6-20
+  string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
+}
+
+message LoginResp {
+  CommonResp commonResp = 1;
+  // 是否是新用户
+  bool isNewUser = 2;
+  // token
+  string token = 3; // 如果是新用户，token为空
+}
+
+// 确认注册
+message ConfirmRegisterReq {
+  Requester requester = 1;
+  string id = 2; // 用户id 只能是英文和数字_，长度为6-20
+  string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
+}
+
+message ConfirmRegisterResp {
+  CommonResp commonResp = 1;
+  string token = 2;
+}
+
+service userService {
+  rpc Login(LoginReq) returns (LoginResp) {}
+  rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
+}

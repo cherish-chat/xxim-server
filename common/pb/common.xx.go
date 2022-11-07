@@ -4,6 +4,11 @@ func (x *CommonResp) SetMsg(msg string) {
 	x.Msg = &msg
 }
 
+func (x *CommonResp) SetTitleMsg(title string, msg string) {
+	x.Msg = &title
+	x.Data = &msg
+}
+
 func (x *CommonResp) SetData(data string) {
 	x.Data = &data
 }
@@ -83,9 +88,9 @@ func NewToastErrorResp(tip ...string) *CommonResp {
 	}
 	return x
 }
-func NewAlertErrorResp(alert string) *CommonResp {
+func NewAlertErrorResp(title string, alert string) *CommonResp {
 	x := NewCommonResp(CommonResp_AlertError)
-	x.SetMsg(alert)
+	x.SetTitleMsg(title, alert)
 	return x
 }
 func NewRetryErrorResp() *CommonResp {

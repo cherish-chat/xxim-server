@@ -5,6 +5,8 @@ go 1.19
 require (
 	github.com/apache/pulsar-client-go v0.9.0
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20221017063954-c5c24655eb63
 	github.com/qiniu/qmgo v1.1.4
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519
@@ -12,9 +14,13 @@ require (
 	go.mongodb.org/mongo-driver v1.10.3
 	go.opentelemetry.io/otel v1.11.0
 	go.opentelemetry.io/otel/trace v1.11.0
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/time v0.1.0
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
+	k8s.io/api v0.22.9
+	k8s.io/apimachinery v0.22.9
+	k8s.io/client-go v0.22.9
 	nhooyr.io/websocket v1.8.7
 )
 
@@ -90,7 +96,6 @@ require (
 	go.uber.org/automaxprocs v1.5.1 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
@@ -102,9 +107,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.22.9 // indirect
-	k8s.io/apimachinery v0.22.9 // indirect
-	k8s.io/client-go v0.22.9 // indirect
 	k8s.io/klog/v2 v2.40.1 // indirect
 	k8s.io/utils v0.0.0-20220706174534-f6158b442e7c // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect

@@ -212,7 +212,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 				_, err := pod.SendMsg(ctx, &pb.SendMsgReq{
 					GetUserConnReq: &pb.GetUserConnReq{
 						UserIds: []string{in.Requester.Id},
-						Devices: []string{in.Requester.Device},
+						Devices: []string{in.Requester.DeviceId},
 					},
 					Event: pb.PushEvent_PushMsgDataList,
 					Data:  msgDataListBytes,
