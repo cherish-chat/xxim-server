@@ -96,7 +96,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	// 组成想要查询的 id 列表
 	expectIds := make([]string, 0)
 	for _, seq := range in.SeqList {
-		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, seq))
+		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, utils.AnyToInt64(seq)))
 	}
 	// 查询
 	var msgList []*msgmodel.Msg

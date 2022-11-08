@@ -12,6 +12,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.opentelemetry.io/otel/propagation"
 	"regexp"
 	"time"
 
@@ -52,7 +53,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "密码错误")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "登录失败"), l.svcCtx.T(in.Requester.Language, "密码错误"))}, nil
 	}
 	// 密码正确
 	// 生成token
@@ -77,31 +78,11 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		l.Errorf("save token failed, err: %v", err)
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SaveLoginRecord", func(ctx context.Context) {
-		region := ip2region.Ip2Region(in.Requester.Ip)
-		record := &usermodel.LoginRecord{
-			Id:     utils.GenId(),
-			UserId: user.Id,
-			LoginInfo: usermodel.LoginInfo{
-				Time:        time.Now().UnixMilli(),
-				Ip:          in.Requester.Ip,
-				IpCountry:   region.Country,
-				IpProvince:  region.Province,
-				IpCity:      region.City,
-				IpISP:       region.ISP,
-				AppVersion:  in.Requester.AppVersion,
-				Ua:          in.Requester.Ua,
-				OsVersion:   in.Requester.OsVersion,
-				Platform:    in.Requester.Platform,
-				DeviceId:    in.Requester.DeviceId,
-				DeviceModel: in.Requester.DeviceModel,
-			},
-		}
-		_, err := l.svcCtx.Mongo().Collection(&usermodel.LoginRecord{}).InsertOne(ctx, record)
-		if err != nil {
-			l.Errorf("save login record failed, err: %v", err)
-		}
-	}, nil)
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterLogin", func(ctx context.Context) {
+		NewAfterLogic(ctx, l.svcCtx).AfterLogin(user.Id, in.Requester)
+	}, propagation.MapCarrier{
+		"user_id": user.Id,
+	})
 	return &pb.LoginResp{
 		IsNewUser: false,
 		Token:     tokenObj.Token,
@@ -112,11 +93,11 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 检查用户id是否符合规则 只能是字母数字下划线
 	reg := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
 	if !reg.MatchString(in.Id) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "id只能包含字母数字下划线")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, l.svcCtx.T(in.Requester.Language, "注册失败")), l.svcCtx.T(in.Requester.Language, "用户名违规"))}, nil
 	}
 	// 检查用户id是否符合规则 长度在6-20之间
 	if len(in.Id) < 6 || len(in.Id) > 20 {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "id长度在6-20之间")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "注册失败"), l.svcCtx.T(in.Requester.Language, "用户名违规"))}, nil
 	}
 	region := ip2region.Ip2Region(in.Requester.Ip)
 	// 注册

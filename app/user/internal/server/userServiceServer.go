@@ -31,3 +31,18 @@ func (s *UserServiceServer) ConfirmRegister(ctx context.Context, in *pb.ConfirmR
 	l := logic.NewConfirmRegisterLogic(ctx, s.svcCtx)
 	return l.ConfirmRegister(in)
 }
+
+func (s *UserServiceServer) MapUserByIds(ctx context.Context, in *pb.MapUserByIdsReq) (*pb.MapUserByIdsResp, error) {
+	l := logic.NewMapUserByIdsLogic(ctx, s.svcCtx)
+	return l.MapUserByIds(in)
+}
+
+func (s *UserServiceServer) SearchUsersByKeyword(ctx context.Context, in *pb.SearchUsersByKeywordReq) (*pb.SearchUsersByKeywordResp, error) {
+	l := logic.NewSearchUsersByKeywordLogic(ctx, s.svcCtx)
+	return l.SearchUsersByKeyword(in)
+}
+
+func (s *UserServiceServer) GetUserHome(ctx context.Context, in *pb.GetUserHomeReq) (*pb.GetUserHomeResp, error) {
+	l := logic.NewGetUserHomeLogic(ctx, s.svcCtx)
+	return l.GetUserHome(in)
+}

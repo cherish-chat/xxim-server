@@ -24,6 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
+	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
+	GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 }
 
 type userServiceClient struct {
@@ -52,12 +55,42 @@ func (c *userServiceClient) ConfirmRegister(ctx context.Context, in *ConfirmRegi
 	return out, nil
 }
 
+func (c *userServiceClient) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
+	out := new(MapUserByIdsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/MapUserByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error) {
+	out := new(SearchUsersByKeywordResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/SearchUsersByKeyword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error) {
+	out := new(GetUserHomeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserHome", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error)
+	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
+	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
+	GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -70,6 +103,15 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginReq) (*LoginR
 }
 func (UnimplementedUserServiceServer) ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmRegister not implemented")
+}
+func (UnimplementedUserServiceServer) MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MapUserByIds not implemented")
+}
+func (UnimplementedUserServiceServer) SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchUsersByKeyword not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserHome not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -120,6 +162,60 @@ func _UserService_ConfirmRegister_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_MapUserByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MapUserByIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).MapUserByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/MapUserByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).MapUserByIds(ctx, req.(*MapUserByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SearchUsersByKeyword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchUsersByKeywordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SearchUsersByKeyword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/SearchUsersByKeyword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SearchUsersByKeyword(ctx, req.(*SearchUsersByKeywordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserHome_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserHomeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserHome(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserHome",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserHome(ctx, req.(*GetUserHomeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +230,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmRegister",
 			Handler:    _UserService_ConfirmRegister_Handler,
+		},
+		{
+			MethodName: "MapUserByIds",
+			Handler:    _UserService_MapUserByIds_Handler,
+		},
+		{
+			MethodName: "SearchUsersByKeyword",
+			Handler:    _UserService_SearchUsersByKeyword_Handler,
+		},
+		{
+			MethodName: "GetUserHome",
+			Handler:    _UserService_GetUserHome_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

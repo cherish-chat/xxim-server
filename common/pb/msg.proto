@@ -41,8 +41,8 @@ message MsgData {
   }
   string clientMsgId = 1;
   string serverMsgId = 2;
-  int64 clientTime = 3;
-  int64 serverTime = 4;
+  string clientTime = 3;
+  string serverTime = 4;
 
   string sender = 11; // 发送者id
   string senderInfo = 12; // 发送者信息
@@ -54,7 +54,7 @@ message MsgData {
 
   ContentType contentType = 31; // 消息内容类型
   bytes content = 32; // 消息内容
-  int64 seq = 33; // 消息序号 会话内唯一且递增
+  string seq = 33; // 消息序号 会话内唯一且递增
 
   Options options = 41; // 消息选项
   OfflinePush offlinePush = 42; // 离线推送
@@ -71,7 +71,7 @@ message SendMsgListReq {
   repeated MsgData msgDataList = 2;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int64 deliverAfter = 11;
+  optional int32 deliverAfter = 11;
 }
 
 message BatchSendMsgReq {
@@ -81,7 +81,7 @@ message BatchSendMsgReq {
   repeated string groupIdList = 4; // 群组id列表
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int64 deliverAfter = 11;
+  optional int32 deliverAfter = 11;
 }
 
 message PushMsgListReq {
@@ -91,7 +91,7 @@ message PushMsgListReq {
 message GetMsgListByConvIdReq {
   Requester requester = 1;
   string convId = 2;
-  repeated int64 seqList = 3;
+  repeated string seqList = 3;
   bool push = 4;
 }
 

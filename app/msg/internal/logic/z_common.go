@@ -178,3 +178,16 @@ func MsgFromMongo(
 	}
 	return msgList, nil
 }
+
+func FlushMsgCache(ctx context.Context, rc *zedis.Redis, ids []string) error {
+	var err error
+	if len(ids) > 0 {
+		xtrace.StartFuncSpan(ctx, "DeleteCache", func(ctx context.Context) {
+			redisKeys := utils.UpdateSlice(ids, func(v string) string {
+				return rediskey.MsgKey(v)
+			})
+			_, err = rc.DelCtx(ctx, redisKeys...)
+		})
+	}
+	return err
+}

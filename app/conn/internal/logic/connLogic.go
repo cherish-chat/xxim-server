@@ -94,7 +94,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 					Headers:     param.Headers,
 					PodIp:       l.svcCtx.PodIp,
 				},
-				ConnectedAt: c.ConnectedAt.UnixMilli(),
+				ConnectedAt: utils.AnyToString(c.ConnectedAt.UnixMilli()),
 			})
 			if err != nil {
 				// 是否是 context canceled
@@ -146,8 +146,8 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 					Headers:     c.ConnParam.Headers,
 					PodIp:       l.svcCtx.PodIp,
 				},
-				ConnectedAt:    c.ConnectedAt.UnixMilli(),
-				DisconnectedAt: time.Now().UnixMilli(),
+				ConnectedAt:    utils.AnyToString(c.ConnectedAt.UnixMilli()),
+				DisconnectedAt: utils.AnyToString(time.Now().UnixMilli()),
 			})
 			if err != nil {
 				// 是否是 context canceled

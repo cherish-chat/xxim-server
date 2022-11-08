@@ -1,6 +1,7 @@
 package ip2region
 
 import (
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	. "github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -13,10 +14,14 @@ var (
 )
 
 func Init(downloadUrl string) {
-	err := utils.DownloadFile(downloadUrl, "./ip2region.xdb")
-	if err != nil {
-		logx.Errorf("download ip2region.xdb failed: %s", err.Error())
-		panic(err)
+	// 判断本地是否存在 ./ip2region.xdb
+	var err error
+	if !utils.FileExists("./ip2region.xdb") {
+		err = utils.DownloadFile(downloadUrl, "./ip2region.xdb")
+		if err != nil {
+			logx.Errorf("download ip2region.xdb failed: %s", err.Error())
+			panic(err)
+		}
 	}
 	cBuff, err = LoadContentFromFile("./ip2region.xdb")
 	if err != nil {
@@ -31,15 +36,24 @@ func Init(downloadUrl string) {
 }
 
 type Obj struct {
-	Country  string
-	District string
-	Province string
-	City     string
-	ISP      string
+	Country  string `json:"country" bson:"country"`
+	District string `json:"district" bson:"district"`
+	Province string `json:"province" bson:"province"`
+	City     string `json:"city" bson:"city"`
+	ISP      string `json:"isp" bson:"isp"`
 }
 
 func (o Obj) String() string {
 	return o.Country + "|" + o.District + "|" + o.Province + "|" + o.City + "|" + o.ISP
+}
+
+func (o Obj) Pb() *pb.IpRegion {
+	return &pb.IpRegion{
+		Country:  o.Country,
+		Province: o.Province,
+		City:     o.City,
+		Isp:      o.ISP,
+	}
 }
 
 func Ip2Region(ip string) Obj {

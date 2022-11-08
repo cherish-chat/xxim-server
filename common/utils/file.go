@@ -28,3 +28,8 @@ func DownloadFile(url string, saveTo string) error {
 
 	return nil
 }
+
+func FileExists(filepath string) bool {
+	_, err := os.Stat(filepath)
+	return !os.IsNotExist(err)
+}

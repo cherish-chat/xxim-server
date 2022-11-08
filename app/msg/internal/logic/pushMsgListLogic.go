@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"google.golang.org/protobuf/proto"
 	"time"
@@ -30,12 +31,16 @@ func NewPushMsgListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PushM
 func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, error) {
 	var convIdMsgListMap = make(map[string]*pb.MsgDataList)
 	for _, msgData := range in.MsgDataList {
-		if msgData.Receiver.UserId != nil {
-			msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
-		} else {
-			msgData.ConvId = *msgData.Receiver.GroupId
+		if msgData.ConvId == "" {
+			if msgData.Receiver.UserId != nil {
+				msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
+			} else {
+				msgData.ConvId = *msgData.Receiver.GroupId
+			}
 		}
-		msgData.ServerTime = time.Now().UnixMilli()
+		if utils.AnyToInt64(msgData.ServerTime) == 0 {
+			msgData.ServerTime = utils.AnyToString(time.Now().UnixMilli())
+		}
 		if msgDataList, ok := convIdMsgListMap[msgData.ConvId]; ok {
 			msgDataList.MsgDataList = append(msgDataList.MsgDataList, msgData)
 		} else {

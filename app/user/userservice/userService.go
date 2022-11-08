@@ -13,14 +13,26 @@ import (
 )
 
 type (
-	ConfirmRegisterReq  = pb.ConfirmRegisterReq
-	ConfirmRegisterResp = pb.ConfirmRegisterResp
-	LoginReq            = pb.LoginReq
-	LoginResp           = pb.LoginResp
+	BirthdayInfo             = pb.BirthdayInfo
+	ConfirmRegisterReq       = pb.ConfirmRegisterReq
+	ConfirmRegisterResp      = pb.ConfirmRegisterResp
+	GetUserHomeReq           = pb.GetUserHomeReq
+	GetUserHomeResp          = pb.GetUserHomeResp
+	LevelInfo                = pb.LevelInfo
+	LoginReq                 = pb.LoginReq
+	LoginResp                = pb.LoginResp
+	MapUserByIdsReq          = pb.MapUserByIdsReq
+	MapUserByIdsResp         = pb.MapUserByIdsResp
+	SearchUsersByKeywordReq  = pb.SearchUsersByKeywordReq
+	SearchUsersByKeywordResp = pb.SearchUsersByKeywordResp
+	UserBaseInfo             = pb.UserBaseInfo
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+		MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
+		SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
+		GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 	}
 
 	defaultUserService struct {
@@ -42,4 +54,19 @@ func (m *defaultUserService) Login(ctx context.Context, in *LoginReq, opts ...gr
 func (m *defaultUserService) ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.ConfirmRegister(ctx, in, opts...)
+}
+
+func (m *defaultUserService) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.MapUserByIds(ctx, in, opts...)
+}
+
+func (m *defaultUserService) SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.SearchUsersByKeyword(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserHome(ctx, in, opts...)
 }

@@ -3,6 +3,56 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
+// userModels
+enum XB {
+  UnknownXB = 0;
+  Male = 1;
+  Female = 2;
+}
+
+// 星座
+enum Constellation {
+  UnknownConstellation = 0;
+  Aries = 1;
+  Taurus = 2;
+  Gemini = 3;
+  Cancer = 4;
+  Leo = 5;
+  Virgo = 6;
+  Libra = 7;
+  Scorpio = 8;
+  Sagittarius = 9;
+  Capricorn = 10;
+  Aquarius = 11;
+  Pisces = 12;
+}
+
+message BirthdayInfo {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+  int32 age = 4;
+  Constellation constellation = 5;
+}
+
+message LevelInfo {
+  int32 level = 1;
+  int32 exp = 2;
+  // 下一级所需经验
+  int32 nextLevelExp = 3;
+}
+
+message UserBaseInfo {
+  string id = 1;
+  string nickname = 2;
+  string avatar = 3;
+  XB xb = 4;
+  // 生日信息
+  BirthdayInfo birthday = 5;
+  // 最后一次连接 ip所在地
+  IpRegion ipRegion = 6;
+}
+
 // 登录 如果没有注册过，会暂存到临时表，等待用户确认后注册成功
 message LoginReq {
   Requester requester = 1;
@@ -30,7 +80,51 @@ message ConfirmRegisterResp {
   string token = 2;
 }
 
+//mapUserByIds 获取用户信息
+message MapUserByIdsReq {
+  Requester requester = 1;
+  repeated string ids = 2;
+}
+
+message MapUserByIdsResp {
+  CommonResp commonResp = 1;
+  map<string, bytes> users = 2;
+}
+
+message SearchUsersByKeywordReq {
+  Requester requester = 1;
+  string keyword = 2;
+}
+
+message SearchUsersByKeywordResp {
+  CommonResp commonResp = 1;
+  repeated UserBaseInfo users = 2;
+}
+
+//GetUserHomeReq 获取用户主页信息
+message GetUserHomeReq {
+  Requester requester = 1;
+  string id = 2;
+}
+
+message GetUserHomeResp {
+  CommonResp commonResp = 1;
+  string id = 2;
+  string nickname = 3;
+  string avatar = 4;
+  XB xb = 5;
+  BirthdayInfo birthday = 6;
+  IpRegion ipRegion = 7;
+  // 个性签名
+  string signature = 8;
+  // 等级信息
+  LevelInfo levelInfo = 9;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
+  rpc MapUserByIds(MapUserByIdsReq) returns (MapUserByIdsResp) {}
+  rpc SearchUsersByKeyword(SearchUsersByKeywordReq) returns (SearchUsersByKeywordResp) {}
+  rpc GetUserHome(GetUserHomeReq) returns (GetUserHomeResp) {}
 }

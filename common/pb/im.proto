@@ -25,13 +25,27 @@ message BeforeConnectResp {
 
 message AfterConnectReq {
   ConnParam connParam = 1;
-  int64 connectedAt = 2;
+  string connectedAt = 2;
 }
 
 message AfterDisconnectReq {
   ConnParam connParam = 1;
-  int64 connectedAt = 2;
-  int64 disconnectedAt = 3;
+  string connectedAt = 2;
+  string disconnectedAt = 3;
+}
+
+message GetUserLatestConnReq {
+  string userId = 1;
+}
+
+message GetUserLatestConnResp {
+  string userId = 1;
+  string ip = 2;
+  IpRegion ipRegion = 3;
+  string connectedAt = 4;
+  string disconnectedAt = 5;
+  string platform = 6;
+  string deviceId = 7;
 }
 
 service imService {
@@ -40,4 +54,5 @@ service imService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
+  rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
 }
