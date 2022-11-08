@@ -1,0 +1,39 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+//A和BList是不是好友
+message AreFriendsReq {
+  Requester requester = 1;
+  string a = 2;
+  repeated string bList = 3;
+}
+
+message AreFriendsResp {
+  CommonResp commonResp = 1;
+  map<string, bool> friendList = 2;
+}
+
+//A和BList是不是有拉黑关系
+message AreBlackListReq {
+  Requester requester = 1;
+  enum Option {
+    Or = 0; // A拉黑B 或者 B拉黑A
+    And = 1; // A拉黑B 并且 B拉黑A
+    ABlackB = 2; // A拉黑B
+    BBlackA = 3; // B拉黑A
+  }
+  string a = 2;
+  repeated string bList = 3;
+}
+
+message AreBlackListResp {
+  CommonResp commonResp = 1;
+  map<string, bool> blackList = 2;
+}
+
+service relationService {
+  rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
+  rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
+}
