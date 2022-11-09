@@ -51,3 +51,8 @@ func (s *ImServiceServer) GetUserLatestConn(ctx context.Context, in *pb.GetUserL
 	l := logic.NewGetUserLatestConnLogic(ctx, s.svcCtx)
 	return l.GetUserLatestConn(in)
 }
+
+func (s *ImServiceServer) SendMsg(ctx context.Context, in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
+	l := logic.NewSendMsgLogic(ctx, s.svcCtx)
+	return l.SendMsg(in)
+}

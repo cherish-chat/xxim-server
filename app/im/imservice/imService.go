@@ -28,6 +28,7 @@ type (
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 		GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
+		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 	}
 
 	defaultImService struct {
@@ -69,4 +70,9 @@ func (m *defaultImService) GetUserConn(ctx context.Context, in *GetUserConnReq, 
 func (m *defaultImService) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetUserLatestConn(ctx, in, opts...)
+}
+
+func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.SendMsg(ctx, in, opts...)
 }
