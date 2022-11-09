@@ -57,7 +57,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 		}
 	})
 	// 删除这些消息的缓存
-	err = FlushMsgCache(l.ctx, l.svcCtx.Redis(), updateCacheIds)
+	err = msgmodel.FlushMsgCache(l.ctx, l.svcCtx.Redis(), updateCacheIds)
 	if err != nil {
 		l.Errorf("InsertMsgDataList.DeleteCache err:%v", err)
 		return respMsgDataList, err
@@ -130,7 +130,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		MsgFromMongo(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), updateCacheIds)
+		msgmodel.MsgFromMongo(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), updateCacheIds)
 	}, nil)
 	return respMsgDataList, nil
 }

@@ -75,18 +75,13 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	for convId, msgDataList := range listMap {
 		if userIds, ok := convUserIds[convId]; ok {
 			msgDataListBytes, _ := proto.Marshal(msgDataList)
-			for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-				_, err := pod.SendMsg(l.ctx, &pb.SendMsgReq{
-					GetUserConnReq: &pb.GetUserConnReq{
-						UserIds: userIds,
-					},
-					Event: pb.PushEvent_PushMsgDataList,
-					Data:  msgDataListBytes,
-				})
-				if err != nil {
-					l.Errorf("SendMsg error: %v", err)
-				}
-			}
+			_, _ = l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
+				GetUserConnReq: &pb.GetUserConnReq{
+					UserIds: userIds,
+				},
+				Event: pb.PushEvent_PushMsgDataList,
+				Data:  msgDataListBytes,
+			})
 		}
 	}
 }
