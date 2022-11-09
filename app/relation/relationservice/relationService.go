@@ -13,14 +13,36 @@ import (
 )
 
 type (
-	AreBlackListReq  = pb.AreBlackListReq
-	AreBlackListResp = pb.AreBlackListResp
-	AreFriendsReq    = pb.AreFriendsReq
-	AreFriendsResp   = pb.AreFriendsResp
+	AcceptAddFriendReq    = pb.AcceptAddFriendReq
+	AcceptAddFriendResp   = pb.AcceptAddFriendResp
+	AreBlackListReq       = pb.AreBlackListReq
+	AreBlackListResp      = pb.AreBlackListResp
+	AreFriendsReq         = pb.AreFriendsReq
+	AreFriendsResp        = pb.AreFriendsResp
+	BlockUserReq          = pb.BlockUserReq
+	BlockUserResp         = pb.BlockUserResp
+	DeleteBlockUserReq    = pb.DeleteBlockUserReq
+	DeleteBlockUserResp   = pb.DeleteBlockUserResp
+	DeleteFriendReq       = pb.DeleteFriendReq
+	DeleteFriendResp      = pb.DeleteFriendResp
+	GetFriendCountReq     = pb.GetFriendCountReq
+	GetFriendCountResp    = pb.GetFriendCountResp
+	RejectAddFriendReq    = pb.RejectAddFriendReq
+	RejectAddFriendResp   = pb.RejectAddFriendResp
+	RequestAddFriendExtra = pb.RequestAddFriendExtra
+	RequestAddFriendReq   = pb.RequestAddFriendReq
+	RequestAddFriendResp  = pb.RequestAddFriendResp
 
 	RelationService interface {
 		AreFriends(ctx context.Context, in *AreFriendsReq, opts ...grpc.CallOption) (*AreFriendsResp, error)
 		AreBlackList(ctx context.Context, in *AreBlackListReq, opts ...grpc.CallOption) (*AreBlackListResp, error)
+		RequestAddFriend(ctx context.Context, in *RequestAddFriendReq, opts ...grpc.CallOption) (*RequestAddFriendResp, error)
+		AcceptAddFriend(ctx context.Context, in *AcceptAddFriendReq, opts ...grpc.CallOption) (*AcceptAddFriendResp, error)
+		RejectAddFriend(ctx context.Context, in *RejectAddFriendReq, opts ...grpc.CallOption) (*RejectAddFriendResp, error)
+		GetFriendCount(ctx context.Context, in *GetFriendCountReq, opts ...grpc.CallOption) (*GetFriendCountResp, error)
+		BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
+		DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
+		DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
 	}
 
 	defaultRelationService struct {
@@ -42,4 +64,39 @@ func (m *defaultRelationService) AreFriends(ctx context.Context, in *AreFriendsR
 func (m *defaultRelationService) AreBlackList(ctx context.Context, in *AreBlackListReq, opts ...grpc.CallOption) (*AreBlackListResp, error) {
 	client := pb.NewRelationServiceClient(m.cli.Conn())
 	return client.AreBlackList(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) RequestAddFriend(ctx context.Context, in *RequestAddFriendReq, opts ...grpc.CallOption) (*RequestAddFriendResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.RequestAddFriend(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) AcceptAddFriend(ctx context.Context, in *AcceptAddFriendReq, opts ...grpc.CallOption) (*AcceptAddFriendResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.AcceptAddFriend(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) RejectAddFriend(ctx context.Context, in *RejectAddFriendReq, opts ...grpc.CallOption) (*RejectAddFriendResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.RejectAddFriend(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) GetFriendCount(ctx context.Context, in *GetFriendCountReq, opts ...grpc.CallOption) (*GetFriendCountResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.GetFriendCount(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.BlockUser(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.DeleteBlockUser(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.DeleteFriend(ctx, in, opts...)
 }

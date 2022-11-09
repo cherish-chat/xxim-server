@@ -31,3 +31,38 @@ func (s *RelationServiceServer) AreBlackList(ctx context.Context, in *pb.AreBlac
 	l := logic.NewAreBlackListLogic(ctx, s.svcCtx)
 	return l.AreBlackList(in)
 }
+
+func (s *RelationServiceServer) RequestAddFriend(ctx context.Context, in *pb.RequestAddFriendReq) (*pb.RequestAddFriendResp, error) {
+	l := logic.NewRequestAddFriendLogic(ctx, s.svcCtx)
+	return l.RequestAddFriend(in)
+}
+
+func (s *RelationServiceServer) AcceptAddFriend(ctx context.Context, in *pb.AcceptAddFriendReq) (*pb.AcceptAddFriendResp, error) {
+	l := logic.NewAcceptAddFriendLogic(ctx, s.svcCtx)
+	return l.AcceptAddFriend(in)
+}
+
+func (s *RelationServiceServer) RejectAddFriend(ctx context.Context, in *pb.RejectAddFriendReq) (*pb.RejectAddFriendResp, error) {
+	l := logic.NewRejectAddFriendLogic(ctx, s.svcCtx)
+	return l.RejectAddFriend(in)
+}
+
+func (s *RelationServiceServer) GetFriendCount(ctx context.Context, in *pb.GetFriendCountReq) (*pb.GetFriendCountResp, error) {
+	l := logic.NewGetFriendCountLogic(ctx, s.svcCtx)
+	return l.GetFriendCount(in)
+}
+
+func (s *RelationServiceServer) BlockUser(ctx context.Context, in *pb.BlockUserReq) (*pb.BlockUserResp, error) {
+	l := logic.NewBlockUserLogic(ctx, s.svcCtx)
+	return l.BlockUser(in)
+}
+
+func (s *RelationServiceServer) DeleteBlockUser(ctx context.Context, in *pb.DeleteBlockUserReq) (*pb.DeleteBlockUserResp, error) {
+	l := logic.NewDeleteBlockUserLogic(ctx, s.svcCtx)
+	return l.DeleteBlockUser(in)
+}
+
+func (s *RelationServiceServer) DeleteFriend(ctx context.Context, in *pb.DeleteFriendReq) (*pb.DeleteFriendResp, error) {
+	l := logic.NewDeleteFriendLogic(ctx, s.svcCtx)
+	return l.DeleteFriend(in)
+}

@@ -55,4 +55,5 @@ service imService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
 }

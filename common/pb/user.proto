@@ -121,10 +121,49 @@ message GetUserHomeResp {
   LevelInfo levelInfo = 9;
 }
 
+// ************ userSettings ************ //
+
+enum UserSettingKey {
+  HowToAddFriend = 0; // 如何添加好友
+  HowToAddFriend_NeedAnswerQuestionCorrectly_Question = 1; // 如何添加好友 需要回答的问题
+  HowToAddFriend_NeedAnswerQuestionCorrectly_Answer = 2; // 如何添加好友 需要回答的问题的答案
+}
+
+//获取用户settings
+message GetUserSettingsReq {
+  Requester requester = 1;
+  repeated UserSettingKey keys = 2;
+}
+
+message UserSetting {
+  string userId = 1;
+  UserSettingKey key = 2;
+  string value = 3;
+}
+
+message GetUserSettingsResp {
+  CommonResp commonResp = 1;
+  map<int32, UserSetting> settings = 2;
+}
+
+// 设置用户settings
+message SetUserSettingsReq {
+  Requester requester = 1;
+  repeated UserSetting settings = 2;
+}
+
+message SetUserSettingsResp {
+  CommonResp commonResp = 1;
+}
+
+// ************ userSettings ************ //
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
   rpc MapUserByIds(MapUserByIdsReq) returns (MapUserByIdsResp) {}
   rpc SearchUsersByKeyword(SearchUsersByKeywordReq) returns (SearchUsersByKeywordResp) {}
   rpc GetUserHome(GetUserHomeReq) returns (GetUserHomeResp) {}
+  rpc GetUserSettings(GetUserSettingsReq) returns (GetUserSettingsResp) {}
+  rpc SetUserSettings(SetUserSettingsReq) returns (SetUserSettingsResp) {}
 }

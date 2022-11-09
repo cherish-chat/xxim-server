@@ -24,6 +24,13 @@ const _ = grpc.SupportPackageIsVersion7
 type RelationServiceClient interface {
 	AreFriends(ctx context.Context, in *AreFriendsReq, opts ...grpc.CallOption) (*AreFriendsResp, error)
 	AreBlackList(ctx context.Context, in *AreBlackListReq, opts ...grpc.CallOption) (*AreBlackListResp, error)
+	RequestAddFriend(ctx context.Context, in *RequestAddFriendReq, opts ...grpc.CallOption) (*RequestAddFriendResp, error)
+	AcceptAddFriend(ctx context.Context, in *AcceptAddFriendReq, opts ...grpc.CallOption) (*AcceptAddFriendResp, error)
+	RejectAddFriend(ctx context.Context, in *RejectAddFriendReq, opts ...grpc.CallOption) (*RejectAddFriendResp, error)
+	GetFriendCount(ctx context.Context, in *GetFriendCountReq, opts ...grpc.CallOption) (*GetFriendCountResp, error)
+	BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
+	DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
+	DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
 }
 
 type relationServiceClient struct {
@@ -52,12 +59,82 @@ func (c *relationServiceClient) AreBlackList(ctx context.Context, in *AreBlackLi
 	return out, nil
 }
 
+func (c *relationServiceClient) RequestAddFriend(ctx context.Context, in *RequestAddFriendReq, opts ...grpc.CallOption) (*RequestAddFriendResp, error) {
+	out := new(RequestAddFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/RequestAddFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) AcceptAddFriend(ctx context.Context, in *AcceptAddFriendReq, opts ...grpc.CallOption) (*AcceptAddFriendResp, error) {
+	out := new(AcceptAddFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/AcceptAddFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) RejectAddFriend(ctx context.Context, in *RejectAddFriendReq, opts ...grpc.CallOption) (*RejectAddFriendResp, error) {
+	out := new(RejectAddFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/RejectAddFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) GetFriendCount(ctx context.Context, in *GetFriendCountReq, opts ...grpc.CallOption) (*GetFriendCountResp, error) {
+	out := new(GetFriendCountResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/GetFriendCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error) {
+	out := new(BlockUserResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/BlockUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error) {
+	out := new(DeleteBlockUserResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/DeleteBlockUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error) {
+	out := new(DeleteFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/DeleteFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RelationServiceServer is the server API for RelationService service.
 // All implementations must embed UnimplementedRelationServiceServer
 // for forward compatibility
 type RelationServiceServer interface {
 	AreFriends(context.Context, *AreFriendsReq) (*AreFriendsResp, error)
 	AreBlackList(context.Context, *AreBlackListReq) (*AreBlackListResp, error)
+	RequestAddFriend(context.Context, *RequestAddFriendReq) (*RequestAddFriendResp, error)
+	AcceptAddFriend(context.Context, *AcceptAddFriendReq) (*AcceptAddFriendResp, error)
+	RejectAddFriend(context.Context, *RejectAddFriendReq) (*RejectAddFriendResp, error)
+	GetFriendCount(context.Context, *GetFriendCountReq) (*GetFriendCountResp, error)
+	BlockUser(context.Context, *BlockUserReq) (*BlockUserResp, error)
+	DeleteBlockUser(context.Context, *DeleteBlockUserReq) (*DeleteBlockUserResp, error)
+	DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error)
 	mustEmbedUnimplementedRelationServiceServer()
 }
 
@@ -70,6 +147,27 @@ func (UnimplementedRelationServiceServer) AreFriends(context.Context, *AreFriend
 }
 func (UnimplementedRelationServiceServer) AreBlackList(context.Context, *AreBlackListReq) (*AreBlackListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AreBlackList not implemented")
+}
+func (UnimplementedRelationServiceServer) RequestAddFriend(context.Context, *RequestAddFriendReq) (*RequestAddFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestAddFriend not implemented")
+}
+func (UnimplementedRelationServiceServer) AcceptAddFriend(context.Context, *AcceptAddFriendReq) (*AcceptAddFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AcceptAddFriend not implemented")
+}
+func (UnimplementedRelationServiceServer) RejectAddFriend(context.Context, *RejectAddFriendReq) (*RejectAddFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectAddFriend not implemented")
+}
+func (UnimplementedRelationServiceServer) GetFriendCount(context.Context, *GetFriendCountReq) (*GetFriendCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFriendCount not implemented")
+}
+func (UnimplementedRelationServiceServer) BlockUser(context.Context, *BlockUserReq) (*BlockUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BlockUser not implemented")
+}
+func (UnimplementedRelationServiceServer) DeleteBlockUser(context.Context, *DeleteBlockUserReq) (*DeleteBlockUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBlockUser not implemented")
+}
+func (UnimplementedRelationServiceServer) DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
 }
 func (UnimplementedRelationServiceServer) mustEmbedUnimplementedRelationServiceServer() {}
 
@@ -120,6 +218,132 @@ func _RelationService_AreBlackList_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationService_RequestAddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestAddFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).RequestAddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/RequestAddFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).RequestAddFriend(ctx, req.(*RequestAddFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_AcceptAddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptAddFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).AcceptAddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/AcceptAddFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).AcceptAddFriend(ctx, req.(*AcceptAddFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_RejectAddFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectAddFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).RejectAddFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/RejectAddFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).RejectAddFriend(ctx, req.(*RejectAddFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_GetFriendCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFriendCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).GetFriendCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/GetFriendCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).GetFriendCount(ctx, req.(*GetFriendCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_BlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).BlockUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/BlockUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).BlockUser(ctx, req.(*BlockUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_DeleteBlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBlockUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).DeleteBlockUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/DeleteBlockUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).DeleteBlockUser(ctx, req.(*DeleteBlockUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_DeleteFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).DeleteFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/DeleteFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).DeleteFriend(ctx, req.(*DeleteFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RelationService_ServiceDesc is the grpc.ServiceDesc for RelationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +358,34 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AreBlackList",
 			Handler:    _RelationService_AreBlackList_Handler,
+		},
+		{
+			MethodName: "RequestAddFriend",
+			Handler:    _RelationService_RequestAddFriend_Handler,
+		},
+		{
+			MethodName: "AcceptAddFriend",
+			Handler:    _RelationService_AcceptAddFriend_Handler,
+		},
+		{
+			MethodName: "RejectAddFriend",
+			Handler:    _RelationService_RejectAddFriend_Handler,
+		},
+		{
+			MethodName: "GetFriendCount",
+			Handler:    _RelationService_GetFriendCount_Handler,
+		},
+		{
+			MethodName: "BlockUser",
+			Handler:    _RelationService_BlockUser_Handler,
+		},
+		{
+			MethodName: "DeleteBlockUser",
+			Handler:    _RelationService_DeleteBlockUser_Handler,
+		},
+		{
+			MethodName: "DeleteFriend",
+			Handler:    _RelationService_DeleteFriend_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -27,6 +27,8 @@ type UserServiceClient interface {
 	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
 	GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
+	GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
+	SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error)
 }
 
 type userServiceClient struct {
@@ -82,6 +84,24 @@ func (c *userServiceClient) GetUserHome(ctx context.Context, in *GetUserHomeReq,
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error) {
+	out := new(GetUserSettingsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserSettings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error) {
+	out := new(SetUserSettingsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/SetUserSettings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -91,6 +111,8 @@ type UserServiceServer interface {
 	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
 	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
 	GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error)
+	GetUserSettings(context.Context, *GetUserSettingsReq) (*GetUserSettingsResp, error)
+	SetUserSettings(context.Context, *SetUserSettingsReq) (*SetUserSettingsResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -112,6 +134,12 @@ func (UnimplementedUserServiceServer) SearchUsersByKeyword(context.Context, *Sea
 }
 func (UnimplementedUserServiceServer) GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserHome not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserSettings(context.Context, *GetUserSettingsReq) (*GetUserSettingsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSettings not implemented")
+}
+func (UnimplementedUserServiceServer) SetUserSettings(context.Context, *SetUserSettingsReq) (*SetUserSettingsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserSettings not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -216,6 +244,42 @@ func _UserService_GetUserHome_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSettingsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserSettings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserSettings(ctx, req.(*GetUserSettingsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserSettingsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SetUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/SetUserSettings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SetUserSettings(ctx, req.(*SetUserSettingsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +306,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserHome",
 			Handler:    _UserService_GetUserHome_Handler,
+		},
+		{
+			MethodName: "GetUserSettings",
+			Handler:    _UserService_GetUserSettings_Handler,
+		},
+		{
+			MethodName: "SetUserSettings",
+			Handler:    _UserService_SetUserSettings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

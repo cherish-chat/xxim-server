@@ -46,6 +46,7 @@ message KickUserConnResp {
 
 enum PushEvent {
   PushMsgDataList = 0;
+  RequestAddFriend = 1;
 }
 
 message PushBody {

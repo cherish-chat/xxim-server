@@ -20,6 +20,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type RequestAddFriendStatus int32
+
+const (
+	// 未处理
+	RequestAddFriendStatus_Unhandled RequestAddFriendStatus = 0
+	// 已同意
+	RequestAddFriendStatus_Agreed RequestAddFriendStatus = 1
+	// 已拒绝
+	RequestAddFriendStatus_Refused RequestAddFriendStatus = 2
+)
+
+// Enum value maps for RequestAddFriendStatus.
+var (
+	RequestAddFriendStatus_name = map[int32]string{
+		0: "Unhandled",
+		1: "Agreed",
+		2: "Refused",
+	}
+	RequestAddFriendStatus_value = map[string]int32{
+		"Unhandled": 0,
+		"Agreed":    1,
+		"Refused":   2,
+	}
+)
+
+func (x RequestAddFriendStatus) Enum() *RequestAddFriendStatus {
+	p := new(RequestAddFriendStatus)
+	*p = x
+	return p
+}
+
+func (x RequestAddFriendStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RequestAddFriendStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_relation_proto_enumTypes[0].Descriptor()
+}
+
+func (RequestAddFriendStatus) Type() protoreflect.EnumType {
+	return &file_relation_proto_enumTypes[0]
+}
+
+func (x RequestAddFriendStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RequestAddFriendStatus.Descriptor instead.
+func (RequestAddFriendStatus) EnumDescriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{0}
+}
+
 type AreBlackListReq_Option int32
 
 const (
@@ -56,11 +108,11 @@ func (x AreBlackListReq_Option) String() string {
 }
 
 func (AreBlackListReq_Option) Descriptor() protoreflect.EnumDescriptor {
-	return file_relation_proto_enumTypes[0].Descriptor()
+	return file_relation_proto_enumTypes[1].Descriptor()
 }
 
 func (AreBlackListReq_Option) Type() protoreflect.EnumType {
-	return &file_relation_proto_enumTypes[0]
+	return &file_relation_proto_enumTypes[1]
 }
 
 func (x AreBlackListReq_Option) Number() protoreflect.EnumNumber {
@@ -310,6 +362,823 @@ func (x *AreBlackListResp) GetBlackList() map[string]bool {
 	return nil
 }
 
+type RequestAddFriendExtra struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId  string `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId"`
+	Content string `protobuf:"bytes,2,opt,name=content,proto3" json:"content"`
+}
+
+func (x *RequestAddFriendExtra) Reset() {
+	*x = RequestAddFriendExtra{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RequestAddFriendExtra) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestAddFriendExtra) ProtoMessage() {}
+
+func (x *RequestAddFriendExtra) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestAddFriendExtra.ProtoReflect.Descriptor instead.
+func (*RequestAddFriendExtra) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RequestAddFriendExtra) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RequestAddFriendExtra) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+//RequestAddFriendReq 请求添加好友
+type RequestAddFriendReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	To        string     `protobuf:"bytes,2,opt,name=to,proto3" json:"to"`
+	// 附加消息
+	Message string `protobuf:"bytes,3,opt,name=message,proto3" json:"message"`
+}
+
+func (x *RequestAddFriendReq) Reset() {
+	*x = RequestAddFriendReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RequestAddFriendReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestAddFriendReq) ProtoMessage() {}
+
+func (x *RequestAddFriendReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestAddFriendReq.ProtoReflect.Descriptor instead.
+func (*RequestAddFriendReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RequestAddFriendReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *RequestAddFriendReq) GetTo() string {
+	if x != nil {
+		return x.To
+	}
+	return ""
+}
+
+func (x *RequestAddFriendReq) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type RequestAddFriendResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *RequestAddFriendResp) Reset() {
+	*x = RequestAddFriendResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RequestAddFriendResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestAddFriendResp) ProtoMessage() {}
+
+func (x *RequestAddFriendResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestAddFriendResp.ProtoReflect.Descriptor instead.
+func (*RequestAddFriendResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RequestAddFriendResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//AcceptAddFriendReq 接受添加好友
+type AcceptAddFriendReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester   *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	ApplyUserId string     `protobuf:"bytes,2,opt,name=applyUserId,proto3" json:"applyUserId"`   // 申请人id
+	RequestId   *string    `protobuf:"bytes,3,opt,name=requestId,proto3,oneof" json:"requestId"` // 申请id
+}
+
+func (x *AcceptAddFriendReq) Reset() {
+	*x = AcceptAddFriendReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AcceptAddFriendReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptAddFriendReq) ProtoMessage() {}
+
+func (x *AcceptAddFriendReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptAddFriendReq.ProtoReflect.Descriptor instead.
+func (*AcceptAddFriendReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *AcceptAddFriendReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *AcceptAddFriendReq) GetApplyUserId() string {
+	if x != nil {
+		return x.ApplyUserId
+	}
+	return ""
+}
+
+func (x *AcceptAddFriendReq) GetRequestId() string {
+	if x != nil && x.RequestId != nil {
+		return *x.RequestId
+	}
+	return ""
+}
+
+type AcceptAddFriendResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *AcceptAddFriendResp) Reset() {
+	*x = AcceptAddFriendResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AcceptAddFriendResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptAddFriendResp) ProtoMessage() {}
+
+func (x *AcceptAddFriendResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptAddFriendResp.ProtoReflect.Descriptor instead.
+func (*AcceptAddFriendResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AcceptAddFriendResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//RejectAddFriendReq 拒绝添加好友
+type RejectAddFriendReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester   *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	ApplyUserId string     `protobuf:"bytes,2,opt,name=applyUserId,proto3" json:"applyUserId"` // 申请人id
+	RequestId   string     `protobuf:"bytes,3,opt,name=requestId,proto3" json:"requestId"`     // 申请id
+	Block       bool       `protobuf:"varint,4,opt,name=block,proto3" json:"block"`            // 是否拉黑
+}
+
+func (x *RejectAddFriendReq) Reset() {
+	*x = RejectAddFriendReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RejectAddFriendReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectAddFriendReq) ProtoMessage() {}
+
+func (x *RejectAddFriendReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectAddFriendReq.ProtoReflect.Descriptor instead.
+func (*RejectAddFriendReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *RejectAddFriendReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *RejectAddFriendReq) GetApplyUserId() string {
+	if x != nil {
+		return x.ApplyUserId
+	}
+	return ""
+}
+
+func (x *RejectAddFriendReq) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *RejectAddFriendReq) GetBlock() bool {
+	if x != nil {
+		return x.Block
+	}
+	return false
+}
+
+type RejectAddFriendResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *RejectAddFriendResp) Reset() {
+	*x = RejectAddFriendResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RejectAddFriendResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RejectAddFriendResp) ProtoMessage() {}
+
+func (x *RejectAddFriendResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RejectAddFriendResp.ProtoReflect.Descriptor instead.
+func (*RejectAddFriendResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RejectAddFriendResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//GetFriendCountReq 获取好友总数
+type GetFriendCountReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+}
+
+func (x *GetFriendCountReq) Reset() {
+	*x = GetFriendCountReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetFriendCountReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFriendCountReq) ProtoMessage() {}
+
+func (x *GetFriendCountReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFriendCountReq.ProtoReflect.Descriptor instead.
+func (*GetFriendCountReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetFriendCountReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+type GetFriendCountResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+	Count      int32       `protobuf:"varint,2,opt,name=count,proto3" json:"count"`
+}
+
+func (x *GetFriendCountResp) Reset() {
+	*x = GetFriendCountResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetFriendCountResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFriendCountResp) ProtoMessage() {}
+
+func (x *GetFriendCountResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFriendCountResp.ProtoReflect.Descriptor instead.
+func (*GetFriendCountResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetFriendCountResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+func (x *GetFriendCountResp) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+//拉黑用户
+type BlockUserReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	UserId    string     `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId"`
+}
+
+func (x *BlockUserReq) Reset() {
+	*x = BlockUserReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BlockUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BlockUserReq) ProtoMessage() {}
+
+func (x *BlockUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BlockUserReq.ProtoReflect.Descriptor instead.
+func (*BlockUserReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *BlockUserReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *BlockUserReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type BlockUserResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *BlockUserResp) Reset() {
+	*x = BlockUserResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BlockUserResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BlockUserResp) ProtoMessage() {}
+
+func (x *BlockUserResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BlockUserResp.ProtoReflect.Descriptor instead.
+func (*BlockUserResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *BlockUserResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//删除拉黑用户
+type DeleteBlockUserReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	UserId    string     `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId"`
+}
+
+func (x *DeleteBlockUserReq) Reset() {
+	*x = DeleteBlockUserReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteBlockUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBlockUserReq) ProtoMessage() {}
+
+func (x *DeleteBlockUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBlockUserReq.ProtoReflect.Descriptor instead.
+func (*DeleteBlockUserReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteBlockUserReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *DeleteBlockUserReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type DeleteBlockUserResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *DeleteBlockUserResp) Reset() {
+	*x = DeleteBlockUserResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteBlockUserResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBlockUserResp) ProtoMessage() {}
+
+func (x *DeleteBlockUserResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBlockUserResp.ProtoReflect.Descriptor instead.
+func (*DeleteBlockUserResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DeleteBlockUserResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//解除好友关系
+type DeleteFriendReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Requester *Requester `protobuf:"bytes,1,opt,name=requester,proto3" json:"requester"`
+	UserId    string     `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId"`
+	Block     bool       `protobuf:"varint,3,opt,name=block,proto3" json:"block"` // 是否拉黑
+}
+
+func (x *DeleteFriendReq) Reset() {
+	*x = DeleteFriendReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteFriendReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteFriendReq) ProtoMessage() {}
+
+func (x *DeleteFriendReq) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteFriendReq.ProtoReflect.Descriptor instead.
+func (*DeleteFriendReq) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *DeleteFriendReq) GetRequester() *Requester {
+	if x != nil {
+		return x.Requester
+	}
+	return nil
+}
+
+func (x *DeleteFriendReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DeleteFriendReq) GetBlock() bool {
+	if x != nil {
+		return x.Block
+	}
+	return false
+}
+
+type DeleteFriendResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *DeleteFriendResp) Reset() {
+	*x = DeleteFriendResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_relation_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteFriendResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteFriendResp) ProtoMessage() {}
+
+func (x *DeleteFriendResp) ProtoReflect() protoreflect.Message {
+	mi := &file_relation_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteFriendResp.ProtoReflect.Descriptor instead.
+func (*DeleteFriendResp) Descriptor() ([]byte, []int) {
+	return file_relation_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *DeleteFriendResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
 var File_relation_proto protoreflect.FileDescriptor
 
 var file_relation_proto_rawDesc = []byte{
@@ -355,17 +1224,134 @@ var file_relation_proto_rawDesc = []byte{
 	0x42, 0x6c, 0x61, 0x63, 0x6b, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10,
 	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
 	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x32, 0x85, 0x01, 0x0a, 0x0f, 0x72,
-	0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x35,
-	0x0a, 0x0a, 0x41, 0x72, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x11, 0x2e, 0x70,
-	0x62, 0x2e, 0x41, 0x72, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a,
-	0x12, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x72, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x52,
-	0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0c, 0x41, 0x72, 0x65, 0x42, 0x6c, 0x61, 0x63,
-	0x6b, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x72, 0x65, 0x42, 0x6c,
-	0x61, 0x63, 0x6b, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x70, 0x62, 0x2e,
-	0x41, 0x72, 0x65, 0x42, 0x6c, 0x61, 0x63, 0x6b, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70,
-	0x22, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x49, 0x0a, 0x15, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x45, 0x78,
+	0x74, 0x72, 0x61, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63,
+	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f,
+	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x6c, 0x0a, 0x13, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09,
+	0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x09,
+	0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x74, 0x6f, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x74, 0x6f, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x22, 0x46, 0x0a, 0x14, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64,
+	0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52,
+	0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x94, 0x01, 0x0a, 0x12,
+	0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52,
+	0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x65, 0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x12,
+	0x20, 0x0a, 0x0b, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x55, 0x73, 0x65, 0x72, 0x49,
+	0x64, 0x12, 0x21, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x49,
+	0x64, 0x88, 0x01, 0x01, 0x42, 0x0c, 0x0a, 0x0a, 0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x49, 0x64, 0x22, 0x45, 0x0a, 0x13, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x41, 0x64, 0x64, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
+	0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x97, 0x01, 0x0a, 0x12, 0x52, 0x65,
+	0x6a, 0x65, 0x63, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71,
+	0x12, 0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x65, 0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x12, 0x20, 0x0a,
+	0x0b, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0b, 0x61, 0x70, 0x70, 0x6c, 0x79, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12,
+	0x1c, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x49, 0x64, 0x12, 0x14, 0x0a,
+	0x05, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x62, 0x6c,
+	0x6f, 0x63, 0x6b, 0x22, 0x45, 0x0a, 0x13, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x41, 0x64, 0x64,
+	0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x40, 0x0a, 0x11, 0x47, 0x65,
+	0x74, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x12,
+	0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65,
+	0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x22, 0x5a, 0x0a, 0x12,
+	0x47, 0x65, 0x74, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x12, 0x14, 0x0a, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x53, 0x0a, 0x0c, 0x42, 0x6c, 0x6f, 0x63,
+	0x6b, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62,
+	0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x3f, 0x0a,
+	0x0d, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e,
+	0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x59,
+	0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65,
+	0x72, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65,
+	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65,
+	0x72, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x45, 0x0a, 0x13, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
+	0x22, 0x6c, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64,
+	0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x09, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x65, 0x72,
+	0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x62, 0x6c, 0x6f, 0x63,
+	0x6b, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x05, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x22, 0x42,
+	0x0a, 0x10, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65,
+	0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x2a, 0x40, 0x0a, 0x16, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64,
+	0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0d, 0x0a, 0x09,
+	0x55, 0x6e, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x64, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x41,
+	0x67, 0x72, 0x65, 0x65, 0x64, 0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x52, 0x65, 0x66, 0x75, 0x73,
+	0x65, 0x64, 0x10, 0x02, 0x32, 0xd4, 0x04, 0x0a, 0x0f, 0x72, 0x65, 0x6c, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x35, 0x0a, 0x0a, 0x41, 0x72, 0x65, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x12, 0x11, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x72, 0x65, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x41,
+	0x72, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12,
+	0x3b, 0x0a, 0x0c, 0x41, 0x72, 0x65, 0x42, 0x6c, 0x61, 0x63, 0x6b, 0x4c, 0x69, 0x73, 0x74, 0x12,
+	0x13, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x72, 0x65, 0x42, 0x6c, 0x61, 0x63, 0x6b, 0x4c, 0x69, 0x73,
+	0x74, 0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x72, 0x65, 0x42, 0x6c, 0x61,
+	0x63, 0x6b, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x47, 0x0a, 0x10,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64,
+	0x12, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64,
+	0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x70, 0x62, 0x2e, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52,
+	0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x41,
+	0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x12, 0x16, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x63,
+	0x63, 0x65, 0x70, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71,
+	0x1a, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x70, 0x74, 0x41, 0x64, 0x64, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x52,
+	0x65, 0x6a, 0x65, 0x63, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x12, 0x16,
+	0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x6a, 0x65, 0x63, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69,
+	0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x6a, 0x65,
+	0x63, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x22,
+	0x00, 0x12, 0x41, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x43, 0x6f,
+	0x75, 0x6e, 0x74, 0x12, 0x15, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x46, 0x72, 0x69, 0x65,
+	0x6e, 0x64, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x70, 0x62, 0x2e,
+	0x47, 0x65, 0x74, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x09, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65,
+	0x72, 0x12, 0x10, 0x2e, 0x70, 0x62, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e, 0x70, 0x62, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0f, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x12, 0x16, 0x2e, 0x70, 0x62,
+	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x12, 0x3b,
+	0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x12, 0x13,
+	0x2e, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64,
+	0x52, 0x65, 0x71, 0x1a, 0x14, 0x2e, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46,
+	0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e,
+	0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -380,35 +1366,79 @@ func file_relation_proto_rawDescGZIP() []byte {
 	return file_relation_proto_rawDescData
 }
 
-var file_relation_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_relation_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_relation_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_relation_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_relation_proto_goTypes = []interface{}{
-	(AreBlackListReq_Option)(0), // 0: pb.AreBlackListReq.Option
-	(*AreFriendsReq)(nil),       // 1: pb.AreFriendsReq
-	(*AreFriendsResp)(nil),      // 2: pb.AreFriendsResp
-	(*AreBlackListReq)(nil),     // 3: pb.AreBlackListReq
-	(*AreBlackListResp)(nil),    // 4: pb.AreBlackListResp
-	nil,                         // 5: pb.AreFriendsResp.FriendListEntry
-	nil,                         // 6: pb.AreBlackListResp.BlackListEntry
-	(*Requester)(nil),           // 7: pb.Requester
-	(*CommonResp)(nil),          // 8: pb.CommonResp
+	(RequestAddFriendStatus)(0),   // 0: pb.RequestAddFriendStatus
+	(AreBlackListReq_Option)(0),   // 1: pb.AreBlackListReq.Option
+	(*AreFriendsReq)(nil),         // 2: pb.AreFriendsReq
+	(*AreFriendsResp)(nil),        // 3: pb.AreFriendsResp
+	(*AreBlackListReq)(nil),       // 4: pb.AreBlackListReq
+	(*AreBlackListResp)(nil),      // 5: pb.AreBlackListResp
+	(*RequestAddFriendExtra)(nil), // 6: pb.RequestAddFriendExtra
+	(*RequestAddFriendReq)(nil),   // 7: pb.RequestAddFriendReq
+	(*RequestAddFriendResp)(nil),  // 8: pb.RequestAddFriendResp
+	(*AcceptAddFriendReq)(nil),    // 9: pb.AcceptAddFriendReq
+	(*AcceptAddFriendResp)(nil),   // 10: pb.AcceptAddFriendResp
+	(*RejectAddFriendReq)(nil),    // 11: pb.RejectAddFriendReq
+	(*RejectAddFriendResp)(nil),   // 12: pb.RejectAddFriendResp
+	(*GetFriendCountReq)(nil),     // 13: pb.GetFriendCountReq
+	(*GetFriendCountResp)(nil),    // 14: pb.GetFriendCountResp
+	(*BlockUserReq)(nil),          // 15: pb.BlockUserReq
+	(*BlockUserResp)(nil),         // 16: pb.BlockUserResp
+	(*DeleteBlockUserReq)(nil),    // 17: pb.DeleteBlockUserReq
+	(*DeleteBlockUserResp)(nil),   // 18: pb.DeleteBlockUserResp
+	(*DeleteFriendReq)(nil),       // 19: pb.DeleteFriendReq
+	(*DeleteFriendResp)(nil),      // 20: pb.DeleteFriendResp
+	nil,                           // 21: pb.AreFriendsResp.FriendListEntry
+	nil,                           // 22: pb.AreBlackListResp.BlackListEntry
+	(*Requester)(nil),             // 23: pb.Requester
+	(*CommonResp)(nil),            // 24: pb.CommonResp
 }
 var file_relation_proto_depIdxs = []int32{
-	7, // 0: pb.AreFriendsReq.requester:type_name -> pb.Requester
-	8, // 1: pb.AreFriendsResp.commonResp:type_name -> pb.CommonResp
-	5, // 2: pb.AreFriendsResp.friendList:type_name -> pb.AreFriendsResp.FriendListEntry
-	7, // 3: pb.AreBlackListReq.requester:type_name -> pb.Requester
-	8, // 4: pb.AreBlackListResp.commonResp:type_name -> pb.CommonResp
-	6, // 5: pb.AreBlackListResp.blackList:type_name -> pb.AreBlackListResp.BlackListEntry
-	1, // 6: pb.relationService.AreFriends:input_type -> pb.AreFriendsReq
-	3, // 7: pb.relationService.AreBlackList:input_type -> pb.AreBlackListReq
-	2, // 8: pb.relationService.AreFriends:output_type -> pb.AreFriendsResp
-	4, // 9: pb.relationService.AreBlackList:output_type -> pb.AreBlackListResp
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	23, // 0: pb.AreFriendsReq.requester:type_name -> pb.Requester
+	24, // 1: pb.AreFriendsResp.commonResp:type_name -> pb.CommonResp
+	21, // 2: pb.AreFriendsResp.friendList:type_name -> pb.AreFriendsResp.FriendListEntry
+	23, // 3: pb.AreBlackListReq.requester:type_name -> pb.Requester
+	24, // 4: pb.AreBlackListResp.commonResp:type_name -> pb.CommonResp
+	22, // 5: pb.AreBlackListResp.blackList:type_name -> pb.AreBlackListResp.BlackListEntry
+	23, // 6: pb.RequestAddFriendReq.requester:type_name -> pb.Requester
+	24, // 7: pb.RequestAddFriendResp.commonResp:type_name -> pb.CommonResp
+	23, // 8: pb.AcceptAddFriendReq.requester:type_name -> pb.Requester
+	24, // 9: pb.AcceptAddFriendResp.commonResp:type_name -> pb.CommonResp
+	23, // 10: pb.RejectAddFriendReq.requester:type_name -> pb.Requester
+	24, // 11: pb.RejectAddFriendResp.commonResp:type_name -> pb.CommonResp
+	23, // 12: pb.GetFriendCountReq.requester:type_name -> pb.Requester
+	24, // 13: pb.GetFriendCountResp.commonResp:type_name -> pb.CommonResp
+	23, // 14: pb.BlockUserReq.requester:type_name -> pb.Requester
+	24, // 15: pb.BlockUserResp.commonResp:type_name -> pb.CommonResp
+	23, // 16: pb.DeleteBlockUserReq.requester:type_name -> pb.Requester
+	24, // 17: pb.DeleteBlockUserResp.commonResp:type_name -> pb.CommonResp
+	23, // 18: pb.DeleteFriendReq.requester:type_name -> pb.Requester
+	24, // 19: pb.DeleteFriendResp.commonResp:type_name -> pb.CommonResp
+	2,  // 20: pb.relationService.AreFriends:input_type -> pb.AreFriendsReq
+	4,  // 21: pb.relationService.AreBlackList:input_type -> pb.AreBlackListReq
+	7,  // 22: pb.relationService.RequestAddFriend:input_type -> pb.RequestAddFriendReq
+	9,  // 23: pb.relationService.AcceptAddFriend:input_type -> pb.AcceptAddFriendReq
+	11, // 24: pb.relationService.RejectAddFriend:input_type -> pb.RejectAddFriendReq
+	13, // 25: pb.relationService.GetFriendCount:input_type -> pb.GetFriendCountReq
+	15, // 26: pb.relationService.BlockUser:input_type -> pb.BlockUserReq
+	17, // 27: pb.relationService.DeleteBlockUser:input_type -> pb.DeleteBlockUserReq
+	19, // 28: pb.relationService.DeleteFriend:input_type -> pb.DeleteFriendReq
+	3,  // 29: pb.relationService.AreFriends:output_type -> pb.AreFriendsResp
+	5,  // 30: pb.relationService.AreBlackList:output_type -> pb.AreBlackListResp
+	8,  // 31: pb.relationService.RequestAddFriend:output_type -> pb.RequestAddFriendResp
+	10, // 32: pb.relationService.AcceptAddFriend:output_type -> pb.AcceptAddFriendResp
+	12, // 33: pb.relationService.RejectAddFriend:output_type -> pb.RejectAddFriendResp
+	14, // 34: pb.relationService.GetFriendCount:output_type -> pb.GetFriendCountResp
+	16, // 35: pb.relationService.BlockUser:output_type -> pb.BlockUserResp
+	18, // 36: pb.relationService.DeleteBlockUser:output_type -> pb.DeleteBlockUserResp
+	20, // 37: pb.relationService.DeleteFriend:output_type -> pb.DeleteFriendResp
+	29, // [29:38] is the sub-list for method output_type
+	20, // [20:29] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_relation_proto_init() }
@@ -466,14 +1496,195 @@ func file_relation_proto_init() {
 				return nil
 			}
 		}
+		file_relation_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RequestAddFriendExtra); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RequestAddFriendReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RequestAddFriendResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AcceptAddFriendReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AcceptAddFriendResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RejectAddFriendReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RejectAddFriendResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetFriendCountReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetFriendCountResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BlockUserReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BlockUserResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteBlockUserReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteBlockUserResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteFriendReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_relation_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteFriendResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
+	file_relation_proto_msgTypes[7].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_relation_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   6,
+			NumEnums:      2,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

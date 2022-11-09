@@ -32,8 +32,101 @@ message AreBlackListResp {
   CommonResp commonResp = 1;
   map<string, bool> blackList = 2;
 }
+enum RequestAddFriendStatus {
+  // 未处理
+  Unhandled = 0;
+  // 已同意
+  Agreed = 1;
+  // 已拒绝
+  Refused = 2;
+}
+message RequestAddFriendExtra {
+  string userId = 1;
+  string content = 2;
+}
+//RequestAddFriendReq 请求添加好友
+message RequestAddFriendReq {
+  Requester requester = 1;
+  string to = 2;
+  // 附加消息
+  string message = 3;
+}
 
+message RequestAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//AcceptAddFriendReq 接受添加好友
+message AcceptAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  optional string requestId = 3; // 申请id
+}
+
+message AcceptAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//RejectAddFriendReq 拒绝添加好友
+message RejectAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  string requestId = 3; // 申请id
+  bool block = 4; // 是否拉黑
+}
+
+message RejectAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//GetFriendCountReq 获取好友总数
+message GetFriendCountReq {
+  Requester requester = 1;
+}
+
+message GetFriendCountResp {
+  CommonResp commonResp = 1;
+  int32 count = 2;
+}
+
+//拉黑用户
+message BlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message BlockUserResp {
+  CommonResp commonResp = 1;
+}
+
+//删除拉黑用户
+message DeleteBlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message DeleteBlockUserResp {
+  CommonResp commonResp = 1;
+}
+
+//解除好友关系
+message DeleteFriendReq {
+  Requester requester = 1;
+  string userId = 2;
+  bool block = 3; // 是否拉黑
+}
+
+message DeleteFriendResp {
+  CommonResp commonResp = 1;
+}
 service relationService {
   rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
   rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
+  rpc RequestAddFriend(RequestAddFriendReq) returns (RequestAddFriendResp) {}
+  rpc AcceptAddFriend(AcceptAddFriendReq) returns (AcceptAddFriendResp) {}
+  rpc RejectAddFriend(RejectAddFriendReq) returns (RejectAddFriendResp) {}
+  rpc GetFriendCount(GetFriendCountReq) returns (GetFriendCountResp) {}
+  rpc BlockUser(BlockUserReq) returns (BlockUserResp) {}
+  rpc DeleteBlockUser(DeleteBlockUserReq) returns (DeleteBlockUserResp) {}
+  rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
 }
