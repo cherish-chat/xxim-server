@@ -39,6 +39,9 @@ func AnyToString(t any) string {
 }
 
 func AnyToBytes(t any) []byte {
+	if t == nil {
+		return nil
+	}
 	switch v := t.(type) {
 	case string:
 		return []byte(v)

@@ -121,3 +121,14 @@ func AnyRandomInSlice[T any](slice []T, defaultValue T) T {
 	}
 	return slice[RandomInt(0, len(slice))]
 }
+
+func SliceRemove[T any](slice []T, value T) []T {
+	var newSlice []T
+	for _, v := range slice {
+		if reflect.DeepEqual(v, value) {
+			continue
+		}
+		newSlice = append(newSlice, v)
+	}
+	return newSlice
+}
