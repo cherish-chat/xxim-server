@@ -18,6 +18,8 @@ type (
 	ConfirmRegisterResp      = pb.ConfirmRegisterResp
 	GetUserHomeReq           = pb.GetUserHomeReq
 	GetUserHomeResp          = pb.GetUserHomeResp
+	GetUserSettingsReq       = pb.GetUserSettingsReq
+	GetUserSettingsResp      = pb.GetUserSettingsResp
 	LevelInfo                = pb.LevelInfo
 	LoginReq                 = pb.LoginReq
 	LoginResp                = pb.LoginResp
@@ -25,7 +27,10 @@ type (
 	MapUserByIdsResp         = pb.MapUserByIdsResp
 	SearchUsersByKeywordReq  = pb.SearchUsersByKeywordReq
 	SearchUsersByKeywordResp = pb.SearchUsersByKeywordResp
+	SetUserSettingsReq       = pb.SetUserSettingsReq
+	SetUserSettingsResp      = pb.SetUserSettingsResp
 	UserBaseInfo             = pb.UserBaseInfo
+	UserSetting              = pb.UserSetting
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -33,6 +38,8 @@ type (
 		MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 		SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
 		GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
+		GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
+		SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error)
 	}
 
 	defaultUserService struct {
@@ -69,4 +76,14 @@ func (m *defaultUserService) SearchUsersByKeyword(ctx context.Context, in *Searc
 func (m *defaultUserService) GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.GetUserHome(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserSettings(ctx, in, opts...)
+}
+
+func (m *defaultUserService) SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.SetUserSettings(ctx, in, opts...)
 }

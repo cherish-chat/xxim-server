@@ -57,7 +57,7 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		// id已被占用
 		return &pb.ConfirmRegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "注册失败"), l.svcCtx.T(in.Requester.Language, "用户名已存在"))}, nil
 	} else {
-		_ = flushUserCache(l.ctx, l.svcCtx.Redis(), []string{user.Id})
+		_ = usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{user.Id})
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterRegister", func(ctx context.Context) {
 			NewAfterLogic(ctx, l.svcCtx).AfterRegister(user.Id, in.Requester)
 		}, propagation.MapCarrier{

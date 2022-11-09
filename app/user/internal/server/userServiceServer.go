@@ -46,3 +46,13 @@ func (s *UserServiceServer) GetUserHome(ctx context.Context, in *pb.GetUserHomeR
 	l := logic.NewGetUserHomeLogic(ctx, s.svcCtx)
 	return l.GetUserHome(in)
 }
+
+func (s *UserServiceServer) GetUserSettings(ctx context.Context, in *pb.GetUserSettingsReq) (*pb.GetUserSettingsResp, error) {
+	l := logic.NewGetUserSettingsLogic(ctx, s.svcCtx)
+	return l.GetUserSettings(in)
+}
+
+func (s *UserServiceServer) SetUserSettings(ctx context.Context, in *pb.SetUserSettingsReq) (*pb.SetUserSettingsResp, error) {
+	l := logic.NewSetUserSettingsLogic(ctx, s.svcCtx)
+	return l.SetUserSettings(in)
+}

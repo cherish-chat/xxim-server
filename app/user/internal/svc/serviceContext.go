@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/config"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
@@ -27,6 +28,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mongo().Collection(&xconf.SystemConfig{}))
 	s.I18N = i18n.NewI18N(s.Mongo())
+	usermodel.InitUserSetting(s.Mongo().Collection(&usermodel.UserSetting{}))
 	return s
 }
 
