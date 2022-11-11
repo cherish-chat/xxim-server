@@ -1,9 +1,10 @@
 package svc
 
 import (
-	"github.com/cherish-chat/xxim-server/app/conn/connservice"
+	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
+	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -11,19 +12,19 @@ import (
 )
 
 type ServiceContext struct {
-	Config      config.Config
-	msgProducer *xtdmq.TDMQProducer
-	zedis       *redis.Redis
-	mongo       *xmgo.Client
-	imService   imservice.ImService
-	ConnPodsMgr *connservice.ConnPodsMgr
+	Config          config.Config
+	msgProducer     *xtdmq.TDMQProducer
+	zedis           *redis.Redis
+	mongo           *xmgo.Client
+	imService       imservice.ImService
+	relationService relationservice.RelationService
+	groupService    groupservice.GroupService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
 	return s
 }
 
@@ -53,4 +54,18 @@ func (s *ServiceContext) ImService() imservice.ImService {
 		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc))
 	}
 	return s.imService
+}
+
+func (s *ServiceContext) RelationService() relationservice.RelationService {
+	if s.relationService == nil {
+		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc))
+	}
+	return s.relationService
+}
+
+func (s *ServiceContext) GroupService() groupservice.GroupService {
+	if s.groupService == nil {
+		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
+	}
+	return s.groupService
 }

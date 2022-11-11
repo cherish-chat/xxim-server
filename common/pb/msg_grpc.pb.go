@@ -30,6 +30,15 @@ type MsgServiceClient interface {
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+	//BatchSetMinSeq 批量设置用户某会话的minseq
+	BatchSetMinSeq(ctx context.Context, in *BatchSetMinSeqReq, opts ...grpc.CallOption) (*BatchSetMinSeqResp, error)
+	//BatchGetConvSeq 批量获取会话的seq
+	BatchGetConvSeq(ctx context.Context, in *BatchGetConvSeqReq, opts ...grpc.CallOption) (*BatchGetConvSeqResp, error)
+	// conn hook
+	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	//GetConvSubscribers 获取一个会话里所有的消息订阅者
+	GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
 }
 
 type msgServiceClient struct {
@@ -103,6 +112,51 @@ func (c *msgServiceClient) GetMsgListByConvId(ctx context.Context, in *GetMsgLis
 	return out, nil
 }
 
+func (c *msgServiceClient) BatchSetMinSeq(ctx context.Context, in *BatchSetMinSeqReq, opts ...grpc.CallOption) (*BatchSetMinSeqResp, error) {
+	out := new(BatchSetMinSeqResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSetMinSeq", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) BatchGetConvSeq(ctx context.Context, in *BatchGetConvSeqReq, opts ...grpc.CallOption) (*BatchGetConvSeqResp, error) {
+	out := new(BatchGetConvSeqResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchGetConvSeq", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/AfterConnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/AfterDisconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error) {
+	out := new(GetConvSubscribersResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetConvSubscribers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -115,6 +169,15 @@ type MsgServiceServer interface {
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
+	//BatchSetMinSeq 批量设置用户某会话的minseq
+	BatchSetMinSeq(context.Context, *BatchSetMinSeqReq) (*BatchSetMinSeqResp, error)
+	//BatchGetConvSeq 批量获取会话的seq
+	BatchGetConvSeq(context.Context, *BatchGetConvSeqReq) (*BatchGetConvSeqResp, error)
+	// conn hook
+	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
+	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
+	//GetConvSubscribers 获取一个会话里所有的消息订阅者
+	GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -142,6 +205,21 @@ func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListRe
 }
 func (UnimplementedMsgServiceServer) GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMsgListByConvId not implemented")
+}
+func (UnimplementedMsgServiceServer) BatchSetMinSeq(context.Context, *BatchSetMinSeqReq) (*BatchSetMinSeqResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchSetMinSeq not implemented")
+}
+func (UnimplementedMsgServiceServer) BatchGetConvSeq(context.Context, *BatchGetConvSeqReq) (*BatchGetConvSeqResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetConvSeq not implemented")
+}
+func (UnimplementedMsgServiceServer) AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AfterConnect not implemented")
+}
+func (UnimplementedMsgServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
+}
+func (UnimplementedMsgServiceServer) GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConvSubscribers not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -282,6 +360,96 @@ func _MsgService_GetMsgListByConvId_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_BatchSetMinSeq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchSetMinSeqReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BatchSetMinSeq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/BatchSetMinSeq",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BatchSetMinSeq(ctx, req.(*BatchSetMinSeqReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_BatchGetConvSeq_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetConvSeqReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).BatchGetConvSeq(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/BatchGetConvSeq",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).BatchGetConvSeq(ctx, req.(*BatchGetConvSeqReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_AfterConnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AfterConnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).AfterConnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/AfterConnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).AfterConnect(ctx, req.(*AfterConnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_AfterDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AfterDisconnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).AfterDisconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/AfterDisconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).AfterDisconnect(ctx, req.(*AfterDisconnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_GetConvSubscribers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConvSubscribersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).GetConvSubscribers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/GetConvSubscribers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).GetConvSubscribers(ctx, req.(*GetConvSubscribersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -316,6 +484,26 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMsgListByConvId",
 			Handler:    _MsgService_GetMsgListByConvId_Handler,
+		},
+		{
+			MethodName: "BatchSetMinSeq",
+			Handler:    _MsgService_BatchSetMinSeq_Handler,
+		},
+		{
+			MethodName: "BatchGetConvSeq",
+			Handler:    _MsgService_BatchGetConvSeq_Handler,
+		},
+		{
+			MethodName: "AfterConnect",
+			Handler:    _MsgService_AfterConnect_Handler,
+		},
+		{
+			MethodName: "AfterDisconnect",
+			Handler:    _MsgService_AfterDisconnect_Handler,
+		},
+		{
+			MethodName: "GetConvSubscribers",
+			Handler:    _MsgService_GetConvSubscribers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

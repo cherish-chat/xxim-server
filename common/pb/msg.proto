@@ -1,6 +1,7 @@
 syntax = "proto3";
 package pb;
 option go_package = "./pb";
+import "conn.proto";
 import "common.proto";
 
 // 服务器通过websocket发送给客户端的消息体
@@ -100,6 +101,53 @@ message GetMsgListResp {
   repeated MsgData msgDataList = 2;
 }
 
+//批量设置用户某会话的minseq
+message BatchSetMinSeqReq {
+  Requester requester = 1;
+  string convId = 2;
+  repeated string userIdList = 3;
+  string minSeq = 4;
+}
+
+message BatchSetMinSeqResp {
+  CommonResp commonResp = 1;
+}
+
+//批量获取会话的seq
+message BatchGetConvSeqReq {
+  Requester requester = 1;
+  repeated string convIdList = 2;
+}
+
+message BatchGetConvSeqResp {
+  CommonResp commonResp = 1;
+  message ConvSeq {
+    string convId = 1;
+    string minSeq = 2;
+    string maxSeq = 3;
+    string updateTime = 4;
+  }
+  map<string, ConvSeq> convSeqMap = 2;
+}
+
+//GetConvSubscribersReq 获取一个会话里所有的消息订阅者
+message GetConvSubscribersReq {
+  Requester requester = 1;
+  string convId = 2;
+  // 最后的活跃时间 会查询 >= lastActiveTime 的订阅者
+  optional int64 lastActiveTime = 3;
+}
+
+message GetConvSubscribersResp {
+  CommonResp commonResp = 1;
+  repeated string userIdList = 2;
+  message uidList {
+    repeated string userIds = 1;
+    string podIp = 2;
+  }
+  map<string, uidList> podIpMap = 3;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (CommonResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -109,4 +157,13 @@ service msgService {
   rpc PushMsgList(PushMsgListReq) returns (CommonResp) {} // 推送消息
   //GetMsgListByConvId 通过seq拉取一个会话的消息
   rpc GetMsgListByConvId(GetMsgListByConvIdReq) returns (GetMsgListResp) {}
+  //BatchSetMinSeq 批量设置用户某会话的minseq
+  rpc BatchSetMinSeq(BatchSetMinSeqReq) returns (BatchSetMinSeqResp) {}
+  //BatchGetConvSeq 批量获取会话的seq
+  rpc BatchGetConvSeq(BatchGetConvSeqReq) returns (BatchGetConvSeqResp) {}
+  // conn hook
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  //GetConvSubscribers 获取一个会话里所有的消息订阅者
+  rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
 }

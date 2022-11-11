@@ -59,16 +59,29 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	for convId := range listMap {
 		convIds = append(convIds, convId)
 	}
-	var convSubscribers = make(map[string]*MockSubscribers)
+	var convSubscribers = make(map[string]*pb.GetConvSubscribersResp)
 	convUserIds := make(map[string][]string)
 	xtrace.StartFuncSpan(l.ctx, "BatchGetConvSubscribers", func(ctx context.Context) {
-		convSubscribers = mockBatchGetConvSubscribers(convIds)
+		for _, convId := range convIds {
+			subscribers, err := NewGetConvSubscribersLogic(ctx, l.svcCtx).GetConvSubscribers(&pb.GetConvSubscribersReq{
+				ConvId:         convId,
+				LastActiveTime: utils.AnyPtr(time.Now().Add(-time.Minute * 15).UnixMilli()),
+			})
+			if err != nil {
+				l.Logger.Errorf("BatchGetConvSubscribers err: %v", err)
+				continue
+			}
+			if len(subscribers.UserIdList) > 0 {
+				convSubscribers[convId] = subscribers
+				convUserIds[convId] = subscribers.UserIdList
+			}
+		}
 		for convId, subscribers := range convSubscribers {
-			for _, subscriber := range subscribers.Subscribers {
+			for _, subscriber := range subscribers.UserIdList {
 				if _, ok := convUserIds[convId]; !ok {
 					convUserIds[convId] = make([]string, 0)
 				}
-				convUserIds[convId] = append(convUserIds[convId], subscriber.UserId)
+				convUserIds[convId] = append(convUserIds[convId], subscriber)
 			}
 		}
 	})
