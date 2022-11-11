@@ -2,16 +2,9 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
-	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/qiniu/qmgo"
-	"github.com/zeromicro/go-zero/core/logx"
 	zedis "github.com/zeromicro/go-zero/core/stores/redis"
-	"go.mongodb.org/mongo-driver/bson"
 	"time"
 )
 
@@ -117,64 +110,4 @@ func BatchGetConvMaxSeq(rc *zedis.Redis, ctx context.Context, convIds []string) 
 		}
 	}
 	return m, nil
-}
-
-func generateSeqList(deviceMaxSeq int64, conv *convSeq) []int64 {
-	// 如果 conv.MaxSeq - deviceMaxSeq > 1000, 则只返回 1000 个 seq
-	if conv.maxSeq-deviceMaxSeq > 1000 {
-		deviceMaxSeq = conv.maxSeq - 1000
-	}
-	seqList := make([]int64, 0, deviceMaxSeq-conv.minSeq+1)
-	for i := conv.minSeq; i <= deviceMaxSeq; i++ {
-		seqList = append(seqList, i)
-	}
-	return seqList
-}
-
-func MsgFromMongo(
-	ctx context.Context,
-	rc *zedis.Redis,
-	collection *qmgo.Collection,
-	ids []string,
-) (msgList []*msgmodel.Msg, err error) {
-	if len(ids) == 0 {
-		return make([]*msgmodel.Msg, 0), nil
-	}
-	xtrace.StartFuncSpan(ctx, "FindMsgByIds", func(ctx context.Context) {
-		err = collection.Find(ctx, bson.M{
-			"_id": bson.M{"$in": ids},
-		}).All(&msgList)
-	})
-	if err != nil {
-		logx.WithContext(ctx).Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-		return nil, err
-	}
-	msgMap := make(map[string]*msgmodel.Msg)
-	for _, msg := range msgList {
-		msgMap[msg.ServerMsgId] = msg
-		// 存入redis
-		redisMsg, _ := json.Marshal(msg)
-		err = rc.SetexCtx(ctx, rediskey.MsgKey(msg.ServerMsgId), string(redisMsg), msg.ExpireSeconds())
-		if err != nil {
-			logx.WithContext(ctx).Errorf("redis Setex error: %v", err)
-			continue
-		}
-	}
-	var notFoundIds []string
-	for _, id := range ids {
-		if _, ok := msgMap[id]; !ok {
-			notFoundIds = append(notFoundIds, id)
-		}
-	}
-	if len(notFoundIds) > 0 {
-		// 占位符写入redis
-		for _, id := range notFoundIds {
-			err = rc.SetexCtx(ctx, rediskey.MsgKey(id), xredis.NotFound, xredis.ExpireMinutes(5))
-			if err != nil {
-				logx.WithContext(ctx).Errorf("redis Setex error: %v", err)
-				continue
-			}
-		}
-	}
-	return msgList, nil
 }

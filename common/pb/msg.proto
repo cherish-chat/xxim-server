@@ -1,6 +1,7 @@
 syntax = "proto3";
 package pb;
 option go_package = "./pb";
+import "conn.proto";
 import "common.proto";
 
 // 服务器通过websocket发送给客户端的消息体
@@ -41,8 +42,8 @@ message MsgData {
   }
   string clientMsgId = 1;
   string serverMsgId = 2;
-  int64 clientTime = 3;
-  int64 serverTime = 4;
+  string clientTime = 3;
+  string serverTime = 4;
 
   string sender = 11; // 发送者id
   string senderInfo = 12; // 发送者信息
@@ -54,7 +55,7 @@ message MsgData {
 
   ContentType contentType = 31; // 消息内容类型
   bytes content = 32; // 消息内容
-  int64 seq = 33; // 消息序号 会话内唯一且递增
+  string seq = 33; // 消息序号 会话内唯一且递增
 
   Options options = 41; // 消息选项
   OfflinePush offlinePush = 42; // 离线推送
@@ -71,7 +72,7 @@ message SendMsgListReq {
   repeated MsgData msgDataList = 2;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int64 deliverAfter = 11;
+  optional int32 deliverAfter = 11;
 }
 
 message BatchSendMsgReq {
@@ -81,7 +82,7 @@ message BatchSendMsgReq {
   repeated string groupIdList = 4; // 群组id列表
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int64 deliverAfter = 11;
+  optional int32 deliverAfter = 11;
 }
 
 message PushMsgListReq {
@@ -91,13 +92,60 @@ message PushMsgListReq {
 message GetMsgListByConvIdReq {
   Requester requester = 1;
   string convId = 2;
-  repeated int64 seqList = 3;
+  repeated string seqList = 3;
   bool push = 4;
 }
 
 message GetMsgListResp {
   CommonResp commonResp = 1;
   repeated MsgData msgDataList = 2;
+}
+
+//批量设置用户某会话的minseq
+message BatchSetMinSeqReq {
+  Requester requester = 1;
+  string convId = 2;
+  repeated string userIdList = 3;
+  string minSeq = 4;
+}
+
+message BatchSetMinSeqResp {
+  CommonResp commonResp = 1;
+}
+
+//批量获取会话的seq
+message BatchGetConvSeqReq {
+  Requester requester = 1;
+  repeated string convIdList = 2;
+}
+
+message BatchGetConvSeqResp {
+  CommonResp commonResp = 1;
+  message ConvSeq {
+    string convId = 1;
+    string minSeq = 2;
+    string maxSeq = 3;
+    string updateTime = 4;
+  }
+  map<string, ConvSeq> convSeqMap = 2;
+}
+
+//GetConvSubscribersReq 获取一个会话里所有的消息订阅者
+message GetConvSubscribersReq {
+  Requester requester = 1;
+  string convId = 2;
+  // 最后的活跃时间 会查询 >= lastActiveTime 的订阅者
+  optional int64 lastActiveTime = 3;
+}
+
+message GetConvSubscribersResp {
+  CommonResp commonResp = 1;
+  repeated string userIdList = 2;
+  message uidList {
+    repeated string userIds = 1;
+    string podIp = 2;
+  }
+  map<string, uidList> podIpMap = 3;
 }
 
 service msgService {
@@ -109,4 +157,13 @@ service msgService {
   rpc PushMsgList(PushMsgListReq) returns (CommonResp) {} // 推送消息
   //GetMsgListByConvId 通过seq拉取一个会话的消息
   rpc GetMsgListByConvId(GetMsgListByConvIdReq) returns (GetMsgListResp) {}
+  //BatchSetMinSeq 批量设置用户某会话的minseq
+  rpc BatchSetMinSeq(BatchSetMinSeqReq) returns (BatchSetMinSeqResp) {}
+  //BatchGetConvSeq 批量获取会话的seq
+  rpc BatchGetConvSeq(BatchGetConvSeqReq) returns (BatchGetConvSeqResp) {}
+  // conn hook
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  //GetConvSubscribers 获取一个会话里所有的消息订阅者
+  rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
 }

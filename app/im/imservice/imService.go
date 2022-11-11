@@ -13,11 +13,12 @@ import (
 )
 
 type (
-	AfterConnectReq    = pb.AfterConnectReq
-	AfterDisconnectReq = pb.AfterDisconnectReq
-	BeforeConnectReq   = pb.BeforeConnectReq
-	BeforeConnectResp  = pb.BeforeConnectResp
-	ImMQBody           = pb.ImMQBody
+	BeforeConnectReq      = pb.BeforeConnectReq
+	BeforeConnectResp     = pb.BeforeConnectResp
+	GetUserLatestConnReq  = pb.GetUserLatestConnReq
+	GetUserLatestConnResp = pb.GetUserLatestConnResp
+	ImMQBody              = pb.ImMQBody
+	MsgNotifyOpt          = pb.MsgNotifyOpt
 
 	ImService interface {
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
@@ -25,6 +26,8 @@ type (
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
+		GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
+		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 	}
 
 	defaultImService struct {
@@ -61,4 +64,14 @@ func (m *defaultImService) KickUserConn(ctx context.Context, in *KickUserConnReq
 func (m *defaultImService) GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetUserConn(ctx, in, opts...)
+}
+
+func (m *defaultImService) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.GetUserLatestConn(ctx, in, opts...)
+}
+
+func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.SendMsg(ctx, in, opts...)
 }

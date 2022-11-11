@@ -2,11 +2,17 @@ package msgmodel
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/qiniu/qmgo"
 	"github.com/qiniu/qmgo/options"
+	"github.com/zeromicro/go-zero/core/logx"
+	zedis "github.com/zeromicro/go-zero/core/stores/redis"
+	"go.mongodb.org/mongo-driver/bson"
 	"strconv"
 	"strings"
 	"time"
@@ -93,8 +99,8 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 		ServerMsgId:    in.ServerMsgId,
 		ConvId:         in.ConvId,
 		ClientMsgId:    in.ClientMsgId,
-		ClientTime:     in.ClientTime,
-		ServerTime:     in.ServerTime,
+		ClientTime:     utils.AnyToInt64(in.ClientTime),
+		ServerTime:     utils.AnyToInt64(in.ServerTime),
 		Sender:         in.Sender,
 		SenderInfo:     in.SenderInfo,
 		SenderConvInfo: in.SenderConvInfo,
@@ -105,7 +111,7 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 		AtUsers:     utils.AnyMakeSlice(in.AtUsers),
 		ContentType: in.ContentType,
 		Content:     in.Content,
-		Seq:         in.Seq,
+		Seq:         utils.AnyToInt64(in.Seq),
 		Options: MsgOptions{
 			OfflinePush:      in.Options.OfflinePush,
 			StorageForServer: in.Options.StorageForServer,
@@ -169,8 +175,8 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		ServerMsgId:    m.ServerMsgId,
 		ConvId:         m.ConvId,
 		ClientMsgId:    m.ClientMsgId,
-		ClientTime:     m.ClientTime,
-		ServerTime:     m.ServerTime,
+		ClientTime:     utils.AnyToString(m.ClientTime),
+		ServerTime:     utils.AnyToString(m.ServerTime),
 		Sender:         m.Sender,
 		SenderInfo:     m.SenderInfo,
 		SenderConvInfo: m.SenderConvInfo,
@@ -181,7 +187,7 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		AtUsers:     m.AtUsers,
 		ContentType: m.ContentType,
 		Content:     m.Content,
-		Seq:         m.Seq,
+		Seq:         utils.AnyToString(m.Seq),
 		Options: &pb.MsgData_Options{
 			OfflinePush:      m.Options.OfflinePush,
 			StorageForServer: m.Options.StorageForServer,
@@ -208,8 +214,8 @@ func (m *Msg) SinglePb(seq int64, uid string) *pb.MsgData {
 	return &pb.MsgData{
 		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
 		ServerMsgId:    ServerMsgId(convId, seq),
-		ClientTime:     m.ClientTime,
-		ServerTime:     m.ServerTime,
+		ClientTime:     utils.AnyToString(m.ClientTime),
+		ServerTime:     utils.AnyToString(m.ServerTime),
 		Sender:         m.Sender,
 		SenderInfo:     m.SenderInfo,
 		SenderConvInfo: m.SenderConvInfo,
@@ -218,7 +224,7 @@ func (m *Msg) SinglePb(seq int64, uid string) *pb.MsgData {
 		AtUsers:        m.AtUsers,
 		ContentType:    m.ContentType,
 		Content:        m.Content,
-		Seq:            seq,
+		Seq:            utils.AnyToString(seq),
 		Options: &pb.MsgData_Options{
 			OfflinePush:      m.Options.OfflinePush,
 			StorageForServer: m.Options.StorageForServer,
@@ -241,8 +247,8 @@ func (m *Msg) GroupPb(seq int64, groupId string) *pb.MsgData {
 	return &pb.MsgData{
 		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
 		ServerMsgId:    ServerMsgId(convId, seq),
-		ClientTime:     m.ClientTime,
-		ServerTime:     m.ServerTime,
+		ClientTime:     utils.AnyToString(m.ClientTime),
+		ServerTime:     utils.AnyToString(m.ServerTime),
 		Sender:         m.Sender,
 		SenderInfo:     m.SenderInfo,
 		SenderConvInfo: m.SenderConvInfo,
@@ -251,7 +257,7 @@ func (m *Msg) GroupPb(seq int64, groupId string) *pb.MsgData {
 		AtUsers:        m.AtUsers,
 		ContentType:    m.ContentType,
 		Content:        m.Content,
-		Seq:            seq,
+		Seq:            utils.AnyToString(seq),
 		Options: &pb.MsgData_Options{
 			OfflinePush:      m.Options.OfflinePush,
 			StorageForServer: m.Options.StorageForServer,
@@ -324,4 +330,65 @@ func ParseSingleConvId(convId string) (string, string) {
 		return arr[0], arr[1]
 	}
 	return "", ""
+}
+
+func MsgFromMongo(
+	ctx context.Context,
+	rc *zedis.Redis,
+	collection *qmgo.Collection,
+	ids []string,
+) (msgList []*Msg, err error) {
+	if len(ids) == 0 {
+		return make([]*Msg, 0), nil
+	}
+	xtrace.StartFuncSpan(ctx, "FindMsgByIds", func(ctx context.Context) {
+		err = collection.Find(ctx, bson.M{
+			"_id": bson.M{"$in": ids},
+		}).All(&msgList)
+	})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("GetSingleMsgListBySeq failed, err: %v", err)
+		return nil, err
+	}
+	msgMap := make(map[string]*Msg)
+	for _, msg := range msgList {
+		msgMap[msg.ServerMsgId] = msg
+		// 存入redis
+		redisMsg, _ := json.Marshal(msg)
+		err = rc.SetexCtx(ctx, rediskey.MsgKey(msg.ServerMsgId), string(redisMsg), msg.ExpireSeconds())
+		if err != nil {
+			logx.WithContext(ctx).Errorf("redis Setex error: %v", err)
+			continue
+		}
+	}
+	var notFoundIds []string
+	for _, id := range ids {
+		if _, ok := msgMap[id]; !ok {
+			notFoundIds = append(notFoundIds, id)
+		}
+	}
+	if len(notFoundIds) > 0 {
+		// 占位符写入redis
+		for _, id := range notFoundIds {
+			err = rc.SetexCtx(ctx, rediskey.MsgKey(id), xredis.NotFound, xredis.ExpireMinutes(5))
+			if err != nil {
+				logx.WithContext(ctx).Errorf("redis Setex error: %v", err)
+				continue
+			}
+		}
+	}
+	return msgList, nil
+}
+
+func FlushMsgCache(ctx context.Context, rc *zedis.Redis, ids []string) error {
+	var err error
+	if len(ids) > 0 {
+		xtrace.StartFuncSpan(ctx, "DeleteCache", func(ctx context.Context) {
+			redisKeys := utils.UpdateSlice(ids, func(v string) string {
+				return rediskey.MsgKey(v)
+			})
+			_, err = rc.DelCtx(ctx, redisKeys...)
+		})
+	}
+	return err
 }

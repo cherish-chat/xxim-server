@@ -1,0 +1,547 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+import "im.proto";
+enum GroupDisturbOpt {
+  // 接收消息但不提醒
+  DisturbReceive = 0;
+  // 收进群助手且不提醒
+  DisturbFold = 1;
+  // 屏蔽消息
+  DisturbBlock = 2;
+}
+enum GroupRole {
+  // 普通成员
+  NORMAL = 0;
+  // 群主
+  OWNER = 1;
+  // 管理员
+  ADMIN = 2;
+}
+//CreateGroupReq 创建群聊
+message CreateGroupReq {
+  Requester requester = 1;
+  // 拉人进群
+  repeated string members = 2;
+  // 群名称(可选参数)
+  optional string name = 3;
+  // 群头像(可选参数)
+  optional string avatar = 4;
+}
+
+//CreateGroupResp 创建群聊
+message CreateGroupResp {
+  CommonResp commonResp = 1;
+  // 群ID
+  optional string groupId = 2;
+}
+
+//GetGroupHomeReq 获取群聊首页
+message GetGroupHomeReq {
+  Requester requester = 1;
+  // 群ID
+  optional string groupId = 2;
+}
+
+//GetGroupHomeResp 获取群聊首页
+message GetGroupHomeResp {
+  CommonResp commonResp = 1;
+  // 群ID
+  string groupId = 2;
+  // 群名称
+  string name = 3;
+  // 群头像
+  string avatar = 4;
+  // 创建日期
+  string createdAt = 5;
+  // 成员人数
+  int32 memberCount = 6;
+  // 群介绍
+  string introduction = 7;
+  // 成员统计
+  message MemberStatistics {
+    // 统计标题
+    string title = 1;
+    // 人数
+    int32 count = 2;
+    // 占百分比
+    int32 percentage = 3;
+  }
+  repeated MemberStatistics memberStatistics = 21;
+}
+
+//InviteFriendToGroupReq 邀请好友进群
+message InviteFriendToGroupReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 好友ID
+  repeated string friendIds = 3;
+  optional string minSeq = 4; // 设置所有成员的最小seq
+}
+
+//InviteFriendToGroupResp 邀请好友进群
+message InviteFriendToGroupResp {
+  CommonResp commonResp = 1;
+}
+
+//CreateGroupNoticeReq 创建群公告
+message CreateGroupNoticeReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 公告标题
+  string title = 3;
+  // 公告内容
+  string content = 4;
+}
+
+//CreateGroupNoticeResp 创建群公告
+message CreateGroupNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteGroupNoticeReq 删除群公告
+message DeleteGroupNoticeReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 公告ID
+  string noticeId = 3;
+}
+
+//DeleteGroupNoticeResp 删除群公告
+message DeleteGroupNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+//EditGroupNoticeReq 编辑群公告
+message EditGroupNoticeReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 公告ID
+  string noticeId = 3;
+  // 公告标题
+  string title = 4;
+  // 公告内容
+  string content = 5;
+}
+
+//EditGroupNoticeResp 编辑群公告
+message EditGroupNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+//GetGroupNoticeListReq 获取群公告列表
+message GetGroupNoticeListReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 分页参数
+  optional Page page = 3;
+}
+
+message GroupNotice {
+  // 公告ID
+  string noticeId = 1;
+  // 公告标题
+  string title = 2;
+  // 公告内容
+  string content = 3;
+  // 创建日期
+  string createdAt = 4;
+}
+
+//GetGroupNoticeListResp 获取群公告列表
+message GetGroupNoticeListResp {
+  CommonResp commonResp = 1;
+  // 公告列表
+  repeated GroupNotice groupNotices = 2;
+}
+
+//SetGroupMemberInfoReq 设置群成员信息
+message SetGroupMemberInfoReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+  // 群内显示的昵称
+  optional string nickname = 4;
+  // 群聊的备注
+  optional string remark = 5;
+  // 置顶选项
+  optional bool top = 6;
+  // 免打扰选项
+  optional bool disturb = 11;
+  // 免打扰选项更多设置
+  GroupDisturbOpt disturbMore = 12;
+  // 聊天背景图
+  optional string chatBg = 13;
+}
+
+//SetGroupMemberInfoResp 设置群成员信息
+message SetGroupMemberInfoResp {
+  CommonResp commonResp = 1;
+}
+
+//GetGroupMemberInfoReq 获取群成员信息
+message GetGroupMemberInfoReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+}
+
+message GroupMemberInfo {
+  // 群id
+  string groupId = 1;
+  // 群成员id
+  string memberId = 2;
+  // 群内显示的昵称
+  string nickname = 3;
+  // 群聊的备注
+  string remark = 4;
+  // 置顶选项
+  bool top = 5;
+  // 免打扰选项
+  bool disturb = 6;
+  // 免打扰选项更多设置
+  GroupDisturbOpt disturbMore = 7;
+  // 聊天背景图
+  string chatBg = 8;
+}
+
+//GetGroupMemberInfoResp 获取群成员信息
+message GetGroupMemberInfoResp {
+  CommonResp commonResp = 1;
+  // 群成员信息
+  GroupMemberInfo groupMemberInfo = 2;
+}
+
+//EditGroupInfoReq 编辑群资料
+message EditGroupInfoReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群名称
+  optional string name = 3;
+  // 群头像
+  optional string avatar = 4;
+  // 群介绍
+  optional string introduction = 5;
+}
+
+//EditGroupInfoResp 编辑群资料
+message EditGroupInfoResp {
+  CommonResp commonResp = 1;
+}
+
+//SetGroupSettingReq 设置群设置
+message SetGroupSettingReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群设置
+  GroupSetting groupSetting = 3;
+}
+
+message GroupSetting {
+  // 发言频率限制
+  optional int32 speakLimit = 1;
+  // 成员权限选项
+  message MemberPermission {
+    // 群成员是否可以发起临时会话
+    bool canStartTempChat = 1;
+    // 群成员是否可以邀请好友进群
+    bool canInviteFriend = 2;
+    optional int32 inviteFriendHowVerify = 3; // 0:不需要验证 1:需要验证
+  }
+  // 新成员可见的历史消息条数
+  optional int32 historyMsgCount = 3;
+  // 是否开启匿名聊天
+  bool anonymousChat = 4;
+  // 申请加入群聊的方式
+  message JoinGroupOpt {
+    // 申请加入群聊的方式
+    enum Type {
+      // 需要验证
+      NEED_VERIFY = 0;
+      // 无需验证
+      DONT_NEED_VERIFY = 1;
+      // 需要邀请
+      NEED_INVITE = 2;
+      // 需要正确回答问题并验证
+      NEED_ANSWER_VERIFY = 3;
+      // 需要正确回答问题
+      NEED_ANSWER = 4;
+    }
+    // 申请加入群聊的方式
+    Type type = 1;
+    // 验证信息
+    string question = 3;
+    string answer = 4;
+  }
+  // 申请加入群聊的方式
+  JoinGroupOpt joinGroupOpt = 5;
+}
+
+//SetGroupSettingResp 设置群设置
+message SetGroupSettingResp {
+  CommonResp commonResp = 1;
+}
+
+//GetGroupSettingReq 获取群设置
+message GetGroupSettingReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+}
+
+//GetGroupSettingResp 获取群设置
+message GetGroupSettingResp {
+  CommonResp commonResp = 1;
+  // 群设置
+  GroupSetting groupSetting = 2;
+}
+
+//TransferGroupOwnerReq 转让群主
+message TransferGroupOwnerReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 新群主ID
+  string newOwner = 3;
+}
+
+//TransferGroupOwnerResp 转让群主
+message TransferGroupOwnerResp {
+  CommonResp commonResp = 1;
+}
+
+//SetGroupMemberRoleReq 设置群成员角色
+message SetGroupMemberRoleReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+  // 角色
+  GroupRole role = 4;
+}
+
+//SetGroupMemberRoleResp 设置群成员角色
+message SetGroupMemberRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//KickGroupMemberReq 踢出群成员
+message KickGroupMemberReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+}
+
+//KickGroupMemberResp 踢出群成员
+message KickGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//QuitGroupReq 退出群聊
+message QuitGroupReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+}
+
+//QuitGroupResp 退出群聊
+message QuitGroupResp {
+  CommonResp commonResp = 1;
+}
+
+//禁言群成员
+message BanGroupMemberReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+  // 禁言时长
+  int32 duration = 4;
+}
+
+//禁言群成员
+message BanGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//禁言全部群成员
+message BanAllGroupMemberReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 禁言时长
+  int32 duration = 3;
+}
+
+//禁言全部群成员
+message BanAllGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//解除禁言群成员
+message UnbanGroupMemberReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+}
+
+//解除禁言群成员
+message UnbanGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//解除禁言全部群成员
+message UnbanAllGroupMemberReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+}
+
+//解除禁言全部群成员
+message UnbanAllGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//GetGroupMemberListReq 获取群成员列表
+message GetGroupMemberListReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 分页
+  Page page = 3;
+}
+
+//GetGroupMemberListResp 获取群成员列表
+message GetGroupMemberListResp {
+  CommonResp commonResp = 1;
+  message GroupMember {}
+  // 群成员列表
+  repeated GroupMember groupMemberList = 2;
+}
+
+//DismissGroupReq 解散群聊
+message DismissGroupReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+}
+
+//DismissGroupResp 解散群聊
+message DismissGroupResp {
+  CommonResp commonResp = 1;
+}
+
+//SetGroupMsgNotifyOptReq 设置群消息通知选项
+message SetGroupMsgNotifyTypeReq {
+  Requester requester = 1;
+  // 群ID
+  string groupId = 2;
+  // 消息通知类型
+  MsgNotifyOpt opt = 3;
+}
+
+//SetGroupMsgNotifyOptResp 设置群消息通知选项
+message SetGroupMsgNotifyTypeResp {
+  CommonResp commonResp = 1;
+}
+
+//GetMyGroupListReq 获取我的群聊列表
+message GetMyGroupListReq {
+  Requester requester = 1;
+  // 分页
+  Page page = 2;
+  // 过滤
+  message Filter {
+    // 消息接收类型
+    // 是否过滤掉群助手
+    bool filterFold = 1;
+    // 是否过滤已屏蔽的群
+    bool filterShield = 2;
+  }
+  Filter filter = 3;
+  enum Opt {
+    // 默认
+    DEFAULT = 0;
+    // 只获取id
+    ONLY_ID = 1;
+  }
+  // 获取选项
+  Opt opt = 10;
+}
+
+//GetMyGroupListResp 获取我的群聊列表
+message GetMyGroupListResp {
+  CommonResp commonResp = 1;
+  message Group {}
+  // 群聊列表
+  map<string, Group> groupMap = 2;
+  // ids
+  repeated string ids = 3;
+}
+
+service groupService {
+  //CreateGroup 创建群聊
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
+  //GetGroupHome 获取群聊首页
+  rpc GetGroupHome(GetGroupHomeReq) returns (GetGroupHomeResp) {}
+  //InviteFriendToGroup 邀请好友加入群聊
+  rpc InviteFriendToGroup(InviteFriendToGroupReq) returns (InviteFriendToGroupResp) {}
+  //CreateGroupNotice 创建群公告
+  rpc CreateGroupNotice(CreateGroupNoticeReq) returns (CreateGroupNoticeResp) {}
+  //DeleteGroupNotice 删除群公告
+  rpc DeleteGroupNotice(DeleteGroupNoticeReq) returns (DeleteGroupNoticeResp) {}
+  //GetGroupNoticeList 获取群公告列表
+  rpc GetGroupNoticeList(GetGroupNoticeListReq) returns (GetGroupNoticeListResp) {}
+  //SetGroupMemberInfo 设置群成员信息
+  rpc SetGroupMemberInfo(SetGroupMemberInfoReq) returns (SetGroupMemberInfoResp) {}
+  //GetGroupMemberInfo 获取群成员信息
+  rpc GetGroupMemberInfo(GetGroupMemberInfoReq) returns (GetGroupMemberInfoResp) {}
+  //EditGroupInfo 编辑群信息
+  rpc EditGroupInfo(EditGroupInfoReq) returns (EditGroupInfoResp) {}
+  //SetGroupSetting 设置群设置
+  rpc SetGroupSetting(SetGroupSettingReq) returns (SetGroupSettingResp) {}
+  //GetGroupSetting 获取群设置
+  rpc GetGroupSetting(GetGroupSettingReq) returns (GetGroupSettingResp) {}
+  //TransferGroupOwner 转让群主
+  rpc TransferGroupOwner(TransferGroupOwnerReq) returns (TransferGroupOwnerResp) {}
+  //SetGroupMemberRole 设置群成员角色
+  rpc SetGroupMemberRole(SetGroupMemberRoleReq) returns (SetGroupMemberRoleResp) {}
+  //KickGroupMember 踢出群成员
+  rpc KickGroupMember(KickGroupMemberReq) returns (KickGroupMemberResp) {}
+  //QuitGroup 退出群聊
+  rpc QuitGroup(QuitGroupReq) returns (QuitGroupResp) {}
+  //BanGroupMember 禁言群成员
+  rpc BanGroupMember(BanGroupMemberReq) returns (BanGroupMemberResp) {}
+  //BanAllGroupMember 禁言全部群成员
+  rpc BanAllGroupMember(BanAllGroupMemberReq) returns (BanAllGroupMemberResp) {}
+  //UnbanGroupMember 解除禁言群成员
+  rpc UnbanGroupMember(UnbanGroupMemberReq) returns (UnbanGroupMemberResp) {}
+  //UnbanAllGroupMember 解除禁言全部群成员
+  rpc UnbanAllGroupMember(UnbanAllGroupMemberReq) returns (UnbanAllGroupMemberResp) {}
+  //GetGroupMemberList 获取群成员列表
+  rpc GetGroupMemberList(GetGroupMemberListReq) returns (GetGroupMemberListResp) {}
+  //DismissGroup 解散群聊
+  rpc DismissGroup(DismissGroupReq) returns (DismissGroupResp) {}
+  //SetGroupMsgNotifyType 设置群消息通知选项
+  rpc SetGroupMsgNotifyType(SetGroupMsgNotifyTypeReq) returns (SetGroupMsgNotifyTypeResp) {}
+  //GetMyGroupList 获取我的群聊列表
+  rpc GetMyGroupList(GetMyGroupListReq) returns (GetMyGroupListResp) {}
+}

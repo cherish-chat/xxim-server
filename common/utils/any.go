@@ -90,3 +90,45 @@ func UpdateSlice[T any](slice []T, update func(v T) T) []T {
 	}
 	return results
 }
+
+type HasId interface {
+	GetId() string
+}
+type HasIdSerializable interface {
+	HasId
+	Marshal() []byte
+}
+
+func Slice2Map[T HasId](t []T) map[string]T {
+	m := make(map[string]T)
+	for _, v := range t {
+		m[v.GetId()] = v
+	}
+	return m
+}
+
+func Slice2MapBytes[T HasIdSerializable](t []T) map[string][]byte {
+	m := make(map[string][]byte)
+	for _, v := range t {
+		m[v.GetId()] = v.Marshal()
+	}
+	return m
+}
+
+func AnyRandomInSlice[T any](slice []T, defaultValue T) T {
+	if len(slice) == 0 {
+		return defaultValue
+	}
+	return slice[RandomInt(0, len(slice))]
+}
+
+func SliceRemove[T any](slice []T, value T) []T {
+	var newSlice []T
+	for _, v := range slice {
+		if reflect.DeepEqual(v, value) {
+			continue
+		}
+		newSlice = append(newSlice, v)
+	}
+	return newSlice
+}

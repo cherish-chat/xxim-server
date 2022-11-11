@@ -57,3 +57,32 @@ func (s *MsgServiceServer) GetMsgListByConvId(ctx context.Context, in *pb.GetMsg
 	l := logic.NewGetMsgListByConvIdLogic(ctx, s.svcCtx)
 	return l.GetMsgListByConvId(in)
 }
+
+// BatchSetMinSeq 批量设置用户某会话的minseq
+func (s *MsgServiceServer) BatchSetMinSeq(ctx context.Context, in *pb.BatchSetMinSeqReq) (*pb.BatchSetMinSeqResp, error) {
+	l := logic.NewBatchSetMinSeqLogic(ctx, s.svcCtx)
+	return l.BatchSetMinSeq(in)
+}
+
+// BatchGetConvSeq 批量获取会话的seq
+func (s *MsgServiceServer) BatchGetConvSeq(ctx context.Context, in *pb.BatchGetConvSeqReq) (*pb.BatchGetConvSeqResp, error) {
+	l := logic.NewBatchGetConvSeqLogic(ctx, s.svcCtx)
+	return l.BatchGetConvSeq(in)
+}
+
+//  conn hook
+func (s *MsgServiceServer) AfterConnect(ctx context.Context, in *pb.AfterConnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterConnectLogic(ctx, s.svcCtx)
+	return l.AfterConnect(in)
+}
+
+func (s *MsgServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisconnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterDisconnectLogic(ctx, s.svcCtx)
+	return l.AfterDisconnect(in)
+}
+
+// GetConvSubscribers 获取一个会话里所有的消息订阅者
+func (s *MsgServiceServer) GetConvSubscribers(ctx context.Context, in *pb.GetConvSubscribersReq) (*pb.GetConvSubscribersResp, error) {
+	l := logic.NewGetConvSubscribersLogic(ctx, s.svcCtx)
+	return l.GetConvSubscribers(in)
+}

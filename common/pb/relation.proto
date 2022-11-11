@@ -1,0 +1,218 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+import "im.proto";
+import "user.proto";
+
+//A和BList是不是好友
+message AreFriendsReq {
+  Requester requester = 1;
+  string a = 2;
+  repeated string bList = 3;
+}
+
+message AreFriendsResp {
+  CommonResp commonResp = 1;
+  map<string, bool> friendList = 2;
+}
+
+//A和BList是不是有拉黑关系
+message AreBlackListReq {
+  Requester requester = 1;
+  enum Option {
+    Or = 0; // A拉黑B 或者 B拉黑A
+    And = 1; // A拉黑B 并且 B拉黑A
+    ABlackB = 2; // A拉黑B
+    BBlackA = 3; // B拉黑A
+  }
+  string a = 2;
+  repeated string bList = 3;
+}
+
+message AreBlackListResp {
+  CommonResp commonResp = 1;
+  map<string, bool> blackList = 2;
+}
+enum RequestAddFriendStatus {
+  // 未处理
+  Unhandled = 0;
+  // 已同意
+  Agreed = 1;
+  // 已拒绝
+  Refused = 2;
+}
+message RequestAddFriendExtra {
+  string userId = 1;
+  string content = 2;
+}
+//RequestAddFriendReq 请求添加好友
+message RequestAddFriendReq {
+  Requester requester = 1;
+  string to = 2;
+  // 附加消息
+  string message = 3;
+}
+
+message RequestAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//AcceptAddFriendReq 接受添加好友
+message AcceptAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  optional string requestId = 3; // 申请id
+}
+
+message AcceptAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//RejectAddFriendReq 拒绝添加好友
+message RejectAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  string requestId = 3; // 申请id
+  bool block = 4; // 是否拉黑
+}
+
+message RejectAddFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//GetFriendCountReq 获取好友总数
+message GetFriendCountReq {
+  Requester requester = 1;
+}
+
+message GetFriendCountResp {
+  CommonResp commonResp = 1;
+  int32 count = 2;
+}
+
+//拉黑用户
+message BlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message BlockUserResp {
+  CommonResp commonResp = 1;
+}
+
+//删除拉黑用户
+message DeleteBlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message DeleteBlockUserResp {
+  CommonResp commonResp = 1;
+}
+
+//解除好友关系
+message DeleteFriendReq {
+  Requester requester = 1;
+  string userId = 2;
+  bool block = 3; // 是否拉黑
+}
+
+message DeleteFriendResp {
+  CommonResp commonResp = 1;
+}
+
+//设置单聊设置
+message SetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+  // 置顶选项
+  optional bool top = 3;
+  // 单聊的备注
+  optional string remark = 4;
+  // 免打扰选项
+  optional bool disturb = 11;
+}
+
+message SetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+}
+
+//获取单聊设置
+message GetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message GetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+  // 置顶选项
+  bool top = 2;
+  // 单聊的备注
+  string remark = 3;
+  // 免打扰选项
+  bool disturb = 4;
+}
+
+//SetSingleMsgNotifyOptReq 设置单聊消息通知选项
+message SetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+  // 消息通知类型
+  MsgNotifyOpt opt = 3;
+}
+
+//SetSingleMsgNotifyOptResp 设置单聊消息通知选项
+message SetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+}
+
+//GetSingleMsgNotifyOptReq 获取单聊消息通知选项
+message GetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+}
+
+//GetSingleMsgNotifyOptResp 获取单聊消息通知选项
+message GetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+  // 消息通知类型
+  MsgNotifyOpt opt = 2;
+}
+
+//GetFriendListReq 获取好友列表
+message GetFriendListReq {
+  Requester requester = 1;
+  // 分页
+  Page page = 2;
+  enum Opt {
+    WithBaseInfo = 0; // 带用户的基本信息
+    OnlyId = 1; // 只有用户id
+  }
+  Opt opt = 10;
+}
+
+message GetFriendListResp {
+  CommonResp commonResp = 1;
+  repeated string ids = 2;
+  map<string, UserBaseInfo> userMap = 3;
+}
+
+service relationService {
+  rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
+  rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
+  rpc RequestAddFriend(RequestAddFriendReq) returns (RequestAddFriendResp) {}
+  rpc AcceptAddFriend(AcceptAddFriendReq) returns (AcceptAddFriendResp) {}
+  rpc RejectAddFriend(RejectAddFriendReq) returns (RejectAddFriendResp) {}
+  rpc GetFriendCount(GetFriendCountReq) returns (GetFriendCountResp) {}
+  rpc BlockUser(BlockUserReq) returns (BlockUserResp) {}
+  rpc DeleteBlockUser(DeleteBlockUserReq) returns (DeleteBlockUserResp) {}
+  rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
+  rpc SetSingleChatSetting(SetSingleChatSettingReq) returns (SetSingleChatSettingResp) {}
+  rpc SetSingleMsgNotifyOpt(SetSingleMsgNotifyOptReq) returns (SetSingleMsgNotifyOptResp) {}
+  rpc GetSingleChatSetting(GetSingleChatSettingReq) returns (GetSingleChatSettingResp) {}
+  rpc GetSingleMsgNotifyOpt(GetSingleMsgNotifyOptReq) returns (GetSingleMsgNotifyOptResp) {}
+  rpc GetFriendList(GetFriendListReq) returns (GetFriendListResp) {}
+}

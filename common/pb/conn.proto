@@ -46,6 +46,7 @@ message KickUserConnResp {
 
 enum PushEvent {
   PushMsgDataList = 0;
+  RequestAddFriend = 1;
 }
 
 message PushBody {
@@ -65,6 +66,17 @@ message SendMsgResp {
   repeated ConnParam successConnParams = 2;
   // 发送失败的连接
   repeated ConnParam failedConnParams = 3;
+}
+
+message AfterConnectReq {
+  ConnParam connParam = 1;
+  string connectedAt = 2;
+}
+
+message AfterDisconnectReq {
+  ConnParam connParam = 1;
+  string connectedAt = 2;
+  string disconnectedAt = 3;
 }
 
 service connService {

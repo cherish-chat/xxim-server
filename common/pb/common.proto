@@ -29,9 +29,9 @@ message Requester {
   string ua = 5;
   string osVersion = 6;
   string platform = 7;
-  string device = 8;
-  string deviceModel = 9;
-  string deviceId = 10;
+  string deviceModel = 8;
+  string deviceId = 9;
+  string language = 10; // 系统语言：zh-CN en-US
 }
 
 enum ConvType {
@@ -57,4 +57,16 @@ enum ContentType {
   COMMAND = 20; // 命令
 
   CUSTOM = 100; // 自定义消息
+}
+
+message IpRegion {
+  string country = 1;
+  string province = 2;
+  string city = 3;
+  string isp = 4;
+}
+
+message Page {
+  int32 page = 1;
+  int32 size = 2;
 }

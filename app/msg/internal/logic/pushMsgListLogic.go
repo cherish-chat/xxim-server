@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"google.golang.org/protobuf/proto"
 	"time"
@@ -30,12 +31,16 @@ func NewPushMsgListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PushM
 func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, error) {
 	var convIdMsgListMap = make(map[string]*pb.MsgDataList)
 	for _, msgData := range in.MsgDataList {
-		if msgData.Receiver.UserId != nil {
-			msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
-		} else {
-			msgData.ConvId = *msgData.Receiver.GroupId
+		if msgData.ConvId == "" {
+			if msgData.Receiver.UserId != nil {
+				msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
+			} else {
+				msgData.ConvId = *msgData.Receiver.GroupId
+			}
 		}
-		msgData.ServerTime = time.Now().UnixMilli()
+		if utils.AnyToInt64(msgData.ServerTime) == 0 {
+			msgData.ServerTime = utils.AnyToString(time.Now().UnixMilli())
+		}
 		if msgDataList, ok := convIdMsgListMap[msgData.ConvId]; ok {
 			msgDataList.MsgDataList = append(msgDataList.MsgDataList, msgData)
 		} else {
@@ -54,34 +59,42 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	for convId := range listMap {
 		convIds = append(convIds, convId)
 	}
-	var convSubscribers = make(map[string]*MockSubscribers)
+	var convSubscribers = make(map[string]*pb.GetConvSubscribersResp)
 	convUserIds := make(map[string][]string)
 	xtrace.StartFuncSpan(l.ctx, "BatchGetConvSubscribers", func(ctx context.Context) {
-		convSubscribers = mockBatchGetConvSubscribers(convIds)
+		for _, convId := range convIds {
+			subscribers, err := NewGetConvSubscribersLogic(ctx, l.svcCtx).GetConvSubscribers(&pb.GetConvSubscribersReq{
+				ConvId:         convId,
+				LastActiveTime: utils.AnyPtr(time.Now().Add(-time.Minute * 15).UnixMilli()),
+			})
+			if err != nil {
+				l.Logger.Errorf("BatchGetConvSubscribers err: %v", err)
+				continue
+			}
+			if len(subscribers.UserIdList) > 0 {
+				convSubscribers[convId] = subscribers
+				convUserIds[convId] = subscribers.UserIdList
+			}
+		}
 		for convId, subscribers := range convSubscribers {
-			for _, subscriber := range subscribers.Subscribers {
+			for _, subscriber := range subscribers.UserIdList {
 				if _, ok := convUserIds[convId]; !ok {
 					convUserIds[convId] = make([]string, 0)
 				}
-				convUserIds[convId] = append(convUserIds[convId], subscriber.UserId)
+				convUserIds[convId] = append(convUserIds[convId], subscriber)
 			}
 		}
 	})
 	for convId, msgDataList := range listMap {
 		if userIds, ok := convUserIds[convId]; ok {
 			msgDataListBytes, _ := proto.Marshal(msgDataList)
-			for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-				_, err := pod.SendMsg(l.ctx, &pb.SendMsgReq{
-					GetUserConnReq: &pb.GetUserConnReq{
-						UserIds: userIds,
-					},
-					Event: pb.PushEvent_PushMsgDataList,
-					Data:  msgDataListBytes,
-				})
-				if err != nil {
-					l.Errorf("SendMsg error: %v", err)
-				}
-			}
+			_, _ = l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
+				GetUserConnReq: &pb.GetUserConnReq{
+					UserIds: userIds,
+				},
+				Event: pb.PushEvent_PushMsgDataList,
+				Data:  msgDataListBytes,
+			})
 		}
 	}
 }

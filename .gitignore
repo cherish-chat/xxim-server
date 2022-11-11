@@ -28,3 +28,5 @@
 
 *local/
 *local_*/
+
+*.xdb

@@ -94,7 +94,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 					Headers:     param.Headers,
 					PodIp:       l.svcCtx.PodIp,
 				},
-				ConnectedAt: c.ConnectedAt.UnixMilli(),
+				ConnectedAt: utils.AnyToString(c.ConnectedAt.UnixMilli()),
 			})
 			if err != nil {
 				// 是否是 context canceled
@@ -146,8 +146,8 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 					Headers:     c.ConnParam.Headers,
 					PodIp:       l.svcCtx.PodIp,
 				},
-				ConnectedAt:    c.ConnectedAt.UnixMilli(),
-				DisconnectedAt: time.Now().UnixMilli(),
+				ConnectedAt:    utils.AnyToString(c.ConnectedAt.UnixMilli()),
+				DisconnectedAt: utils.AnyToString(time.Now().UnixMilli()),
 			})
 			if err != nil {
 				// 是否是 context canceled
@@ -225,7 +225,12 @@ func (l *ConnLogic) KickUserConn(in *pb.KickUserConnReq) error {
 }
 
 func (l *ConnLogic) KickConn(c *types.UserConn) error {
-	return c.Conn.Close(1001, "kick")
+	err := c.Conn.Close(1001, "kick")
+	// 如果是 context deadline exceeded，说明连接已经断开了
+	if xerr.IsCanceled(err) {
+		return nil
+	}
+	return err
 }
 
 func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {

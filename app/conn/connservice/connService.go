@@ -13,15 +13,17 @@ import (
 )
 
 type (
-	ConnMQBody       = pb.ConnMQBody
-	ConnParam        = pb.ConnParam
-	GetUserConnReq   = pb.GetUserConnReq
-	GetUserConnResp  = pb.GetUserConnResp
-	KickUserConnReq  = pb.KickUserConnReq
-	KickUserConnResp = pb.KickUserConnResp
-	PushBody         = pb.PushBody
-	SendMsgReq       = pb.SendMsgReq
-	SendMsgResp      = pb.SendMsgResp
+	AfterConnectReq    = pb.AfterConnectReq
+	AfterDisconnectReq = pb.AfterDisconnectReq
+	ConnMQBody         = pb.ConnMQBody
+	ConnParam          = pb.ConnParam
+	GetUserConnReq     = pb.GetUserConnReq
+	GetUserConnResp    = pb.GetUserConnResp
+	KickUserConnReq    = pb.KickUserConnReq
+	KickUserConnResp   = pb.KickUserConnResp
+	PushBody           = pb.PushBody
+	SendMsgReq         = pb.SendMsgReq
+	SendMsgResp        = pb.SendMsgResp
 
 	ConnService interface {
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)

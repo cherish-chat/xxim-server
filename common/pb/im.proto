@@ -2,7 +2,6 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 import "common.proto";
-import "msg.proto";
 import "conn.proto";
 
 message ImMQBody {
@@ -23,15 +22,26 @@ message BeforeConnectResp {
   string msg = 2;
 }
 
-message AfterConnectReq {
-  ConnParam connParam = 1;
-  int64 connectedAt = 2;
+message GetUserLatestConnReq {
+  string userId = 1;
 }
 
-message AfterDisconnectReq {
-  ConnParam connParam = 1;
-  int64 connectedAt = 2;
-  int64 disconnectedAt = 3;
+message GetUserLatestConnResp {
+  string userId = 1;
+  string ip = 2;
+  IpRegion ipRegion = 3;
+  string connectedAt = 4;
+  string disconnectedAt = 5;
+  string platform = 6;
+  string deviceId = 7;
+}
+
+//MsgNotifyOpt 消息通知选项
+message MsgNotifyOpt {
+  bool preview = 1; // 是否预览
+  bool sound = 2; // 是否声音
+  string soundName = 3; // 声音名称
+  bool vibrate = 4; // 是否震动
 }
 
 service imService {
@@ -40,4 +50,6 @@ service imService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
+  rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
 }

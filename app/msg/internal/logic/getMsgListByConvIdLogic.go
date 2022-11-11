@@ -62,7 +62,7 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []*msgmodel.Msg, err error) {
 	msgs, err := l.fromRedis(ids)
 	if err != nil {
-		return MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), ids)
+		return msgmodel.MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), ids)
 	}
 	// 判断是否有缺失
 	msgMap := make(map[string]*msgmodel.Msg)
@@ -77,7 +77,7 @@ func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []
 	}
 	if len(notFoundIds) > 0 {
 		// 从mongo中获取
-		mongoMsgs, err := MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), notFoundIds)
+		mongoMsgs, err := msgmodel.MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), notFoundIds)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	// 组成想要查询的 id 列表
 	expectIds := make([]string, 0)
 	for _, seq := range in.SeqList {
-		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, seq))
+		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, utils.AnyToInt64(seq)))
 	}
 	// 查询
 	var msgList []*msgmodel.Msg
@@ -208,19 +208,14 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	} else {
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "PushMsgList", func(ctx context.Context) {
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: resp})
-			for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-				_, err := pod.SendMsg(ctx, &pb.SendMsgReq{
-					GetUserConnReq: &pb.GetUserConnReq{
-						UserIds: []string{in.Requester.Id},
-						Devices: []string{in.Requester.Device},
-					},
-					Event: pb.PushEvent_PushMsgDataList,
-					Data:  msgDataListBytes,
-				})
-				if err != nil {
-					l.Errorf("SendMsg error: %v", err)
-				}
-			}
+			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{
+				GetUserConnReq: &pb.GetUserConnReq{
+					UserIds: []string{in.Requester.Id},
+					Devices: []string{in.Requester.DeviceId},
+				},
+				Event: pb.PushEvent_PushMsgDataList,
+				Data:  msgDataListBytes,
+			})
 		}, nil)
 		return &pb.GetMsgListResp{}, nil
 	}

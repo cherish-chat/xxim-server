@@ -5,8 +5,6 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	opts "github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/mr"
@@ -59,14 +57,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 		}
 	})
 	// 删除这些消息的缓存
-	if len(updateCacheIds) > 0 {
-		xtrace.StartFuncSpan(l.ctx, "DeleteCache", func(ctx context.Context) {
-			redisKeys := utils.UpdateSlice(updateCacheIds, func(v string) string {
-				return rediskey.MsgKey(v)
-			})
-			_, err = l.svcCtx.Redis().DelCtx(ctx, redisKeys...)
-		})
-	}
+	err = msgmodel.FlushMsgCache(l.ctx, l.svcCtx.Redis(), updateCacheIds)
 	if err != nil {
 		l.Errorf("InsertMsgDataList.DeleteCache err:%v", err)
 		return respMsgDataList, err
@@ -139,7 +130,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		MsgFromMongo(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), updateCacheIds)
+		msgmodel.MsgFromMongo(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), updateCacheIds)
 	}, nil)
 	return respMsgDataList, nil
 }

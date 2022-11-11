@@ -27,6 +27,8 @@ type ImServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 	GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
+	GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
+	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 }
 
 type imServiceClient struct {
@@ -82,6 +84,24 @@ func (c *imServiceClient) GetUserConn(ctx context.Context, in *GetUserConnReq, o
 	return out, nil
 }
 
+func (c *imServiceClient) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
+	out := new(GetUserLatestConnResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/GetUserLatestConn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *imServiceClient) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
+	out := new(SendMsgResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/SendMsg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImServiceServer is the server API for ImService service.
 // All implementations must embed UnimplementedImServiceServer
 // for forward compatibility
@@ -91,6 +111,8 @@ type ImServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	KickUserConn(context.Context, *KickUserConnReq) (*KickUserConnResp, error)
 	GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error)
+	GetUserLatestConn(context.Context, *GetUserLatestConnReq) (*GetUserLatestConnResp, error)
+	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
 	mustEmbedUnimplementedImServiceServer()
 }
 
@@ -112,6 +134,12 @@ func (UnimplementedImServiceServer) KickUserConn(context.Context, *KickUserConnR
 }
 func (UnimplementedImServiceServer) GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserConn not implemented")
+}
+func (UnimplementedImServiceServer) GetUserLatestConn(context.Context, *GetUserLatestConnReq) (*GetUserLatestConnResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserLatestConn not implemented")
+}
+func (UnimplementedImServiceServer) SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMsg not implemented")
 }
 func (UnimplementedImServiceServer) mustEmbedUnimplementedImServiceServer() {}
 
@@ -216,6 +244,42 @@ func _ImService_GetUserConn_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ImService_GetUserLatestConn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserLatestConnReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).GetUserLatestConn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/GetUserLatestConn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).GetUserLatestConn(ctx, req.(*GetUserLatestConnReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ImService_SendMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).SendMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/SendMsg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).SendMsg(ctx, req.(*SendMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ImService_ServiceDesc is the grpc.ServiceDesc for ImService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +306,14 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserConn",
 			Handler:    _ImService_GetUserConn_Handler,
+		},
+		{
+			MethodName: "GetUserLatestConn",
+			Handler:    _ImService_GetUserLatestConn_Handler,
+		},
+		{
+			MethodName: "SendMsg",
+			Handler:    _ImService_SendMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
