@@ -11,4 +11,5 @@ type Config struct {
 	ConnRpc      connservice.ConnPodsConfig
 	Mongo        xmgo.Config
 	Ip2RegionUrl string `json:",default=https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb"`
+	MsgRpc       zrpc.RpcClientConf
 }

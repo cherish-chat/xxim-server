@@ -13,13 +13,12 @@ import (
 )
 
 type (
-	AfterConnectReq       = pb.AfterConnectReq
-	AfterDisconnectReq    = pb.AfterDisconnectReq
 	BeforeConnectReq      = pb.BeforeConnectReq
 	BeforeConnectResp     = pb.BeforeConnectResp
 	GetUserLatestConnReq  = pb.GetUserLatestConnReq
 	GetUserLatestConnResp = pb.GetUserLatestConnResp
 	ImMQBody              = pb.ImMQBody
+	MsgNotifyOpt          = pb.MsgNotifyOpt
 
 	ImService interface {
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)

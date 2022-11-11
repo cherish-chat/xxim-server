@@ -9,3 +9,5 @@ type GetUserConnReq = pb.GetUserConnReq
 type GetUserConnResp = pb.GetUserConnResp
 type SendMsgReq = pb.SendMsgReq
 type SendMsgResp = pb.SendMsgResp
+type AfterConnectReq = pb.AfterConnectReq
+type AfterDisconnectReq = pb.AfterDisconnectReq
