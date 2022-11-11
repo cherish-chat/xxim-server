@@ -66,3 +66,28 @@ func (s *RelationServiceServer) DeleteFriend(ctx context.Context, in *pb.DeleteF
 	l := logic.NewDeleteFriendLogic(ctx, s.svcCtx)
 	return l.DeleteFriend(in)
 }
+
+func (s *RelationServiceServer) SetSingleChatSetting(ctx context.Context, in *pb.SetSingleChatSettingReq) (*pb.SetSingleChatSettingResp, error) {
+	l := logic.NewSetSingleChatSettingLogic(ctx, s.svcCtx)
+	return l.SetSingleChatSetting(in)
+}
+
+func (s *RelationServiceServer) SetSingleMsgNotifyOpt(ctx context.Context, in *pb.SetSingleMsgNotifyOptReq) (*pb.SetSingleMsgNotifyOptResp, error) {
+	l := logic.NewSetSingleMsgNotifyOptLogic(ctx, s.svcCtx)
+	return l.SetSingleMsgNotifyOpt(in)
+}
+
+func (s *RelationServiceServer) GetSingleChatSetting(ctx context.Context, in *pb.GetSingleChatSettingReq) (*pb.GetSingleChatSettingResp, error) {
+	l := logic.NewGetSingleChatSettingLogic(ctx, s.svcCtx)
+	return l.GetSingleChatSetting(in)
+}
+
+func (s *RelationServiceServer) GetSingleMsgNotifyOpt(ctx context.Context, in *pb.GetSingleMsgNotifyOptReq) (*pb.GetSingleMsgNotifyOptResp, error) {
+	l := logic.NewGetSingleMsgNotifyOptLogic(ctx, s.svcCtx)
+	return l.GetSingleMsgNotifyOpt(in)
+}
+
+func (s *RelationServiceServer) GetFriendList(ctx context.Context, in *pb.GetFriendListReq) (*pb.GetFriendListResp, error) {
+	l := logic.NewGetFriendListLogic(ctx, s.svcCtx)
+	return l.GetFriendList(in)
+}

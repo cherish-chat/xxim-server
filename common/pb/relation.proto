@@ -2,6 +2,8 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 import "common.proto";
+import "im.proto";
+import "user.proto";
 
 //A和BList是不是好友
 message AreFriendsReq {
@@ -119,6 +121,85 @@ message DeleteFriendReq {
 message DeleteFriendResp {
   CommonResp commonResp = 1;
 }
+
+//设置单聊设置
+message SetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+  // 置顶选项
+  optional bool top = 3;
+  // 单聊的备注
+  optional string remark = 4;
+  // 免打扰选项
+  optional bool disturb = 11;
+}
+
+message SetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+}
+
+//获取单聊设置
+message GetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+
+message GetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+  // 置顶选项
+  bool top = 2;
+  // 单聊的备注
+  string remark = 3;
+  // 免打扰选项
+  bool disturb = 4;
+}
+
+//SetSingleMsgNotifyOptReq 设置单聊消息通知选项
+message SetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+  // 消息通知类型
+  MsgNotifyOpt opt = 3;
+}
+
+//SetSingleMsgNotifyOptResp 设置单聊消息通知选项
+message SetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+}
+
+//GetSingleMsgNotifyOptReq 获取单聊消息通知选项
+message GetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+}
+
+//GetSingleMsgNotifyOptResp 获取单聊消息通知选项
+message GetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+  // 消息通知类型
+  MsgNotifyOpt opt = 2;
+}
+
+//GetFriendListReq 获取好友列表
+message GetFriendListReq {
+  Requester requester = 1;
+  // 分页
+  Page page = 2;
+  enum Opt {
+    WithBaseInfo = 0; // 带用户的基本信息
+    OnlyId = 1; // 只有用户id
+  }
+  Opt opt = 10;
+}
+
+message GetFriendListResp {
+  CommonResp commonResp = 1;
+  repeated string ids = 2;
+  map<string, UserBaseInfo> userMap = 3;
+}
+
 service relationService {
   rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
   rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
@@ -129,4 +210,9 @@ service relationService {
   rpc BlockUser(BlockUserReq) returns (BlockUserResp) {}
   rpc DeleteBlockUser(DeleteBlockUserReq) returns (DeleteBlockUserResp) {}
   rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
+  rpc SetSingleChatSetting(SetSingleChatSettingReq) returns (SetSingleChatSettingResp) {}
+  rpc SetSingleMsgNotifyOpt(SetSingleMsgNotifyOptReq) returns (SetSingleMsgNotifyOptResp) {}
+  rpc GetSingleChatSetting(GetSingleChatSettingReq) returns (GetSingleChatSettingResp) {}
+  rpc GetSingleMsgNotifyOpt(GetSingleMsgNotifyOptReq) returns (GetSingleMsgNotifyOptResp) {}
+  rpc GetFriendList(GetFriendListReq) returns (GetFriendListResp) {}
 }

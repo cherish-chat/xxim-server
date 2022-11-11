@@ -13,25 +13,35 @@ import (
 )
 
 type (
-	AcceptAddFriendReq    = pb.AcceptAddFriendReq
-	AcceptAddFriendResp   = pb.AcceptAddFriendResp
-	AreBlackListReq       = pb.AreBlackListReq
-	AreBlackListResp      = pb.AreBlackListResp
-	AreFriendsReq         = pb.AreFriendsReq
-	AreFriendsResp        = pb.AreFriendsResp
-	BlockUserReq          = pb.BlockUserReq
-	BlockUserResp         = pb.BlockUserResp
-	DeleteBlockUserReq    = pb.DeleteBlockUserReq
-	DeleteBlockUserResp   = pb.DeleteBlockUserResp
-	DeleteFriendReq       = pb.DeleteFriendReq
-	DeleteFriendResp      = pb.DeleteFriendResp
-	GetFriendCountReq     = pb.GetFriendCountReq
-	GetFriendCountResp    = pb.GetFriendCountResp
-	RejectAddFriendReq    = pb.RejectAddFriendReq
-	RejectAddFriendResp   = pb.RejectAddFriendResp
-	RequestAddFriendExtra = pb.RequestAddFriendExtra
-	RequestAddFriendReq   = pb.RequestAddFriendReq
-	RequestAddFriendResp  = pb.RequestAddFriendResp
+	AcceptAddFriendReq        = pb.AcceptAddFriendReq
+	AcceptAddFriendResp       = pb.AcceptAddFriendResp
+	AreBlackListReq           = pb.AreBlackListReq
+	AreBlackListResp          = pb.AreBlackListResp
+	AreFriendsReq             = pb.AreFriendsReq
+	AreFriendsResp            = pb.AreFriendsResp
+	BlockUserReq              = pb.BlockUserReq
+	BlockUserResp             = pb.BlockUserResp
+	DeleteBlockUserReq        = pb.DeleteBlockUserReq
+	DeleteBlockUserResp       = pb.DeleteBlockUserResp
+	DeleteFriendReq           = pb.DeleteFriendReq
+	DeleteFriendResp          = pb.DeleteFriendResp
+	GetFriendCountReq         = pb.GetFriendCountReq
+	GetFriendCountResp        = pb.GetFriendCountResp
+	GetFriendListReq          = pb.GetFriendListReq
+	GetFriendListResp         = pb.GetFriendListResp
+	GetSingleChatSettingReq   = pb.GetSingleChatSettingReq
+	GetSingleChatSettingResp  = pb.GetSingleChatSettingResp
+	GetSingleMsgNotifyOptReq  = pb.GetSingleMsgNotifyOptReq
+	GetSingleMsgNotifyOptResp = pb.GetSingleMsgNotifyOptResp
+	RejectAddFriendReq        = pb.RejectAddFriendReq
+	RejectAddFriendResp       = pb.RejectAddFriendResp
+	RequestAddFriendExtra     = pb.RequestAddFriendExtra
+	RequestAddFriendReq       = pb.RequestAddFriendReq
+	RequestAddFriendResp      = pb.RequestAddFriendResp
+	SetSingleChatSettingReq   = pb.SetSingleChatSettingReq
+	SetSingleChatSettingResp  = pb.SetSingleChatSettingResp
+	SetSingleMsgNotifyOptReq  = pb.SetSingleMsgNotifyOptReq
+	SetSingleMsgNotifyOptResp = pb.SetSingleMsgNotifyOptResp
 
 	RelationService interface {
 		AreFriends(ctx context.Context, in *AreFriendsReq, opts ...grpc.CallOption) (*AreFriendsResp, error)
@@ -43,6 +53,11 @@ type (
 		BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
 		DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
 		DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
+		SetSingleChatSetting(ctx context.Context, in *SetSingleChatSettingReq, opts ...grpc.CallOption) (*SetSingleChatSettingResp, error)
+		SetSingleMsgNotifyOpt(ctx context.Context, in *SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*SetSingleMsgNotifyOptResp, error)
+		GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error)
+		GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error)
+		GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 	}
 
 	defaultRelationService struct {
@@ -99,4 +114,29 @@ func (m *defaultRelationService) DeleteBlockUser(ctx context.Context, in *Delete
 func (m *defaultRelationService) DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error) {
 	client := pb.NewRelationServiceClient(m.cli.Conn())
 	return client.DeleteFriend(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) SetSingleChatSetting(ctx context.Context, in *SetSingleChatSettingReq, opts ...grpc.CallOption) (*SetSingleChatSettingResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.SetSingleChatSetting(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) SetSingleMsgNotifyOpt(ctx context.Context, in *SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*SetSingleMsgNotifyOptResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.SetSingleMsgNotifyOpt(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.GetSingleChatSetting(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.GetSingleMsgNotifyOpt(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.GetFriendList(ctx, in, opts...)
 }
