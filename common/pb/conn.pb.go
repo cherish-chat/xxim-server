@@ -665,6 +665,124 @@ func (x *SendMsgResp) GetFailedConnParams() []*ConnParam {
 	return nil
 }
 
+type AfterConnectReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConnParam   *ConnParam `protobuf:"bytes,1,opt,name=connParam,proto3" json:"connParam"`
+	ConnectedAt string     `protobuf:"bytes,2,opt,name=connectedAt,proto3" json:"connectedAt"`
+}
+
+func (x *AfterConnectReq) Reset() {
+	*x = AfterConnectReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_conn_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AfterConnectReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AfterConnectReq) ProtoMessage() {}
+
+func (x *AfterConnectReq) ProtoReflect() protoreflect.Message {
+	mi := &file_conn_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AfterConnectReq.ProtoReflect.Descriptor instead.
+func (*AfterConnectReq) Descriptor() ([]byte, []int) {
+	return file_conn_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AfterConnectReq) GetConnParam() *ConnParam {
+	if x != nil {
+		return x.ConnParam
+	}
+	return nil
+}
+
+func (x *AfterConnectReq) GetConnectedAt() string {
+	if x != nil {
+		return x.ConnectedAt
+	}
+	return ""
+}
+
+type AfterDisconnectReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConnParam      *ConnParam `protobuf:"bytes,1,opt,name=connParam,proto3" json:"connParam"`
+	ConnectedAt    string     `protobuf:"bytes,2,opt,name=connectedAt,proto3" json:"connectedAt"`
+	DisconnectedAt string     `protobuf:"bytes,3,opt,name=disconnectedAt,proto3" json:"disconnectedAt"`
+}
+
+func (x *AfterDisconnectReq) Reset() {
+	*x = AfterDisconnectReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_conn_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AfterDisconnectReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AfterDisconnectReq) ProtoMessage() {}
+
+func (x *AfterDisconnectReq) ProtoReflect() protoreflect.Message {
+	mi := &file_conn_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AfterDisconnectReq.ProtoReflect.Descriptor instead.
+func (*AfterDisconnectReq) Descriptor() ([]byte, []int) {
+	return file_conn_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *AfterDisconnectReq) GetConnParam() *ConnParam {
+	if x != nil {
+		return x.ConnParam
+	}
+	return nil
+}
+
+func (x *AfterDisconnectReq) GetConnectedAt() string {
+	if x != nil {
+		return x.ConnectedAt
+	}
+	return ""
+}
+
+func (x *AfterDisconnectReq) GetDisconnectedAt() string {
+	if x != nil {
+		return x.DisconnectedAt
+	}
+	return ""
+}
+
 var File_conn_proto protoreflect.FileDescriptor
 
 var file_conn_proto_rawDesc = []byte{
@@ -741,7 +859,22 @@ var file_conn_proto_rawDesc = []byte{
 	0x73, 0x12, 0x39, 0x0a, 0x10, 0x66, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x43, 0x6f, 0x6e, 0x6e, 0x50,
 	0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62,
 	0x2e, 0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x52, 0x10, 0x66, 0x61, 0x69, 0x6c,
-	0x65, 0x64, 0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x2a, 0x36, 0x0a, 0x09,
+	0x65, 0x64, 0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x22, 0x60, 0x0a, 0x0f,
+	0x41, 0x66, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x52, 0x65, 0x71, 0x12,
+	0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61,
+	0x6d, 0x52, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x12, 0x20, 0x0a, 0x0b,
+	0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x8b,
+	0x01, 0x0a, 0x12, 0x41, 0x66, 0x74, 0x65, 0x72, 0x44, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65,
+	0x63, 0x74, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72,
+	0x61, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f,
+	0x6e, 0x6e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x52, 0x09, 0x63, 0x6f, 0x6e, 0x6e, 0x50, 0x61, 0x72,
+	0x61, 0x6d, 0x12, 0x20, 0x0a, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41,
+	0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74,
+	0x65, 0x64, 0x41, 0x74, 0x12, 0x26, 0x0a, 0x0e, 0x64, 0x69, 0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65,
+	0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x64, 0x69,
+	0x73, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x2a, 0x36, 0x0a, 0x09,
 	0x50, 0x75, 0x73, 0x68, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x13, 0x0a, 0x0f, 0x50, 0x75, 0x73,
 	0x68, 0x4d, 0x73, 0x67, 0x44, 0x61, 0x74, 0x61, 0x4c, 0x69, 0x73, 0x74, 0x10, 0x00, 0x12, 0x14,
 	0x0a, 0x10, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x41, 0x64, 0x64, 0x46, 0x72, 0x69, 0x65,
@@ -773,46 +906,50 @@ func file_conn_proto_rawDescGZIP() []byte {
 }
 
 var file_conn_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_conn_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_conn_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_conn_proto_goTypes = []interface{}{
-	(PushEvent)(0),           // 0: pb.PushEvent
-	(ConnMQBody_Event)(0),    // 1: pb.ConnMQBody.Event
-	(*ConnMQBody)(nil),       // 2: pb.ConnMQBody
-	(*ConnParam)(nil),        // 3: pb.ConnParam
-	(*GetUserConnReq)(nil),   // 4: pb.GetUserConnReq
-	(*GetUserConnResp)(nil),  // 5: pb.GetUserConnResp
-	(*KickUserConnReq)(nil),  // 6: pb.KickUserConnReq
-	(*KickUserConnResp)(nil), // 7: pb.KickUserConnResp
-	(*PushBody)(nil),         // 8: pb.PushBody
-	(*SendMsgReq)(nil),       // 9: pb.SendMsgReq
-	(*SendMsgResp)(nil),      // 10: pb.SendMsgResp
-	nil,                      // 11: pb.ConnParam.HeadersEntry
-	(*CommonResp)(nil),       // 12: pb.CommonResp
+	(PushEvent)(0),             // 0: pb.PushEvent
+	(ConnMQBody_Event)(0),      // 1: pb.ConnMQBody.Event
+	(*ConnMQBody)(nil),         // 2: pb.ConnMQBody
+	(*ConnParam)(nil),          // 3: pb.ConnParam
+	(*GetUserConnReq)(nil),     // 4: pb.GetUserConnReq
+	(*GetUserConnResp)(nil),    // 5: pb.GetUserConnResp
+	(*KickUserConnReq)(nil),    // 6: pb.KickUserConnReq
+	(*KickUserConnResp)(nil),   // 7: pb.KickUserConnResp
+	(*PushBody)(nil),           // 8: pb.PushBody
+	(*SendMsgReq)(nil),         // 9: pb.SendMsgReq
+	(*SendMsgResp)(nil),        // 10: pb.SendMsgResp
+	(*AfterConnectReq)(nil),    // 11: pb.AfterConnectReq
+	(*AfterDisconnectReq)(nil), // 12: pb.AfterDisconnectReq
+	nil,                        // 13: pb.ConnParam.HeadersEntry
+	(*CommonResp)(nil),         // 14: pb.CommonResp
 }
 var file_conn_proto_depIdxs = []int32{
 	1,  // 0: pb.ConnMQBody.event:type_name -> pb.ConnMQBody.Event
-	11, // 1: pb.ConnParam.headers:type_name -> pb.ConnParam.HeadersEntry
-	12, // 2: pb.GetUserConnResp.commonResp:type_name -> pb.CommonResp
+	13, // 1: pb.ConnParam.headers:type_name -> pb.ConnParam.HeadersEntry
+	14, // 2: pb.GetUserConnResp.commonResp:type_name -> pb.CommonResp
 	3,  // 3: pb.GetUserConnResp.connParams:type_name -> pb.ConnParam
 	4,  // 4: pb.KickUserConnReq.getUserConnReq:type_name -> pb.GetUserConnReq
-	12, // 5: pb.KickUserConnResp.commonResp:type_name -> pb.CommonResp
+	14, // 5: pb.KickUserConnResp.commonResp:type_name -> pb.CommonResp
 	0,  // 6: pb.PushBody.event:type_name -> pb.PushEvent
 	4,  // 7: pb.SendMsgReq.getUserConnReq:type_name -> pb.GetUserConnReq
 	0,  // 8: pb.SendMsgReq.event:type_name -> pb.PushEvent
-	12, // 9: pb.SendMsgResp.commonResp:type_name -> pb.CommonResp
+	14, // 9: pb.SendMsgResp.commonResp:type_name -> pb.CommonResp
 	3,  // 10: pb.SendMsgResp.successConnParams:type_name -> pb.ConnParam
 	3,  // 11: pb.SendMsgResp.failedConnParams:type_name -> pb.ConnParam
-	6,  // 12: pb.connService.KickUserConn:input_type -> pb.KickUserConnReq
-	4,  // 13: pb.connService.GetUserConn:input_type -> pb.GetUserConnReq
-	9,  // 14: pb.connService.SendMsg:input_type -> pb.SendMsgReq
-	7,  // 15: pb.connService.KickUserConn:output_type -> pb.KickUserConnResp
-	5,  // 16: pb.connService.GetUserConn:output_type -> pb.GetUserConnResp
-	10, // 17: pb.connService.SendMsg:output_type -> pb.SendMsgResp
-	15, // [15:18] is the sub-list for method output_type
-	12, // [12:15] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	3,  // 12: pb.AfterConnectReq.connParam:type_name -> pb.ConnParam
+	3,  // 13: pb.AfterDisconnectReq.connParam:type_name -> pb.ConnParam
+	6,  // 14: pb.connService.KickUserConn:input_type -> pb.KickUserConnReq
+	4,  // 15: pb.connService.GetUserConn:input_type -> pb.GetUserConnReq
+	9,  // 16: pb.connService.SendMsg:input_type -> pb.SendMsgReq
+	7,  // 17: pb.connService.KickUserConn:output_type -> pb.KickUserConnResp
+	5,  // 18: pb.connService.GetUserConn:output_type -> pb.GetUserConnResp
+	10, // 19: pb.connService.SendMsg:output_type -> pb.SendMsgResp
+	17, // [17:20] is the sub-list for method output_type
+	14, // [14:17] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_conn_proto_init() }
@@ -930,6 +1067,30 @@ func file_conn_proto_init() {
 				return nil
 			}
 		}
+		file_conn_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AfterConnectReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_conn_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AfterDisconnectReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -937,7 +1098,7 @@ func file_conn_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_conn_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

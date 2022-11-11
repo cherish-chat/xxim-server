@@ -469,6 +469,61 @@ func (x *IpRegion) GetIsp() string {
 	return ""
 }
 
+type Page struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page int32 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	Size int32 `protobuf:"varint,2,opt,name=size,proto3" json:"size"`
+}
+
+func (x *Page) Reset() {
+	*x = Page{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_common_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Page) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Page) ProtoMessage() {}
+
+func (x *Page) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Page.ProtoReflect.Descriptor instead.
+func (*Page) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Page) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *Page) GetSize() int32 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
 var File_common_proto protoreflect.FileDescriptor
 
 var file_common_proto_rawDesc = []byte{
@@ -512,7 +567,10 @@ var file_common_proto_rawDesc = []byte{
 	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x6e, 0x63,
 	0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x69, 0x74, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x04, 0x63, 0x69, 0x74, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x69, 0x73, 0x70, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x03, 0x69, 0x73, 0x70, 0x2a, 0x21, 0x0a, 0x08, 0x43, 0x6f, 0x6e, 0x76, 0x54,
+	0x28, 0x09, 0x52, 0x03, 0x69, 0x73, 0x70, 0x22, 0x2e, 0x0a, 0x04, 0x50, 0x61, 0x67, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x70,
+	0x61, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x04, 0x73, 0x69, 0x7a, 0x65, 0x2a, 0x21, 0x0a, 0x08, 0x43, 0x6f, 0x6e, 0x76, 0x54,
 	0x79, 0x70, 0x65, 0x12, 0x0a, 0x0a, 0x06, 0x53, 0x49, 0x4e, 0x47, 0x4c, 0x45, 0x10, 0x00, 0x12,
 	0x09, 0x0a, 0x05, 0x47, 0x52, 0x4f, 0x55, 0x50, 0x10, 0x01, 0x2a, 0xb8, 0x01, 0x0a, 0x0b, 0x43,
 	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e,
@@ -543,7 +601,7 @@ func file_common_proto_rawDescGZIP() []byte {
 }
 
 var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_common_proto_goTypes = []interface{}{
 	(ConvType)(0),        // 0: pb.ConvType
 	(ContentType)(0),     // 1: pb.ContentType
@@ -551,6 +609,7 @@ var file_common_proto_goTypes = []interface{}{
 	(*CommonResp)(nil),   // 3: pb.CommonResp
 	(*Requester)(nil),    // 4: pb.Requester
 	(*IpRegion)(nil),     // 5: pb.IpRegion
+	(*Page)(nil),         // 6: pb.Page
 }
 var file_common_proto_depIdxs = []int32{
 	2, // 0: pb.CommonResp.code:type_name -> pb.CommonResp.Code
@@ -603,6 +662,18 @@ func file_common_proto_init() {
 				return nil
 			}
 		}
+		file_common_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Page); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_common_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	type x struct{}
@@ -611,7 +682,7 @@ func file_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_common_proto_rawDesc,
 			NumEnums:      3,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

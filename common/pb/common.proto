@@ -65,3 +65,8 @@ message IpRegion {
   string city = 3;
   string isp = 4;
 }
+
+message Page {
+  int32 page = 1;
+  int32 size = 2;
+}

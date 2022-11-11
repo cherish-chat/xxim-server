@@ -68,6 +68,17 @@ message SendMsgResp {
   repeated ConnParam failedConnParams = 3;
 }
 
+message AfterConnectReq {
+  ConnParam connParam = 1;
+  string connectedAt = 2;
+}
+
+message AfterDisconnectReq {
+  ConnParam connParam = 1;
+  string connectedAt = 2;
+  string disconnectedAt = 3;
+}
+
 service connService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);

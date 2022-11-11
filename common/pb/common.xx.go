@@ -96,3 +96,7 @@ func NewAlertErrorResp(title string, alert string) *CommonResp {
 func NewRetryErrorResp() *CommonResp {
 	return NewCommonResp(CommonResp_RetryError)
 }
+
+func (x *CommonResp) Failed() bool {
+	return x.Code != CommonResp_Success
+}
