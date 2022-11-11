@@ -19,6 +19,7 @@ for i = 3, #ARGV, 2 do
 end
 redis.call('HMSET', key, unpack(fields), unpack(values))
 redis.call('EXPIRE', key, ttl)
+return 1
 `
 
 var hmsetexSha = ""
