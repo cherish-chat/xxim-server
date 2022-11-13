@@ -2,6 +2,7 @@ package handler
 
 import (
 	"crypto/tls"
+	"errors"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
@@ -20,18 +21,12 @@ func PingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 代理到 conn 服务
-		var connRpcIps []string
-		for _, connPod := range svcCtx.ConnPodsMgr.AllConnServices() {
-			connRpcIps = append(connRpcIps, connPod.PodIp)
-		}
-		if len(connRpcIps) == 0 {
+		host, err := getConnPodHost(svcCtx)
+		if err != nil {
 			// 502
 			w.WriteHeader(http.StatusBadGateway)
 			return
 		}
-		// randIp 随机选择一个 conn 服务实现负载均衡
-		host := utils.AnyRandomInSlice(connRpcIps, "")
 		ur := "http://" + host + "/ws"
 		target, _ := url.Parse(ur)
 		var transport http.RoundTripper = &http.Transport{
@@ -55,4 +50,18 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		r.Header.Set("X-Real-IP", xhttp.GetRequestIP(r))
 		proxy.ServeHTTP(w, r)
 	}
+}
+
+// 自定义负载均衡
+func getConnPodHost(svcCtx *svc.ServiceContext) (string, error) {
+	// 代理到 conn 服务
+	var connRpcIps []string
+	for _, connPod := range svcCtx.ConnPodsMgr.AllConnServices() {
+		connRpcIps = append(connRpcIps, connPod.PodIp)
+	}
+	if len(connRpcIps) == 0 {
+		return "", errors.New("no conn service")
+	}
+	// randIp 随机选择一个 conn 服务实现负载均衡
+	return utils.AnyRandomInSlice(connRpcIps, ""), nil
 }
