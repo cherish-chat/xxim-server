@@ -177,4 +177,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/ws",
+					Handler: WsHandler(serverCtx),
+				},
+			}...,
+		),
+	)
 }
