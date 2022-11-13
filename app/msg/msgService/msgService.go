@@ -17,6 +17,7 @@ type (
 	BatchGetConvSeqResp           = pb.BatchGetConvSeqResp
 	BatchGetConvSeqResp_ConvSeq   = pb.BatchGetConvSeqResp_ConvSeq
 	BatchSendMsgReq               = pb.BatchSendMsgReq
+	BatchSendMsgResp              = pb.BatchSendMsgResp
 	BatchSetMinSeqReq             = pb.BatchSetMinSeqReq
 	BatchSetMinSeqResp            = pb.BatchSetMinSeqResp
 	GetConvSubscribersReq         = pb.GetConvSubscribersReq
@@ -32,13 +33,14 @@ type (
 	MsgMQBody                     = pb.MsgMQBody
 	PushMsgListReq                = pb.PushMsgListReq
 	SendMsgListReq                = pb.SendMsgListReq
+	SendMsgListResp               = pb.SendMsgListResp
 
 	MsgService interface {
 		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
-		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
-		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
+		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
+		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
+		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
 		PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// GetMsgListByConvId 通过seq拉取一个会话的消息
 		GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
@@ -69,22 +71,22 @@ func (m *defaultMsgService) InsertMsgDataList(ctx context.Context, in *MsgDataLi
 	return client.InsertMsgDataList(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (m *defaultMsgService) SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.SendMsgListSync(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (m *defaultMsgService) SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.SendMsgListAsync(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (m *defaultMsgService) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.BatchSendMsgSync(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (m *defaultMsgService) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.BatchSendMsgAsync(ctx, in, opts...)
 }

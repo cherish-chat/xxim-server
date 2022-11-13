@@ -3,6 +3,7 @@ package xjwt
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
@@ -113,6 +114,10 @@ func VerifyToken(
 	tokenObj := &TokenObj{}
 	val, err := rc.HgetCtx(ctx, key, hkey)
 	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			// token不存在
+			return VerifyTokenCodeExpire, ""
+		}
 		logger.Errorf("redis Hget error: %v, key: %s, hkey: %s", err, key, hkey)
 		return VerifyTokenCodeInternalError, "服务器内部错误"
 	}

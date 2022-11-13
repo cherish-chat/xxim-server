@@ -26,7 +26,7 @@ func NewSendMsgListAsyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *SendMsgListAsyncLogic) SendMsgListAsync(in *pb.SendMsgListReq) (*pb.CommonResp, error) {
+func (l *SendMsgListAsyncLogic) SendMsgListAsync(in *pb.SendMsgListReq) (*pb.SendMsgListResp, error) {
 	// 发送到消息队列
 	var options []xtdmq.ProducerOptFunc
 	if in.DeliverAfter != nil {
@@ -38,7 +38,7 @@ func (l *SendMsgListAsyncLogic) SendMsgListAsync(in *pb.SendMsgListReq) (*pb.Com
 	}), options...)
 	if err != nil {
 		l.Errorf("MsgProducer.Produce error: %v", err)
-		return pb.NewRetryErrorResp(), err
+		return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	return &pb.CommonResp{}, nil
+	return &pb.SendMsgListResp{}, nil
 }

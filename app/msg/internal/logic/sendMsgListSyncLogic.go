@@ -24,7 +24,7 @@ func NewSendMsgListSyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 	}
 }
 
-func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.CommonResp, error) {
+func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.SendMsgListResp, error) {
 	var resp *pb.MsgDataList
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "InsertMsgDataList", func(ctx context.Context) {
@@ -32,7 +32,7 @@ func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.Commo
 	})
 	if err != nil {
 		l.Errorf("InsertMsgDataList error: %v", err)
-		return pb.NewRetryErrorResp(), err
+		return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 推送给相关的在线用户
 	xtrace.StartFuncSpan(l.ctx, "PushMsgList", func(ctx context.Context) {
@@ -41,5 +41,5 @@ func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.Commo
 			l.Errorf("PushMsgList error: %v", err)
 		}
 	})
-	return &pb.CommonResp{}, nil
+	return &pb.SendMsgListResp{}, nil
 }

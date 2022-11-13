@@ -16,7 +16,7 @@ message CommonResp {
   }
   Code code = 1;
   optional string msg = 2;
-  optional string data = 3;
+  bytes data = 3;
 }
 
 message Requester {
