@@ -155,6 +155,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/sendMsg",
 					Handler: wrapper.WrapHandler(serverCtx, msghandler.SendMsgConfig(serverCtx)),
 				},
+				// getMsgListByConvId
+				{
+					Method:  http.MethodPost,
+					Path:    "/getMsgListByConvId",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.GetMsgListByConvIdConfig(serverCtx)),
+				},
 			}...,
 		),
 		rest.WithPrefix("/v1/msg"),

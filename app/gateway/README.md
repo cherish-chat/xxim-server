@@ -782,3 +782,25 @@ message SendMsgListResp {
 }
 ```
 
+#### 3.4.2 GetMsgListByConvId: 获取会话消息列表
+
+- 请求地址：`/v1/msg/getMsgListByConvId`
+- 请求体：
+
+```protobuf
+message GetMsgListByConvIdReq {
+  Requester requester = 1;
+  string convId = 2;
+  repeated string seqList = 3;
+  bool push = 4; // 是否使用websocket推送的方式
+}
+```
+
+- 响应体：
+
+```protobuf
+message GetMsgListResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2; // 如果是websocket推送的方式，这里是空的
+}
+```

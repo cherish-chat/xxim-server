@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conn/connservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
@@ -23,6 +24,7 @@ type ServiceContext struct {
 	zedis           *redis.Redis
 	mongo           *xmgo.Client
 	SystemConfigMgr *xconf.SystemConfigMgr
+	ConnPodsMgr     *connservice.ConnPodsMgr
 	*i18n.I18N
 }
 
@@ -33,6 +35,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mongo().Collection(&xconf.SystemConfig{}))
 	s.I18N = i18n.NewI18N(s.Mongo())
+	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
 	return s
 }
 

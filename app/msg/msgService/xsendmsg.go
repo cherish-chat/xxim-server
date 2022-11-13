@@ -21,7 +21,7 @@ func SendMsgSync(
 	ctx context.Context,
 	msgDataList []*pb.MsgData,
 	opts ...SendMsgOptionFunc,
-) (*CommonResp, error) {
+) (*SendMsgListResp, error) {
 	opt := &SendMsgOption{}
 	for _, o := range opts {
 		o(opt)
