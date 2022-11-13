@@ -28,7 +28,7 @@ func NewBatchSendMsgSyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
 	msg := msgmodel.NewMsgFromPb(in.MsgData)
 	msg.Receiver.UserId = ""
 	msg.Receiver.GroupId = ""
@@ -44,7 +44,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 	})
 	if err != nil {
 		l.Errorf("BatchSendMsgSync error: %v", err)
-		return pb.NewRetryErrorResp(), err
+		return &pb.BatchSendMsgResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	var uidSeqMap = make(map[string]int64)
 	var groupSeqMap = make(map[string]int64)
@@ -87,7 +87,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 	})
 	if err != nil {
 		l.Errorf("redis MHSet error: %v", err)
-		return pb.NewRetryErrorResp(), err
+		return &pb.BatchSendMsgResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 推送给相关的在线用户
 	xtrace.StartFuncSpan(l.ctx, "PushMsgList", func(ctx context.Context) {
@@ -105,5 +105,5 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Co
 			l.Errorf("PushMsgList error: %v", err)
 		}
 	})
-	return &pb.CommonResp{}, nil
+	return &pb.BatchSendMsgResp{}, nil
 }

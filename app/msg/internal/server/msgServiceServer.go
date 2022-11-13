@@ -27,22 +27,22 @@ func (s *MsgServiceServer) InsertMsgDataList(ctx context.Context, in *pb.MsgData
 	return l.InsertMsgDataList(in)
 }
 
-func (s *MsgServiceServer) SendMsgListSync(ctx context.Context, in *pb.SendMsgListReq) (*pb.CommonResp, error) {
+func (s *MsgServiceServer) SendMsgListSync(ctx context.Context, in *pb.SendMsgListReq) (*pb.SendMsgListResp, error) {
 	l := logic.NewSendMsgListSyncLogic(ctx, s.svcCtx)
 	return l.SendMsgListSync(in)
 }
 
-func (s *MsgServiceServer) SendMsgListAsync(ctx context.Context, in *pb.SendMsgListReq) (*pb.CommonResp, error) {
+func (s *MsgServiceServer) SendMsgListAsync(ctx context.Context, in *pb.SendMsgListReq) (*pb.SendMsgListResp, error) {
 	l := logic.NewSendMsgListAsyncLogic(ctx, s.svcCtx)
 	return l.SendMsgListAsync(in)
 }
 
-func (s *MsgServiceServer) BatchSendMsgSync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+func (s *MsgServiceServer) BatchSendMsgSync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
 	l := logic.NewBatchSendMsgSyncLogic(ctx, s.svcCtx)
 	return l.BatchSendMsgSync(in)
 }
 
-func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
 	l := logic.NewBatchSendMsgAsyncLogic(ctx, s.svcCtx)
 	return l.BatchSendMsgAsync(in)
 }

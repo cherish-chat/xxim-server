@@ -26,7 +26,7 @@ func NewBatchSendMsgAsyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *BatchSendMsgAsyncLogic) BatchSendMsgAsync(in *pb.BatchSendMsgReq) (*pb.CommonResp, error) {
+func (l *BatchSendMsgAsyncLogic) BatchSendMsgAsync(in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
 	// 发送到消息队列
 	var options []xtdmq.ProducerOptFunc
 	if in.DeliverAfter != nil {
@@ -38,7 +38,7 @@ func (l *BatchSendMsgAsyncLogic) BatchSendMsgAsync(in *pb.BatchSendMsgReq) (*pb.
 	}), options...)
 	if err != nil {
 		l.Errorf("MsgProducer.Produce error: %v", err)
-		return pb.NewRetryErrorResp(), err
+		return &pb.BatchSendMsgResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	return &pb.CommonResp{}, nil
+	return &pb.BatchSendMsgResp{}, nil
 }

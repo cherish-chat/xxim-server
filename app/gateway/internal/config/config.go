@@ -12,5 +12,9 @@ type Config struct {
 	Redis        redis.RedisKeyConf
 	Mongo        xmgo.Config
 	UserRpc      zrpc.RpcClientConf
+	RelationRpc  zrpc.RpcClientConf
+	GroupRpc     zrpc.RpcClientConf
+	MsgRpc       zrpc.RpcClientConf
 	Ip2RegionUrl string `json:",default=https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb"`
+	EnablePulsar bool   `json:",default=false"`
 }

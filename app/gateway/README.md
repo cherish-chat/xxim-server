@@ -210,6 +210,116 @@ message UserBaseInfo {
 }
 ```
 
+### 2.3 im
+
+#### 2.3.1 MsgNotifyOpt: 消息通知选项
+
+```protobuf
+//MsgNotifyOpt 消息通知选项
+message MsgNotifyOpt {
+  bool preview = 1; // 是否预览
+  bool sound = 2; // 是否声音
+  string soundName = 3; // 声音名称
+  bool vibrate = 4; // 是否震动
+}
+```
+
+### 2.3 消息
+
+#### 2.3.1 ConvType: 会话类型
+
+```protobuf
+enum ConvType {
+  SINGLE = 0; // 单聊
+  GROUP = 1; // 群聊
+}
+```
+
+#### 2.3.2 ContentType: 消息类型
+
+```protobuf
+
+enum ContentType {
+  UNKNOWN = 0;
+  TYPING = 1; // 正在输入
+  READ = 2; // 已读
+  REVOKE = 3; // 撤回
+
+  TEXT = 11; // 文本
+  IMAGE = 12; // 图片
+  AUDIO = 13; // 语音
+  VIDEO = 14; // 视频
+  FILE = 15; // 文件
+  LOCATION = 16; // 位置
+  CARD = 17; // 名片
+  MERGE = 18; // 合并
+  EMOJI = 19; // 表情
+  COMMAND = 20; // 命令
+
+  CUSTOM = 100; // 自定义消息
+}
+```
+
+#### 2.3.3 MsgData: 消息体
+
+```protobuf
+
+message MsgData {
+  message OfflinePush {
+    string title = 1;
+    string content = 2;
+    string payload = 3;
+  }
+  message Options {
+    // 是否需要离线推送
+    bool offlinePush = 1;
+    // 服务端是否需要保存消息
+    bool storageForServer = 2;
+    // 客户端是否需要保存消息
+    bool storageForClient = 3;
+    // 消息是否需要计入未读数
+    bool unreadCount = 4;
+    // 是否需要解密 （端对端加密技术，服务端无法解密）
+    bool needDecrypt = 5;
+    // 是否需要重新渲染会话
+    bool updateConv = 6;
+  }
+  message Receiver {
+    optional string userId = 1; // 单聊时为对方的userId
+    optional string groupId = 2; // 群聊时为群组id
+  }
+  string clientMsgId = 1;
+  string serverMsgId = 2;
+  string clientTime = 3;
+  string serverTime = 4;
+
+  string sender = 11; // 发送者id
+  string senderInfo = 12; // 发送者信息
+  string senderConvInfo = 13; // 发送者在会话中的信息
+
+  Receiver receiver = 21; // 接收者id (单聊时为对方id, 群聊时为群id)
+  string convId = 22; // 会话id
+  repeated string atUsers = 23;   // 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
+
+  ContentType contentType = 31; // 消息内容类型
+  bytes content = 32; // 消息内容
+  string seq = 33; // 消息序号 会话内唯一且递增
+
+  Options options = 41; // 消息选项
+  OfflinePush offlinePush = 42; // 离线推送
+
+  bytes ext = 100;
+}
+```
+
+#### 2.3.4 MsgDataList: 消息列表
+
+```protobuf
+message MsgDataList {
+  repeated MsgData msgDataList = 1;
+}
+```
+
 ## 3. 接口
 
 ### 3.1 用户模块
@@ -363,3 +473,312 @@ message SetUserSettingsResp {
   CommonResp commonResp = 1;
 }
 ```
+
+### 3.2 关系模块
+
+#### 3.2.1 RequestAddFriend: 请求添加好友
+
+- 请求地址：`/v1/relation/requestAddFriend`
+- 请求体：
+
+```protobuf
+message RequestAddFriendReq {
+  Requester requester = 1;
+  string to = 2;
+  // 附加消息
+  string message = 3;
+}
+```
+
+- 响应体：
+
+```protobuf
+message RequestAddFriendResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.2 AcceptAddFriend: 接受添加好友请求
+
+- 请求地址：`/v1/relation/acceptAddFriend`
+- 请求体：
+
+```protobuf
+message AcceptAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  optional string requestId = 3; // 申请id
+}
+```
+
+- 响应体：
+
+```protobuf
+message AcceptAddFriendResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.3 RejectAddFriend: 拒绝添加好友请求
+
+- 请求地址：`/v1/relation/rejectAddFriend`
+- 请求体：
+
+```protobuf
+message RejectAddFriendReq {
+  Requester requester = 1;
+  string applyUserId = 2; // 申请人id
+  string requestId = 3; // 申请id
+  bool block = 4; // 是否拉黑
+}
+```
+
+- 响应体：
+
+```protobuf
+message RejectAddFriendResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.4 BlockUser: 拉黑用户
+
+- 请求地址：`/v1/relation/blockUser`
+- 请求体：
+
+```protobuf
+message BlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+```
+
+- 响应体：
+
+```protobuf
+message BlockUserResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.5 DeleteBlockUser: 取消拉黑用户
+
+- 请求地址：`/v1/relation/deleteBlockUser`
+- 请求体：
+
+```protobuf
+message DeleteBlockUserReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+```
+
+- 响应体：
+
+```protobuf
+message DeleteBlockUserResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.6 DeleteFriend: 删除好友
+
+- 请求地址：`/v1/relation/deleteFriend`
+- 请求体：
+
+```protobuf
+message DeleteFriendReq {
+  Requester requester = 1;
+  string userId = 2;
+  bool block = 3; // 是否拉黑
+}
+```
+
+- 响应体：
+
+```protobuf
+message DeleteFriendResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.7 SetSingleChatSetting: 设置单聊设置
+
+- 请求地址：`/v1/relation/setSingleChatSetting`
+- 请求体：
+
+```protobuf
+message SetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+  // 置顶选项
+  optional bool top = 3;
+  // 单聊的备注
+  optional string remark = 4;
+  // 免打扰选项
+  optional bool disturb = 11;
+}
+```
+
+- 响应体：
+
+```protobuf
+message SetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.8 GetSingleChatSetting: 获取单聊设置
+
+- 请求地址：`/v1/relation/getSingleChatSetting`
+- 请求体：
+
+```protobuf
+message GetSingleChatSettingReq {
+  Requester requester = 1;
+  string userId = 2;
+}
+```
+
+- 响应体：
+
+```protobuf
+message GetSingleChatSettingResp {
+  CommonResp commonResp = 1;
+  // 置顶选项
+  bool top = 2;
+  // 单聊的备注
+  string remark = 3;
+  // 免打扰选项
+  bool disturb = 4;
+}
+```
+
+#### 3.2.9 SetSingleMsgNotifyOpt: 设置单聊消息通知选项
+
+- 请求地址：`/v1/relation/setSingleMsgNotifyOpt`
+- 请求体：
+
+```protobuf
+message SetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+  // 消息通知类型
+  MsgNotifyOpt opt = 3;
+}
+```
+
+- 响应体：
+
+```protobuf
+message SetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+}
+```
+
+#### 3.2.10 GetSingleMsgNotifyOpt: 获取单聊消息通知选项
+
+- 请求地址：`/v1/relation/getSingleMsgNotifyOpt`
+- 请求体：
+
+```protobuf
+message GetSingleMsgNotifyOptReq {
+  Requester requester = 1;
+  // 群ID
+  string userId = 2;
+}
+```
+
+- 响应体：
+
+```protobuf
+message GetSingleMsgNotifyOptResp {
+  CommonResp commonResp = 1;
+  // 消息通知类型
+  MsgNotifyOpt opt = 2;
+}
+```
+
+#### 3.2.11 GetFriendList: 获取好友列表
+
+- 请求地址：`/v1/relation/getFriendList`
+- 请求体：
+
+```protobuf
+message GetFriendListReq {
+  Requester requester = 1;
+  // 分页
+  Page page = 2;
+  enum Opt {
+    WithBaseInfo = 0; // 带用户的基本信息
+    OnlyId = 1; // 只有用户id
+  }
+  Opt opt = 10;
+}
+```
+
+- 响应体：
+
+```protobuf
+message GetFriendListResp {
+  CommonResp commonResp = 1;
+  repeated string ids = 2;
+  map<string, UserBaseInfo> userMap = 3;
+}
+```
+
+### 3.3 群组
+
+#### 3.3.1 CreateGroup: 创建群组
+
+- 请求地址：`/v1/group/createGroup`
+- 请求体：
+
+```protobuf
+message CreateGroupReq {
+  Requester requester = 1;
+  // 拉人进群
+  repeated string members = 2;
+  // 群名称(可选参数)
+  optional string name = 3;
+  // 群头像(可选参数)
+  optional string avatar = 4;
+}
+```
+
+- 响应体：
+
+```protobuf
+message CreateGroupResp {
+  CommonResp commonResp = 1;
+  // 群ID
+  optional string groupId = 2;
+}
+```
+
+### 3.4 消息
+
+#### 3.4.1 SendMsg: 发送消息
+
+- 请求地址：`/v1/msg/sendMsg`
+- 请求体：
+
+```protobuf
+message SendMsgListReq {
+  Requester requester = 1;
+  repeated MsgData msgDataList = 2;
+  // options
+  // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天 只有开启了Pulsar的延迟消息功能才有效
+  optional int32 deliverAfter = 11;
+}
+```
+
+- 响应体：
+
+```protobuf
+message SendMsgListResp {
+  CommonResp commonResp = 1;
+}
+```
+

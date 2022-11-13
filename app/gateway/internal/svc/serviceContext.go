@@ -2,6 +2,9 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
+	"github.com/cherish-chat/xxim-server/app/group/groupservice"
+	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
+	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
@@ -14,6 +17,9 @@ import (
 type ServiceContext struct {
 	Config          config.Config
 	userService     userservice.UserService
+	relationService relationservice.RelationService
+	groupService    groupservice.GroupService
+	msgService      msgservice.MsgService
 	zedis           *redis.Redis
 	mongo           *xmgo.Client
 	SystemConfigMgr *xconf.SystemConfigMgr
@@ -49,4 +55,25 @@ func (s *ServiceContext) Mongo() *xmgo.Client {
 		s.mongo = xmgo.NewClient(s.Config.Mongo)
 	}
 	return s.mongo
+}
+
+func (s *ServiceContext) RelationService() relationservice.RelationService {
+	if s.relationService == nil {
+		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc))
+	}
+	return s.relationService
+}
+
+func (s *ServiceContext) GroupService() groupservice.GroupService {
+	if s.groupService == nil {
+		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
+	}
+	return s.groupService
+}
+
+func (s *ServiceContext) MsgService() msgservice.MsgService {
+	if s.msgService == nil {
+		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc))
+	}
+	return s.msgService
 }

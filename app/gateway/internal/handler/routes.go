@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/grouphandler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/msghandler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/relationhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/userhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/wrapper"
@@ -53,6 +56,108 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/v1/user"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				// requestAddFriend
+				{
+					Method:  http.MethodPost,
+					Path:    "/requestAddFriend",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.RequestAddFriendConfig(serverCtx)),
+				},
+				// acceptAddFriend
+				{
+					Method:  http.MethodPost,
+					Path:    "/acceptAddFriend",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.AcceptAddFriendConfig(serverCtx)),
+				},
+				// rejectAddFriend
+				{
+					Method:  http.MethodPost,
+					Path:    "/rejectAddFriend",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.RejectAddFriendConfig(serverCtx)),
+				},
+				// blockUser
+				{
+					Method:  http.MethodPost,
+					Path:    "/blockUser",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.BlockUserConfig(serverCtx)),
+				},
+				// deleteBlockUser
+				{
+					Method:  http.MethodPost,
+					Path:    "/deleteBlockUser",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.DeleteBlockUserConfig(serverCtx)),
+				},
+				// deleteFriend
+				{
+					Method:  http.MethodPost,
+					Path:    "/deleteFriend",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.DeleteFriendConfig(serverCtx)),
+				},
+				// setSingleChatSetting
+				{
+					Method:  http.MethodPost,
+					Path:    "/setSingleChatSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleChatSettingConfig(serverCtx)),
+				},
+				// setSingleMsgNotifyOpt
+				{
+					Method:  http.MethodPost,
+					Path:    "/setSingleMsgNotifyOpt",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleMsgNotifyOptConfig(serverCtx)),
+				},
+				// getSingleChatSetting
+				{
+					Method:  http.MethodPost,
+					Path:    "/getSingleChatSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleChatSettingConfig(serverCtx)),
+				},
+				// getSingleMsgNotifyOpt
+				{
+					Method:  http.MethodPost,
+					Path:    "/getSingleMsgNotifyOpt",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleMsgNotifyOptConfig(serverCtx)),
+				},
+				// getFriendList
+				{
+					Method:  http.MethodPost,
+					Path:    "/getFriendList",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetFriendListConfig(serverCtx)),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/relation"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				// createGroup
+				{
+					Method:  http.MethodPost,
+					Path:    "/createGroup",
+					Handler: wrapper.WrapHandler(serverCtx, grouphandler.CreateGroupConfig(serverCtx)),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/group"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				// sendMsg
+				{
+					Method:  http.MethodPost,
+					Path:    "/sendMsg",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.SendMsgConfig(serverCtx)),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/msg"),
 	)
 	server.AddRoutes(
 		rest.WithMiddlewares(

@@ -23,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MsgServiceClient interface {
 	InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
-	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
-	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error)
+	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
+	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
+	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
+	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
@@ -58,8 +58,8 @@ func (c *msgServiceClient) InsertMsgDataList(ctx context.Context, in *MsgDataLis
 	return out, nil
 }
 
-func (c *msgServiceClient) SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
+func (c *msgServiceClient) SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error) {
+	out := new(SendMsgListResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/SendMsgListSync", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -67,8 +67,8 @@ func (c *msgServiceClient) SendMsgListSync(ctx context.Context, in *SendMsgListR
 	return out, nil
 }
 
-func (c *msgServiceClient) SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
+func (c *msgServiceClient) SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error) {
+	out := new(SendMsgListResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/SendMsgListAsync", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -76,8 +76,8 @@ func (c *msgServiceClient) SendMsgListAsync(ctx context.Context, in *SendMsgList
 	return out, nil
 }
 
-func (c *msgServiceClient) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
+func (c *msgServiceClient) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
+	out := new(BatchSendMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgSync", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -85,8 +85,8 @@ func (c *msgServiceClient) BatchSendMsgSync(ctx context.Context, in *BatchSendMs
 	return out, nil
 }
 
-func (c *msgServiceClient) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
+func (c *msgServiceClient) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
+	out := new(BatchSendMsgResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgAsync", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -162,10 +162,10 @@ func (c *msgServiceClient) GetConvSubscribers(ctx context.Context, in *GetConvSu
 // for forward compatibility
 type MsgServiceServer interface {
 	InsertMsgDataList(context.Context, *MsgDataList) (*MsgDataList, error)
-	SendMsgListSync(context.Context, *SendMsgListReq) (*CommonResp, error)
-	SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error)
-	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
-	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error)
+	SendMsgListSync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
+	SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
+	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error)
+	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error)
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
@@ -188,16 +188,16 @@ type UnimplementedMsgServiceServer struct {
 func (UnimplementedMsgServiceServer) InsertMsgDataList(context.Context, *MsgDataList) (*MsgDataList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertMsgDataList not implemented")
 }
-func (UnimplementedMsgServiceServer) SendMsgListSync(context.Context, *SendMsgListReq) (*CommonResp, error) {
+func (UnimplementedMsgServiceServer) SendMsgListSync(context.Context, *SendMsgListReq) (*SendMsgListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsgListSync not implemented")
 }
-func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgListReq) (*CommonResp, error) {
+func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsgListAsync not implemented")
 }
-func (UnimplementedMsgServiceServer) BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*CommonResp, error) {
+func (UnimplementedMsgServiceServer) BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgSync not implemented")
 }
-func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*CommonResp, error) {
+func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgAsync not implemented")
 }
 func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
