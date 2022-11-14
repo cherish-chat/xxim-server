@@ -34,7 +34,7 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		ur := "http://" + host + "/ws"
-		if r.URL.Scheme == "https" {
+		if svcCtx.Config.EnableSSL {
 			ur = "https://" + host + "/ws"
 		}
 		target, _ := url.Parse(ur)
