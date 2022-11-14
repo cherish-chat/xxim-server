@@ -6,10 +6,13 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
+	"github.com/zeromicro/go-zero/core/logx"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -19,11 +22,14 @@ func PingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	}
 }
 
+var wsProxyLogger = log.New(os.Stdout, "【proxy-error】", log.LstdFlags)
+
 func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		host, err := getConnPodHost(svcCtx)
 		if err != nil {
 			// 502
+			logx.WithContext(r.Context()).Errorf("get conn pod host error: %v", err)
 			w.WriteHeader(http.StatusBadGateway)
 			return
 		}
@@ -47,6 +53,7 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			resp.Header.Del("X-Frame-Options")
 			return nil
 		}
+		proxy.ErrorLog = wsProxyLogger
 		r.Header.Set("X-Real-IP", xhttp.GetRequestIP(r))
 		proxy.ServeHTTP(w, r)
 	}

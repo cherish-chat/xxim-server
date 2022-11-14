@@ -19,9 +19,7 @@ type Config struct {
 			ClusterName string // 集群名称
 			Namespace   string // 命名空间
 			Topics      struct {
-				Conn TDMQTopic
-				Msg  TDMQTopic
-				Im   TDMQTopic
+				Msg TDMQTopic
 			}
 		}
 	}

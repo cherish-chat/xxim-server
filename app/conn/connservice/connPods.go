@@ -71,6 +71,11 @@ func (s *ConnPodsMgr) initConnRpc() {
 					}
 					return true
 				})
+				// 列出所有的
+				s.connPods.Range(func(endpoint, value interface{}) bool {
+					fmt.Println("conn pod endpoint:", endpoint)
+					return true
+				})
 			})
 		}
 	} else {
