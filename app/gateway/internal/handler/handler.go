@@ -34,6 +34,9 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		ur := "http://" + host + "/ws"
+		if r.TLS != nil {
+			ur = "https://" + host + "/ws"
+		}
 		target, _ := url.Parse(ur)
 		var transport http.RoundTripper = &http.Transport{
 			DialContext: (&net.Dialer{
