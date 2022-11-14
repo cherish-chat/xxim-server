@@ -10,7 +10,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
@@ -50,7 +49,7 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
 			DisableCompression:    true,
 		}
-		proxy := httputil.NewSingleHostReverseProxy(target)
+		proxy := xhttp.NewSingleHostReverseProxy(target)
 		proxy.Transport = transport
 		proxy.ModifyResponse = func(resp *http.Response) error {
 			resp.Header.Del("X-Frame-Options")
