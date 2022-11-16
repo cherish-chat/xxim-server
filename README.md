@@ -1,7 +1,7 @@
 # xxim
 
 <p align="center">
-<img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docsify/images/xxim.jpg">
+<img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docsify/images/xxim.webp">
 </p>
 
 xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是为了让每个人都能使用自己的IM APP，不需要再使用令人不爽的第三方IM APP。xxim-server是一个开源项目，欢迎大家一起来完善它。
@@ -28,11 +28,12 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * [x] 发送消息（可定时的、可群发），包括：文本、图片、语音、视频、文件、位置、名片、撤回、转发、@、表情、对方正在输入、自定义消息等
 * [x] 按需拉取离线消息，且没有消息数量/天数限制
 * [x] 已读管理（对方是否已读、群内已读的成员）
-* [ ] 音视频通话、IOS支持`Callkit`
 * [x] 当用户不在线时，通过厂商推送（极光、腾讯、Mob）将消息推送给用户
 * [x] 用户的每个会话都可以设置消息接收选项（接收、不接收、接收但不提醒）
 * [x] 不限人数的群聊
 * [x] 端对端加密
+* [ ] 应用内部署新服务器。分布式:（腾讯云k8s、阿里云k8s），单机版（CentOS7+）
+* [ ] 音视频通话、IOS支持`Callkit`
 
 
 ## xxim的背景

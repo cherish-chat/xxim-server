@@ -6,10 +6,12 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
+	"github.com/zeromicro/go-zero/core/logx"
+	"log"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -19,15 +21,21 @@ func PingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	}
 }
 
+var wsProxyLogger = log.New(os.Stdout, "【proxy-error】", log.LstdFlags)
+
 func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		host, err := getConnPodHost(svcCtx)
 		if err != nil {
 			// 502
+			logx.WithContext(r.Context()).Errorf("get conn pod host error: %v", err)
 			w.WriteHeader(http.StatusBadGateway)
 			return
 		}
 		ur := "http://" + host + "/ws"
+		if svcCtx.Config.EnableSSL {
+			ur = "https://" + host + "/ws"
+		}
 		target, _ := url.Parse(ur)
 		var transport http.RoundTripper = &http.Transport{
 			DialContext: (&net.Dialer{
@@ -41,12 +49,13 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
 			DisableCompression:    true,
 		}
-		proxy := httputil.NewSingleHostReverseProxy(target)
+		proxy := xhttp.NewSingleHostReverseProxy(target)
 		proxy.Transport = transport
 		proxy.ModifyResponse = func(resp *http.Response) error {
 			resp.Header.Del("X-Frame-Options")
 			return nil
 		}
+		proxy.ErrorLog = wsProxyLogger
 		r.Header.Set("X-Real-IP", xhttp.GetRequestIP(r))
 		proxy.ServeHTTP(w, r)
 	}

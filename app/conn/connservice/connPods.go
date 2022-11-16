@@ -45,7 +45,7 @@ func (s *ConnPodsMgr) AllConnServices() []*ConnPod {
 func (s *ConnPodsMgr) initConnRpc() {
 	if s.Config.DiscovType == "k8s" {
 		{
-			s.endpointsEventHandler = discov.MustListenEndpoints(s.Config.K8s.Namespace, "conn", func(endpoints []string) {
+			s.endpointsEventHandler = discov.MustListenEndpoints(s.Config.K8s.Namespace, "conn-rpc-svc", func(endpoints []string) {
 				for _, endpoint := range endpoints {
 					if _, ok := s.connPods.Load(endpoint); !ok {
 						s.connPods.Store(endpoint, &ConnPod{
@@ -69,6 +69,11 @@ func (s *ConnPodsMgr) initConnRpc() {
 					if !exist {
 						s.connPods.Delete(key)
 					}
+					return true
+				})
+				// 列出所有的
+				s.connPods.Range(func(endpoint, value interface{}) bool {
+					fmt.Println("conn pod endpoint:", endpoint)
 					return true
 				})
 			})
