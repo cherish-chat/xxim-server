@@ -7,15 +7,16 @@ import (
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
 	Config          config.Config
 	zedis           *redis.Redis
-	mongo           *xmgo.Client
+	mysql           *gorm.DB
 	imService       imservice.ImService
 	SystemConfigMgr *xconf.SystemConfigMgr
 	*i18n.I18N
@@ -26,9 +27,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mongo().Collection(&xconf.SystemConfig{}))
-	s.I18N = i18n.NewI18N(s.Mongo())
-	usermodel.InitUserSetting(s.Mongo().Collection(&usermodel.UserSetting{}))
+	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.I18N = i18n.NewI18N(s.Mysql())
+	usermodel.InitUserSetting(s.Mysql())
+	s.Mysql().AutoMigrate(
+		&usermodel.User{},
+		&usermodel.UserSetting{},
+		&usermodel.UserTmp{},
+		&usermodel.LoginRecord{},
+	)
 	return s
 }
 
@@ -39,11 +46,11 @@ func (s *ServiceContext) Redis() *redis.Redis {
 	return s.zedis
 }
 
-func (s *ServiceContext) Mongo() *xmgo.Client {
-	if s.mongo == nil {
-		s.mongo = xmgo.NewClient(s.Config.Mongo)
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
 	}
-	return s.mongo
+	return s.mysql
 }
 
 func (s *ServiceContext) ImService() imservice.ImService {

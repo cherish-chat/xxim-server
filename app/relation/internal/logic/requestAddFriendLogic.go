@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -168,11 +168,8 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	}
 	// 判断是否有没处理的 添加好友请求
 	{
-		count, err := l.svcCtx.Mongo().Collection(model).Find(l.ctx, bson.M{
-			"fromUserId": model.FromUserId,
-			"toUserId":   model.ToUserId,
-			"status":     pb.RequestAddFriendStatus_Unhandled,
-		}).Count()
+		var count int64
+		err := l.svcCtx.Mysql().Model(model).Where("fromUserId = ? and toUserId = ? and status = ?", model.FromUserId, model.ToUserId, pb.RequestAddFriendStatus_Unhandled).Count(&count).Error
 		if err != nil {
 			l.Errorf("Find failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -183,13 +180,12 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	}
 	// 插入 添加好友请求
 	{
-		_, err := l.svcCtx.Mongo().Collection(model).InsertOne(l.ctx, model)
+		err := xorm.InsertOne(l.svcCtx.Mysql(), model)
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
-	// TODO 发送消息通知给对方
 	l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
 		GetUserConnReq: &pb.GetUserConnReq{UserIds: []string{in.To}},
 		Event:          pb.PushEvent_RequestAddFriend,

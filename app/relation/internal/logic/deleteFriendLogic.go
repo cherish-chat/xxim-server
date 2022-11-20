@@ -3,8 +3,9 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
+	"gorm.io/gorm"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -27,14 +28,18 @@ func NewDeleteFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFriendResp, error) {
-	_, err := l.svcCtx.Mongo().Collection(&relationmodel.Friend{}).RemoveAll(l.ctx, bson.M{
-		"$or": []bson.M{{
-			"userId":   in.Requester.Id,
-			"friendId": in.UserId,
-		}, {
-			"userId":   in.UserId,
-			"friendId": in.Requester.Id,
-		}},
+	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+		err := tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.Requester.Id, in.UserId).Delete(&relationmodel.Friend{}).Error
+		if err != nil {
+			l.Errorf("delete friend failed, err: %v", err)
+			return err
+		}
+		err = tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.UserId, in.Requester.Id).Delete(&relationmodel.Friend{}).Error
+		if err != nil {
+			l.Errorf("delete friend failed, err: %v", err)
+			return err
+		}
+		return nil
 	})
 	if err != nil {
 		l.Errorf("DeleteFriend failed, err: %v", err)
@@ -49,8 +54,8 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 		}
 		// 预热缓存
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.UserId)
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.Requester.Id)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.UserId)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 		}, nil)
 	}
 	if in.Block {

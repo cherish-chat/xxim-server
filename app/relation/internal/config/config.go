@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	Mongo        xmgo.Config
+	Mysql        xorm.MysqlConfig
 	ImRpc        zrpc.RpcClientConf
 	UserRpc      zrpc.RpcClientConf
 	MsgRpc       zrpc.RpcClientConf

@@ -25,7 +25,7 @@ func NewAreFriendsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AreFri
 }
 
 func (l *AreFriendsLogic) AreFriends(in *pb.AreFriendsReq) (*pb.AreFriendsResp, error) {
-	friend, err := relationmodel.AreMyFriend(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.A, in.BList)
+	friend, err := relationmodel.AreMyFriend(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.A, in.BList)
 	if err != nil {
 		l.Errorf("AreMyFriend failed, err: %v", err)
 		return &pb.AreFriendsResp{CommonResp: pb.NewRetryErrorResp()}, err

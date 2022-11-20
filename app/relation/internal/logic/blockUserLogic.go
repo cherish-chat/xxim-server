@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -33,10 +33,7 @@ func (l *BlockUserLogic) BlockUser(in *pb.BlockUserReq) (*pb.BlockUserResp, erro
 		BlacklistId: in.UserId,
 		CreateTime:  time.Now().UnixMilli(),
 	}
-	_, err := l.svcCtx.Mongo().Collection(blacklist).Upsert(l.ctx, bson.M{
-		"userId":      blacklist.UserId,
-		"blacklistId": blacklist.BlacklistId,
-	}, blacklist)
+	err := xorm.Upsert(l.svcCtx.Mysql(), blacklist, []string{"createTime"}, []string{"userId", "blacklistId"})
 	if err != nil {
 		l.Errorf("Upsert failed, err: %v", err)
 		return &pb.BlockUserResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -49,7 +46,7 @@ func (l *BlockUserLogic) BlockUser(in *pb.BlockUserReq) (*pb.BlockUserResp, erro
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(blacklist), in.Requester.Id)
+		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 	}, nil)
 	return &pb.BlockUserResp{}, nil
 }

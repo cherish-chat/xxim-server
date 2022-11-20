@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 
@@ -40,7 +40,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Ba
 	}
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "InsertOne", func(ctx context.Context) {
-		_, err = l.svcCtx.Mongo().Collection(model).InsertOne(l.ctx, model)
+		err = xorm.InsertOne(l.svcCtx.Mysql(), model)
 	})
 	if err != nil {
 		l.Errorf("BatchSendMsgSync error: %v", err)
@@ -49,7 +49,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Ba
 	var uidSeqMap = make(map[string]int64)
 	var groupSeqMap = make(map[string]int64)
 	xtrace.StartFuncSpan(l.ctx, "MHSet", func(ctx context.Context) {
-		var kvs []xmgo.MHSetKv
+		var kvs []xorm.HashKv
 		for _, userId := range in.UserIdList {
 			convId := msgmodel.SingleConvId(in.MsgData.Sender, userId)
 			// 给会话生成一个新的seq
@@ -59,7 +59,7 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Ba
 				return
 			}
 			msgId := msgmodel.ServerMsgId(convId, int64(seq))
-			kvs = append(kvs, xmgo.MHSetKv{
+			kvs = append(kvs, xorm.HashKv{
 				Key: rediskey.ConvMsgIdMapping(convId),
 				HK:  msgId,
 				V:   model.Id,
@@ -76,14 +76,14 @@ func (l *BatchSendMsgSyncLogic) BatchSendMsgSync(in *pb.BatchSendMsgReq) (*pb.Ba
 				return
 			}
 			msgId := msgmodel.ServerMsgId(convId, int64(seq))
-			kvs = append(kvs, xmgo.MHSetKv{
+			kvs = append(kvs, xorm.HashKv{
 				Key: rediskey.ConvMsgIdMapping(convId),
 				HK:  msgId,
 				V:   model.Id,
 			})
 			groupSeqMap[groupId] = int64(seq)
 		}
-		err = xmgo.MHSet(l.svcCtx.Mongo().Collection(&xmgo.MHSetKv{}), l.ctx, kvs...)
+		err = xorm.MHSet(l.svcCtx.Mysql(), kvs...)
 	})
 	if err != nil {
 		l.Errorf("redis MHSet error: %v", err)

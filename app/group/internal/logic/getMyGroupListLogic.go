@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -41,37 +39,14 @@ func (l *GetMyGroupListLogic) getMyGroupListDefault(in *pb.GetMyGroupListReq) (*
 }
 
 func (l *GetMyGroupListLogic) getMyGroupListOnlyId(in *pb.GetMyGroupListReq) (*pb.GetMyGroupListResp, error) {
-	type res struct {
-		Id string `bson:"groupId"`
-	}
-	var result []res
-	filter := bson.M{
-		"userId": in.Requester.Id,
-	}
-	if in.Filter != nil {
-		if in.Filter.FilterFold {
-			filter["fold"] = bson.M{
-				"$ne": true,
-			}
-		}
-		if in.Filter.FilterShield {
-			filter["shield"] = bson.M{
-				"$ne": true,
-			}
-		}
-	}
-	err := l.svcCtx.Mongo().Collection(&groupmodel.GroupMember{}).Find(l.ctx, filter).Select(bson.M{
-		"groupId": 1,
-	}).All(&result)
+	model := &groupmodel.GroupMember{}
+	var groupIds []string
+	err := l.svcCtx.Mysql().Model(model).Where("userId = ?", in.Requester.Id).Pluck("groupId", &groupIds).Error
 	if err != nil {
 		l.Errorf("get group list error: %v", err)
 		return &pb.GetMyGroupListResp{}, err
 	}
-	var ids []string
-	for _, v := range result {
-		ids = append(ids, v.Id)
-	}
 	return &pb.GetMyGroupListResp{
-		Ids: ids,
+		Ids: groupIds,
 	}, nil
 }

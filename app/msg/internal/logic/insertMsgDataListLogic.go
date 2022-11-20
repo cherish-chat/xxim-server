@@ -5,13 +5,10 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	opts "github.com/qiniu/qmgo/options"
-	"github.com/zeromicro/go-zero/core/mr"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type InsertMsgDataListLogic struct {
@@ -71,9 +68,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 			var existModels []*msgmodel.Msg
 			var err error
 			xtrace.StartFuncSpan(l.ctx, "CheckClientMsgIdExist", func(ctx context.Context) {
-				err = l.svcCtx.Mongo().Collection(&msgmodel.Msg{}).Find(ctx, bson.M{
-					"clientMsgId": clientIds[0],
-				}).All(&existModels)
+				err = l.svcCtx.Mysql().Model(&msgmodel.Msg{}).Where("clientMsgId = ?", clientIds[0]).Find(&existModels).Error
 				if err != nil {
 					l.Errorf("check clientMsgId exist failed, err: %v", err)
 					return
@@ -85,32 +80,22 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 				if len(existServerIds) > 0 {
 					model := clientIdModelMap[clientIds[0]]
 					// 更新已存在的clientMsgId的contentType 和 content 和 offlinePush 和 ext
-					_, err = l.svcCtx.Mongo().Collection(&msgmodel.Msg{}).UpdateAll(
-						ctx,
-						bson.M{"_id": bson.M{"$in": existServerIds}},
-						bson.M{"$set": bson.M{
-							"contentType": model.ContentType,
-							"content":     model.Content,
-							"offlinePush": model.OfflinePush,
-							"ext":         model.Ext,
-						}},
-					)
+					err = xorm.Update(l.svcCtx.Mysql(), &msgmodel.Msg{}, map[string]interface{}{
+						"contentType": model.ContentType,
+						"content":     model.Content,
+						"offlinePush": model.OfflinePush,
+						"ext":         model.Ext,
+					}, xorm.Where("id in (?)", existServerIds))
 				}
 			})
 			return err
 		})
-		//if err != nil {
-		//	l.Errorf("InsertMsgDataList.GenModels err:%v", err)
-		//	return respMsgDataList, err
-		//}
 	}
 	if len(models) > 0 {
 		fs = append(fs, func() error {
 			var err error
 			xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
-				_, err = l.svcCtx.Mongo().Collection(&msgmodel.Msg{}).InsertMany(l.ctx, models, opts.InsertManyOptions{
-					InsertManyOptions: options.InsertMany().SetOrdered(true),
-				})
+				err = xorm.InsertMany(l.svcCtx.Mysql(), &msgmodel.Msg{}, models)
 			})
 			return err
 		})
@@ -130,7 +115,7 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		msgmodel.MsgFromMongo(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), updateCacheIds)
+		msgmodel.MsgFromMysql(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), updateCacheIds)
 	}, nil)
 	return respMsgDataList, nil
 }

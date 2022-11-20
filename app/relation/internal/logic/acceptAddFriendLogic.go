@@ -7,8 +7,9 @@ import (
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -53,18 +54,19 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		// 添加好友
 		friend1 := &relationmodel.Friend{FriendId: in.Requester.Id, UserId: in.ApplyUserId}
 		friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.Requester.Id}
-		_, err := l.svcCtx.Mongo().Collection(friend1).Upsert(l.ctx, bson.M{
-			"userId":   friend1.UserId,
-			"friendId": friend1.FriendId,
-		}, friend1)
-		if err != nil {
-			l.Errorf("InsertOne failed, err: %v", err)
-			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
-		}
-		_, err = l.svcCtx.Mongo().Collection(friend2).Upsert(l.ctx, bson.M{
-			"userId":   friend2.UserId,
-			"friendId": friend2.FriendId,
-		}, friend2)
+		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+			err := xorm.Upsert(tx, friend1, []string{"friendId", "userId"}, []string{"friendId", "userId"})
+			if err != nil {
+				l.Errorf("Save friend1 failed, err: %v", err)
+				return err
+			}
+			err = xorm.Upsert(tx, friend2, []string{"friendId", "userId"}, []string{"friendId", "userId"})
+			if err != nil {
+				l.Errorf("Save friend2 failed, err: %v", err)
+				return err
+			}
+			return nil
+		})
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -75,22 +77,15 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 	{
 		// 设置申请状态
 		if in.RequestId != nil {
-			apply := &relationmodel.RequestAddFriend{Id: *in.RequestId}
-			_, err := l.svcCtx.Mongo().Collection(apply).UpdateAll(l.ctx, bson.M{
-				"$or": []bson.M{{
-					"fromUserId": in.ApplyUserId,
-					"toUserId":   in.Requester.Id,
-				}, {
-					"fromUserId": in.Requester.Id,
-					"toUserId":   in.ApplyUserId,
-				}},
-				"status": pb.RequestAddFriendStatus_Unhandled,
-			}, bson.M{
-				"$set": bson.M{
+			err := l.svcCtx.Mysql().Model(&relationmodel.RequestAddFriend{}).
+				Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
+					pb.RequestAddFriendStatus_Unhandled,
+					in.Requester.Id, in.ApplyUserId,
+					in.ApplyUserId, in.Requester.Id).
+				Updates(map[string]interface{}{
 					"status":     pb.RequestAddFriendStatus_Agreed,
 					"updateTime": time.Now().UnixMilli(),
-				},
-			})
+				}).Error
 			if err != nil {
 				l.Errorf("UpdateOne failed, err: %v", err)
 				return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -105,8 +100,8 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		}
 		// 预热缓存
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.ApplyUserId)
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.Requester.Id)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 		}, nil)
 	}
 	return &pb.AcceptAddFriendResp{}, nil

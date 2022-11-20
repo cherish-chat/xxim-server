@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -15,7 +15,7 @@ type Config struct {
 			Msg xtdmq.TDMQProducerConfig
 		}
 	}
-	Mongo       xmgo.Config
+	Mysql       xorm.MysqlConfig
 	ImRpc       zrpc.RpcClientConf
 	RelationRpc zrpc.RpcClientConf
 	GroupRpc    zrpc.RpcClientConf

@@ -7,7 +7,9 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v20.10.21+incompatible
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20221017063954-c5c24655eb63
+	github.com/pingcap/parser v3.1.2+incompatible
 	github.com/qiniu/qmgo v1.1.4
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519
@@ -19,6 +21,8 @@ require (
 	golang.org/x/time v0.1.0
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
+	gorm.io/driver/mysql v1.4.4
+	gorm.io/gorm v1.24.1
 	k8s.io/api v0.22.9
 	k8s.io/apimachinery v0.22.9
 	k8s.io/client-go v0.22.9
@@ -65,6 +69,8 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/imdario/mergo v0.3.5 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.14.4 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
@@ -83,6 +89,9 @@ require (
 	github.com/openzipkin/zipkin-go v0.4.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
+	github.com/pingcap/check v0.0.0-20211026125417-57bd13f7b5f0 // indirect
+	github.com/pingcap/errors v0.11.4 // indirect
+	github.com/pingcap/tidb v2.0.11+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.13.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect

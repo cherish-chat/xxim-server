@@ -2,46 +2,58 @@ package usermodel
 
 import (
 	"context"
+	"database/sql/driver"
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/qiniu/qmgo"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"go.mongodb.org/mongo-driver/bson"
+	"gorm.io/gorm"
 )
 
 type (
 	User struct {
-		Id           string `bson:"_id" json:"id"`
-		Password     string `bson:"password" json:"password"`
-		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt"`
-		Nickname     string `bson:"nickname" json:"nickname"`
-		Avatar       string `bson:"avatar" json:"avatar"`
+		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
+		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
+		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:password_salt;type:char(64);"`
+		Nickname     string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
+		Avatar       string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
 		// 注册信息
-		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo"`
-		Xb       pb.XB            `bson:"xb" json:"xb"`
-		Birthday *pb.BirthdayInfo `bson:"birthday,omitempty" json:"birthday,omitempty"`
+		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:reg_info;type:json;"`
+		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`
+		Birthday *pb.BirthdayInfo `bson:"birthday,omitempty" json:"birthday,omitempty" gorm:"column:birthday;type:json;"`
 		// 其他信息
-		InfoMap   M         `bson:"infoMap" json:"infoMap"`
-		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo"`
+		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:info_map;type:json;"`
+		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:level_info;type:json;"`
 	}
 	LoginInfo struct {
-		Time        int64  `bson:"time" json:"time"` // 13位时间戳
-		Ip          string `bson:"ip" json:"ip"`
-		IpCountry   string `bson:"ipCountry" json:"ipCountry"`     // 中国
-		IpProvince  string `bson:"ipProvince" json:"ipProvince"`   // 北京市
-		IpCity      string `bson:"ipCity" json:"ipCity"`           // 北京市
-		IpISP       string `bson:"ipService" json:"ipService"`     // 电信
-		AppVersion  string `bson:"appVersion" json:"appVersion"`   // 1.0.0
-		Ua          string `bson:"ua" json:"ua"`                   // user-agent
-		OsVersion   string `bson:"osVersion" json:"osVersion"`     // 10.0.0
-		Platform    string `bson:"platform" json:"platform"`       // iphone/ipad/android/pc/mac/linux/windows
-		DeviceId    string `bson:"deviceId" json:"deviceId"`       // 设备id
-		DeviceModel string `bson:"deviceModel" json:"deviceModel"` // 设备型号
+		// 13位时间戳
+		Time int64  `bson:"time" json:"time" gorm:"column:time;type:bigint(13);index;"`
+		Ip   string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
+		// 中国
+		IpCountry string `bson:"ipCountry" json:"ipCountry" gorm:"column:ipCountry;type:varchar(64);"`
+		// 北京市
+		IpProvince string `bson:"ipProvince" json:"ipProvince" gorm:"column:ipProvince;type:varchar(64);"`
+		// 北京市
+		IpCity string `bson:"ipCity" json:"ipCity" gorm:"column:ipCity;type:varchar(64);"`
+		// 电信
+		IpISP string `bson:"ipService" json:"ipService" gorm:"column:ipService;type:varchar(64);"`
+		// 1.0.0
+		AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
+		// user-agent
+		Ua string `bson:"ua" json:"ua" gorm:"column:ua;type:varchar(255);"`
+		// 10.0.0
+		OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
+		// iphone/ipad/android/pc/mac/linux/windows
+		Platform string `bson:"platform" json:"platform" gorm:"column:platform;type:varchar(64);"`
+		// 设备id
+		DeviceId string `bson:"deviceId" json:"deviceId" gorm:"column:deviceId;type:varchar(64);"`
+		// 设备型号
+		DeviceModel string `bson:"deviceModel" json:"deviceModel" gorm:"column:deviceModel;type:varchar(64);"`
 	}
 	LevelInfo struct {
 		Level        int32 `bson:"level" json:"level"`
@@ -58,17 +70,8 @@ func (m LevelInfo) Pb() *pb.LevelInfo {
 	}
 }
 
-func (m *User) CollectionName() string {
+func (m *User) TableName() string {
 	return "user"
-}
-
-func (m *User) Indexes(c *qmgo.Collection) error {
-	//TODO implement me
-	return nil
-}
-
-func (m *User) GetId() string {
-	return m.Id
 }
 
 func (m *User) Marshal() []byte {
@@ -85,6 +88,10 @@ func (m *User) NotFound(id string) {
 
 func (m *User) String() string {
 	return utils.AnyToString(m)
+}
+
+func (m *User) GetId() string {
+	return m.Id
 }
 
 func (m *User) BaseInfo() *pb.UserBaseInfo {
@@ -106,28 +113,23 @@ func UserFromBytes(bytes []byte) *User {
 
 type (
 	UserTmp struct {
-		UserId       string `bson:"userId" json:"userId"`
-		Password     string `bson:"password" json:"password"`
-		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt"`
+		UserId       string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);primary_key"`
+		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64)"`
+		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64)"`
 		// 注册信息
-		RegInfo *LoginInfo `bson:"regInfo" json:"regInfo"`
+		RegInfo *LoginInfo `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json"`
 	}
 )
 
-func (m *UserTmp) CollectionName() string {
+func (m *UserTmp) TableName() string {
 	return "user_tmp"
 }
 
-func (m *UserTmp) Indexes(c *qmgo.Collection) error {
-	//TODO implement me
-	return nil
-}
-
 // GetUsersByIds 批量获取用户信息
-func GetUsersByIds(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, ids []string) ([]*User, error) {
+func GetUsersByIds(ctx context.Context, rc *redis.Redis, tx *gorm.DB, ids []string) ([]*User, error) {
 	users, err := getUsersByIdsFromRedis(ctx, rc, ids)
 	if err != nil {
-		return userFromMongo(ctx, rc, c, ids)
+		return userFromMysql(ctx, rc, tx, ids)
 	}
 	// 判断是否有缺失
 	userMap := make(map[string]*User)
@@ -141,7 +143,7 @@ func GetUsersByIds(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, ids
 		}
 	}
 	if len(missIds) > 0 {
-		missUsers, err := userFromMongo(ctx, rc, c, missIds)
+		missUsers, err := userFromMysql(ctx, rc, tx, missIds)
 		if err != nil {
 			return nil, err
 		}
@@ -150,15 +152,11 @@ func GetUsersByIds(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, ids
 	return users, nil
 }
 
-func userFromMongo(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, ids []string) ([]*User, error) {
+func userFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.DB, ids []string) ([]*User, error) {
 	users := make([]*User, 0)
 	err := error(nil)
 	xtrace.StartFuncSpan(ctx, "FindUserByIds", func(ctx context.Context) {
-		err = c.Find(ctx, bson.M{
-			"_id": bson.M{
-				"$in": ids,
-			},
-		}).All(&users)
+		err = tx.Where("id in (?)", ids).Find(&users).Error
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("find users by ids %v error: %s", ids, err.Error())
@@ -231,4 +229,20 @@ func FlushUserCache(ctx context.Context, rc *redis.Redis, ids []string) error {
 		})
 	}
 	return err
+}
+
+func (m LoginInfo) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *LoginInfo) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), m)
+}
+
+func (m LevelInfo) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *LevelInfo) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), m)
 }

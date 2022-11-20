@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/connservice"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -11,7 +11,6 @@ import (
 type Config struct {
 	rest.RestConf
 	Redis        redis.RedisKeyConf
-	Mongo        xmgo.Config
 	UserRpc      zrpc.RpcClientConf
 	RelationRpc  zrpc.RpcClientConf
 	GroupRpc     zrpc.RpcClientConf
@@ -20,4 +19,5 @@ type Config struct {
 	EnablePulsar bool   `json:",default=false"`
 	EnableSSL    bool   `json:",default=false"`
 	ConnRpc      connservice.ConnPodsConfig
+	Mysql        xorm.MysqlConfig
 }

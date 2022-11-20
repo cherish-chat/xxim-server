@@ -1,37 +1,16 @@
 package groupmodel
 
-import (
-	"context"
-	"github.com/qiniu/qmgo"
-	"github.com/qiniu/qmgo/options"
-	opts "go.mongodb.org/mongo-driver/mongo/options"
-)
-
 type (
 	GroupMember struct {
 		// 群id
-		GroupId string `bson:"groupId" json:"groupId"`
+		GroupId string `bson:"groupId" json:"groupId" gorm:"column:groupId;type:char(32);not null;index:group_user,unique;comment:群id;index;"`
 		// 用户id
-		UserId string `bson:"userId" json:"userId"`
+		UserId string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);not null;index:group_user,unique;comment:用户id;index;"`
 		// 加入时间
-		CreateTime int64 `bson:"createTime" json:"createTime"`
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index;comment:加入时间"`
 	}
 )
 
-func (m *GroupMember) CollectionName() string {
+func (m *GroupMember) TableName() string {
 	return "group_member"
-}
-
-func (m *GroupMember) Indexes(c *qmgo.Collection) error {
-	_ = c.CreateIndexes(context.Background(), []options.IndexModel{{
-		Key:          []string{"groupId", "userId"},
-		IndexOptions: opts.Index().SetUnique(true),
-	}, {
-		Key: []string{"groupId"},
-	}, {
-		Key: []string{"userId"},
-	}, {
-		Key: []string{"createTime"},
-	}})
-	return nil
 }

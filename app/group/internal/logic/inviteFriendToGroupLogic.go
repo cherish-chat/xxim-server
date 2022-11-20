@@ -3,9 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
-	"github.com/qiniu/qmgo/options"
-	opts "go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
@@ -63,18 +61,9 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroupWithoutVerify(in *pb.Invit
 			CreateTime: l.now.UnixMilli(),
 		})
 	}
-	_, err := l.svcCtx.Mongo().Collection(&groupmodel.GroupMember{}).InsertMany(l.ctx, members, options.InsertManyOptions{
-		InsertManyOptions: opts.InsertMany().SetOrdered(false),
-	})
+	err := xorm.InsertMany(l.svcCtx.Mysql(), &groupmodel.GroupMember{}, members)
 	if err != nil {
-		// 唯一索引冲突
-		if xmgo.DuplicateKeyError(err) {
-			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "邀请失败"), l.svcCtx.T(in.Requester.Language, "群成员已经存在"))}, nil
-		} else {
-			// retry
-			l.Errorf("CreateGroup InsertMany error: %v", err)
-			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
-		}
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "邀请失败"), l.svcCtx.T(in.Requester.Language, "群成员可能已经存在"))}, nil
 	}
 	if in.MinSeq != nil {
 		//// 获取最大seq

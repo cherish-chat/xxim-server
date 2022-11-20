@@ -39,7 +39,7 @@ func (l *GetFriendListLogic) getFriendListWithBaseInfo(in *pb.GetFriendListReq) 
 }
 
 func (l *GetFriendListLogic) getFriendListOnlyId(in *pb.GetFriendListReq) (*pb.GetFriendListResp, error) {
-	myFriendList, err := relationmodel.GetMyFriendList(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.Requester.Id)
+	myFriendList, err := relationmodel.GetMyFriendList(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 	if err != nil {
 		l.Errorf("get friend list error: %v", err)
 		return &pb.GetFriendListResp{CommonResp: pb.NewRetryErrorResp()}, err

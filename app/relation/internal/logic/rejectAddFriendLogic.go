@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -29,30 +29,22 @@ func NewRejectAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 
 func (l *RejectAddFriendLogic) RejectAddFriend(in *pb.RejectAddFriendReq) (*pb.RejectAddFriendResp, error) {
 	apply := &relationmodel.RequestAddFriend{Id: in.RequestId}
-	err := l.svcCtx.Mongo().Collection(apply).Find(l.ctx, bson.M{
-		"_id": apply.Id,
-	}).One(apply)
+	err := xorm.DetailByWhere(l.svcCtx.Mysql(), apply, xorm.Where("id", apply.Id))
 	if err != nil {
 		l.Errorf("FindOne failed, err: %v", err)
 		return &pb.RejectAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	apply.Status = pb.RequestAddFriendStatus_Refused
 	apply.UpdateTime = time.Now().UnixMilli()
-	err = l.svcCtx.Mongo().Collection(apply).UpdateOne(l.ctx, bson.M{
-		"$or": []bson.M{{
-			"fromUserId": in.ApplyUserId,
-			"toUserId":   in.Requester.Id,
-		}, {
-			"fromUserId": in.Requester.Id,
-			"toUserId":   in.ApplyUserId,
-		}},
-		"status": pb.RequestAddFriendStatus_Unhandled,
-	}, bson.M{
-		"$set": bson.M{
-			"status":      apply.Status,
-			"update_time": apply.UpdateTime,
-		},
-	})
+	err = l.svcCtx.Mysql().Model(apply).
+		Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
+			pb.RequestAddFriendStatus_Unhandled,
+			in.ApplyUserId, in.Requester.Id,
+			in.Requester.Id, in.ApplyUserId).
+		Updates(map[string]interface{}{
+			"status":     apply.Status,
+			"updateTime": apply.UpdateTime,
+		}).Error
 	if err != nil {
 		l.Errorf("Upsert failed, err: %v", err)
 		return &pb.RejectAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err

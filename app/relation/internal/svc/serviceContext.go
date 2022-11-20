@@ -4,18 +4,20 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/relation/internal/config"
+	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/xconf"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
 	Config          config.Config
 	zedis           *redis.Redis
-	mongo           *xmgo.Client
+	mysql           *gorm.DB
 	imService       imservice.ImService
 	userService     userservice.UserService
 	msgService      msgservice.MsgService
@@ -27,8 +29,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mongo().Collection(&xconf.SystemConfig{}))
-	s.I18N = i18n.NewI18N(s.Mongo())
+	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.I18N = i18n.NewI18N(s.Mysql())
+	s.Mysql().AutoMigrate(
+		relationmodel.Friend{},
+		relationmodel.Blacklist{},
+		relationmodel.RequestAddFriend{},
+	)
 	return s
 }
 
@@ -39,11 +46,11 @@ func (s *ServiceContext) Redis() *redis.Redis {
 	return s.zedis
 }
 
-func (s *ServiceContext) Mongo() *xmgo.Client {
-	if s.mongo == nil {
-		s.mongo = xmgo.NewClient(s.Config.Mongo)
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
 	}
-	return s.mongo
+	return s.mysql
 }
 
 func (s *ServiceContext) ImService() imservice.ImService {

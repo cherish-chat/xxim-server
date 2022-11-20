@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 )
@@ -26,7 +27,7 @@ func (l *AfterLogic) AfterLogin(userId string, requester *pb.Requester) {
 	record := &usermodel.LoginRecord{
 		Id:     utils.GenId(),
 		UserId: userId,
-		LoginInfo: usermodel.LoginInfo{
+		LoginRecordInfo: usermodel.LoginRecordInfo{
 			Time:        time.Now().UnixMilli(),
 			Ip:          requester.Ip,
 			IpCountry:   region.Country,
@@ -41,12 +42,12 @@ func (l *AfterLogic) AfterLogin(userId string, requester *pb.Requester) {
 			DeviceModel: requester.DeviceModel,
 		},
 	}
-	_, err := l.svcCtx.Mongo().Collection(&usermodel.LoginRecord{}).InsertOne(l.ctx, record)
+	err := xorm.InsertOne(l.svcCtx.Mysql(), record)
 	if err != nil {
 		l.Errorf("save login record failed, err: %v", err)
 	}
 }
 
 func (l *AfterLogic) AfterRegister(userId string, requester *pb.Requester) {
-	
+
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -30,10 +28,7 @@ func (l *DeleteBlockUserLogic) DeleteBlockUser(in *pb.DeleteBlockUserReq) (*pb.D
 		UserId:      in.Requester.Id,
 		BlacklistId: in.UserId,
 	}
-	err := l.svcCtx.Mongo().Collection(blacklist).Remove(l.ctx, bson.M{
-		"userId":      blacklist.UserId,
-		"blacklistId": blacklist.BlacklistId,
-	})
+	err := l.svcCtx.Mysql().Where("userId = ? and blacklistId = ?", blacklist.UserId, blacklist.BlacklistId).Delete(blacklist).Error
 	if err != nil {
 		l.Errorf("Upsert failed, err: %v", err)
 		return &pb.DeleteBlockUserResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -46,7 +41,7 @@ func (l *DeleteBlockUserLogic) DeleteBlockUser(in *pb.DeleteBlockUserReq) (*pb.D
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(blacklist), in.Requester.Id)
+		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 	}, nil)
 	return &pb.DeleteBlockUserResp{}, nil
 }

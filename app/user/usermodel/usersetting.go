@@ -1,34 +1,23 @@
 package usermodel
 
 import (
-	"context"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"github.com/qiniu/qmgo"
-	"github.com/qiniu/qmgo/options"
-	opts "go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"gorm.io/gorm"
 )
 
 type UserSetting struct {
-	UserId string            `json:"userId" bson:"userId"` // 如果userId为空，则表示所有用户的默认设置
-	Key    pb.UserSettingKey `json:"key" bson:"key"`
-	Value  string            `json:"value" bson:"value"`
+	UserId string            `json:"userId" bson:"userId" gorm:"column:userId;type:char(32);not null;index;index:idx_userId_key,unique"`
+	Key    pb.UserSettingKey `json:"key" bson:"key" gorm:"column:key;type:varchar(64);not null;index:idx_userId_key,unique"`
+	Value  string            `json:"value" bson:"value" gorm:"column:value;type:varchar(255);not null"`
 }
 
-func (m *UserSetting) CollectionName() string {
+func (m *UserSetting) TableName() string {
 	return "user_setting"
 }
 
-func (m *UserSetting) Indexes(c *qmgo.Collection) error {
-	_ = c.CreateIndexes(context.Background(), []options.IndexModel{{
-		Key: []string{"userId"},
-	}, {
-		Key:          []string{"userId", "key"},
-		IndexOptions: opts.Index().SetUnique(true),
-	}})
-	return nil
-}
-
-func InitUserSetting(c *qmgo.Collection) {
+func InitUserSetting(tx *gorm.DB) {
+	tx.AutoMigrate(&UserSetting{})
 	defaultUserSetting := func(k pb.UserSettingKey, v string) *UserSetting {
 		return &UserSetting{
 			UserId: "",
@@ -36,8 +25,12 @@ func InitUserSetting(c *qmgo.Collection) {
 			Value:  v,
 		}
 	}
-	ctx := context.Background()
-	c.InsertOne(ctx, defaultUserSetting(pb.UserSettingKey_HowToAddFriend, "need_confirm"))
-	c.InsertOne(ctx, defaultUserSetting(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Question, "你的名字是？"))
-	c.InsertOne(ctx, defaultUserSetting(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer, "xxim"))
+	insertIfNotExist := func(setting *UserSetting) {
+		if xorm.RecordNotFound(tx.Where("userId = ? and `key` = ?", setting.UserId, setting.Key).First(&UserSetting{}).Error) {
+			tx.Create(setting)
+		}
+	}
+	insertIfNotExist(defaultUserSetting(pb.UserSettingKey_HowToAddFriend, "need_confirm"))
+	insertIfNotExist(defaultUserSetting(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Question, "你的名字是？"))
+	insertIfNotExist(defaultUserSetting(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer, "xxim"))
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
 
@@ -29,6 +30,10 @@ func NewAfterConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Afte
 }
 
 func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp, error) {
+	var headers = xorm.M{}
+	for k, v := range in.ConnParam.Headers {
+		headers[k] = v
+	}
 	connectRecord := &immodel.UserConnectRecord{
 		UserId:         in.ConnParam.UserId,
 		DeviceId:       in.ConnParam.DeviceId,
@@ -36,15 +41,19 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 		Ips:            in.ConnParam.Ips,
 		IpRegion:       ip2region.Ip2Region(in.ConnParam.Ips),
 		NetworkUsed:    in.ConnParam.NetworkUsed,
-		Headers:        in.ConnParam.Headers,
+		Headers:        headers,
 		PodIp:          in.ConnParam.PodIp,
 		ConnectTime:    utils.AnyToInt64(in.ConnectedAt),
 		DisconnectTime: 0,
 	}
-	_, err := l.svcCtx.Mongo().Collection(connectRecord).InsertOne(l.ctx, connectRecord)
-	if err != nil {
-		l.Errorf("insert connect record failed, err: %v", err)
-		return pb.NewRetryErrorResp(), err
+	// 判断是否存在 通过 ConnectTime
+	err := l.svcCtx.Mysql().Model(&immodel.UserConnectRecord{}).Where("user_id = ? and device_id = ? and connect_time = ?", in.ConnParam.UserId, in.ConnParam.DeviceId, utils.AnyToInt64(in.ConnectedAt)).First(connectRecord).Error
+	if xorm.RecordNotFound(err) {
+		err := xorm.InsertOne(l.svcCtx.Mysql(), connectRecord)
+		if err != nil {
+			l.Errorf("insert connect record failed, err: %v", err)
+			return pb.NewRetryErrorResp(), err
+		}
 	}
 	return &pb.CommonResp{}, nil
 }

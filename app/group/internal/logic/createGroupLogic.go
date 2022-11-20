@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"strconv"
@@ -88,7 +89,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		return &pb.CreateGroupResp{CommonResp: inviteFriendToGroupResp.CommonResp}, nil
 	}
 	// 插入群表
-	_, err = l.svcCtx.Mongo().Collection(&groupmodel.Group{}).InsertOne(l.ctx, group)
+	err = xorm.InsertOne(l.svcCtx.Mysql(), group)
 	if err != nil {
 		// retry
 		l.Errorf("CreateGroup InsertOne error: %v", err)

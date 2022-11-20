@@ -2,16 +2,14 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xjwt"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.opentelemetry.io/otel/propagation"
 	"regexp"
 	"time"
@@ -39,11 +37,9 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	user := &usermodel.User{}
 	// 使用id查询用户信息
-	err := l.svcCtx.Mongo().Collection(&usermodel.User{}).Find(l.ctx, bson.M{
-		"_id": in.Id,
-	}).One(user)
+	err := xorm.DetailByWhere(l.svcCtx.Mysql(), user, xorm.Where("id = ?", in.Id))
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
+		if xorm.RecordNotFound(err) {
 			// 用户不存在 注册流程
 			return l.register(in)
 		} else {
@@ -122,7 +118,7 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 		},
 	}
 	// 保存用户信息
-	_, err := l.svcCtx.Mongo().Collection(&usermodel.UserTmp{}).InsertOne(l.ctx, userTmp)
+	err := xorm.InsertOne(l.svcCtx.Mysql(), userTmp)
 	if err != nil {
 		l.Errorf("insert user failed, err: %v", err)
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err

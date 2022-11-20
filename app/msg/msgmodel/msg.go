@@ -2,17 +2,17 @@ package msgmodel
 
 import (
 	"context"
+	"database/sql/driver"
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/qiniu/qmgo"
-	"github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/logx"
 	zedis "github.com/zeromicro/go-zero/core/stores/redis"
-	"go.mongodb.org/mongo-driver/bson"
+	"gorm.io/gorm"
 	"strconv"
 	"strings"
 	"time"
@@ -23,28 +23,49 @@ const ConvIdSeparator = ":"
 
 type (
 	Msg struct {
-		ServerMsgId    string          `bson:"_id"`                   // 服务端生成的消息id convId+seq
-		ConvId         string          `bson:"conv_id"`               // 会话id // 单聊：sender_id + receiver_id // 群聊：group_id
-		ClientMsgId    string          `bson:"clientMsgId"`           // 客户端生成的消息id
-		ClientTime     int64           `bson:"clientTime"`            // 客户端发送消息的时间 13位时间戳
-		ServerTime     int64           `bson:"serverTime"`            // 服务端接收到消息的时间 13位时间戳
-		Sender         string          `bson:"sender"`                // 发送者id
-		SenderInfo     string          `bson:"senderInfo"`            // 发送者信息
-		SenderConvInfo string          `bson:"senderConvInfo"`        // 发送者在会话中的信息
-		Receiver       MsgReceiver     `bson:"receiver"`              // 接收者id (单聊时为对方id, 群聊时为群id)
-		AtUsers        []string        `bson:"atUsers"`               // 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
-		ContentType    ContentType     `bson:"contentType"`           // 消息内容类型
-		Content        []byte          `bson:"content"`               // 消息内容
-		Seq            int64           `bson:"seq"`                   // 消息序号 会话内唯一且递增
-		Options        MsgOptions      `bson:"options"`               // 消息选项
-		OfflinePush    *MsgOfflinePush `bson:"offlinePush,omitempty"` // 离线推送
-		Ext            []byte          `bson:"ext"`                   // 扩展字段
+		// 服务端生成的消息id convId+seq
+		ServerMsgId string `bson:"_id" gorm:"column:id;primary_key;type:char(128);"`
+		// 会话id // 单聊：sender_id + receiver_id // 群聊：group_id
+		ConvId string `bson:"convId" gorm:"column:convId;type:char(96);index;"`
+		// 客户端生成的消息id
+		ClientMsgId string `bson:"clientMsgId" gorm:"column:clientMsgId;type:char(128);index;"`
+		// 客户端发送消息的时间 13位时间戳
+		ClientTime int64 `bson:"clientTime" gorm:"column:clientTime;type:bigint;index;"`
+		// 服务端接收到消息的时间 13位时间戳
+		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index;"`
+		// 发送者id
+		Sender string `bson:"sender" gorm:"column:sender;type:char(32);index;"`
+		// 发送者信息
+		SenderInfo string `bson:"senderInfo" gorm:"column:senderInfo;type:text;"`
+		// 发送者在会话中的信息
+		SenderConvInfo string `bson:"senderConvInfo" gorm:"column:senderConvInfo;type:text;"`
+		// 接收者id (单聊时为对方id, 群聊时为群id)
+		Receiver MsgReceiver `bson:"receiver" gorm:"column:receiver;type:JSON;"`
+		// 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
+		AtUsers xorm.SliceString `bson:"atUsers" gorm:"column:atUsers;type:JSON;"`
+		// 消息内容类型
+		ContentType ContentType `bson:"contentType" gorm:"column:contentType;type:tinyint;"`
+		// 消息内容
+		Content xorm.Bytes `bson:"content" gorm:"column:content;type:blob;"`
+		// 消息序号 会话内唯一且递增
+		Seq int64 `bson:"seq" gorm:"column:seq;type:bigint;index;"`
+		// 消息选项
+		Options MsgOptions `bson:"options" gorm:"column:options;type:JSON;"`
+		// 离线推送
+		OfflinePush *MsgOfflinePush `bson:"offlinePush,omitempty" gorm:"column:offlinePush;type:JSON;"`
+		// 扩展字段
+		Ext xorm.Bytes `bson:"ext" gorm:"column:ext;type:blob;"`
+		// internal
+		internal MsgInternal `bson:"-" gorm:"-"`
+	}
+	MsgInternal struct {
+		NotFound bool
 	}
 	BatchMsg struct {
-		Id          string   `bson:"_id"` // 批量id
-		Msg         *Msg     `bson:"msg"` // 原始消息
-		UserIdList  []string `bson:"userIdList"`
-		GroupIdList []string `bson:"groupIdList"`
+		Id          string           `bson:"_id"` // 批量id
+		Msg         *Msg             `bson:"msg"` // 原始消息
+		UserIdList  xorm.SliceString `bson:"userIdList"`
+		GroupIdList xorm.SliceString `bson:"groupIdList"`
 	}
 	ContentType = pb.ContentType
 	MsgReceiver struct {
@@ -66,23 +87,12 @@ type (
 	}
 )
 
-func (m *BatchMsg) CollectionName() string {
+func (m *BatchMsg) TableName() string {
 	return "batch_msg"
 }
 
-func (m *BatchMsg) Indexes(c *qmgo.Collection) error {
-	return nil
-}
-
-func (m *Msg) CollectionName() string {
+func (m *Msg) TableName() string {
 	return "msg"
-}
-
-func (m *Msg) Indexes(c *qmgo.Collection) error {
-	c.CreateIndexes(context.Background(), []options.IndexModel{{
-		Key: []string{"clientMsgId"},
-	}})
-	return nil
 }
 
 func NewMsgFromPb(in *pb.MsgData) *Msg {
@@ -134,6 +144,11 @@ func (m *Msg) NotFound(serverId string) {
 	convId, seq := ParseConvServerMsgId(serverId)
 	m.ConvId = convId
 	m.Seq = seq
+	m.internal.NotFound = true
+}
+
+func (m *Msg) IsNotFound() bool {
+	return m.internal.NotFound
 }
 
 func (m *Msg) AutoConvId() *Msg {
@@ -332,19 +347,17 @@ func ParseSingleConvId(convId string) (string, string) {
 	return "", ""
 }
 
-func MsgFromMongo(
+func MsgFromMysql(
 	ctx context.Context,
 	rc *zedis.Redis,
-	collection *qmgo.Collection,
+	tx *gorm.DB,
 	ids []string,
 ) (msgList []*Msg, err error) {
 	if len(ids) == 0 {
 		return make([]*Msg, 0), nil
 	}
 	xtrace.StartFuncSpan(ctx, "FindMsgByIds", func(ctx context.Context) {
-		err = collection.Find(ctx, bson.M{
-			"_id": bson.M{"$in": ids},
-		}).All(&msgList)
+		err = tx.Model(&Msg{}).Where("id in (?)", ids).Find(&msgList).Error
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("GetSingleMsgListBySeq failed, err: %v", err)
@@ -391,4 +404,36 @@ func FlushMsgCache(ctx context.Context, rc *zedis.Redis, ids []string) error {
 		})
 	}
 	return err
+}
+
+func (m Msg) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *Msg) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), m)
+}
+
+func (m MsgReceiver) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *MsgReceiver) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), m)
+}
+
+func (m MsgOptions) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *MsgOptions) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), m)
+}
+
+func (m MsgOfflinePush) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *MsgOfflinePush) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), m)
 }

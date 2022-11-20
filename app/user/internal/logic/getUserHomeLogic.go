@@ -25,7 +25,7 @@ func NewGetUserHomeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeResp, error) {
-	users, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&usermodel.User{}), []string{in.Id})
+	users, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), []string{in.Id})
 	if err != nil {
 		l.Errorf("getUsersByIds failed, err: %v", err)
 		return &pb.GetUserHomeResp{CommonResp: pb.NewRetryErrorResp()}, err

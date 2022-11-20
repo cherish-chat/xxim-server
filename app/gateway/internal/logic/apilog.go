@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
@@ -73,7 +74,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 			ResponseTimeStr: responseTime.Format("2006-01-02 15:04:05.000"),
 			TraceId:         l.traceId,
 		}
-		_, err = l.svcCtx.Mongo().Collection(apiLog).InsertOne(ctx, apiLog)
+		err = xorm.InsertOne(l.svcCtx.Mysql(), apiLog)
 		if err != nil {
 			l.Errorf("ApiLog err: %v", err)
 		}

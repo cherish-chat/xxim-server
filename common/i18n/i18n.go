@@ -1,18 +1,13 @@
 package i18n
 
 import (
-	"context"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
-	"github.com/qiniu/qmgo"
-	"github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/logx"
-	"go.mongodb.org/mongo-driver/bson"
-	opts "go.mongodb.org/mongo-driver/mongo/options"
+	"gorm.io/gorm"
 )
 
-func NewI18N(mongodb *xmgo.Client) *I18N {
+func NewI18N(mysql *gorm.DB) *I18N {
 	m := &I18N{
-		c:           mongodb.Collection(&Language{}),
+		mysql:       mysql,
 		LanguageMap: map[string]map[string]string{},
 	}
 	m.init()
@@ -20,7 +15,7 @@ func NewI18N(mongodb *xmgo.Client) *I18N {
 }
 
 type I18N struct {
-	c           *qmgo.Collection
+	mysql       *gorm.DB
 	LanguageMap map[string]map[string]string
 }
 
@@ -30,23 +25,15 @@ type Language struct {
 	Value    string `bson:"value" json:"value"`       // 语言值
 }
 
-func (m *Language) CollectionName() string {
+func (m *Language) TableName() string {
 	return "language"
 }
 
-func (m *Language) Indexes(c *qmgo.Collection) error {
-	_ = c.CreateIndexes(context.Background(), []options.IndexModel{{
-		Key:          []string{"language", "key"},
-		IndexOptions: opts.Index().SetUnique(true),
-	}, {
-		Key: []string{"language"},
-	}})
-	return nil
-}
-
 func (l *I18N) init() {
+	l.mysql.AutoMigrate(&Language{})
 	var languageList []Language
-	err := l.c.Find(context.Background(), bson.M{}).All(&languageList)
+	// 查询所有
+	err := l.mysql.Find(&languageList).Error
 	if err != nil {
 		logx.Errorf("init language error: %v", err)
 		panic(err)

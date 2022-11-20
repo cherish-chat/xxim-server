@@ -3,10 +3,9 @@ package msgmodel
 import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"time"
 )
-
-type H map[string]any
 
 func CreateTextMsgToUser(
 	sender *pb.UserBaseInfo,
@@ -16,7 +15,7 @@ func CreateTextMsgToUser(
 	offlinePush *MsgOfflinePush,
 	ext any,
 ) *Msg {
-	return CreateCustomMsgToUser(sender, userId, pb.ContentType_TEXT, H{
+	return CreateCustomMsgToUser(sender, userId, pb.ContentType_TEXT, xorm.M{
 		"text": text,
 	}, options, offlinePush, ext)
 }

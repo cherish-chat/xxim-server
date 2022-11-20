@@ -29,7 +29,7 @@ func NewGetFriendCountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 func (l *GetFriendCountLogic) GetFriendCount(in *pb.GetFriendCountReq) (*pb.GetFriendCountResp, error) {
 	hLen, err := xredis.HLen(l.svcCtx.Redis(), l.ctx, rediskey.FriendList(in.Requester.Id))
 	if err != nil {
-		friendList, err := relationmodel.GetMyFriendList(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.Requester.Id)
+		friendList, err := relationmodel.GetMyFriendList(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
 		if err != nil {
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.GetFriendCountResp{CommonResp: pb.NewRetryErrorResp()}, err
