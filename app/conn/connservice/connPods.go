@@ -29,7 +29,7 @@ type ConnPodsConfig struct {
 }
 
 type ConnPod struct {
-	PodIp string
+	PodIpPort string
 	ConnService
 }
 
@@ -47,9 +47,10 @@ func (s *ConnPodsMgr) initConnRpc() {
 		{
 			s.endpointsEventHandler = discov.MustListenEndpoints(s.Config.K8s.Namespace, "conn-rpc-svc", func(endpoints []string) {
 				for _, endpoint := range endpoints {
+					endpoint = fmt.Sprintf("%s:%d", endpoint, s.Config.K8s.Port)
 					if _, ok := s.connPods.Load(endpoint); !ok {
 						s.connPods.Store(endpoint, &ConnPod{
-							PodIp: fmt.Sprintf("%s:%d", endpoint, s.Config.K8s.Port),
+							PodIpPort: endpoint,
 							ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 								Endpoints: []string{endpoint},
 								NonBlock:  true,
@@ -81,7 +82,7 @@ func (s *ConnPodsMgr) initConnRpc() {
 	} else {
 		for _, endpoint := range s.Config.Endpoints {
 			s.connPods.Store(endpoint, &ConnPod{
-				PodIp: endpoint,
+				PodIpPort: endpoint,
 				ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 					Endpoints: []string{endpoint},
 					NonBlock:  true,
@@ -89,11 +90,4 @@ func (s *ConnPodsMgr) initConnRpc() {
 			})
 		}
 	}
-}
-
-func (s *ConnPodsMgr) ConnByIp(ip string) ConnService {
-	if v, ok := s.connPods.Load(ip); ok {
-		return v.(*ConnPod).ConnService
-	}
-	return nil
 }

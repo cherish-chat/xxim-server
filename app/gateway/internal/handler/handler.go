@@ -66,7 +66,7 @@ func getConnPodHost(svcCtx *svc.ServiceContext) (string, error) {
 	// 代理到 conn 服务
 	var connRpcIps []string
 	for _, connPod := range svcCtx.ConnPodsMgr.AllConnServices() {
-		connRpcIps = append(connRpcIps, connPod.PodIp)
+		connRpcIps = append(connRpcIps, connPod.PodIpPort)
 	}
 	if len(connRpcIps) == 0 {
 		return "", errors.New("no conn service")
