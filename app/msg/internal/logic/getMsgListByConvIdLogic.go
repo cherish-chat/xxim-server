@@ -43,7 +43,7 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 	}
 	for i, redisMsg := range redisMsgList {
 		msg := &msgmodel.Msg{}
-		if redisMsg == xredis.NotFound {
+		if redisMsg == xredis.NotFound || redisMsg == "" {
 			id := ids[i]
 			msg.NotFound(id)
 		} else {

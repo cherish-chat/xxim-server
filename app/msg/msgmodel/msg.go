@@ -62,10 +62,11 @@ type (
 		NotFound bool
 	}
 	BatchMsg struct {
-		Id          string           `bson:"_id"` // 批量id
-		Msg         *Msg             `bson:"msg"` // 原始消息
-		UserIdList  xorm.SliceString `bson:"userIdList"`
-		GroupIdList xorm.SliceString `bson:"groupIdList"`
+		// 批量id
+		Id          string           `bson:"_id" gorm:"column:id;primary_key;type:char(32);" json:"id"`
+		Msg         *Msg             `bson:"msg" gorm:"column:msg;type:JSON;" json:"msg"`
+		UserIdList  xorm.SliceString `bson:"userIdList" gorm:"column:userIdList;type:JSON;" json:"userIdList"`
+		GroupIdList xorm.SliceString `bson:"groupIdList" gorm:"column:groupIdList;type:JSON;" json:"groupIdList"`
 	}
 	ContentType = pb.ContentType
 	MsgReceiver struct {

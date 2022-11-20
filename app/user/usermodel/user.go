@@ -19,16 +19,16 @@ type (
 	User struct {
 		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
 		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
-		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:password_salt;type:char(64);"`
+		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64);"`
 		Nickname     string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
 		Avatar       string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
 		// 注册信息
-		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:reg_info;type:json;"`
+		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json;"`
 		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`
 		Birthday *pb.BirthdayInfo `bson:"birthday,omitempty" json:"birthday,omitempty" gorm:"column:birthday;type:json;"`
 		// 其他信息
-		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:info_map;type:json;"`
-		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:level_info;type:json;"`
+		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:infoMap;type:json;"`
+		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:levelInfo;type:json;"`
 	}
 	LoginInfo struct {
 		// 13位时间戳
@@ -203,7 +203,7 @@ func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) 
 	}
 	for i, val := range vals {
 		user := &User{}
-		if val == xredis.NotFound {
+		if val == xredis.NotFound || val == "" {
 			id := ids[i]
 			user.NotFound(id)
 		} else {
