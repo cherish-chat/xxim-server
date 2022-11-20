@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/connservice"
+	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/app/im/internal/config"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
@@ -46,5 +47,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	ip2region.Init(c.Ip2RegionUrl)
 	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
+	s.Mysql().AutoMigrate(&immodel.UserConnectRecord{})
 	return s
 }
