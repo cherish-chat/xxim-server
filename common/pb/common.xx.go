@@ -1,7 +1,6 @@
 package pb
 
 import (
-	"database/sql/driver"
 	"encoding/json"
 )
 
@@ -98,11 +97,6 @@ func (x *CommonResp) Failed() bool {
 	return x.Code != CommonResp_Success
 }
 
-// Value 实现 sql 接口
-func (x Requester) Value() (driver.Value, error) {
-	return json.Marshal(x)
-}
-
 // Scan 实现 sql 接口
 func (x *Requester) Scan(input interface{}) error {
 	s := string(input.([]byte))
@@ -111,11 +105,6 @@ func (x *Requester) Scan(input interface{}) error {
 
 	}
 	return nil
-}
-
-// Value 实现 sql 接口
-func (x IpRegion) Value() (driver.Value, error) {
-	return json.Marshal(x)
 }
 
 // Scan 实现 sql 接口
