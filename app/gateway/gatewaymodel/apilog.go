@@ -10,8 +10,8 @@ type ApiLog struct {
 	Resp            string             `json:"resp" bson:"resp" gorm:"column:resp;type:text;"`                                      // 响应
 	Err             string             `json:"err" bson:"err" gorm:"column:err;index;type:varchar(255);"`                           // 错误
 	RespCode        pb.CommonResp_Code `json:"respCode" bson:"respCode" gorm:"column:respCode;index;"`                              // 响应码
-	Requester       *pb.Requester      `json:"requester" bson:"requester" gorm:"column:requester;type:json;"`                       // 请求者
-	IpRegion        *pb.IpRegion       `json:"ipRegion" bson:"ipRegion" gorm:"column:ipRegion;type:json;"`                          // ip 地区
+	Requester       string             `json:"requester" bson:"requester" gorm:"column:requester;type:text;"`                       // 请求者
+	IpRegion        string             `json:"ipRegion" bson:"ipRegion" gorm:"column:ipRegion;type:text;"`                          // ip 地区
 	RequestTime     int64              `json:"requestTime" bson:"requestTime" gorm:"column:requestTime;index;type:bigint(13);"`     // 请求时间
 	ResponseTime    int64              `json:"responseTime" bson:"responseTime" gorm:"column:responseTime;index;type:bigint(13);"`  // 响应时间
 	RequestTimeStr  string             `json:"requestTimeStr" bson:"requestTimeStr" gorm:"column:requestTimeStr;type:char(32);"`    // 请求时间

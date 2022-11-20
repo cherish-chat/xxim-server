@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewaymodel"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -66,8 +67,8 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 			Resp:            resp,
 			Err:             errStr,
 			RespCode:        commonResp.Code,
-			Requester:       requester,
-			IpRegion:        ipRegion,
+			Requester:       utils.AnyToString(requester),
+			IpRegion:        utils.AnyToString(ipRegion),
 			RequestTime:     requestTime.UnixMilli(),
 			ResponseTime:    responseTime.UnixMilli(),
 			RequestTimeStr:  requestTime.Format("2006-01-02 15:04:05.000"),
