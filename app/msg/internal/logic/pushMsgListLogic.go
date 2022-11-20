@@ -78,6 +78,9 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 			if len(subscribers.UserIdList) > 0 {
 				convSubscribers[convId] = subscribers
 				convUserIds[convId] = subscribers.UserIdList
+			} else {
+				convSubscribers[convId] = &pb.GetConvSubscribersResp{}
+				convUserIds[convId] = []string{}
 			}
 		}
 		for convId, subscribers := range convSubscribers {
