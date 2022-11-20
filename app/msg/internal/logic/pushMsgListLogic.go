@@ -95,6 +95,9 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	for convId, msgDataList := range listMap {
 		if userIds, ok := convUserIds[convId]; ok {
 			userIds = utils.Set(append(userIds, senders...))
+			if len(userIds) == 0 {
+				continue
+			}
 			msgDataListBytes, _ := proto.Marshal(msgDataList)
 			_, _ = l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{
