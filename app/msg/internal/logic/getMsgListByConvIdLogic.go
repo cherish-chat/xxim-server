@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -117,70 +116,6 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 			notFoundIds = append(notFoundIds, id)
 		} else if m.IsNotFound() {
 			notFoundIds = append(notFoundIds, id)
-		}
-	}
-	if len(notFoundIds) > 0 {
-		xtrace.StartFuncSpan(l.ctx, "FindMsgByIdsFromBatchMsg", func(ctx context.Context) {
-			var kvs []xorm.HashKv
-			for _, id := range notFoundIds {
-				kvs = append(kvs, xorm.HashKv{
-					Key: rediskey.ConvMsgIdMapping(convId),
-					HK:  id,
-					V:   "",
-				})
-			}
-			var results []*xorm.HashKv
-			results, err = xorm.MHGet(l.svcCtx.Mysql(), kvs...)
-			if err != nil {
-				l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-				return
-			}
-			batchMsgIds := make([]string, 0)
-			batchIdMsgIdMap := make(map[string]string)
-			for _, result := range results {
-				batchMsgIds = append(batchMsgIds, utils.AnyToString(result.V))
-				batchIdMsgIdMap[utils.AnyToString(result.V)] = result.HK
-			}
-			if len(batchMsgIds) > 0 {
-				var batchMsgList []*msgmodel.BatchMsg
-				err = l.svcCtx.Mysql().Model(&msgmodel.BatchMsg{}).Where("id in (?)", batchMsgIds).Find(&batchMsgList).Error
-				if err != nil {
-					l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-					return
-				}
-				if msgmodel.ConvIsGroup(convId) {
-					for _, batchMsg := range batchMsgList {
-						msg := batchMsg.Msg
-						msg.ConvId = convId
-						msg.Receiver.GroupId = convId
-						msg.ServerMsgId = batchIdMsgIdMap[batchMsg.Id]
-						msg.ClientMsgId = msgmodel.BatchMsgClientMsgId(msg.ClientMsgId, convId)
-						_, msg.Seq = msgmodel.ParseGroupServerMsgId(msg.ServerMsgId)
-						msgList = append(msgList, msg)
-						msgMap[msg.ServerMsgId] = msg
-					}
-				} else {
-					for _, batchMsg := range batchMsgList {
-						msg := batchMsg.Msg
-						msg.ConvId = convId
-						if msg.Sender == in.CommonReq.Id {
-							id1, id2 := msgmodel.ParseSingleConvId(convId)
-							msg.Receiver.UserId = utils.If(id1 == in.CommonReq.Id, id2, id1)
-						} else {
-							msg.Receiver.UserId = in.CommonReq.Id
-						}
-						msg.ServerMsgId = batchIdMsgIdMap[batchMsg.Id]
-						msg.ClientMsgId = msgmodel.BatchMsgClientMsgId(msg.ClientMsgId, convId)
-						_, msg.Seq = msgmodel.ParseSingleServerMsgId(msg.ServerMsgId)
-						msgList = append(msgList, msg)
-						msgMap[msg.ServerMsgId] = msg
-					}
-				}
-			}
-		})
-		if err != nil {
-			l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-			return &pb.GetMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
 	for _, id := range expectIds {

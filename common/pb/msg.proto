@@ -10,7 +10,6 @@ message MsgMQBody {
   enum Event {
     // 插入消息并推送消息
     SendMsgListSync = 0;
-    BatchSendMsgSync = 1;
   }
   Event event = 1;
   bytes data = 2;
@@ -79,20 +78,6 @@ message SendMsgListResp {
   CommonResp commonResp = 1;
 }
 
-message BatchSendMsgReq {
-  CommonReq commonReq = 1;
-  MsgData msgData = 2;
-  repeated string userIdList = 3; // 接收者id列表
-  repeated string groupIdList = 4; // 群组id列表
-  // options
-  // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int32 deliverAfter = 11;
-}
-
-message BatchSendMsgResp {
-  CommonResp commonResp = 1;
-}
-
 message PushMsgListReq {
   repeated MsgData msgDataList = 1;
 }
@@ -107,6 +92,18 @@ message GetMsgListByConvIdReq {
 message GetMsgListResp {
   CommonResp commonResp = 1;
   repeated MsgData msgDataList = 2;
+}
+
+message GetMsgByIdReq {
+  CommonReq commonReq = 1;
+  optional string serverMsgId = 2;
+  optional string clientMsgId = 3;
+  bool push = 4;
+}
+
+message GetMsgByIdResp {
+  CommonResp commonResp = 1;
+  MsgData msgData = 2;
 }
 
 //批量设置用户某会话的minseq
@@ -160,11 +157,11 @@ service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
   rpc SendMsgListAsync(SendMsgListReq) returns (SendMsgListResp) {} // 异步发送消息 成功后只能等待推送
-  rpc BatchSendMsgSync(BatchSendMsgReq) returns (BatchSendMsgResp) {} // 批量同步发送消息
-  rpc BatchSendMsgAsync(BatchSendMsgReq) returns (BatchSendMsgResp) {} // 批量异步发送消息
   rpc PushMsgList(PushMsgListReq) returns (CommonResp) {} // 推送消息
   //GetMsgListByConvId 通过seq拉取一个会话的消息
   rpc GetMsgListByConvId(GetMsgListByConvIdReq) returns (GetMsgListResp) {}
+  //GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+  rpc GetMsgById(GetMsgByIdReq) returns (GetMsgByIdResp) {}
   //BatchSetMinSeq 批量设置用户某会话的minseq
   rpc BatchSetMinSeq(BatchSetMinSeqReq) returns (BatchSetMinSeqResp) {}
   //BatchGetConvSeq 批量获取会话的seq

@@ -61,13 +61,6 @@ type (
 	MsgInternal struct {
 		NotFound bool
 	}
-	BatchMsg struct {
-		// 批量id
-		Id          string           `bson:"_id" gorm:"column:id;primary_key;type:char(32);" json:"id"`
-		Msg         *Msg             `bson:"msg" gorm:"column:msg;type:JSON;" json:"msg"`
-		UserIdList  xorm.SliceString `bson:"userIdList" gorm:"column:userIdList;type:JSON;" json:"userIdList"`
-		GroupIdList xorm.SliceString `bson:"groupIdList" gorm:"column:groupIdList;type:JSON;" json:"groupIdList"`
-	}
 	ContentType = pb.ContentType
 	MsgReceiver struct {
 		UserId  string `bson:"userId"`  // 单聊时为对方的userId
@@ -87,10 +80,6 @@ type (
 		Payload string `bson:"payload"` // 离线推送自定义字段
 	}
 )
-
-func (m *BatchMsg) TableName() string {
-	return "batch_msg"
-}
 
 func (m *Msg) TableName() string {
 	return "msg"
@@ -225,72 +214,6 @@ func (m *Msg) ExpireSeconds() int {
 	return xredis.ExpireMinutes(5)
 }
 
-func (m *Msg) SinglePb(seq int64, uid string) *pb.MsgData {
-	convId := SingleConvId(uid, m.Sender)
-	return &pb.MsgData{
-		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
-		ServerMsgId:    ServerMsgId(convId, seq),
-		ClientTime:     utils.AnyToString(m.ClientTime),
-		ServerTime:     utils.AnyToString(m.ServerTime),
-		Sender:         m.Sender,
-		SenderInfo:     m.SenderInfo,
-		SenderConvInfo: m.SenderConvInfo,
-		Receiver:       &pb.MsgData_Receiver{UserId: &uid},
-		ConvId:         convId,
-		AtUsers:        m.AtUsers,
-		ContentType:    m.ContentType,
-		Content:        m.Content,
-		Seq:            utils.AnyToString(seq),
-		Options: &pb.MsgData_Options{
-			OfflinePush:       m.Options.OfflinePush,
-			StorageForServer:  m.Options.StorageForServer,
-			StorageForClient:  m.Options.StorageForClient,
-			UpdateUnreadCount: m.Options.UpdateUnreadCount,
-			NeedDecrypt:       m.Options.NeedDecrypt,
-			UpdateConvMsg:     m.Options.UpdateConvMsg,
-		},
-		OfflinePush: &pb.MsgData_OfflinePush{
-			Title:   m.OfflinePush.Title,
-			Content: m.OfflinePush.Content,
-			Payload: m.OfflinePush.Payload,
-		},
-		Ext: m.Ext,
-	}
-}
-
-func (m *Msg) GroupPb(seq int64, groupId string) *pb.MsgData {
-	convId := groupId
-	return &pb.MsgData{
-		ClientMsgId:    BatchMsgClientMsgId(m.ClientMsgId, convId),
-		ServerMsgId:    ServerMsgId(convId, seq),
-		ClientTime:     utils.AnyToString(m.ClientTime),
-		ServerTime:     utils.AnyToString(m.ServerTime),
-		Sender:         m.Sender,
-		SenderInfo:     m.SenderInfo,
-		SenderConvInfo: m.SenderConvInfo,
-		Receiver:       &pb.MsgData_Receiver{GroupId: &groupId},
-		ConvId:         convId,
-		AtUsers:        m.AtUsers,
-		ContentType:    m.ContentType,
-		Content:        m.Content,
-		Seq:            utils.AnyToString(seq),
-		Options: &pb.MsgData_Options{
-			OfflinePush:       m.Options.OfflinePush,
-			StorageForServer:  m.Options.StorageForServer,
-			StorageForClient:  m.Options.StorageForClient,
-			UpdateUnreadCount: m.Options.UpdateUnreadCount,
-			NeedDecrypt:       m.Options.NeedDecrypt,
-			UpdateConvMsg:     m.Options.UpdateConvMsg,
-		},
-		OfflinePush: &pb.MsgData_OfflinePush{
-			Title:   m.OfflinePush.Title,
-			Content: m.OfflinePush.Content,
-			Payload: m.OfflinePush.Payload,
-		},
-		Ext: m.Ext,
-	}
-}
-
 func ServerMsgId(convId string, seq int64) string {
 	return convId + ConvIdSeparator + strconv.FormatInt(seq, 10)
 }
@@ -311,19 +234,6 @@ func ParseSingleServerMsgId(serverMsgId string) (convId string, seq int64) {
 	return
 }
 
-func BatchMsgClientMsgId(clientMsgId string, convId string) string {
-	return clientMsgId + ConvIdSeparator + convId
-}
-
-func ParseGroupServerMsgId(serverMsgId string) (groupId string, seq int64) {
-	arr := strings.Split(serverMsgId, ConvIdSeparator)
-	if len(arr) == 2 {
-		groupId = arr[0]
-		seq, _ = strconv.ParseInt(arr[1], 10, 64)
-	}
-	return
-}
-
 func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {
 	arr := strings.Split(serverMsgId, ConvIdSeparator)
 	if len(arr) == 2 {
@@ -334,18 +244,6 @@ func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {
 		seq, _ = strconv.ParseInt(arr[2], 10, 64)
 	}
 	return
-}
-
-func ConvIsGroup(convId string) bool {
-	return !strings.Contains(convId, ConvIdSeparator)
-}
-
-func ParseSingleConvId(convId string) (string, string) {
-	arr := strings.Split(convId, ConvIdSeparator)
-	if len(arr) == 2 {
-		return arr[0], arr[1]
-	}
-	return "", ""
 }
 
 func MsgFromMysql(

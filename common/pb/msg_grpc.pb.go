@@ -25,11 +25,11 @@ type MsgServiceClient interface {
 	InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
 	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
-	BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
-	BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+	GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
 	BatchSetMinSeq(ctx context.Context, in *BatchSetMinSeqReq, opts ...grpc.CallOption) (*BatchSetMinSeqResp, error)
 	//BatchGetConvSeq 批量获取会话的seq
@@ -76,24 +76,6 @@ func (c *msgServiceClient) SendMsgListAsync(ctx context.Context, in *SendMsgList
 	return out, nil
 }
 
-func (c *msgServiceClient) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
-	out := new(BatchSendMsgResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgSync", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgServiceClient) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
-	out := new(BatchSendMsgResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/BatchSendMsgAsync", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/PushMsgList", in, out, opts...)
@@ -106,6 +88,15 @@ func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, 
 func (c *msgServiceClient) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	out := new(GetMsgListResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/GetMsgListByConvId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error) {
+	out := new(GetMsgByIdResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetMsgById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -164,11 +155,11 @@ type MsgServiceServer interface {
 	InsertMsgDataList(context.Context, *MsgDataList) (*MsgDataList, error)
 	SendMsgListSync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
-	BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error)
-	BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error)
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
 	//GetMsgListByConvId 通过seq拉取一个会话的消息
 	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
+	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+	GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
 	BatchSetMinSeq(context.Context, *BatchSetMinSeqReq) (*BatchSetMinSeqResp, error)
 	//BatchGetConvSeq 批量获取会话的seq
@@ -194,17 +185,14 @@ func (UnimplementedMsgServiceServer) SendMsgListSync(context.Context, *SendMsgLi
 func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsgListAsync not implemented")
 }
-func (UnimplementedMsgServiceServer) BatchSendMsgSync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgSync not implemented")
-}
-func (UnimplementedMsgServiceServer) BatchSendMsgAsync(context.Context, *BatchSendMsgReq) (*BatchSendMsgResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BatchSendMsgAsync not implemented")
-}
 func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushMsgList not implemented")
 }
 func (UnimplementedMsgServiceServer) GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMsgListByConvId not implemented")
+}
+func (UnimplementedMsgServiceServer) GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMsgById not implemented")
 }
 func (UnimplementedMsgServiceServer) BatchSetMinSeq(context.Context, *BatchSetMinSeqReq) (*BatchSetMinSeqResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchSetMinSeq not implemented")
@@ -288,42 +276,6 @@ func _MsgService_SendMsgListAsync_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_BatchSendMsgSync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchSendMsgReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServiceServer).BatchSendMsgSync(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.msgService/BatchSendMsgSync",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).BatchSendMsgSync(ctx, req.(*BatchSendMsgReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MsgService_BatchSendMsgAsync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchSendMsgReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServiceServer).BatchSendMsgAsync(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.msgService/BatchSendMsgAsync",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).BatchSendMsgAsync(ctx, req.(*BatchSendMsgReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _MsgService_PushMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushMsgListReq)
 	if err := dec(in); err != nil {
@@ -356,6 +308,24 @@ func _MsgService_GetMsgListByConvId_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, req.(*GetMsgListByConvIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_GetMsgById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMsgByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).GetMsgById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/GetMsgById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).GetMsgById(ctx, req.(*GetMsgByIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -470,20 +440,16 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_SendMsgListAsync_Handler,
 		},
 		{
-			MethodName: "BatchSendMsgSync",
-			Handler:    _MsgService_BatchSendMsgSync_Handler,
-		},
-		{
-			MethodName: "BatchSendMsgAsync",
-			Handler:    _MsgService_BatchSendMsgAsync_Handler,
-		},
-		{
 			MethodName: "PushMsgList",
 			Handler:    _MsgService_PushMsgList_Handler,
 		},
 		{
 			MethodName: "GetMsgListByConvId",
 			Handler:    _MsgService_GetMsgListByConvId_Handler,
+		},
+		{
+			MethodName: "GetMsgById",
+			Handler:    _MsgService_GetMsgById_Handler,
 		},
 		{
 			MethodName: "BatchSetMinSeq",

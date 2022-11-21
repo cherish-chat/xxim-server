@@ -25,7 +25,7 @@ message CommonResp {
 
     UnknownError = 1;
     InternalError = 2;
-    CommonReqror = 3;
+    RequestError = 3;
     AuthError = 4;
     ToastError = 5;
     AlertError = 7;
@@ -125,6 +125,18 @@ message GetMsgListByConvIdReq {
 message GetMsgListResp {
   CommonResp commonResp = 1;
   repeated MsgData msgDataList = 2;
+}
+
+message GetMsgByIdReq {
+  CommonReq commonReq = 1;
+  optional string serverMsgId = 2;
+  optional string clientMsgId = 3;
+  bool push = 4;
+}
+
+message GetMsgByIdResp {
+  CommonResp commonResp = 1;
+  MsgData msgData = 2;
 }
 
 message BatchGetConvSeqReq {

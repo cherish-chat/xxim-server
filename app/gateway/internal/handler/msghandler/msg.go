@@ -54,3 +54,18 @@ func GetMsgListByConvIdConfig[REQ *pb.GetMsgListByConvIdReq, RESP *pb.GetMsgList
 		},
 	}
 }
+
+// GetMsgByIdConfig ...
+func GetMsgByIdConfig[REQ *pb.GetMsgByIdReq, RESP *pb.GetMsgByIdResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp] {
+	return wrapper.Config[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
+		Do: func(ctx context.Context, in *pb.GetMsgByIdReq, opts ...grpc.CallOption) (*pb.GetMsgByIdResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.MsgService().GetMsgById(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetMsgById", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.GetMsgByIdReq {
+			return &pb.GetMsgByIdReq{}
+		},
+	}
+}

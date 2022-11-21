@@ -79,3 +79,7 @@ func (x *GetSingleMsgNotifyOptReq) SetCommonReq(r *CommonReq) {
 func (x *GetFriendListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *GetMsgByIdReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

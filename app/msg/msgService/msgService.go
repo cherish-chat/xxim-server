@@ -16,13 +16,13 @@ type (
 	BatchGetConvSeqReq            = pb.BatchGetConvSeqReq
 	BatchGetConvSeqResp           = pb.BatchGetConvSeqResp
 	BatchGetConvSeqResp_ConvSeq   = pb.BatchGetConvSeqResp_ConvSeq
-	BatchSendMsgReq               = pb.BatchSendMsgReq
-	BatchSendMsgResp              = pb.BatchSendMsgResp
 	BatchSetMinSeqReq             = pb.BatchSetMinSeqReq
 	BatchSetMinSeqResp            = pb.BatchSetMinSeqResp
 	GetConvSubscribersReq         = pb.GetConvSubscribersReq
 	GetConvSubscribersResp        = pb.GetConvSubscribersResp
 	GetConvSubscribersRespUidList = pb.GetConvSubscribersRespUidList
+	GetMsgByIdReq                 = pb.GetMsgByIdReq
+	GetMsgByIdResp                = pb.GetMsgByIdResp
 	GetMsgListByConvIdReq         = pb.GetMsgListByConvIdReq
 	GetMsgListResp                = pb.GetMsgListResp
 	MsgData                       = pb.MsgData
@@ -39,11 +39,11 @@ type (
 		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
 		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
-		BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
-		BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error)
 		PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// GetMsgListByConvId 通过seq拉取一个会话的消息
 		GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+		// GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+		GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error)
 		// BatchSetMinSeq 批量设置用户某会话的minseq
 		BatchSetMinSeq(ctx context.Context, in *BatchSetMinSeqReq, opts ...grpc.CallOption) (*BatchSetMinSeqResp, error)
 		// BatchGetConvSeq 批量获取会话的seq
@@ -81,16 +81,6 @@ func (m *defaultMsgService) SendMsgListAsync(ctx context.Context, in *SendMsgLis
 	return client.SendMsgListAsync(ctx, in, opts...)
 }
 
-func (m *defaultMsgService) BatchSendMsgSync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
-	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.BatchSendMsgSync(ctx, in, opts...)
-}
-
-func (m *defaultMsgService) BatchSendMsgAsync(ctx context.Context, in *BatchSendMsgReq, opts ...grpc.CallOption) (*BatchSendMsgResp, error) {
-	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.BatchSendMsgAsync(ctx, in, opts...)
-}
-
 func (m *defaultMsgService) PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.PushMsgList(ctx, in, opts...)
@@ -100,6 +90,12 @@ func (m *defaultMsgService) PushMsgList(ctx context.Context, in *PushMsgListReq,
 func (m *defaultMsgService) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.GetMsgListByConvId(ctx, in, opts...)
+}
+
+// GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+func (m *defaultMsgService) GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.GetMsgById(ctx, in, opts...)
 }
 
 // BatchSetMinSeq 批量设置用户某会话的minseq

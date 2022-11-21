@@ -6,9 +6,9 @@ import (
 )
 
 type HashKv struct {
-	Key string `json:"key" gorm:"column:key;type:varchar(255);not null;index:idx_key_hk,unique;"`
+	Key string `json:"key" gorm:"column:key;type:varchar(255);not null;index:idx_key_hk,unique;index;"`
 	HK  string `json:"hk" gorm:"column:hk;type:varchar(255);not null;index:idx_key_hk,unique;"`
-	V   string `json:"v" gorm:"column:v;type:varchar(255);not null;default:'';"`
+	V   string `json:"v" gorm:"column:v;type:varchar(255);not null;default:'';index;"`
 }
 
 func (m *HashKv) TableName() string {
@@ -42,4 +42,10 @@ func MHGet(tx *gorm.DB, kvs ...HashKv) ([]*HashKv, error) {
 	var kvs2 []*HashKv
 	err := whereBuilder.Find(&kvs2).Error
 	return kvs2, err
+}
+
+func GetHkByV(tx *gorm.DB, key string, v string) (*HashKv, error) {
+	var kv HashKv
+	err := tx.Model(&HashKv{}).Where("`key` = ? and v = ?", key, v).Limit(1).Find(&kv).Error
+	return &kv, err
 }

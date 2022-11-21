@@ -28,7 +28,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config: c,
 	}
 	s.Mysql().AutoMigrate(
-		msgmodel.BatchMsg{},
 		msgmodel.Msg{},
 		xorm.HashKv{},
 	)

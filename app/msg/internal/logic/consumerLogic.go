@@ -58,18 +58,18 @@ func (l *ConsumerLogic) Consumer(ctx context.Context, topic string, key string, 
 			l.Errorf("SendMsgListSyncLogic.SendMsgListSync error: %v", err)
 			return err
 		}
-	case pb.MsgMQBody_BatchSendMsgSync:
-		batchSendMsgSyncReq := &pb.BatchSendMsgReq{}
-		err = proto.Unmarshal(body.Data, batchSendMsgSyncReq)
-		if err != nil {
-			l.Errorf("proto.Unmarshal error: %v", err)
-			return err
-		}
-		_, err = NewBatchSendMsgSyncLogic(ctx, l.svcCtx).BatchSendMsgSync(batchSendMsgSyncReq)
-		if err != nil {
-			l.Errorf("BatchSendMsgSyncLogic.BatchSendMsgSync error: %v", err)
-			return err
-		}
+		//case pb.MsgMQBody_BatchSendMsgSync:
+		//	batchSendMsgSyncReq := &pb.BatchSendMsgReq{}
+		//	err = proto.Unmarshal(body.Data, batchSendMsgSyncReq)
+		//	if err != nil {
+		//		l.Errorf("proto.Unmarshal error: %v", err)
+		//		return err
+		//	}
+		//	_, err = NewBatchSendMsgSyncLogic(ctx, l.svcCtx).BatchSendMsgSync(batchSendMsgSyncReq)
+		//	if err != nil {
+		//		l.Errorf("BatchSendMsgSyncLogic.BatchSendMsgSync error: %v", err)
+		//		return err
+		//	}
 	}
 	return nil
 }
