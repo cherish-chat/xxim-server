@@ -113,11 +113,12 @@ func UserFromBytes(bytes []byte) *User {
 
 type (
 	UserTmp struct {
-		UserId       string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);primary_key"`
+		UserId       string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);index;"`
 		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64)"`
 		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64)"`
 		// 注册信息
-		RegInfo *LoginInfo `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json"`
+		RegInfo   *LoginInfo `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json"`
+		CreatedAt int64      `bson:"createdAt" json:"createdAt" gorm:"column:createdAt;type:bigint(13);index"`
 	}
 )
 

@@ -32,7 +32,7 @@ func NewConfirmRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.ConfirmRegisterResp, error) {
 	userTmp := &usermodel.UserTmp{}
 	// 使用id查询用户信息
-	err := xorm.DetailByWhere(l.svcCtx.Mysql(), userTmp, xorm.Where("userId = ?", in.Id))
+	err := l.svcCtx.Mysql().Where("userId = ?", in.Id).Order("createdAt desc").First(userTmp).Error
 	if err != nil {
 		l.Errorf("ConfirmRegisterLogic ConfirmRegister err: %v", err)
 		return &pb.ConfirmRegisterResp{CommonResp: pb.NewInternalErrorResp()}, err
