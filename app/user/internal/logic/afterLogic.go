@@ -22,7 +22,7 @@ func NewAfterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AfterLogic 
 	return &AfterLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
-func (l *AfterLogic) AfterLogin(userId string, requester *pb.Requester) {
+func (l *AfterLogic) AfterLogin(userId string, requester *pb.CommonReq) {
 	region := ip2region.Ip2Region(requester.Ip)
 	record := &usermodel.LoginRecord{
 		Id:     utils.GenId(),
@@ -35,7 +35,7 @@ func (l *AfterLogic) AfterLogin(userId string, requester *pb.Requester) {
 			IpCity:      region.City,
 			IpISP:       region.ISP,
 			AppVersion:  requester.AppVersion,
-			Ua:          requester.Ua,
+			UserAgent:   requester.UserAgent,
 			OsVersion:   requester.OsVersion,
 			Platform:    requester.Platform,
 			DeviceId:    requester.DeviceId,
@@ -48,6 +48,6 @@ func (l *AfterLogic) AfterLogin(userId string, requester *pb.Requester) {
 	}
 }
 
-func (l *AfterLogic) AfterRegister(userId string, requester *pb.Requester) {
+func (l *AfterLogic) AfterRegister(userId string, requester *pb.CommonReq) {
 
 }

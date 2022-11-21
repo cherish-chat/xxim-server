@@ -55,7 +55,7 @@ message UserBaseInfo {
 
 // 登录 如果没有注册过，会暂存到临时表，等待用户确认后注册成功
 message LoginReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string id = 2; // 用户id 只能是英文和数字_，长度为6-20
   string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
 }
@@ -70,7 +70,7 @@ message LoginResp {
 
 // 确认注册
 message ConfirmRegisterReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string id = 2; // 用户id 只能是英文和数字_，长度为6-20
   string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
 }
@@ -82,7 +82,7 @@ message ConfirmRegisterResp {
 
 //mapUserByIds 获取用户信息
 message MapUserByIdsReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   repeated string ids = 2;
 }
 
@@ -92,7 +92,7 @@ message MapUserByIdsResp {
 }
 
 message SearchUsersByKeywordReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string keyword = 2;
 }
 
@@ -103,7 +103,7 @@ message SearchUsersByKeywordResp {
 
 //GetUserHomeReq 获取用户主页信息
 message GetUserHomeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string id = 2;
 }
 
@@ -131,7 +131,7 @@ enum UserSettingKey {
 
 //获取用户settings
 message GetUserSettingsReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   repeated UserSettingKey keys = 2;
 }
 
@@ -148,7 +148,7 @@ message GetUserSettingsResp {
 
 // 设置用户settings
 message SetUserSettingsReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   repeated UserSetting settings = 2;
 }
 

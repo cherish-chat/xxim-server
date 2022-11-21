@@ -7,7 +7,7 @@ import "user.proto";
 
 //A和BList是不是好友
 message AreFriendsReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string a = 2;
   repeated string bList = 3;
 }
@@ -19,7 +19,7 @@ message AreFriendsResp {
 
 //A和BList是不是有拉黑关系
 message AreBlackListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   enum Option {
     Or = 0; // A拉黑B 或者 B拉黑A
     And = 1; // A拉黑B 并且 B拉黑A
@@ -48,7 +48,7 @@ message RequestAddFriendExtra {
 }
 //RequestAddFriendReq 请求添加好友
 message RequestAddFriendReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string to = 2;
   // 附加消息
   string message = 3;
@@ -60,7 +60,7 @@ message RequestAddFriendResp {
 
 //AcceptAddFriendReq 接受添加好友
 message AcceptAddFriendReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string applyUserId = 2; // 申请人id
   optional string requestId = 3; // 申请id
 }
@@ -71,7 +71,7 @@ message AcceptAddFriendResp {
 
 //RejectAddFriendReq 拒绝添加好友
 message RejectAddFriendReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string applyUserId = 2; // 申请人id
   string requestId = 3; // 申请id
   bool block = 4; // 是否拉黑
@@ -83,7 +83,7 @@ message RejectAddFriendResp {
 
 //GetFriendCountReq 获取好友总数
 message GetFriendCountReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
 }
 
 message GetFriendCountResp {
@@ -93,7 +93,7 @@ message GetFriendCountResp {
 
 //拉黑用户
 message BlockUserReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string userId = 2;
 }
 
@@ -103,7 +103,7 @@ message BlockUserResp {
 
 //删除拉黑用户
 message DeleteBlockUserReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string userId = 2;
 }
 
@@ -113,7 +113,7 @@ message DeleteBlockUserResp {
 
 //解除好友关系
 message DeleteFriendReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string userId = 2;
   bool block = 3; // 是否拉黑
 }
@@ -124,7 +124,7 @@ message DeleteFriendResp {
 
 //设置单聊设置
 message SetSingleChatSettingReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string userId = 2;
   // 置顶选项
   optional bool top = 3;
@@ -140,7 +140,7 @@ message SetSingleChatSettingResp {
 
 //获取单聊设置
 message GetSingleChatSettingReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string userId = 2;
 }
 
@@ -156,7 +156,7 @@ message GetSingleChatSettingResp {
 
 //SetSingleMsgNotifyOptReq 设置单聊消息通知选项
 message SetSingleMsgNotifyOptReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string userId = 2;
   // 消息通知类型
@@ -170,7 +170,7 @@ message SetSingleMsgNotifyOptResp {
 
 //GetSingleMsgNotifyOptReq 获取单聊消息通知选项
 message GetSingleMsgNotifyOptReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string userId = 2;
 }
@@ -184,7 +184,7 @@ message GetSingleMsgNotifyOptResp {
 
 //GetFriendListReq 获取好友列表
 message GetFriendListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 分页
   Page page = 2;
   enum Opt {

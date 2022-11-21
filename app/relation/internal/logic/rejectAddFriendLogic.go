@@ -39,8 +39,8 @@ func (l *RejectAddFriendLogic) RejectAddFriend(in *pb.RejectAddFriendReq) (*pb.R
 	err = l.svcCtx.Mysql().Model(apply).
 		Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
 			pb.RequestAddFriendStatus_Unhandled,
-			in.ApplyUserId, in.Requester.Id,
-			in.Requester.Id, in.ApplyUserId).
+			in.ApplyUserId, in.CommonReq.Id,
+			in.CommonReq.Id, in.ApplyUserId).
 		Updates(map[string]interface{}{
 			"status":     apply.Status,
 			"updateTime": apply.UpdateTime,
@@ -53,7 +53,7 @@ func (l *RejectAddFriendLogic) RejectAddFriend(in *pb.RejectAddFriendReq) (*pb.R
 	if in.Block {
 		xtrace.StartFuncSpan(l.ctx, "BlockUser", func(ctx context.Context) {
 			_, err = NewBlockUserLogic(ctx, l.svcCtx).BlockUser(&pb.BlockUserReq{
-				Requester: in.Requester,
+				CommonReq: in.CommonReq,
 				UserId:    in.ApplyUserId,
 			})
 		})

@@ -32,7 +32,7 @@ func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeRe
 	}
 	if len(users) == 0 {
 		l.Errorf("user not found, id: %s", in.Id)
-		return &pb.GetUserHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "用户已注销"))}, nil
+		return &pb.GetUserHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户已注销"))}, nil
 	}
 	user := users[0]
 	resp := &pb.GetUserHomeResp{

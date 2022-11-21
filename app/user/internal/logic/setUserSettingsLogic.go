@@ -27,7 +27,7 @@ func NewSetUserSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SetUserSettingsLogic) SetUserSettings(in *pb.SetUserSettingsReq) (*pb.SetUserSettingsResp, error) {
 	for _, setting := range in.Settings {
 		model := &usermodel.UserSetting{
-			UserId: in.Requester.Id,
+			UserId: in.CommonReq.Id,
 			Key:    setting.Key,
 			Value:  setting.Value,
 		}

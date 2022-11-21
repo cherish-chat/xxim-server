@@ -74,12 +74,12 @@ type (
 		GroupId string `bson:"groupId"` // 群聊时为群组id
 	}
 	MsgOptions struct {
-		OfflinePush      bool `bson:"offlinePush"`      // 是否需要离线推送
-		StorageForServer bool `bson:"storageForServer"` // 服务端是否需要保存消息
-		StorageForClient bool `bson:"storageForClient"` // 客户端是否需要保存消息
-		UnreadCount      bool `bson:"unreadCount"`      // 消息是否需要计入未读数
-		NeedDecrypt      bool `bson:"needDecrypt"`      // 是否需要解密 （端对端加密技术，服务端无法解密）
-		UpdateConv       bool `bson:"updateConv"`       // 是否需要重新渲染会话
+		OfflinePush       bool `bson:"offlinePush"`       // 是否需要离线推送
+		StorageForServer  bool `bson:"storageForServer"`  // 服务端是否需要保存消息
+		StorageForClient  bool `bson:"storageForClient"`  // 客户端是否需要保存消息
+		UpdateUnreadCount bool `bson:"updateUnreadCount"` // 消息是否需要计入未读数
+		NeedDecrypt       bool `bson:"needDecrypt"`       // 是否需要解密 （端对端加密技术，服务端无法解密）
+		UpdateConvMsg     bool `bson:"updateConvMsg"`     // 是否需要重新渲染会话
 	}
 	MsgOfflinePush struct {
 		Title   string `bson:"title"`   // 离线推送标题
@@ -124,12 +124,12 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 		Content:     in.Content,
 		Seq:         utils.AnyToInt64(in.Seq),
 		Options: MsgOptions{
-			OfflinePush:      in.Options.OfflinePush,
-			StorageForServer: in.Options.StorageForServer,
-			StorageForClient: in.Options.StorageForClient,
-			UnreadCount:      in.Options.UnreadCount,
-			NeedDecrypt:      in.Options.NeedDecrypt,
-			UpdateConv:       in.Options.UpdateConv,
+			OfflinePush:       in.Options.OfflinePush,
+			StorageForServer:  in.Options.StorageForServer,
+			StorageForClient:  in.Options.StorageForClient,
+			UpdateUnreadCount: in.Options.UpdateUnreadCount,
+			NeedDecrypt:       in.Options.NeedDecrypt,
+			UpdateConvMsg:     in.Options.UpdateConvMsg,
 		},
 		OfflinePush: &MsgOfflinePush{
 			Title:   in.OfflinePush.Title,
@@ -205,12 +205,12 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		Content:     m.Content,
 		Seq:         utils.AnyToString(m.Seq),
 		Options: &pb.MsgData_Options{
-			OfflinePush:      m.Options.OfflinePush,
-			StorageForServer: m.Options.StorageForServer,
-			StorageForClient: m.Options.StorageForClient,
-			UnreadCount:      m.Options.UnreadCount,
-			NeedDecrypt:      m.Options.NeedDecrypt,
-			UpdateConv:       m.Options.UpdateConv,
+			OfflinePush:       m.Options.OfflinePush,
+			StorageForServer:  m.Options.StorageForServer,
+			StorageForClient:  m.Options.StorageForClient,
+			UpdateUnreadCount: m.Options.UpdateUnreadCount,
+			NeedDecrypt:       m.Options.NeedDecrypt,
+			UpdateConvMsg:     m.Options.UpdateConvMsg,
 		},
 		OfflinePush: &pb.MsgData_OfflinePush{
 			Title:   offlinePush.Title,
@@ -242,12 +242,12 @@ func (m *Msg) SinglePb(seq int64, uid string) *pb.MsgData {
 		Content:        m.Content,
 		Seq:            utils.AnyToString(seq),
 		Options: &pb.MsgData_Options{
-			OfflinePush:      m.Options.OfflinePush,
-			StorageForServer: m.Options.StorageForServer,
-			StorageForClient: m.Options.StorageForClient,
-			UnreadCount:      m.Options.UnreadCount,
-			NeedDecrypt:      m.Options.NeedDecrypt,
-			UpdateConv:       m.Options.UpdateConv,
+			OfflinePush:       m.Options.OfflinePush,
+			StorageForServer:  m.Options.StorageForServer,
+			StorageForClient:  m.Options.StorageForClient,
+			UpdateUnreadCount: m.Options.UpdateUnreadCount,
+			NeedDecrypt:       m.Options.NeedDecrypt,
+			UpdateConvMsg:     m.Options.UpdateConvMsg,
 		},
 		OfflinePush: &pb.MsgData_OfflinePush{
 			Title:   m.OfflinePush.Title,
@@ -275,12 +275,12 @@ func (m *Msg) GroupPb(seq int64, groupId string) *pb.MsgData {
 		Content:        m.Content,
 		Seq:            utils.AnyToString(seq),
 		Options: &pb.MsgData_Options{
-			OfflinePush:      m.Options.OfflinePush,
-			StorageForServer: m.Options.StorageForServer,
-			StorageForClient: m.Options.StorageForClient,
-			UnreadCount:      m.Options.UnreadCount,
-			NeedDecrypt:      m.Options.NeedDecrypt,
-			UpdateConv:       m.Options.UpdateConv,
+			OfflinePush:       m.Options.OfflinePush,
+			StorageForServer:  m.Options.StorageForServer,
+			StorageForClient:  m.Options.StorageForClient,
+			UpdateUnreadCount: m.Options.UpdateUnreadCount,
+			NeedDecrypt:       m.Options.NeedDecrypt,
+			UpdateConvMsg:     m.Options.UpdateConvMsg,
 		},
 		OfflinePush: &pb.MsgData_OfflinePush{
 			Title:   m.OfflinePush.Title,

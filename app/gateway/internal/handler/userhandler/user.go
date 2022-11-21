@@ -16,7 +16,7 @@ func LoginConfig[REQ *pb.LoginReq, RESP *pb.LoginResp](svcCtx *svc.ServiceContex
 		Do: func(ctx context.Context, in *pb.LoginReq, opts ...grpc.CallOption) (*pb.LoginResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().Login(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "Login", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "Login", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.LoginReq {
@@ -30,7 +30,7 @@ func ConfirmRegisterConfig[REQ *pb.ConfirmRegisterReq, RESP *pb.ConfirmRegisterR
 		Do: func(ctx context.Context, in *pb.ConfirmRegisterReq, opts ...grpc.CallOption) (*pb.ConfirmRegisterResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().ConfirmRegister(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "ConfirmRegister", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "ConfirmRegister", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.ConfirmRegisterReq {
@@ -44,7 +44,7 @@ func SearchUsersByKeywordConfig[REQ *pb.SearchUsersByKeywordReq, RESP *pb.Search
 		Do: func(ctx context.Context, in *pb.SearchUsersByKeywordReq, opts ...grpc.CallOption) (*pb.SearchUsersByKeywordResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().SearchUsersByKeyword(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SearchUsersByKeyword", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SearchUsersByKeyword", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.SearchUsersByKeywordReq {
@@ -58,7 +58,7 @@ func GetUserHomeConfig[REQ *pb.GetUserHomeReq, RESP *pb.GetUserHomeResp](svcCtx 
 		Do: func(ctx context.Context, in *pb.GetUserHomeReq, opts ...grpc.CallOption) (*pb.GetUserHomeResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().GetUserHome(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetUserHome", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetUserHome", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetUserHomeReq {
@@ -72,7 +72,7 @@ func GetUserSettingsConfig[REQ *pb.GetUserSettingsReq, RESP *pb.GetUserSettingsR
 		Do: func(ctx context.Context, in *pb.GetUserSettingsReq, opts ...grpc.CallOption) (*pb.GetUserSettingsResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().GetUserSettings(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetUserSettings", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetUserSettings", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetUserSettingsReq {
@@ -86,7 +86,7 @@ func SetUserSettingsConfig[REQ *pb.SetUserSettingsReq, RESP *pb.SetUserSettingsR
 		Do: func(ctx context.Context, in *pb.SetUserSettingsReq, opts ...grpc.CallOption) (*pb.SetUserSettingsResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.UserService().SetUserSettings(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SetUserSettings", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetUserSettings", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.SetUserSettingsReq {

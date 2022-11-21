@@ -57,6 +57,7 @@ func (s *ConnPodsMgr) initConnRpc() {
 							PodIpPort: endpoint,
 							ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 								Endpoints: []string{endpoint},
+								NonBlock:  true,
 							})),
 						})
 					}
@@ -91,6 +92,7 @@ func (s *ConnPodsMgr) initConnRpc() {
 				PodIpPort: endpoint,
 				ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 					Endpoints: []string{endpoint},
+					NonBlock:  true,
 				})),
 			})
 		}

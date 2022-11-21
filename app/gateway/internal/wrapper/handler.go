@@ -16,36 +16,31 @@ func WrapHandler[REQ IReq, RESP IResp](
 	config Config[REQ, RESP],
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		req := config.NewRequest()
+		requester := &pb.CommonReq{}
 		var body []byte
 		if r.Body != nil {
 			body, _ = io.ReadAll(r.Body)
 		}
-		err := proto.Unmarshal(body, req)
+		err := proto.Unmarshal(body, requester)
 		if err != nil {
 			requestValidateErr(w, err.Error())
 			return
 		}
-		requester := req.GetRequester()
-		if requester == nil {
-			requestValidateErr(w, "requester is nil")
+		req := config.NewRequest()
+		err = proto.Unmarshal(requester.Data, req)
+		if err != nil {
+			requestValidateErr(w, err.Error())
 			return
 		}
 		requester.Ip = xhttp.GetRequestIP(r)
-		requester.Ua = r.UserAgent()
-		requester.Token = r.Header.Get("Token")
-		requester.OsVersion = r.Header.Get("OsVersion")
-		requester.AppVersion = r.Header.Get("AppVersion")
-		requester.DeviceId = r.Header.Get("DeviceId")
-		requester.Platform = r.Header.Get("Platform")
-		requester.DeviceModel = r.Header.Get("DeviceModel")
-		requester.Language = r.Header.Get("Language")
-		requester.Id = r.Header.Get("UserId")
+		requester.UserAgent = r.UserAgent()
 		resp := logic.NewAuthLogic(r, svcCtx).Auth(requester)
 		if resp.Code != pb.CommonResp_Success {
 			authError(w, resp)
 			return
 		}
+		requester.Data = nil
+		req.SetCommonReq(requester)
 		response, err := config.Do(r.Context(), req)
 		if err != nil {
 			internalErr(w, err)

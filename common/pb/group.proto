@@ -21,7 +21,7 @@ enum GroupRole {
 }
 //CreateGroupReq 创建群聊
 message CreateGroupReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 拉人进群
   repeated string members = 2;
   // 群名称(可选参数)
@@ -39,7 +39,7 @@ message CreateGroupResp {
 
 //GetGroupHomeReq 获取群聊首页
 message GetGroupHomeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   optional string groupId = 2;
 }
@@ -73,7 +73,7 @@ message GetGroupHomeResp {
 
 //InviteFriendToGroupReq 邀请好友进群
 message InviteFriendToGroupReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 好友ID
@@ -88,7 +88,7 @@ message InviteFriendToGroupResp {
 
 //CreateGroupNoticeReq 创建群公告
 message CreateGroupNoticeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 公告标题
@@ -104,7 +104,7 @@ message CreateGroupNoticeResp {
 
 //DeleteGroupNoticeReq 删除群公告
 message DeleteGroupNoticeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 公告ID
@@ -118,7 +118,7 @@ message DeleteGroupNoticeResp {
 
 //EditGroupNoticeReq 编辑群公告
 message EditGroupNoticeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 公告ID
@@ -136,7 +136,7 @@ message EditGroupNoticeResp {
 
 //GetGroupNoticeListReq 获取群公告列表
 message GetGroupNoticeListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 分页参数
@@ -163,7 +163,7 @@ message GetGroupNoticeListResp {
 
 //SetGroupMemberInfoReq 设置群成员信息
 message SetGroupMemberInfoReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -189,7 +189,7 @@ message SetGroupMemberInfoResp {
 
 //GetGroupMemberInfoReq 获取群成员信息
 message GetGroupMemberInfoReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -224,7 +224,7 @@ message GetGroupMemberInfoResp {
 
 //EditGroupInfoReq 编辑群资料
 message EditGroupInfoReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群名称
@@ -242,7 +242,7 @@ message EditGroupInfoResp {
 
 //SetGroupSettingReq 设置群设置
 message SetGroupSettingReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群设置
@@ -296,7 +296,7 @@ message SetGroupSettingResp {
 
 //GetGroupSettingReq 获取群设置
 message GetGroupSettingReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
 }
@@ -310,7 +310,7 @@ message GetGroupSettingResp {
 
 //TransferGroupOwnerReq 转让群主
 message TransferGroupOwnerReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 新群主ID
@@ -324,7 +324,7 @@ message TransferGroupOwnerResp {
 
 //SetGroupMemberRoleReq 设置群成员角色
 message SetGroupMemberRoleReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -340,7 +340,7 @@ message SetGroupMemberRoleResp {
 
 //KickGroupMemberReq 踢出群成员
 message KickGroupMemberReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -354,7 +354,7 @@ message KickGroupMemberResp {
 
 //QuitGroupReq 退出群聊
 message QuitGroupReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
 }
@@ -366,7 +366,7 @@ message QuitGroupResp {
 
 //禁言群成员
 message BanGroupMemberReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -382,7 +382,7 @@ message BanGroupMemberResp {
 
 //禁言全部群成员
 message BanAllGroupMemberReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 禁言时长
@@ -396,7 +396,7 @@ message BanAllGroupMemberResp {
 
 //解除禁言群成员
 message UnbanGroupMemberReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 群成员ID
@@ -410,7 +410,7 @@ message UnbanGroupMemberResp {
 
 //解除禁言全部群成员
 message UnbanAllGroupMemberReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
 }
@@ -422,7 +422,7 @@ message UnbanAllGroupMemberResp {
 
 //GetGroupMemberListReq 获取群成员列表
 message GetGroupMemberListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 分页
@@ -439,7 +439,7 @@ message GetGroupMemberListResp {
 
 //DismissGroupReq 解散群聊
 message DismissGroupReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
 }
@@ -451,7 +451,7 @@ message DismissGroupResp {
 
 //SetGroupMsgNotifyOptReq 设置群消息通知选项
 message SetGroupMsgNotifyTypeReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 群ID
   string groupId = 2;
   // 消息通知类型
@@ -465,7 +465,7 @@ message SetGroupMsgNotifyTypeResp {
 
 //GetMyGroupListReq 获取我的群聊列表
 message GetMyGroupListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   // 分页
   Page page = 2;
   // 过滤

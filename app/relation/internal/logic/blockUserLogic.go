@@ -29,7 +29,7 @@ func NewBlockUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BlockUs
 
 func (l *BlockUserLogic) BlockUser(in *pb.BlockUserReq) (*pb.BlockUserResp, error) {
 	blacklist := &relationmodel.Blacklist{
-		UserId:      in.Requester.Id,
+		UserId:      in.CommonReq.Id,
 		BlacklistId: in.UserId,
 		CreateTime:  time.Now().UnixMilli(),
 	}
@@ -39,14 +39,14 @@ func (l *BlockUserLogic) BlockUser(in *pb.BlockUserReq) (*pb.BlockUserResp, erro
 		return &pb.BlockUserResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 刷新缓存
-	err = relationmodel.FlushBlacklistList(l.ctx, l.svcCtx.Redis(), in.Requester.Id)
+	err = relationmodel.FlushBlacklistList(l.ctx, l.svcCtx.Redis(), in.CommonReq.Id)
 	if err != nil {
 		l.Errorf("FlushBlacklistList failed, err: %v", err)
 		return &pb.BlockUserResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Requester.Id)
+		_, _ = relationmodel.GetMyBlacklistList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.Id)
 	}, nil)
 	return &pb.BlockUserResp{}, nil
 }

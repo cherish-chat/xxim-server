@@ -44,7 +44,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		Id:          strconv.Itoa(groupIdInt),
 		Name:        l.svcCtx.SystemConfigMgr.GetOrDefaultCtx(l.ctx, "default_group_name", "未命名群聊"),
 		Avatar:      utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSliceCtx(l.ctx, "default_group_avatars"), ""),
-		Owner:       in.Requester.Id,
+		Owner:       in.CommonReq.Id,
 		Managers:    make([]string, 0),
 		CreateTime:  time.Now().UnixMilli(),
 		DismissTime: 0,
@@ -75,9 +75,9 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 	var inviteFriendToGroupResp *pb.InviteFriendToGroupResp
 	xtrace.StartFuncSpan(l.ctx, "InviteFriendToGroupWithoutVerify", func(ctx context.Context) {
 		inviteFriendToGroupResp, err = NewInviteFriendToGroupLogic(ctx, l.svcCtx).InviteFriendToGroupWithoutVerify(&pb.InviteFriendToGroupReq{
-			Requester: in.Requester,
+			CommonReq: in.CommonReq,
 			GroupId:   group.Id,
-			FriendIds: append(in.Members, in.Requester.Id),
+			FriendIds: append(in.Members, in.CommonReq.Id),
 		})
 	})
 	if err != nil {

@@ -30,6 +30,6 @@ func (l *AreFriendsLogic) AreFriends(in *pb.AreFriendsReq) (*pb.AreFriendsResp, 
 		l.Errorf("AreMyFriend failed, err: %v", err)
 		return &pb.AreFriendsResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	friend[in.Requester.Id] = true
+	friend[in.CommonReq.Id] = true
 	return &pb.AreFriendsResp{FriendList: friend}, nil
 }

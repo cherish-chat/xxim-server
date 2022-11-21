@@ -43,7 +43,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 	// 获取用户订阅的好友列表
 	{
 		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
-			Requester: &pb.Requester{
+			CommonReq: &pb.CommonReq{
 				Id: userId,
 			},
 			Page: &pb.Page{
@@ -64,7 +64,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 	// 获取用户订阅的群组列表
 	{
 		getMyGroupList, err := l.svcCtx.GroupService().GetMyGroupList(l.ctx, &pb.GetMyGroupListReq{
-			Requester: &pb.Requester{
+			CommonReq: &pb.CommonReq{
 				Id: userId,
 			},
 			Page: &pb.Page{Page: 1},

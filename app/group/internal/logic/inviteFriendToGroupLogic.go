@@ -31,12 +31,12 @@ func NewInviteFriendToGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext
 // InviteFriendToGroup 邀请好友加入群聊
 func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGroupReq) (*pb.InviteFriendToGroupResp, error) {
 	if len(in.FriendIds) == 0 {
-		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "请选择好友"))}, nil
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "请选择好友"))}, nil
 	}
 	// 验证是否是我的好友
 	areFriendsResp, err := l.svcCtx.RelationService().AreFriends(l.ctx, &pb.AreFriendsReq{
-		Requester: in.Requester,
-		A:         in.Requester.Id,
+		CommonReq: in.CommonReq,
+		A:         in.CommonReq.Id,
 		BList:     in.FriendIds,
 	})
 	if err != nil {
@@ -46,7 +46,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 	for _, id := range in.FriendIds {
 		if is, ok := areFriendsResp.FriendList[id]; !ok || !is {
 			l.Errorf("InviteFriendToGroup AreFriends error: %v", err)
-			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "只能邀请好友加入群聊"))}, err
+			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "只能邀请好友加入群聊"))}, err
 		}
 	}
 	return l.InviteFriendToGroupWithoutVerify(in)
@@ -63,7 +63,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroupWithoutVerify(in *pb.Invit
 	}
 	err := xorm.InsertMany(l.svcCtx.Mysql(), &groupmodel.GroupMember{}, members)
 	if err != nil {
-		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "邀请失败"), l.svcCtx.T(in.Requester.Language, "群成员可能已经存在"))}, nil
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "邀请失败"), l.svcCtx.T(in.CommonReq.Language, "群成员可能已经存在"))}, nil
 	}
 	if in.MinSeq != nil {
 		//// 获取最大seq
@@ -74,7 +74,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroupWithoutVerify(in *pb.Invit
 		//}
 		// 设置群成员的最小消息序列号
 		_, err = l.svcCtx.MsgService().BatchSetMinSeq(l.ctx, &pb.BatchSetMinSeqReq{
-			Requester:  in.Requester,
+			CommonReq:  in.CommonReq,
 			ConvId:     in.GroupId,
 			UserIdList: in.FriendIds,
 			MinSeq:     *in.MinSeq,

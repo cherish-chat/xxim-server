@@ -39,7 +39,7 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, userTmp.Password, userTmp.PasswordSalt) {
-		return &pb.ConfirmRegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "登录失败"), l.svcCtx.T(in.Requester.Language, "密码错误"))}, nil
+		return &pb.ConfirmRegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "密码错误"))}, nil
 	}
 	// 插入用户表
 	user := &usermodel.User{
@@ -53,11 +53,11 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)
 	if err != nil {
 		// id已被占用
-		return &pb.ConfirmRegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "注册失败"), l.svcCtx.T(in.Requester.Language, "用户名已存在"))}, nil
+		return &pb.ConfirmRegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "用户名已存在"))}, nil
 	} else {
 		_ = usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{user.Id})
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterRegister", func(ctx context.Context) {
-			NewAfterLogic(ctx, l.svcCtx).AfterRegister(user.Id, in.Requester)
+			NewAfterLogic(ctx, l.svcCtx).AfterRegister(user.Id, in.CommonReq)
 		}, propagation.MapCarrier{
 			"user_id": user.Id,
 		})
@@ -66,7 +66,7 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 	// 密码正确
 	xtrace.StartFuncSpan(l.ctx, "login", func(ctx context.Context) {
 		resp, err = NewLoginLogic(ctx, l.svcCtx).Login(&pb.LoginReq{
-			Requester: in.Requester,
+			CommonReq: in.CommonReq,
 			Id:        in.Id,
 			Password:  in.Password,
 		})

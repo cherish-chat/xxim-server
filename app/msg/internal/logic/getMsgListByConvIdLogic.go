@@ -163,11 +163,11 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 					for _, batchMsg := range batchMsgList {
 						msg := batchMsg.Msg
 						msg.ConvId = convId
-						if msg.Sender == in.Requester.Id {
+						if msg.Sender == in.CommonReq.Id {
 							id1, id2 := msgmodel.ParseSingleConvId(convId)
-							msg.Receiver.UserId = utils.If(id1 == in.Requester.Id, id2, id1)
+							msg.Receiver.UserId = utils.If(id1 == in.CommonReq.Id, id2, id1)
 						} else {
-							msg.Receiver.UserId = in.Requester.Id
+							msg.Receiver.UserId = in.CommonReq.Id
 						}
 						msg.ServerMsgId = batchIdMsgIdMap[batchMsg.Id]
 						msg.ClientMsgId = msgmodel.BatchMsgClientMsgId(msg.ClientMsgId, convId)
@@ -209,8 +209,8 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: resp})
 			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{
-					UserIds: []string{in.Requester.Id},
-					Devices: []string{in.Requester.DeviceId},
+					UserIds: []string{in.CommonReq.Id},
+					Devices: []string{in.CommonReq.DeviceId},
 				},
 				Event: pb.PushEvent_PushMsgDataList,
 				Data:  msgDataListBytes,

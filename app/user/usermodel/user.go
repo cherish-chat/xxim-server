@@ -45,7 +45,7 @@ type (
 		// 1.0.0
 		AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
 		// user-agent
-		Ua string `bson:"ua" json:"ua" gorm:"column:ua;type:varchar(255);"`
+		UserAgent string `bson:"userAgent" json:"userAgent" gorm:"column:userAgent;type:varchar(255);"`
 		// 10.0.0
 		OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
 		// iphone/ipad/android/pc/mac/linux/windows

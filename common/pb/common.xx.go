@@ -65,7 +65,7 @@ func NewInternalErrorResp(err ...string) *CommonResp {
 	}
 	return x
 }
-func NewRequestErrorResp(tip ...string) *CommonResp {
+func NewCommonRequestResp(tip ...string) *CommonResp {
 	x := NewCommonResp(CommonResp_RequestError)
 	if len(tip) > 0 {
 		x.SetMsg(tip[0])
@@ -98,7 +98,7 @@ func (x *CommonResp) Failed() bool {
 }
 
 // Scan 实现 sql 接口
-func (x *Requester) Scan(input interface{}) error {
+func (x *CommonReq) Scan(input interface{}) error {
 	s := string(input.([]byte))
 	err := json.Unmarshal([]byte(s), x)
 	if err != nil {

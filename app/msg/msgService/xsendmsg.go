@@ -27,7 +27,7 @@ func SendMsgSync(
 		o(opt)
 	}
 	return service.SendMsgListSync(ctx, &SendMsgListReq{
-		Requester: &pb.Requester{
+		CommonReq: &pb.CommonReq{
 			Platform: "system",
 		},
 		MsgDataList:  msgDataList,

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package pb;
 
-message Requester {
+message CommonReq {
   string id = 1;
   string token = 2;
   string appVersion = 3;
@@ -21,7 +21,7 @@ message CommonResp {
 
     UnknownError = 1;
     InternalError = 2;
-    RequestError = 3;
+    CommonReqror = 3;
     AuthError = 4;
     ToastError = 5;
     AlertError = 7;
@@ -98,13 +98,13 @@ message MsgDataList {
 }
 
 message SendMsgListReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   repeated MsgData msgDataList = 2;
   optional int32 deliverAfter = 11;
 }
 
 message BatchSendMsgReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   MsgData msgData = 2;
   repeated string userIdList = 3;
   repeated string groupIdList = 4;
@@ -112,7 +112,7 @@ message BatchSendMsgReq {
 }
 
 message GetMsgListByConvIdReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   string convId = 2;
   repeated string seqList = 3;
   bool push = 4;
@@ -124,7 +124,7 @@ message GetMsgListResp {
 }
 
 message BatchGetConvSeqReq {
-  Requester requester = 1;
+  CommonReq commonReq = 1;
   repeated string convIdList = 2;
 }
 

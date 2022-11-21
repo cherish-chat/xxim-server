@@ -26,7 +26,7 @@ func NewApiLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApiLogLogi
 	return &ApiLogLogic{_ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx), traceId: xtrace.TraceIdFromContext(ctx)}
 }
 
-func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp *pb.CommonResp, req string, resp string, requestTime time.Time, responseTime time.Time, err error) {
+func (l *ApiLogLogic) ApiLog(requester *pb.CommonReq, service string, commonResp *pb.CommonResp, req string, resp string, requestTime time.Time, responseTime time.Time, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			l.Error("ApiLog panic", r)
@@ -50,7 +50,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 		attr["deviceModel"] = requester.DeviceModel
 		attr["platform"] = requester.Platform
 		attr["osVersion"] = requester.OsVersion
-		attr["ua"] = requester.Ua
+		attr["userAgent"] = requester.UserAgent
 		attr["ipRegion.country"] = ipRegion.Country
 		attr["ipRegion.province"] = ipRegion.Province
 		attr["ipRegion.city"] = ipRegion.City
@@ -67,7 +67,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 			Resp:            resp,
 			Err:             errStr,
 			RespCode:        commonResp.Code,
-			Requester:       utils.AnyToString(requester),
+			CommonReq:       utils.AnyToString(requester),
 			IpRegion:        utils.AnyToString(ipRegion),
 			RequestTime:     requestTime.UnixMilli(),
 			ResponseTime:    responseTime.UnixMilli(),
