@@ -43,7 +43,7 @@ func (l *AuthLogic) Auth(in *pb.CommonReq) *pb.CommonResp {
 		if strings.Contains(l.request.URL.Path, "white") {
 			return &pb.CommonResp{}
 		}
-		return pb.NewAlertErrorResp("下线通知", msg)
+		return pb.NewAuthErrorResp(msg)
 	default:
 		return pb.NewAuthErrorResp(msg)
 	}

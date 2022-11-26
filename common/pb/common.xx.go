@@ -8,14 +8,14 @@ func (x *CommonResp) SetMsg(msg string) {
 	x.Msg = &msg
 }
 
-func (x *CommonResp) SetTitleMsg(title string, msg string) {
-	buf, _ := json.Marshal(map[string]string{
-		"title": title,
-		"msg":   msg,
-	})
-	msg = string(buf)
-	x.Msg = &msg
-}
+//func (x *CommonResp) SetTitleMsg(title string, msg string) {
+//	buf, _ := json.Marshal(map[string]string{
+//		"title": title,
+//		"msg":   msg,
+//	})
+//	msg = string(buf)
+//	x.Msg = &msg
+//}
 
 func (x *CommonResp) setDefaultMsg() {
 	msg := ""
@@ -84,11 +84,29 @@ func NewToastErrorResp(tip ...string) *CommonResp {
 	}
 	return x
 }
-func NewAlertErrorResp(title string, alert string) *CommonResp {
+
+var defaultAlertAction = &AlertAction{
+	Action: AlertAction_Cancel,
+	Title:  "确定",
+	JumpTo: "",
+}
+
+func NewAlertErrorResp(title string, alert string, actions ...*AlertAction) *CommonResp {
 	x := NewCommonResp(CommonResp_AlertError)
-	x.SetTitleMsg(title, alert)
+	//x.SetTitleMsg(title, alert)
+	if len(actions) == 0 {
+		actions = append(actions, defaultAlertAction)
+	}
+	buf, _ := json.Marshal(map[string]any{
+		"title":   title,
+		"msg":     alert,
+		"actions": actions,
+	})
+	msg := string(buf)
+	x.Msg = &msg
 	return x
 }
+
 func NewRetryErrorResp() *CommonResp {
 	return NewCommonResp(CommonResp_RetryError)
 }

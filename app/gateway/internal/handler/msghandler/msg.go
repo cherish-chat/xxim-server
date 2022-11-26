@@ -69,3 +69,18 @@ func GetMsgByIdConfig[REQ *pb.GetMsgByIdReq, RESP *pb.GetMsgByIdResp](svcCtx *sv
 		},
 	}
 }
+
+// BatchGetConvSeqConfig ...
+func BatchGetConvSeqConfig[REQ *pb.BatchGetConvSeqReq, RESP *pb.BatchGetConvSeqResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp] {
+	return wrapper.Config[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
+		Do: func(ctx context.Context, in *pb.BatchGetConvSeqReq, opts ...grpc.CallOption) (*pb.BatchGetConvSeqResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.MsgService().BatchGetConvSeq(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "BatchGetConvSeq", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.BatchGetConvSeqReq {
+			return &pb.BatchGetConvSeqReq{}
+		},
+	}
+}

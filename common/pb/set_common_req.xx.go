@@ -83,3 +83,7 @@ func (x *GetFriendListReq) SetCommonReq(r *CommonReq) {
 func (x *GetMsgByIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *BatchGetConvSeqReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

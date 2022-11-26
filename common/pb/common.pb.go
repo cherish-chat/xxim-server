@@ -215,6 +215,62 @@ func (CommonResp_Code) EnumDescriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{0, 0}
 }
 
+type AlertActionType int32
+
+const (
+	// 取消
+	AlertAction_Cancel AlertActionType = 0
+	// 重试
+	AlertAction_Retry AlertActionType = 1
+	// 跳转h5
+	AlertAction_ToH5 AlertActionType = 2
+	// 跳转应用内页面
+	AlertAction_ToApp AlertActionType = 3
+)
+
+// Enum value maps for AlertActionType.
+var (
+	AlertActionType_name = map[int32]string{
+		0: "Cancel",
+		1: "Retry",
+		2: "ToH5",
+		3: "ToApp",
+	}
+	AlertActionType_value = map[string]int32{
+		"Cancel": 0,
+		"Retry":  1,
+		"ToH5":   2,
+		"ToApp":  3,
+	}
+)
+
+func (x AlertActionType) Enum() *AlertActionType {
+	p := new(AlertActionType)
+	*p = x
+	return p
+}
+
+func (x AlertActionType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AlertActionType) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[3].Descriptor()
+}
+
+func (AlertActionType) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[3]
+}
+
+func (x AlertActionType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AlertActionType.Descriptor instead.
+func (AlertActionType) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{1, 0}
+}
+
 type CommonResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -278,6 +334,69 @@ func (x *CommonResp) GetData() []byte {
 	return nil
 }
 
+type AlertAction struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Action AlertActionType `protobuf:"varint,1,opt,name=action,proto3,enum=pb.AlertActionType" json:"action"`
+	Title  string          `protobuf:"bytes,2,opt,name=title,proto3" json:"title"`
+	JumpTo string          `protobuf:"bytes,3,opt,name=jumpTo,proto3" json:"jumpTo"`
+}
+
+func (x *AlertAction) Reset() {
+	*x = AlertAction{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_common_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AlertAction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertAction) ProtoMessage() {}
+
+func (x *AlertAction) ProtoReflect() protoreflect.Message {
+	mi := &file_common_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertAction.ProtoReflect.Descriptor instead.
+func (*AlertAction) Descriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *AlertAction) GetAction() AlertActionType {
+	if x != nil {
+		return x.Action
+	}
+	return AlertAction_Cancel
+}
+
+func (x *AlertAction) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AlertAction) GetJumpTo() string {
+	if x != nil {
+		return x.JumpTo
+	}
+	return ""
+}
+
 type CommonReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -299,7 +418,7 @@ type CommonReq struct {
 func (x *CommonReq) Reset() {
 	*x = CommonReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_common_proto_msgTypes[1]
+		mi := &file_common_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -312,7 +431,7 @@ func (x *CommonReq) String() string {
 func (*CommonReq) ProtoMessage() {}
 
 func (x *CommonReq) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[1]
+	mi := &file_common_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -325,7 +444,7 @@ func (x *CommonReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommonReq.ProtoReflect.Descriptor instead.
 func (*CommonReq) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{1}
+	return file_common_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CommonReq) GetId() string {
@@ -419,7 +538,7 @@ type IpRegion struct {
 func (x *IpRegion) Reset() {
 	*x = IpRegion{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_common_proto_msgTypes[2]
+		mi := &file_common_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -432,7 +551,7 @@ func (x *IpRegion) String() string {
 func (*IpRegion) ProtoMessage() {}
 
 func (x *IpRegion) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[2]
+	mi := &file_common_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -445,7 +564,7 @@ func (x *IpRegion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IpRegion.ProtoReflect.Descriptor instead.
 func (*IpRegion) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{2}
+	return file_common_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *IpRegion) GetCountry() string {
@@ -488,7 +607,7 @@ type Page struct {
 func (x *Page) Reset() {
 	*x = Page{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_common_proto_msgTypes[3]
+		mi := &file_common_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -501,7 +620,7 @@ func (x *Page) String() string {
 func (*Page) ProtoMessage() {}
 
 func (x *Page) ProtoReflect() protoreflect.Message {
-	mi := &file_common_proto_msgTypes[3]
+	mi := &file_common_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -514,7 +633,7 @@ func (x *Page) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Page.ProtoReflect.Descriptor instead.
 func (*Page) Descriptor() ([]byte, []int) {
-	return file_common_proto_rawDescGZIP(), []int{3}
+	return file_common_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Page) GetPage() int32 {
@@ -550,7 +669,17 @@ var file_common_proto_rawDesc = []byte{
 	0x04, 0x12, 0x0e, 0x0a, 0x0a, 0x54, 0x6f, 0x61, 0x73, 0x74, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x10,
 	0x05, 0x12, 0x0e, 0x0a, 0x0a, 0x41, 0x6c, 0x65, 0x72, 0x74, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x10,
 	0x07, 0x12, 0x0e, 0x0a, 0x0a, 0x52, 0x65, 0x74, 0x72, 0x79, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x10,
-	0x08, 0x42, 0x06, 0x0a, 0x04, 0x5f, 0x6d, 0x73, 0x67, 0x22, 0xa7, 0x02, 0x0a, 0x09, 0x43, 0x6f,
+	0x08, 0x42, 0x06, 0x0a, 0x04, 0x5f, 0x6d, 0x73, 0x67, 0x22, 0x9d, 0x01, 0x0a, 0x0b, 0x41, 0x6c,
+	0x65, 0x72, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2c, 0x0a, 0x06, 0x61, 0x63, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x14, 0x2e, 0x70, 0x62, 0x2e, 0x41,
+	0x6c, 0x65, 0x72, 0x74, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x74, 0x79, 0x70, 0x65, 0x52,
+	0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x16, 0x0a,
+	0x06, 0x6a, 0x75, 0x6d, 0x70, 0x54, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6a,
+	0x75, 0x6d, 0x70, 0x54, 0x6f, 0x22, 0x32, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x0a, 0x0a,
+	0x06, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x52, 0x65, 0x74,
+	0x72, 0x79, 0x10, 0x01, 0x12, 0x08, 0x0a, 0x04, 0x54, 0x6f, 0x48, 0x35, 0x10, 0x02, 0x12, 0x09,
+	0x0a, 0x05, 0x54, 0x6f, 0x41, 0x70, 0x70, 0x10, 0x03, 0x22, 0xa7, 0x02, 0x0a, 0x09, 0x43, 0x6f,
 	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x20, 0x0a,
@@ -608,24 +737,27 @@ func file_common_proto_rawDescGZIP() []byte {
 	return file_common_proto_rawDescData
 }
 
-var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_common_proto_goTypes = []interface{}{
 	(ConvType)(0),        // 0: pb.ConvType
 	(ContentType)(0),     // 1: pb.ContentType
 	(CommonResp_Code)(0), // 2: pb.CommonResp.Code
-	(*CommonResp)(nil),   // 3: pb.CommonResp
-	(*CommonReq)(nil),    // 4: pb.CommonReq
-	(*IpRegion)(nil),     // 5: pb.IpRegion
-	(*Page)(nil),         // 6: pb.Page
+	(AlertActionType)(0), // 3: pb.AlertAction.type
+	(*CommonResp)(nil),   // 4: pb.CommonResp
+	(*AlertAction)(nil),  // 5: pb.AlertAction
+	(*CommonReq)(nil),    // 6: pb.CommonReq
+	(*IpRegion)(nil),     // 7: pb.IpRegion
+	(*Page)(nil),         // 8: pb.Page
 }
 var file_common_proto_depIdxs = []int32{
 	2, // 0: pb.CommonResp.code:type_name -> pb.CommonResp.Code
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 1: pb.AlertAction.action:type_name -> pb.AlertAction.type
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_common_proto_init() }
@@ -647,7 +779,7 @@ func file_common_proto_init() {
 			}
 		}
 		file_common_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CommonReq); i {
+			switch v := v.(*AlertAction); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -659,7 +791,7 @@ func file_common_proto_init() {
 			}
 		}
 		file_common_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IpRegion); i {
+			switch v := v.(*CommonReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -671,6 +803,18 @@ func file_common_proto_init() {
 			}
 		}
 		file_common_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IpRegion); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_common_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Page); i {
 			case 0:
 				return &v.state
@@ -689,8 +833,8 @@ func file_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_common_proto_rawDesc,
-			NumEnums:      3,
-			NumMessages:   4,
+			NumEnums:      4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
