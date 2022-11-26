@@ -36,6 +36,24 @@ message CommonResp {
   bytes data = 3;
 }
 
+enum PushEvent {
+  // 消息推送
+  PushMsgDataList = 0;
+  // 好友通知
+  FriendNotify = 1;
+  // 群通知
+  GroupNotify = 2;
+  // 订阅号
+  SubscribeNotify = 3;
+  // 社交圈
+  SocialNotify = 4;
+}
+
+message PushBody {
+  PushEvent event = 1;
+  bytes data = 2;
+}
+
 enum ContentType {
   UNKNOWN = 0;
   TYPING = 1; // 正在输入

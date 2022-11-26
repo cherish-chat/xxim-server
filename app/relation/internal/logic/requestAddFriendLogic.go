@@ -188,7 +188,7 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	}
 	l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
 		GetUserConnReq: &pb.GetUserConnReq{UserIds: []string{in.To}},
-		Event:          pb.PushEvent_RequestAddFriend,
+		Event:          pb.PushEvent_FriendNotify,
 		Data:           nil,
 	})
 	return &pb.RequestAddFriendResp{}, nil
