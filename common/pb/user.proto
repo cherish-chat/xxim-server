@@ -91,6 +91,17 @@ message MapUserByIdsResp {
   map<string, bytes> users = 2;
 }
 
+//batchGetUserBaseInfo 批量获取用户基本信息
+message BatchGetUserBaseInfoReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+message BatchGetUserBaseInfoResp {
+  CommonResp commonResp = 1;
+  repeated UserBaseInfo userBaseInfos = 2;
+}
+
 message SearchUsersByKeywordReq {
   CommonReq commonReq = 1;
   string keyword = 2;
@@ -127,6 +138,9 @@ enum UserSettingKey {
   HowToAddFriend = 0; // 如何添加好友
   HowToAddFriend_NeedAnswerQuestionCorrectly_Question = 1; // 如何添加好友 需要回答的问题
   HowToAddFriend_NeedAnswerQuestionCorrectly_Answer = 2; // 如何添加好友 需要回答的问题的答案
+
+  // 好友通知列表 点击清空按钮 设置的createTime
+  FriendEventList_ClearTime = 21;
 }
 
 //获取用户settings
@@ -162,6 +176,7 @@ service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
   rpc MapUserByIds(MapUserByIdsReq) returns (MapUserByIdsResp) {}
+  rpc BatchGetUserBaseInfo(BatchGetUserBaseInfoReq) returns (BatchGetUserBaseInfoResp) {}
   rpc SearchUsersByKeyword(SearchUsersByKeywordReq) returns (SearchUsersByKeywordResp) {}
   rpc GetUserHome(GetUserHomeReq) returns (GetUserHomeResp) {}
   rpc GetUserSettings(GetUserSettingsReq) returns (GetUserSettingsResp) {}

@@ -25,10 +25,13 @@ type (
 	DeleteBlockUserResp       = pb.DeleteBlockUserResp
 	DeleteFriendReq           = pb.DeleteFriendReq
 	DeleteFriendResp          = pb.DeleteFriendResp
+	FriendEvent               = pb.FriendEvent
 	GetFriendCountReq         = pb.GetFriendCountReq
 	GetFriendCountResp        = pb.GetFriendCountResp
 	GetFriendListReq          = pb.GetFriendListReq
 	GetFriendListResp         = pb.GetFriendListResp
+	GetMyFriendEventListReq   = pb.GetMyFriendEventListReq
+	GetMyFriendEventListResp  = pb.GetMyFriendEventListResp
 	GetSingleChatSettingReq   = pb.GetSingleChatSettingReq
 	GetSingleChatSettingResp  = pb.GetSingleChatSettingResp
 	GetSingleMsgNotifyOptReq  = pb.GetSingleMsgNotifyOptReq
@@ -58,6 +61,7 @@ type (
 		GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error)
 		GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error)
 		GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
+		GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 	}
 
 	defaultRelationService struct {
@@ -139,4 +143,9 @@ func (m *defaultRelationService) GetSingleMsgNotifyOpt(ctx context.Context, in *
 func (m *defaultRelationService) GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error) {
 	client := pb.NewRelationServiceClient(m.cli.Conn())
 	return client.GetFriendList(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.GetMyFriendEventList(ctx, in, opts...)
 }

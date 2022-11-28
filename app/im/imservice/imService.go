@@ -13,12 +13,14 @@ import (
 )
 
 type (
-	BeforeConnectReq      = pb.BeforeConnectReq
-	BeforeConnectResp     = pb.BeforeConnectResp
-	GetUserLatestConnReq  = pb.GetUserLatestConnReq
-	GetUserLatestConnResp = pb.GetUserLatestConnResp
-	ImMQBody              = pb.ImMQBody
-	MsgNotifyOpt          = pb.MsgNotifyOpt
+	BatchGetUserLatestConnReq  = pb.BatchGetUserLatestConnReq
+	BatchGetUserLatestConnResp = pb.BatchGetUserLatestConnResp
+	BeforeConnectReq           = pb.BeforeConnectReq
+	BeforeConnectResp          = pb.BeforeConnectResp
+	GetUserLatestConnReq       = pb.GetUserLatestConnReq
+	GetUserLatestConnResp      = pb.GetUserLatestConnResp
+	ImMQBody                   = pb.ImMQBody
+	MsgNotifyOpt               = pb.MsgNotifyOpt
 
 	ImService interface {
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
@@ -27,6 +29,7 @@ type (
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 		GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
+		BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 	}
 
@@ -69,6 +72,11 @@ func (m *defaultImService) GetUserConn(ctx context.Context, in *GetUserConnReq, 
 func (m *defaultImService) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetUserLatestConn(ctx, in, opts...)
+}
+
+func (m *defaultImService) BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.BatchGetUserLatestConn(ctx, in, opts...)
 }
 
 func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {

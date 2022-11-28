@@ -127,6 +127,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/getFriendList",
 					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetFriendListConfig(serverCtx)),
 				},
+				// getMyFriendEventList
+				{
+					Method:  http.MethodPost,
+					Path:    "/getMyFriendEventList",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetMyFriendEventListConfig(serverCtx)),
+				},
 			}...,
 		),
 		rest.WithPrefix("/v1/relation"),

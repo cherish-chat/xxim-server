@@ -91,3 +91,8 @@ func (s *RelationServiceServer) GetFriendList(ctx context.Context, in *pb.GetFri
 	l := logic.NewGetFriendListLogic(ctx, s.svcCtx)
 	return l.GetFriendList(in)
 }
+
+func (s *RelationServiceServer) GetMyFriendEventList(ctx context.Context, in *pb.GetMyFriendEventListReq) (*pb.GetMyFriendEventListResp, error) {
+	l := logic.NewGetMyFriendEventListLogic(ctx, s.svcCtx)
+	return l.GetMyFriendEventList(in)
+}

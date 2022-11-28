@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	BatchGetUserBaseInfoReq  = pb.BatchGetUserBaseInfoReq
+	BatchGetUserBaseInfoResp = pb.BatchGetUserBaseInfoResp
 	BirthdayInfo             = pb.BirthdayInfo
 	ConfirmRegisterReq       = pb.ConfirmRegisterReq
 	ConfirmRegisterResp      = pb.ConfirmRegisterResp
@@ -36,6 +38,7 @@ type (
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
 		MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
+		BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 		SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
 		GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 		GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
@@ -66,6 +69,11 @@ func (m *defaultUserService) ConfirmRegister(ctx context.Context, in *ConfirmReg
 func (m *defaultUserService) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.MapUserByIds(ctx, in, opts...)
+}
+
+func (m *defaultUserService) BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.BatchGetUserBaseInfo(ctx, in, opts...)
 }
 
 func (m *defaultUserService) SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error) {

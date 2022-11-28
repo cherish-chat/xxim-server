@@ -175,3 +175,18 @@ func GetFriendListConfig[REQ *pb.GetFriendListReq, RESP *pb.GetFriendListResp](s
 		},
 	}
 }
+
+// GetMyFriendEventListConfig ...
+func GetMyFriendEventListConfig[REQ *pb.GetMyFriendEventListReq, RESP *pb.GetMyFriendEventListResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetMyFriendEventListReq, *pb.GetMyFriendEventListResp] {
+	return wrapper.Config[*pb.GetMyFriendEventListReq, *pb.GetMyFriendEventListResp]{
+		Do: func(ctx context.Context, in *pb.GetMyFriendEventListReq, opts ...grpc.CallOption) (*pb.GetMyFriendEventListResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.RelationService().GetMyFriendEventList(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetMyFriendEventList", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.GetMyFriendEventListReq {
+			return &pb.GetMyFriendEventListReq{}
+		},
+	}
+}

@@ -37,6 +37,11 @@ func (s *UserServiceServer) MapUserByIds(ctx context.Context, in *pb.MapUserById
 	return l.MapUserByIds(in)
 }
 
+func (s *UserServiceServer) BatchGetUserBaseInfo(ctx context.Context, in *pb.BatchGetUserBaseInfoReq) (*pb.BatchGetUserBaseInfoResp, error) {
+	l := logic.NewBatchGetUserBaseInfoLogic(ctx, s.svcCtx)
+	return l.BatchGetUserBaseInfo(in)
+}
+
 func (s *UserServiceServer) SearchUsersByKeyword(ctx context.Context, in *pb.SearchUsersByKeywordReq) (*pb.SearchUsersByKeywordResp, error) {
 	l := logic.NewSearchUsersByKeywordLogic(ctx, s.svcCtx)
 	return l.SearchUsersByKeyword(in)

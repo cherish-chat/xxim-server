@@ -25,6 +25,7 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
 	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
+	BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
 	GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 	GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
@@ -60,6 +61,15 @@ func (c *userServiceClient) ConfirmRegister(ctx context.Context, in *ConfirmRegi
 func (c *userServiceClient) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
 	out := new(MapUserByIdsResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/MapUserByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error) {
+	out := new(BatchGetUserBaseInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/BatchGetUserBaseInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +119,7 @@ type UserServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error)
 	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
+	BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
 	GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error)
 	GetUserSettings(context.Context, *GetUserSettingsReq) (*GetUserSettingsResp, error)
@@ -128,6 +139,9 @@ func (UnimplementedUserServiceServer) ConfirmRegister(context.Context, *ConfirmR
 }
 func (UnimplementedUserServiceServer) MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapUserByIds not implemented")
+}
+func (UnimplementedUserServiceServer) BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetUserBaseInfo not implemented")
 }
 func (UnimplementedUserServiceServer) SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchUsersByKeyword not implemented")
@@ -204,6 +218,24 @@ func _UserService_MapUserByIds_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).MapUserByIds(ctx, req.(*MapUserByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_BatchGetUserBaseInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetUserBaseInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BatchGetUserBaseInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/BatchGetUserBaseInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BatchGetUserBaseInfo(ctx, req.(*BatchGetUserBaseInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -298,6 +330,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MapUserByIds",
 			Handler:    _UserService_MapUserByIds_Handler,
+		},
+		{
+			MethodName: "BatchGetUserBaseInfo",
+			Handler:    _UserService_BatchGetUserBaseInfo_Handler,
 		},
 		{
 			MethodName: "SearchUsersByKeyword",

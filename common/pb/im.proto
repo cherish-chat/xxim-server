@@ -36,6 +36,17 @@ message GetUserLatestConnResp {
   string deviceId = 7;
 }
 
+//batchGetUserLatestConnReq 批量获取用户最新连接信息
+message BatchGetUserLatestConnReq {
+  repeated string userIds = 1;
+}
+
+//batchGetUserLatestConnResp 批量获取用户最新连接信息
+message BatchGetUserLatestConnResp {
+  CommonResp commonResp = 1;
+  repeated GetUserLatestConnResp userLatestConns = 2;
+}
+
 //MsgNotifyOpt 消息通知选项
 message MsgNotifyOpt {
   bool preview = 1; // 是否预览
@@ -51,5 +62,6 @@ service imService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
+  rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
 }

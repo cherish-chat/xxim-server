@@ -36,6 +36,7 @@ type RelationServiceClient interface {
 	GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error)
 	GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error)
 	GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
+	GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 }
 
 type relationServiceClient struct {
@@ -172,6 +173,15 @@ func (c *relationServiceClient) GetFriendList(ctx context.Context, in *GetFriend
 	return out, nil
 }
 
+func (c *relationServiceClient) GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error) {
+	out := new(GetMyFriendEventListResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/GetMyFriendEventList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RelationServiceServer is the server API for RelationService service.
 // All implementations must embed UnimplementedRelationServiceServer
 // for forward compatibility
@@ -190,6 +200,7 @@ type RelationServiceServer interface {
 	GetSingleChatSetting(context.Context, *GetSingleChatSettingReq) (*GetSingleChatSettingResp, error)
 	GetSingleMsgNotifyOpt(context.Context, *GetSingleMsgNotifyOptReq) (*GetSingleMsgNotifyOptResp, error)
 	GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error)
+	GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error)
 	mustEmbedUnimplementedRelationServiceServer()
 }
 
@@ -238,6 +249,9 @@ func (UnimplementedRelationServiceServer) GetSingleMsgNotifyOpt(context.Context,
 }
 func (UnimplementedRelationServiceServer) GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
+}
+func (UnimplementedRelationServiceServer) GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyFriendEventList not implemented")
 }
 func (UnimplementedRelationServiceServer) mustEmbedUnimplementedRelationServiceServer() {}
 
@@ -504,6 +518,24 @@ func _RelationService_GetFriendList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationService_GetMyFriendEventList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyFriendEventListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).GetMyFriendEventList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/GetMyFriendEventList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).GetMyFriendEventList(ctx, req.(*GetMyFriendEventListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RelationService_ServiceDesc is the grpc.ServiceDesc for RelationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -566,6 +598,10 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendList",
 			Handler:    _RelationService_GetFriendList_Handler,
+		},
+		{
+			MethodName: "GetMyFriendEventList",
+			Handler:    _RelationService_GetMyFriendEventList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

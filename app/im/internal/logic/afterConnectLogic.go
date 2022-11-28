@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
 
@@ -54,6 +55,12 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 			l.Errorf("insert connect record failed, err: %v", err)
 			return pb.NewRetryErrorResp(), err
 		}
+	}
+	// 写入redis latest connect record
+	err = l.svcCtx.Redis().SetexCtx(l.ctx, rediskey.LatestConnectRecord(in.ConnParam.UserId), utils.AnyToString(connectRecord), rediskey.LatestConnectRecordExpire())
+	if err != nil {
+		l.Errorf("set latest connect record failed, err: %v", err)
+		return pb.NewRetryErrorResp(), err
 	}
 	return &pb.CommonResp{}, nil
 }
