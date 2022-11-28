@@ -2,7 +2,7 @@ syntax = "proto3";
 package pb;
 
 message CommonReq {
-  string id = 1;
+  string userId = 1;
   string token = 2;
 
   string deviceModel = 11;
