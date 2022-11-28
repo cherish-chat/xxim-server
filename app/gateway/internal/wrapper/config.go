@@ -9,7 +9,8 @@ import (
 
 type IReq interface {
 	proto.Message
-	GetRequester() *pb.Requester
+	GetCommonReq() *pb.CommonReq
+	SetCommonReq(*pb.CommonReq)
 }
 
 type IResp interface {

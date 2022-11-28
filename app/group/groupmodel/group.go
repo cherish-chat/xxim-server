@@ -1,27 +1,30 @@
 package groupmodel
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"github.com/qiniu/qmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 )
 
 type (
 	Group struct {
-		Id     string `bson:"_id" json:"id"`        // 群id 从10001开始 redis incr
-		Name   string `bson:"name" json:"name"`     // 群名称
+		// 群id 从10001开始 redis incr
+		Id     string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);not null"`
+		Name   string `bson:"name" json:"name" gorm:"column:name;type:varchar(32);not null;index;default:''"`
 		Avatar string `bson:"avatar" json:"avatar"` // 群头像
 		// 群主
-		Owner string `bson:"owner" json:"owner"`
+		Owner string `bson:"owner" json:"owner" gorm:"column:owner;type:char(32);not null;index"`
 		// 所有管理员
-		Managers []string `bson:"managers" json:"managers"`
+		Managers xorm.SliceString `bson:"managers" json:"managers" gorm:"column:managers;type:json;"`
 		// 创建时间
-		CreateTime int64 `bson:"createTime" json:"createTime"`
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index"`
 		// 解散时间
-		DismissTime int64 `bson:"dismissTime" json:"dismissTime"`
+		DismissTime int64 `bson:"dismissTime" json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;index"`
 		// 群描述
-		Description string `bson:"description" json:"description"`
+		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(255);not null;default:''"`
 		// GroupSetting
-		Setting GroupSetting `bson:"setting" json:"setting"`
+		Setting GroupSetting `bson:"setting" json:"setting" gorm:"column:setting;type:json;not null"`
 	}
 	GroupSetting struct {
 		// 全体禁言开关
@@ -51,11 +54,14 @@ type (
 	}
 )
 
-func (m *Group) CollectionName() string {
+func (m *Group) TableName() string {
 	return "group"
 }
 
-func (m *Group) Indexes(c *qmgo.Collection) error {
-	// TODO indexes
-	return nil
+func (m GroupSetting) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *GroupSetting) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), m)
 }

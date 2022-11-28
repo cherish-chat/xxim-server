@@ -17,7 +17,7 @@ func RequestAddFriendConfig[REQ *pb.RequestAddFriendReq, RESP *pb.RequestAddFrie
 		Do: func(ctx context.Context, in *pb.RequestAddFriendReq, opts ...grpc.CallOption) (*pb.RequestAddFriendResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().RequestAddFriend(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "RequestAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "RequestAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.RequestAddFriendReq {
@@ -32,7 +32,7 @@ func AcceptAddFriendConfig[REQ *pb.AcceptAddFriendReq, RESP *pb.AcceptAddFriendR
 		Do: func(ctx context.Context, in *pb.AcceptAddFriendReq, opts ...grpc.CallOption) (*pb.AcceptAddFriendResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().AcceptAddFriend(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "AcceptAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "AcceptAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.AcceptAddFriendReq {
@@ -47,7 +47,7 @@ func RejectAddFriendConfig[REQ *pb.RejectAddFriendReq, RESP *pb.RejectAddFriendR
 		Do: func(ctx context.Context, in *pb.RejectAddFriendReq, opts ...grpc.CallOption) (*pb.RejectAddFriendResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().RejectAddFriend(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "RejectAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "RejectAddFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.RejectAddFriendReq {
@@ -62,7 +62,7 @@ func BlockUserConfig[REQ *pb.BlockUserReq, RESP *pb.BlockUserResp](svcCtx *svc.S
 		Do: func(ctx context.Context, in *pb.BlockUserReq, opts ...grpc.CallOption) (*pb.BlockUserResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().BlockUser(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "BlockUser", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "BlockUser", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.BlockUserReq {
@@ -77,7 +77,7 @@ func DeleteBlockUserConfig[REQ *pb.DeleteBlockUserReq, RESP *pb.DeleteBlockUserR
 		Do: func(ctx context.Context, in *pb.DeleteBlockUserReq, opts ...grpc.CallOption) (*pb.DeleteBlockUserResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().DeleteBlockUser(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "DeleteBlockUser", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "DeleteBlockUser", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.DeleteBlockUserReq {
@@ -92,7 +92,7 @@ func DeleteFriendConfig[REQ *pb.DeleteFriendReq, RESP *pb.DeleteFriendResp](svcC
 		Do: func(ctx context.Context, in *pb.DeleteFriendReq, opts ...grpc.CallOption) (*pb.DeleteFriendResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().DeleteFriend(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "DeleteFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "DeleteFriend", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.DeleteFriendReq {
@@ -107,7 +107,7 @@ func SetSingleChatSettingConfig[REQ *pb.SetSingleChatSettingReq, RESP *pb.SetSin
 		Do: func(ctx context.Context, in *pb.SetSingleChatSettingReq, opts ...grpc.CallOption) (*pb.SetSingleChatSettingResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().SetSingleChatSetting(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.SetSingleChatSettingReq {
@@ -122,7 +122,7 @@ func GetSingleChatSettingConfig[REQ *pb.GetSingleChatSettingReq, RESP *pb.GetSin
 		Do: func(ctx context.Context, in *pb.GetSingleChatSettingReq, opts ...grpc.CallOption) (*pb.GetSingleChatSettingResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().GetSingleChatSetting(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetSingleChatSettingReq {
@@ -137,7 +137,7 @@ func SetSingleMsgNotifyOptConfig[REQ *pb.SetSingleMsgNotifyOptReq, RESP *pb.SetS
 		Do: func(ctx context.Context, in *pb.SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*pb.SetSingleMsgNotifyOptResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().SetSingleMsgNotifyOpt(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.SetSingleMsgNotifyOptReq {
@@ -152,7 +152,7 @@ func GetSingleMsgNotifyOptConfig[REQ *pb.GetSingleMsgNotifyOptReq, RESP *pb.GetS
 		Do: func(ctx context.Context, in *pb.GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*pb.GetSingleMsgNotifyOptResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().GetSingleMsgNotifyOpt(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetSingleMsgNotifyOptReq {
@@ -167,7 +167,7 @@ func GetFriendListConfig[REQ *pb.GetFriendListReq, RESP *pb.GetFriendListResp](s
 		Do: func(ctx context.Context, in *pb.GetFriendListReq, opts ...grpc.CallOption) (*pb.GetFriendListResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.RelationService().GetFriendList(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetFriendList", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetFriendList", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetFriendListReq {

@@ -18,7 +18,7 @@ func SendMsgConfig[REQ *pb.SendMsgListReq, RESP *pb.SendMsgListResp](svcCtx *svc
 			Do: func(ctx context.Context, in *pb.SendMsgListReq, opts ...grpc.CallOption) (*pb.SendMsgListResp, error) {
 				requestTime := time.Now()
 				resp, err := svcCtx.MsgService().SendMsgListAsync(ctx, in, opts...)
-				go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SendMsg", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+				go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SendMsg", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 				return resp, err
 			},
 			NewRequest: func() *pb.SendMsgListReq {
@@ -30,7 +30,7 @@ func SendMsgConfig[REQ *pb.SendMsgListReq, RESP *pb.SendMsgListResp](svcCtx *svc
 			Do: func(ctx context.Context, in *pb.SendMsgListReq, opts ...grpc.CallOption) (*pb.SendMsgListResp, error) {
 				requestTime := time.Now()
 				resp, err := svcCtx.MsgService().SendMsgListSync(ctx, in, opts...)
-				go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "SendMsg", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+				go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SendMsg", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 				return resp, err
 			},
 			NewRequest: func() *pb.SendMsgListReq {
@@ -46,11 +46,41 @@ func GetMsgListByConvIdConfig[REQ *pb.GetMsgListByConvIdReq, RESP *pb.GetMsgList
 		Do: func(ctx context.Context, in *pb.GetMsgListByConvIdReq, opts ...grpc.CallOption) (*pb.GetMsgListResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.MsgService().GetMsgListByConvId(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "GetMsgListByConvId", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetMsgListByConvId", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.GetMsgListByConvIdReq {
 			return &pb.GetMsgListByConvIdReq{}
+		},
+	}
+}
+
+// GetMsgByIdConfig ...
+func GetMsgByIdConfig[REQ *pb.GetMsgByIdReq, RESP *pb.GetMsgByIdResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp] {
+	return wrapper.Config[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
+		Do: func(ctx context.Context, in *pb.GetMsgByIdReq, opts ...grpc.CallOption) (*pb.GetMsgByIdResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.MsgService().GetMsgById(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetMsgById", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.GetMsgByIdReq {
+			return &pb.GetMsgByIdReq{}
+		},
+	}
+}
+
+// BatchGetConvSeqConfig ...
+func BatchGetConvSeqConfig[REQ *pb.BatchGetConvSeqReq, RESP *pb.BatchGetConvSeqResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp] {
+	return wrapper.Config[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
+		Do: func(ctx context.Context, in *pb.BatchGetConvSeqReq, opts ...grpc.CallOption) (*pb.BatchGetConvSeqResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.MsgService().BatchGetConvSeq(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "BatchGetConvSeq", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.BatchGetConvSeqReq {
+			return &pb.BatchGetConvSeqReq{}
 		},
 	}
 }

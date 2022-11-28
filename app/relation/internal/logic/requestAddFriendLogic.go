@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -37,8 +37,8 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		var err error
 		xtrace.StartFuncSpan(l.ctx, "AreFriends", func(ctx context.Context) {
 			areFriendsResp, err = NewAreFriendsLogic(ctx, l.svcCtx).AreFriends(&pb.AreFriendsReq{
-				Requester: in.Requester,
-				A:         in.Requester.Id,
+				CommonReq: in.CommonReq,
+				A:         in.CommonReq.Id,
 				BList:     []string{in.To},
 			})
 		})
@@ -48,7 +48,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		}
 		if is, ok := areFriendsResp.FriendList[in.To]; is && ok {
 			// 已经是好友了
-			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "你们已经是好友了"))}, nil
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "你们已经是好友了"))}, nil
 		}
 	}
 	// 他是否把我拉黑
@@ -57,18 +57,18 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		var err error
 		xtrace.StartFuncSpan(l.ctx, "AreBlackList", func(ctx context.Context) {
 			areBlackListResp, err = NewAreBlackListLogic(ctx, l.svcCtx).AreBlackList(&pb.AreBlackListReq{
-				Requester: in.Requester,
+				CommonReq: in.CommonReq,
 				A:         in.To,
-				BList:     []string{in.Requester.Id},
+				BList:     []string{in.CommonReq.Id},
 			})
 		})
 		if err != nil {
 			l.Errorf("AreBlackList failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if is, ok := areBlackListResp.BlackList[in.Requester.Id]; is && ok {
+		if is, ok := areBlackListResp.BlackList[in.CommonReq.Id]; is && ok {
 			// 已经被拉黑
-			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "对方已把你拉黑"))}, nil
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "对方已把你拉黑"))}, nil
 		}
 	}
 	// 我的好友总数是否已达上限
@@ -77,7 +77,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		var err error
 		xtrace.StartFuncSpan(l.ctx, "GetFriendCount", func(ctx context.Context) {
 			getFriendCountResp, err = NewGetFriendCountLogic(ctx, l.svcCtx).GetFriendCount(&pb.GetFriendCountReq{
-				Requester: in.Requester,
+				CommonReq: in.CommonReq,
 			})
 		})
 		if err != nil {
@@ -85,13 +85,13 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		if int64(getFriendCountResp.Count) >= utils.AnyToInt64(l.svcCtx.SystemConfigMgr.Get("friend_max_count")) {
-			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "好友数量已达上限"))}, nil
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
 	// 对方的加好友设置
 	{
 		getUserSettingsResp, err := l.svcCtx.UserService().GetUserSettings(l.ctx, &pb.GetUserSettingsReq{
-			Requester: &pb.Requester{Id: in.To},
+			CommonReq: &pb.CommonReq{Id: in.To},
 			Keys:      []pb.UserSettingKey{pb.UserSettingKey_HowToAddFriend, pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer},
 		})
 		if err != nil {
@@ -100,7 +100,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		}
 		// 对方不允许任何人添加好友
 		if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend)].Value == pb.UserSettingValue_HowToAddFriend_DontAllowAnyone {
-			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "对方不允许任何人添加好友"))}, nil
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "对方不允许任何人添加好友"))}, nil
 		} else
 		// 对方允许任何人添加好友
 		if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend)].Value == pb.UserSettingValue_HowToAddFriend_AllowAnyone {
@@ -110,7 +110,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend)].Value == pb.UserSettingValue_HowToAddFriend_NeedAnswerQuestionCorrectly {
 			// 对方的问题的答案 和 in.Message 一致
 			if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer)].Value != in.Message {
-				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "回答问题错误"))}, nil
+				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "回答问题错误"))}, nil
 			} else {
 				return l.allowAddFriend(in)
 			}
@@ -123,7 +123,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend)].Value == pb.UserSettingValue_HowToAddFriend_NeedAnswerQuestionCorrectlyAndConfirm {
 			// 对方的问题的答案 和 in.Message 一致
 			if getUserSettingsResp.Settings[int32(pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer)].Value != in.Message {
-				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "回答问题错误"))}, nil
+				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "回答问题错误"))}, nil
 			} else {
 				return l.requestAddFriend(in)
 			}
@@ -136,9 +136,9 @@ func (l *RequestAddFriendLogic) allowAddFriend(in *pb.RequestAddFriendReq) (*pb.
 	var acceptAddFriendResp *pb.AcceptAddFriendResp
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "AcceptAddFriend", func(ctx context.Context) {
-		acceptAddFriendResp, err = NewAcceptAddFriendLogic(ctx, l.svcCtx).AcceptAddFriend(&pb.AcceptAddFriendReq{Requester: &pb.Requester{
+		acceptAddFriendResp, err = NewAcceptAddFriendLogic(ctx, l.svcCtx).AcceptAddFriend(&pb.AcceptAddFriendReq{CommonReq: &pb.CommonReq{
 			Id:       in.To,
-			Language: in.Requester.Language,
+			Language: in.CommonReq.Language,
 		}})
 	})
 	if err != nil {
@@ -153,13 +153,13 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	extra := make([]*pb.RequestAddFriendExtra, 0)
 	if in.Message != "" {
 		extra = append(extra, &pb.RequestAddFriendExtra{
-			UserId:  in.Requester.Id,
+			UserId:  in.CommonReq.Id,
 			Content: in.Message,
 		})
 	}
 	model := &relationmodel.RequestAddFriend{
 		Id:         utils.GenId(),
-		FromUserId: in.Requester.Id,
+		FromUserId: in.CommonReq.Id,
 		ToUserId:   in.To,
 		Status:     pb.RequestAddFriendStatus_Unhandled,
 		CreateTime: now,
@@ -168,31 +168,27 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	}
 	// 判断是否有没处理的 添加好友请求
 	{
-		count, err := l.svcCtx.Mongo().Collection(model).Find(l.ctx, bson.M{
-			"fromUserId": model.FromUserId,
-			"toUserId":   model.ToUserId,
-			"status":     pb.RequestAddFriendStatus_Unhandled,
-		}).Count()
+		var count int64
+		err := l.svcCtx.Mysql().Model(model).Where("fromUserId = ? and toUserId = ? and status = ?", model.FromUserId, model.ToUserId, pb.RequestAddFriendStatus_Unhandled).Count(&count).Error
 		if err != nil {
 			l.Errorf("Find failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		if count > 0 {
-			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "请勿重复添加好友"))}, nil
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "请勿重复添加好友"))}, nil
 		}
 	}
 	// 插入 添加好友请求
 	{
-		_, err := l.svcCtx.Mongo().Collection(model).InsertOne(l.ctx, model)
+		err := xorm.InsertOne(l.svcCtx.Mysql(), model)
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
-	// TODO 发送消息通知给对方
 	l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
 		GetUserConnReq: &pb.GetUserConnReq{UserIds: []string{in.To}},
-		Event:          pb.PushEvent_RequestAddFriend,
+		Event:          pb.PushEvent_FriendNotify,
 		Data:           nil,
 	})
 	return &pb.RequestAddFriendResp{}, nil

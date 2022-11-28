@@ -1,20 +1,12 @@
 package usermodel
 
-import (
-	"github.com/qiniu/qmgo"
-)
-
+type LoginRecordInfo LoginInfo
 type LoginRecord struct {
-	Id        string `bson:"_id" json:"id"`
-	UserId    string `bson:"userId" json:"userId"`
-	LoginInfo `bson:",inline"`
+	Id     string `bson:"_id" json:"id" gorm:"column:id;type:char(32);primary_key"`
+	UserId string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);index"`
+	LoginRecordInfo
 }
 
-func (m *LoginRecord) CollectionName() string {
+func (m *LoginRecord) TableName() string {
 	return "login_record"
-}
-
-func (m *LoginRecord) Indexes(c *qmgo.Collection) error {
-	//TODO implement me
-	return nil
 }

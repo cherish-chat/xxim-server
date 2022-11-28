@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/connservice"
+	"github.com/cherish-chat/xxim-server/app/gateway/gatewaymodel"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
@@ -10,9 +11,10 @@ import (
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
@@ -22,9 +24,9 @@ type ServiceContext struct {
 	groupService    groupservice.GroupService
 	msgService      msgservice.MsgService
 	zedis           *redis.Redis
-	mongo           *xmgo.Client
 	SystemConfigMgr *xconf.SystemConfigMgr
 	ConnPodsMgr     *connservice.ConnPodsMgr
+	mysql           *gorm.DB
 	*i18n.I18N
 }
 
@@ -33,9 +35,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mongo().Collection(&xconf.SystemConfig{}))
-	s.I18N = i18n.NewI18N(s.Mongo())
+	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.I18N = i18n.NewI18N(s.Mysql())
 	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
+	s.Mysql().AutoMigrate(&gatewaymodel.ApiLog{})
 	return s
 }
 
@@ -53,11 +56,11 @@ func (s *ServiceContext) Redis() *redis.Redis {
 	return s.zedis
 }
 
-func (s *ServiceContext) Mongo() *xmgo.Client {
-	if s.mongo == nil {
-		s.mongo = xmgo.NewClient(s.Config.Mongo)
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
 	}
-	return s.mongo
+	return s.mysql
 }
 
 func (s *ServiceContext) RelationService() relationservice.RelationService {

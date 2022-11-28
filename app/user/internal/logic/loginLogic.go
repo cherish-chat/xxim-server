@@ -2,16 +2,14 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xjwt"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.opentelemetry.io/otel/propagation"
 	"regexp"
 	"time"
@@ -39,11 +37,9 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	user := &usermodel.User{}
 	// 使用id查询用户信息
-	err := l.svcCtx.Mongo().Collection(&usermodel.User{}).Find(l.ctx, bson.M{
-		"_id": in.Id,
-	}).One(user)
+	err := xorm.DetailByWhere(l.svcCtx.Mysql(), user, xorm.Where("id = ?", in.Id))
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
+		if xorm.RecordNotFound(err) {
 			// 用户不存在 注册流程
 			return l.register(in)
 		} else {
@@ -53,21 +49,21 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "登录失败"), l.svcCtx.T(in.Requester.Language, "密码错误"))}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "密码错误"))}, nil
 	}
 	// 密码正确
 	// 生成token
-	//uniqueSuffix := fmt.Sprintf("%s:%s", in.Requester.Platform, in.Requester.DeviceId) // 如果你不限制同设备登录多次一个账号，可以使用这行代码
-	uniqueSuffix := fmt.Sprintf("%s", in.Requester.Platform)
+	//uniqueSuffix := fmt.Sprintf("%s:%s", in.CommonReq.Platform, in.CommonReq.DeviceId) // 如果你不限制同设备登录多次一个账号，可以使用这行代码
+	uniqueSuffix := fmt.Sprintf("%s", in.CommonReq.Platform)
 	tokenObj := xjwt.GenerateToken(user.Id, uniqueSuffix,
-		xjwt.WithPlatform(in.Requester.Platform),
-		xjwt.WithDeviceId(in.Requester.DeviceId),
-		xjwt.WithDeviceModel(in.Requester.DeviceModel),
+		xjwt.WithPlatform(in.CommonReq.Platform),
+		xjwt.WithDeviceId(in.CommonReq.DeviceId),
+		xjwt.WithDeviceModel(in.CommonReq.DeviceModel),
 	)
 	// 断开设备连接
 	_, err = l.svcCtx.ImService().KickUserConn(l.ctx, &pb.KickUserConnReq{GetUserConnReq: &pb.GetUserConnReq{
 		UserIds:   []string{user.Id},
-		Platforms: []string{in.Requester.Platform},
+		Platforms: []string{in.CommonReq.Platform},
 	}})
 	if err != nil {
 		l.Errorf("kick user conn failed, err: %v", err)
@@ -79,7 +75,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterLogin", func(ctx context.Context) {
-		NewAfterLogic(ctx, l.svcCtx).AfterLogin(user.Id, in.Requester)
+		NewAfterLogic(ctx, l.svcCtx).AfterLogin(user.Id, in.CommonReq)
 	}, propagation.MapCarrier{
 		"user_id": user.Id,
 	})
@@ -93,13 +89,13 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 检查用户id是否符合规则 只能是字母数字下划线
 	reg := regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
 	if !reg.MatchString(in.Id) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, l.svcCtx.T(in.Requester.Language, "注册失败")), l.svcCtx.T(in.Requester.Language, "用户名违规"))}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, l.svcCtx.T(in.CommonReq.Language, "注册失败")), l.svcCtx.T(in.CommonReq.Language, "用户名违规"))}, nil
 	}
 	// 检查用户id是否符合规则 长度在6-20之间
 	if len(in.Id) < 6 || len(in.Id) > 20 {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.Requester.Language, "注册失败"), l.svcCtx.T(in.Requester.Language, "用户名违规"))}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "用户名违规"))}, nil
 	}
-	region := ip2region.Ip2Region(in.Requester.Ip)
+	region := ip2region.Ip2Region(in.CommonReq.Ip)
 	// 注册
 	salt := utils.GenId()
 	userTmp := &usermodel.UserTmp{
@@ -108,21 +104,21 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 		PasswordSalt: salt,
 		RegInfo: &usermodel.LoginInfo{
 			Time:        time.Now().UnixMilli(),
-			Ip:          in.Requester.Ip,
+			Ip:          in.CommonReq.Ip,
 			IpCountry:   region.Country,
 			IpProvince:  region.Province,
 			IpCity:      region.City,
 			IpISP:       region.ISP,
-			AppVersion:  in.Requester.AppVersion,
-			Ua:          in.Requester.Ua,
-			OsVersion:   in.Requester.OsVersion,
-			Platform:    in.Requester.Platform,
-			DeviceId:    in.Requester.DeviceId,
-			DeviceModel: in.Requester.DeviceModel,
+			AppVersion:  in.CommonReq.AppVersion,
+			UserAgent:   in.CommonReq.UserAgent,
+			OsVersion:   in.CommonReq.OsVersion,
+			Platform:    in.CommonReq.Platform,
+			DeviceId:    in.CommonReq.DeviceId,
+			DeviceModel: in.CommonReq.DeviceModel,
 		},
 	}
 	// 保存用户信息
-	_, err := l.svcCtx.Mongo().Collection(&usermodel.UserTmp{}).InsertOne(l.ctx, userTmp)
+	err := xorm.InsertOne(l.svcCtx.Mysql(), userTmp)
 	if err != nil {
 		l.Errorf("insert user failed, err: %v", err)
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err

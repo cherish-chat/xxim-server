@@ -25,7 +25,7 @@ func NewAreBlackListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AreB
 }
 
 func (l *AreBlackListLogic) AreBlackList(in *pb.AreBlackListReq) (*pb.AreBlackListResp, error) {
-	blacklist, err := relationmodel.AreMyBlacklist(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&relationmodel.Friend{}), in.A, in.BList)
+	blacklist, err := relationmodel.AreMyBlacklist(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.A, in.BList)
 	if err != nil {
 		l.Errorf("AreMyFriend failed, err: %v", err)
 		return &pb.AreBlackListResp{CommonResp: pb.NewRetryErrorResp()}, err

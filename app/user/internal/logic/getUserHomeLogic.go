@@ -25,14 +25,14 @@ func NewGetUserHomeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeResp, error) {
-	users, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&usermodel.User{}), []string{in.Id})
+	users, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), []string{in.Id})
 	if err != nil {
 		l.Errorf("getUsersByIds failed, err: %v", err)
 		return &pb.GetUserHomeResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	if len(users) == 0 {
 		l.Errorf("user not found, id: %s", in.Id)
-		return &pb.GetUserHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.Requester.Language, "用户已注销"))}, nil
+		return &pb.GetUserHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户已注销"))}, nil
 	}
 	user := users[0]
 	resp := &pb.GetUserHomeResp{

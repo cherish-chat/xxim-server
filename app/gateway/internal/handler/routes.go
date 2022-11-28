@@ -161,6 +161,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/getMsgListByConvId",
 					Handler: wrapper.WrapHandler(serverCtx, msghandler.GetMsgListByConvIdConfig(serverCtx)),
 				},
+				// getMsgById
+				{
+					Method:  http.MethodPost,
+					Path:    "/getMsgById",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.GetMsgByIdConfig(serverCtx)),
+				},
+				// batchGetConvSeq
+				{
+					Method:  http.MethodPost,
+					Path:    "/batchGetConvSeq",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.BatchGetConvSeqConfig(serverCtx)),
+				},
 			}...,
 		),
 		rest.WithPrefix("/v1/msg"),
@@ -185,6 +197,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/ws",
 					Handler: WsHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/authVerify",
+					Handler: AuthHandler(serverCtx),
 				},
 			}...,
 		),

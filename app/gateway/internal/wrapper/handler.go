@@ -16,36 +16,31 @@ func WrapHandler[REQ IReq, RESP IResp](
 	config Config[REQ, RESP],
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		req := config.NewRequest()
+		requester := &pb.CommonReq{}
 		var body []byte
 		if r.Body != nil {
 			body, _ = io.ReadAll(r.Body)
 		}
-		err := proto.Unmarshal(body, req)
+		err := proto.Unmarshal(body, requester)
 		if err != nil {
-			requestValidateErr(w, err.Error())
+			RequestValidateErr(w, err.Error())
 			return
 		}
-		requester := req.GetRequester()
-		if requester == nil {
-			requestValidateErr(w, "requester is nil")
+		req := config.NewRequest()
+		err = proto.Unmarshal(requester.Data, req)
+		if err != nil {
+			RequestValidateErr(w, err.Error())
 			return
 		}
 		requester.Ip = xhttp.GetRequestIP(r)
-		requester.Ua = r.UserAgent()
-		requester.Token = r.Header.Get("Token")
-		requester.OsVersion = r.Header.Get("OsVersion")
-		requester.AppVersion = r.Header.Get("AppVersion")
-		requester.DeviceId = r.Header.Get("DeviceId")
-		requester.Platform = r.Header.Get("Platform")
-		requester.DeviceModel = r.Header.Get("DeviceModel")
-		requester.Language = r.Header.Get("Language")
-		requester.Id = r.Header.Get("UserId")
+		requester.UserAgent = r.UserAgent()
 		resp := logic.NewAuthLogic(r, svcCtx).Auth(requester)
 		if resp.Code != pb.CommonResp_Success {
-			authError(w, resp)
+			AuthError(w, resp)
 			return
 		}
+		requester.Data = nil
+		req.SetCommonReq(requester)
 		response, err := config.Do(r.Context(), req)
 		if err != nil {
 			internalErr(w, err)
@@ -56,11 +51,11 @@ func WrapHandler[REQ IReq, RESP IResp](
 			internalErr(w, err)
 			return
 		}
-		success(w, data, response.GetCommonResp())
+		Success(w, data, response.GetCommonResp())
 	}
 }
 
-func success(w http.ResponseWriter, data []byte, commonResp *pb.CommonResp) {
+func Success(w http.ResponseWriter, data []byte, commonResp *pb.CommonResp) {
 	w.WriteHeader(http.StatusOK) // httpCode: 200
 	if commonResp == nil {
 		commonResp = pb.NewSuccessResp()
@@ -80,7 +75,7 @@ func internalErr(w http.ResponseWriter, err error) {
 	_, _ = w.Write(resp)
 }
 
-func requestValidateErr(w http.ResponseWriter, msg string) {
+func RequestValidateErr(w http.ResponseWriter, msg string) {
 	w.WriteHeader(http.StatusBadRequest)
 	resp, _ := proto.Marshal(&pb.CommonResp{
 		Code: pb.CommonResp_RequestError, // httpCode: 400
@@ -90,7 +85,7 @@ func requestValidateErr(w http.ResponseWriter, msg string) {
 	_, _ = w.Write(resp)
 }
 
-func authError(w http.ResponseWriter, resp *pb.CommonResp) {
+func AuthError(w http.ResponseWriter, resp *pb.CommonResp) {
 	// 401
 	w.WriteHeader(http.StatusUnauthorized) // httpCode: 401
 	respBytes, _ := proto.Marshal(resp)

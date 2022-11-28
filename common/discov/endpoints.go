@@ -149,11 +149,7 @@ func MustListenEndpoints(namespace string, serviceName string, onUpdate func([]s
 func ListenEndpoints(namespace string, serviceName string, onUpdate func([]string)) (*EndpointsEventHandler, error) {
 	if onUpdate == nil {
 		onUpdate = func(endpoints []string) {
-			//var addrs []resolver.Address
 			for _, endpoint := range endpoints {
-				//addrs = append(addrs, resolver.Address{
-				//	Addr: fmt.Sprintf("%s:%d", endpoint, port),
-				//})
 				fmt.Printf("endpoint: %s\n", endpoint)
 			}
 		}

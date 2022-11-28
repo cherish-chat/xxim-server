@@ -28,7 +28,7 @@
     请求体中的数据类型为`protobuf`，每一个接口定义的请求体都包含一个 requester 字段，用户不需要设置其中的值，只需要保证该字段的值不为null即可。
 
 ```protobuf
-message Requester {
+message CommonReq {
   string id = 1;
   string token = 2;
   string appVersion = 3;
@@ -101,10 +101,10 @@ message CommonResp {
 }
 ```
 
-#### 2.1.2 Requester: 请求消息体
+#### 2.1.2 CommonReq: 请求消息体
 
 ```protobuf
-message Requester {
+message CommonReq {
   string id = 1;
   string token = 2;
   string appVersion = 3;
@@ -331,7 +331,7 @@ message MsgDataList {
 
 ```protobuf
 message LoginReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string id = 2; // 用户id 只能是英文和数字_，长度为6-20
   string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
 }
@@ -356,7 +356,7 @@ message LoginResp {
 
 ```protobuf
 message ConfirmRegisterReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string id = 2; // 用户id 只能是英文和数字_，长度为6-20
   string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
 }
@@ -378,7 +378,7 @@ message ConfirmRegisterResp {
 
 ```protobuf
 message SearchUsersByKeywordReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string keyword = 2;
 }
 ```
@@ -399,7 +399,7 @@ message SearchUsersByKeywordResp {
 
 ```protobuf
 message GetUserHomeReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string id = 2;
 }
 ```
@@ -434,7 +434,7 @@ enum UserSettingKey {
   HowToAddFriend_NeedAnswerQuestionCorrectly_Answer = 2; // 如何添加好友 需要回答的问题的答案
 }
 message GetUserSettingsReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   repeated UserSettingKey keys = 2;
 }
 ```
@@ -461,7 +461,7 @@ message GetUserSettingsResp {
 
 ```protobuf
 message SetUserSettingsReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   repeated UserSetting settings = 2;
 }
 ```
@@ -483,7 +483,7 @@ message SetUserSettingsResp {
 
 ```protobuf
 message RequestAddFriendReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string to = 2;
   // 附加消息
   string message = 3;
@@ -505,7 +505,7 @@ message RequestAddFriendResp {
 
 ```protobuf
 message AcceptAddFriendReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string applyUserId = 2; // 申请人id
   optional string requestId = 3; // 申请id
 }
@@ -526,7 +526,7 @@ message AcceptAddFriendResp {
 
 ```protobuf
 message RejectAddFriendReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string applyUserId = 2; // 申请人id
   string requestId = 3; // 申请id
   bool block = 4; // 是否拉黑
@@ -548,7 +548,7 @@ message RejectAddFriendResp {
 
 ```protobuf
 message BlockUserReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string userId = 2;
 }
 ```
@@ -568,7 +568,7 @@ message BlockUserResp {
 
 ```protobuf
 message DeleteBlockUserReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string userId = 2;
 }
 ```
@@ -588,7 +588,7 @@ message DeleteBlockUserResp {
 
 ```protobuf
 message DeleteFriendReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string userId = 2;
   bool block = 3; // 是否拉黑
 }
@@ -609,7 +609,7 @@ message DeleteFriendResp {
 
 ```protobuf
 message SetSingleChatSettingReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string userId = 2;
   // 置顶选项
   optional bool top = 3;
@@ -635,7 +635,7 @@ message SetSingleChatSettingResp {
 
 ```protobuf
 message GetSingleChatSettingReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string userId = 2;
 }
 ```
@@ -661,7 +661,7 @@ message GetSingleChatSettingResp {
 
 ```protobuf
 message SetSingleMsgNotifyOptReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   // 群ID
   string userId = 2;
   // 消息通知类型
@@ -684,7 +684,7 @@ message SetSingleMsgNotifyOptResp {
 
 ```protobuf
 message GetSingleMsgNotifyOptReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   // 群ID
   string userId = 2;
 }
@@ -707,7 +707,7 @@ message GetSingleMsgNotifyOptResp {
 
 ```protobuf
 message GetFriendListReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   // 分页
   Page page = 2;
   enum Opt {
@@ -737,7 +737,7 @@ message GetFriendListResp {
 
 ```protobuf
 message CreateGroupReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   // 拉人进群
   repeated string members = 2;
   // 群名称(可选参数)
@@ -766,7 +766,7 @@ message CreateGroupResp {
 
 ```protobuf
 message SendMsgListReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   repeated MsgData msgDataList = 2;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天 只有开启了Pulsar的延迟消息功能才有效
@@ -789,7 +789,7 @@ message SendMsgListResp {
 
 ```protobuf
 message GetMsgListByConvIdReq {
-  Requester requester = 1;
+  CommonReq requester = 1;
   string convId = 2;
   repeated string seqList = 3;
   bool push = 4; // 是否使用websocket推送的方式

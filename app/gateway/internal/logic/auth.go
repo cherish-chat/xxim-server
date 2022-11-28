@@ -22,7 +22,7 @@ func NewAuthLogic(r *http.Request, svcCtx *svc.ServiceContext) *AuthLogic {
 	return &AuthLogic{svcCtx: svcCtx, ctx: ctx, Logger: logx.WithContext(ctx), request: r}
 }
 
-func (l *AuthLogic) Auth(in *pb.Requester) *pb.CommonResp {
+func (l *AuthLogic) Auth(in *pb.CommonReq) *pb.CommonResp {
 	inputToken := in.Token
 	if inputToken == "" {
 		// 判断接口是否需要登录
@@ -43,7 +43,7 @@ func (l *AuthLogic) Auth(in *pb.Requester) *pb.CommonResp {
 		if strings.Contains(l.request.URL.Path, "white") {
 			return &pb.CommonResp{}
 		}
-		return pb.NewAlertErrorResp("下线通知", msg)
+		return pb.NewAuthErrorResp(msg)
 	default:
 		return pb.NewAuthErrorResp(msg)
 	}

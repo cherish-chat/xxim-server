@@ -2,19 +2,21 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/connservice"
+	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/app/im/internal/config"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
 	Config      config.Config
 	ConnPodsMgr *connservice.ConnPodsMgr
 	zedis       *redis.Redis
-	mongo       *xmgo.Client
+	mysql       *gorm.DB
 	msgService  msgservice.MsgService
 }
 
@@ -25,11 +27,11 @@ func (s *ServiceContext) Redis() *redis.Redis {
 	return s.zedis
 }
 
-func (s *ServiceContext) Mongo() *xmgo.Client {
-	if s.mongo == nil {
-		s.mongo = xmgo.NewClient(s.Config.Mongo)
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
 	}
-	return s.mongo
+	return s.mysql
 }
 
 func (s *ServiceContext) MsgService() msgservice.MsgService {
@@ -45,5 +47,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	ip2region.Init(c.Ip2RegionUrl)
 	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
+	s.Mysql().AutoMigrate(&immodel.UserConnectRecord{})
 	return s
 }

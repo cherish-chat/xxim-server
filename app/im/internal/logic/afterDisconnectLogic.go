@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/im/immodel"
-	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/zeromicro/go-zero/core/mr"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"github.com/zeromicro/go-zero/core/mr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,15 +28,9 @@ func NewAfterDisconnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 }
 
 func (l *AfterDisconnectLogic) afterDisconnect(in *pb.AfterDisconnectReq) (*pb.CommonResp, error) {
-	_, err := l.svcCtx.Mongo().Collection(&immodel.UserConnectRecord{}).UpdateAll(l.ctx, bson.M{
-		"userId":         in.ConnParam.UserId,
-		"deviceId":       in.ConnParam.DeviceId,
-		"disconnectTime": 0,
-	}, bson.M{
-		"$set": bson.M{
-			"disconnectTime": utils.AnyToInt64(in.DisconnectedAt),
-		},
-	})
+	err := xorm.Update(l.svcCtx.Mysql(), &immodel.UserConnectRecord{}, map[string]interface{}{
+		"disconnectTime": utils.AnyToInt64(in.DisconnectedAt),
+	}, xorm.Where("userId = ? and deviceId = ? and disconnectTime = 0", in.ConnParam.UserId, in.ConnParam.DeviceId))
 	if err != nil {
 		l.Errorf("update connect record failed, err: %v", err)
 		return pb.NewRetryErrorResp(), err

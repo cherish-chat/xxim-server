@@ -26,7 +26,7 @@ func NewMapUserByIdsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MapU
 }
 
 func (l *MapUserByIdsLogic) MapUserByIds(in *pb.MapUserByIdsReq) (*pb.MapUserByIdsResp, error) {
-	usersByIds, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&usermodel.User{}), in.Ids)
+	usersByIds, err := usermodel.GetUsersByIds(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.Ids)
 	if err != nil {
 		l.Errorf("MapUserByIdsLogic MapUserByIds err: %v", err)
 		return &pb.MapUserByIdsResp{CommonResp: pb.NewInternalErrorResp()}, err

@@ -37,16 +37,6 @@ func (s *MsgServiceServer) SendMsgListAsync(ctx context.Context, in *pb.SendMsgL
 	return l.SendMsgListAsync(in)
 }
 
-func (s *MsgServiceServer) BatchSendMsgSync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
-	l := logic.NewBatchSendMsgSyncLogic(ctx, s.svcCtx)
-	return l.BatchSendMsgSync(in)
-}
-
-func (s *MsgServiceServer) BatchSendMsgAsync(ctx context.Context, in *pb.BatchSendMsgReq) (*pb.BatchSendMsgResp, error) {
-	l := logic.NewBatchSendMsgAsyncLogic(ctx, s.svcCtx)
-	return l.BatchSendMsgAsync(in)
-}
-
 func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListReq) (*pb.CommonResp, error) {
 	l := logic.NewPushMsgListLogic(ctx, s.svcCtx)
 	return l.PushMsgList(in)
@@ -56,6 +46,12 @@ func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListRe
 func (s *MsgServiceServer) GetMsgListByConvId(ctx context.Context, in *pb.GetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
 	l := logic.NewGetMsgListByConvIdLogic(ctx, s.svcCtx)
 	return l.GetMsgListByConvId(in)
+}
+
+// GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
+func (s *MsgServiceServer) GetMsgById(ctx context.Context, in *pb.GetMsgByIdReq) (*pb.GetMsgByIdResp, error) {
+	l := logic.NewGetMsgByIdLogic(ctx, s.svcCtx)
+	return l.GetMsgById(in)
 }
 
 // BatchSetMinSeq 批量设置用户某会话的minseq

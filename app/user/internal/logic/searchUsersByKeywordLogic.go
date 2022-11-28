@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"regexp"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -31,16 +31,10 @@ func (l *SearchUsersByKeywordLogic) SearchUsersByKeyword(in *pb.SearchUsersByKey
 	// 判断 keyword 是不是只包含 英文、数字、下划线
 	if regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString(in.Keyword) && len(in.Keyword) >= 6 && len(in.Keyword) <= 20 {
 		// 使用id查询
-		_ = l.svcCtx.Mongo().Collection(found).Find(l.ctx, bson.M{
-			"_id": in.Keyword,
-		}).One(found)
+		_ = xorm.DetailByWhere(l.svcCtx.Mysql(), found, xorm.Where("id = ?", in.Keyword))
 	} else {
 		// 使用昵称查询
-		_ = l.svcCtx.Mongo().Collection(found).Find(l.ctx, bson.M{
-			"nickname": bson.M{
-				"$regex": in.Keyword,
-			},
-		}).One(found)
+		_ = xorm.DetailByWhere(l.svcCtx.Mysql(), found, xorm.Where("nickname = ?", in.Keyword+"%"))
 	}
 	if found.Id == "" {
 		// 没有找到

@@ -5,7 +5,9 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewaymodel"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
@@ -24,7 +26,7 @@ func NewApiLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ApiLogLogi
 	return &ApiLogLogic{_ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx), traceId: xtrace.TraceIdFromContext(ctx)}
 }
 
-func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp *pb.CommonResp, req string, resp string, requestTime time.Time, responseTime time.Time, err error) {
+func (l *ApiLogLogic) ApiLog(requester *pb.CommonReq, service string, commonResp *pb.CommonResp, req string, resp string, requestTime time.Time, responseTime time.Time, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			l.Error("ApiLog panic", r)
@@ -48,7 +50,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 		attr["deviceModel"] = requester.DeviceModel
 		attr["platform"] = requester.Platform
 		attr["osVersion"] = requester.OsVersion
-		attr["ua"] = requester.Ua
+		attr["userAgent"] = requester.UserAgent
 		attr["ipRegion.country"] = ipRegion.Country
 		attr["ipRegion.province"] = ipRegion.Province
 		attr["ipRegion.city"] = ipRegion.City
@@ -65,15 +67,15 @@ func (l *ApiLogLogic) ApiLog(requester *pb.Requester, service string, commonResp
 			Resp:            resp,
 			Err:             errStr,
 			RespCode:        commonResp.Code,
-			Requester:       requester,
-			IpRegion:        ipRegion,
+			CommonReq:       utils.AnyToString(requester),
+			IpRegion:        utils.AnyToString(ipRegion),
 			RequestTime:     requestTime.UnixMilli(),
 			ResponseTime:    responseTime.UnixMilli(),
 			RequestTimeStr:  requestTime.Format("2006-01-02 15:04:05.000"),
 			ResponseTimeStr: responseTime.Format("2006-01-02 15:04:05.000"),
 			TraceId:         l.traceId,
 		}
-		_, err = l.svcCtx.Mongo().Collection(apiLog).InsertOne(ctx, apiLog)
+		err = xorm.InsertOne(l.svcCtx.Mysql(), apiLog)
 		if err != nil {
 			l.Errorf("ApiLog err: %v", err)
 		}

@@ -3,10 +3,15 @@ package handler
 import (
 	"crypto/tls"
 	"errors"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/wrapper"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -66,11 +71,34 @@ func getConnPodHost(svcCtx *svc.ServiceContext) (string, error) {
 	// 代理到 conn 服务
 	var connRpcIps []string
 	for _, connPod := range svcCtx.ConnPodsMgr.AllConnServices() {
-		connRpcIps = append(connRpcIps, connPod.PodIp)
+		connRpcIps = append(connRpcIps, connPod.PodIpPort)
 	}
 	if len(connRpcIps) == 0 {
 		return "", errors.New("no conn service")
 	}
 	// randIp 随机选择一个 conn 服务实现负载均衡
 	return utils.AnyRandomInSlice(connRpcIps, ""), nil
+}
+
+func AuthHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		requester := &pb.CommonReq{}
+		var body []byte
+		if r.Body != nil {
+			body, _ = io.ReadAll(r.Body)
+		}
+		err := proto.Unmarshal(body, requester)
+		if err != nil {
+			wrapper.RequestValidateErr(w, err.Error())
+			return
+		}
+		requester.Ip = xhttp.GetRequestIP(r)
+		requester.UserAgent = r.UserAgent()
+		resp := logic.NewAuthLogic(r, svcCtx).Auth(requester)
+		if resp.Code != pb.CommonResp_Success {
+			wrapper.AuthError(w, resp)
+			return
+		}
+		wrapper.Success(w, nil, resp)
+	}
 }

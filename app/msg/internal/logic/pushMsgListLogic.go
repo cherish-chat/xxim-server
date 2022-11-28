@@ -56,8 +56,12 @@ func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, e
 
 func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDataList) {
 	convIds := make([]string, 0)
-	for convId := range listMap {
+	senders := make([]string, 0)
+	for convId, msgDataList := range listMap {
 		convIds = append(convIds, convId)
+		for _, data := range msgDataList.MsgDataList {
+			senders = append(senders, data.Sender)
+		}
 	}
 	var convSubscribers = make(map[string]*pb.GetConvSubscribersResp)
 	convUserIds := make(map[string][]string)
@@ -74,6 +78,9 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 			if len(subscribers.UserIdList) > 0 {
 				convSubscribers[convId] = subscribers
 				convUserIds[convId] = subscribers.UserIdList
+			} else {
+				convSubscribers[convId] = &pb.GetConvSubscribersResp{}
+				convUserIds[convId] = []string{}
 			}
 		}
 		for convId, subscribers := range convSubscribers {
@@ -87,6 +94,10 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	})
 	for convId, msgDataList := range listMap {
 		if userIds, ok := convUserIds[convId]; ok {
+			userIds = utils.Set(append(userIds, senders...))
+			if len(userIds) == 0 {
+				continue
+			}
 			msgDataListBytes, _ := proto.Marshal(msgDataList)
 			_, _ = l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{

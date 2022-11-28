@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.mongodb.org/mongo-driver/bson"
 	"google.golang.org/protobuf/proto"
 	"sort"
 
@@ -44,7 +42,7 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 	}
 	for i, redisMsg := range redisMsgList {
 		msg := &msgmodel.Msg{}
-		if redisMsg == xredis.NotFound {
+		if redisMsg == xredis.NotFound || redisMsg == "" {
 			id := ids[i]
 			msg.NotFound(id)
 		} else {
@@ -62,7 +60,7 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []*msgmodel.Msg, err error) {
 	msgs, err := l.fromRedis(ids)
 	if err != nil {
-		return msgmodel.MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), ids)
+		return msgmodel.MsgFromMysql(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), ids)
 	}
 	// 判断是否有缺失
 	msgMap := make(map[string]*msgmodel.Msg)
@@ -76,12 +74,12 @@ func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []
 		}
 	}
 	if len(notFoundIds) > 0 {
-		// 从mongo中获取
-		mongoMsgs, err := msgmodel.MsgFromMongo(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mongo().Collection(&msgmodel.Msg{}), notFoundIds)
+		// 从 mysql 中获取
+		mysqlMsgs, err := msgmodel.MsgFromMysql(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), notFoundIds)
 		if err != nil {
 			return nil, err
 		}
-		msgs = append(msgs, mongoMsgs...)
+		msgs = append(msgs, mysqlMsgs...)
 	}
 	return msgs, nil
 }
@@ -114,74 +112,10 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	}
 	var notFoundIds []string
 	for _, id := range expectIds {
-		if _, ok := msgMap[id]; !ok {
+		if m, ok := msgMap[id]; !ok {
 			notFoundIds = append(notFoundIds, id)
-		}
-	}
-	if len(notFoundIds) > 0 {
-		xtrace.StartFuncSpan(l.ctx, "FindMsgByIdsFromBatchMsg", func(ctx context.Context) {
-			var kvs []xmgo.MHSetKv
-			for _, id := range notFoundIds {
-				kvs = append(kvs, xmgo.MHSetKv{
-					Key: rediskey.ConvMsgIdMapping(convId),
-					HK:  id,
-					V:   nil,
-				})
-			}
-			var results []*xmgo.MHSetKv
-			results, err = xmgo.MHGet(l.svcCtx.Mongo().Collection(&xmgo.MHSetKv{}), l.ctx, kvs...)
-			if err != nil {
-				l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-				return
-			}
-			batchMsgIds := make([]string, 0)
-			batchIdMsgIdMap := make(map[string]string)
-			for _, result := range results {
-				batchMsgIds = append(batchMsgIds, utils.AnyToString(result.V))
-				batchIdMsgIdMap[utils.AnyToString(result.V)] = result.HK
-			}
-			if len(batchMsgIds) > 0 {
-				var batchMsgList []*msgmodel.BatchMsg
-				err = l.svcCtx.Mongo().Collection(&msgmodel.BatchMsg{}).Find(l.ctx, bson.M{
-					"_id": bson.M{"$in": batchMsgIds},
-				}).All(&batchMsgList)
-				if err != nil {
-					l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-					return
-				}
-				if msgmodel.ConvIsGroup(convId) {
-					for _, batchMsg := range batchMsgList {
-						msg := batchMsg.Msg
-						msg.ConvId = convId
-						msg.Receiver.GroupId = convId
-						msg.ServerMsgId = batchIdMsgIdMap[batchMsg.Id]
-						msg.ClientMsgId = msgmodel.BatchMsgClientMsgId(msg.ClientMsgId, convId)
-						_, msg.Seq = msgmodel.ParseSingleServerMsgId(msg.ServerMsgId)
-						msgList = append(msgList, msg)
-						msgMap[msg.ServerMsgId] = msg
-					}
-				} else {
-					for _, batchMsg := range batchMsgList {
-						msg := batchMsg.Msg
-						msg.ConvId = convId
-						if msg.Sender == in.Requester.Id {
-							id1, id2 := msgmodel.ParseSingleConvId(convId)
-							msg.Receiver.UserId = utils.If(id1 == in.Requester.Id, id2, id1)
-						} else {
-							msg.Receiver.UserId = in.Requester.Id
-						}
-						msg.ServerMsgId = batchIdMsgIdMap[batchMsg.Id]
-						msg.ClientMsgId = msgmodel.BatchMsgClientMsgId(msg.ClientMsgId, convId)
-						_, msg.Seq = msgmodel.ParseSingleServerMsgId(msg.ServerMsgId)
-						msgList = append(msgList, msg)
-						msgMap[msg.ServerMsgId] = msg
-					}
-				}
-			}
-		})
-		if err != nil {
-			l.Errorf("GetSingleMsgListBySeq failed, err: %v", err)
-			return &pb.GetMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
+		} else if m.IsNotFound() {
+			notFoundIds = append(notFoundIds, id)
 		}
 	}
 	for _, id := range expectIds {
@@ -210,8 +144,8 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: resp})
 			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{
-					UserIds: []string{in.Requester.Id},
-					Devices: []string{in.Requester.DeviceId},
+					UserIds: []string{in.CommonReq.Id},
+					Devices: []string{in.CommonReq.DeviceId},
 				},
 				Event: pb.PushEvent_PushMsgDataList,
 				Data:  msgDataListBytes,

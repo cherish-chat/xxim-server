@@ -2,10 +2,8 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/user/usermodel"
-	"go.mongodb.org/mongo-driver/bson"
-
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,10 +25,12 @@ func NewGetUserSettingsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 func (l *GetUserSettingsLogic) GetUserSettings(in *pb.GetUserSettingsReq) (*pb.GetUserSettingsResp, error) {
 	var models []*usermodel.UserSetting
-	err := l.svcCtx.Mongo().Collection(&usermodel.UserSetting{}).Find(l.ctx, bson.M{
-		"userId": in.Requester.Id,
-		"key":    bson.M{"$in": in.Keys},
-	}).All(&models)
+	var err error
+	if len(in.Keys) > 0 {
+		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ? and `key` in (?)", in.CommonReq.Id, in.Keys).Find(&models).Error
+	} else {
+		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ?", in.CommonReq.Id).Find(&models).Error
+	}
 	if err != nil {
 		l.Errorf("get user settings failed, err: %v", err)
 		return &pb.GetUserSettingsResp{CommonResp: pb.NewRetryErrorResp()}, nil
@@ -51,10 +51,7 @@ func (l *GetUserSettingsLogic) GetUserSettings(in *pb.GetUserSettingsReq) (*pb.G
 	if len(notInitKeys) > 0 {
 		// 获取默认设置
 		var defaultModels []*usermodel.UserSetting
-		err = l.svcCtx.Mongo().Collection(&usermodel.UserSetting{}).Find(l.ctx, bson.M{
-			"userId": "",
-			"key":    bson.M{"$in": notInitKeys},
-		}).All(&defaultModels)
+		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ? and `key` in (?)", "", notInitKeys).Find(&defaultModels).Error
 		if err != nil {
 			l.Errorf("get user settings failed, err: %v", err)
 			return &pb.GetUserSettingsResp{CommonResp: pb.NewRetryErrorResp()}, nil

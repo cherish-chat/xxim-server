@@ -1,6 +1,8 @@
 package ip2region
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	. "github.com/lionsoul2014/ip2region/binding/golang/xdb"
@@ -41,6 +43,14 @@ type Obj struct {
 	Province string `json:"province" bson:"province"`
 	City     string `json:"city" bson:"city"`
 	ISP      string `json:"isp" bson:"isp"`
+}
+
+func (o Obj) Value() (driver.Value, error) {
+	return json.Marshal(o)
+}
+
+func (o *Obj) Scan(src interface{}) error {
+	return json.Unmarshal(src.([]byte), o)
 }
 
 func (o Obj) String() string {

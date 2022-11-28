@@ -1,19 +1,21 @@
 package pb
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 func (x *CommonResp) SetMsg(msg string) {
 	x.Msg = &msg
 }
 
-func (x *CommonResp) SetTitleMsg(title string, msg string) {
-	buf, _ := json.Marshal(map[string]string{
-		"title": title,
-		"msg":   msg,
-	})
-	msg = string(buf)
-	x.Msg = &msg
-}
+//func (x *CommonResp) SetTitleMsg(title string, msg string) {
+//	buf, _ := json.Marshal(map[string]string{
+//		"title": title,
+//		"msg":   msg,
+//	})
+//	msg = string(buf)
+//	x.Msg = &msg
+//}
 
 func (x *CommonResp) setDefaultMsg() {
 	msg := ""
@@ -63,7 +65,7 @@ func NewInternalErrorResp(err ...string) *CommonResp {
 	}
 	return x
 }
-func NewRequestErrorResp(tip ...string) *CommonResp {
+func NewCommonRequestResp(tip ...string) *CommonResp {
 	x := NewCommonResp(CommonResp_RequestError)
 	if len(tip) > 0 {
 		x.SetMsg(tip[0])
@@ -82,15 +84,53 @@ func NewToastErrorResp(tip ...string) *CommonResp {
 	}
 	return x
 }
-func NewAlertErrorResp(title string, alert string) *CommonResp {
+
+var defaultAlertAction = &AlertAction{
+	Action: AlertAction_Cancel,
+	Title:  "确定",
+	JumpTo: "",
+}
+
+func NewAlertErrorResp(title string, alert string, actions ...*AlertAction) *CommonResp {
 	x := NewCommonResp(CommonResp_AlertError)
-	x.SetTitleMsg(title, alert)
+	//x.SetTitleMsg(title, alert)
+	if len(actions) == 0 {
+		actions = append(actions, defaultAlertAction)
+	}
+	buf, _ := json.Marshal(map[string]any{
+		"title":   title,
+		"msg":     alert,
+		"actions": actions,
+	})
+	msg := string(buf)
+	x.Msg = &msg
 	return x
 }
+
 func NewRetryErrorResp() *CommonResp {
 	return NewCommonResp(CommonResp_RetryError)
 }
 
 func (x *CommonResp) Failed() bool {
 	return x.Code != CommonResp_Success
+}
+
+// Scan 实现 sql 接口
+func (x *CommonReq) Scan(input interface{}) error {
+	s := string(input.([]byte))
+	err := json.Unmarshal([]byte(s), x)
+	if err != nil {
+
+	}
+	return nil
+}
+
+// Scan 实现 sql 接口
+func (x *IpRegion) Scan(input interface{}) error {
+	s := string(input.([]byte))
+	err := json.Unmarshal([]byte(s), x)
+	if err != nil {
+
+	}
+	return nil
 }

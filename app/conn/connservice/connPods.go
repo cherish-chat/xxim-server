@@ -3,6 +3,8 @@ package connservice
 import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/common/discov"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"sync"
 )
@@ -29,7 +31,7 @@ type ConnPodsConfig struct {
 }
 
 type ConnPod struct {
-	PodIp string
+	PodIpPort string
 	ConnService
 }
 
@@ -46,10 +48,13 @@ func (s *ConnPodsMgr) initConnRpc() {
 	if s.Config.DiscovType == "k8s" {
 		{
 			s.endpointsEventHandler = discov.MustListenEndpoints(s.Config.K8s.Namespace, "conn-rpc-svc", func(endpoints []string) {
+				endpoints = utils.UpdateSlice(endpoints, func(endpoint string) string {
+					return fmt.Sprintf("%s:%d", endpoint, s.Config.K8s.Port)
+				})
 				for _, endpoint := range endpoints {
 					if _, ok := s.connPods.Load(endpoint); !ok {
 						s.connPods.Store(endpoint, &ConnPod{
-							PodIp: fmt.Sprintf("%s:%d", endpoint, s.Config.K8s.Port),
+							PodIpPort: endpoint,
 							ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 								Endpoints: []string{endpoint},
 								NonBlock:  true,
@@ -72,16 +77,19 @@ func (s *ConnPodsMgr) initConnRpc() {
 					return true
 				})
 				// 列出所有的
+				count := 0
 				s.connPods.Range(func(endpoint, value interface{}) bool {
-					fmt.Println("conn pod endpoint:", endpoint)
+					logx.Infof("conn pod endpoint: %s", endpoint)
+					count++
 					return true
 				})
+				logx.Infof("conn pod count: %d", count)
 			})
 		}
 	} else {
 		for _, endpoint := range s.Config.Endpoints {
 			s.connPods.Store(endpoint, &ConnPod{
-				PodIp: endpoint,
+				PodIpPort: endpoint,
 				ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
 					Endpoints: []string{endpoint},
 					NonBlock:  true,
@@ -89,11 +97,4 @@ func (s *ConnPodsMgr) initConnRpc() {
 			})
 		}
 	}
-}
-
-func (s *ConnPodsMgr) ConnByIp(ip string) ConnService {
-	if v, ok := s.connPods.Load(ip); ok {
-		return v.(*ConnPod).ConnService
-	}
-	return nil
 }

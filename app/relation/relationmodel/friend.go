@@ -5,42 +5,27 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
-	"github.com/qiniu/qmgo"
-	"github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-	"go.mongodb.org/mongo-driver/bson"
-	opts "go.mongodb.org/mongo-driver/mongo/options"
+	"gorm.io/gorm"
 )
 
 type Friend struct {
-	UserId   string `json:"userId" bson:"userId"`     // 发起好友请求的用户
-	FriendId string `json:"friendId" bson:"friendId"` // 被添加的用户
+	// 发起好友请求的用户
+	UserId string `json:"userId" bson:"userId" gorm:"column:userId;type:char(32);not null;index:idx_user_id,unique;index;comment:发起好友请求的用户"`
+	// 被添加的用户
+	FriendId string `json:"friendId" bson:"friendId" gorm:"column:friendId;type:char(32);not null;index:idx_friend_id,unique;index;comment:被添加的用户"`
 }
 
-func (m *Friend) CollectionName() string {
+func (m *Friend) TableName() string {
 	return "friend"
 }
 
-func (m *Friend) Indexes(c *qmgo.Collection) error {
-	_ = c.CreateIndexes(context.Background(), []options.IndexModel{{
-		Key:          []string{"userId", "friendId"},
-		IndexOptions: opts.Index().SetUnique(true),
-	}, {
-		Key:          []string{"friendId"},
-		IndexOptions: nil,
-	}, {
-		Key:          []string{"userId"},
-		IndexOptions: nil,
-	}})
-	return nil
-}
-
-func GetMyFriendList(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, userId string) ([]string, error) {
+func GetMyFriendList(ctx context.Context, rc *redis.Redis, tx *gorm.DB, userId string) ([]string, error) {
 	// 从 redis 中获取
 	friends, err := getMyFriendListFromRedis(ctx, rc, userId)
 	if err != nil {
-		return getMyFriendListFromMongo(ctx, rc, c, userId)
+		return getMyFriendListFromMysql(ctx, rc, tx, userId)
 	}
 	return utils.SliceRemove(friends, xredis.NotFound), nil
 }
@@ -57,9 +42,9 @@ func getMyFriendListFromRedis(ctx context.Context, rc *redis.Redis, userId strin
 	return friends, nil
 }
 
-func getMyFriendListFromMongo(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, userId string) ([]string, error) {
+func getMyFriendListFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.DB, userId string) ([]string, error) {
 	var friends []*Friend
-	err := c.Find(ctx, bson.M{"userId": userId}).All(&friends)
+	err := tx.Where("userId = ?", userId).Find(&friends).Error
 	if err != nil {
 		return nil, err
 	}
@@ -80,16 +65,16 @@ func getMyFriendListFromMongo(ctx context.Context, rc *redis.Redis, c *qmgo.Coll
 	return friendIds, nil
 }
 
-func AreMyFriend(ctx context.Context, rc *redis.Redis, c *qmgo.Collection, userId string, friendIds []string) (map[string]bool, error) {
+func AreMyFriend(ctx context.Context, rc *redis.Redis, tx *gorm.DB, userId string, friendIds []string) (map[string]bool, error) {
 	existMap, err := xredis.HMExist(rc, ctx, rediskey.FriendList(userId), friendIds...)
 	if err != nil {
-		listFromMongo, err := getMyFriendListFromMongo(ctx, rc, c, userId)
+		listFromMysql, err := getMyFriendListFromMysql(ctx, rc, tx, userId)
 		if err != nil {
 			return nil, err
 		}
 		m := make(map[string]bool, len(friendIds))
 		for _, friendId := range friendIds {
-			m[friendId] = utils.InSlice(listFromMongo, friendId)
+			m[friendId] = utils.InSlice(listFromMysql, friendId)
 		}
 		return m, nil
 	}

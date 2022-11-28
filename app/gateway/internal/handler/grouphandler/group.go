@@ -17,7 +17,7 @@ func CreateGroupConfig[REQ *pb.CreateGroupReq, RESP *pb.CreateGroupResp](svcCtx 
 		Do: func(ctx context.Context, in *pb.CreateGroupReq, opts ...grpc.CallOption) (*pb.CreateGroupResp, error) {
 			requestTime := time.Now()
 			resp, err := svcCtx.GroupService().CreateGroup(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetRequester(), "CreateGroup", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "CreateGroup", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
 		NewRequest: func() *pb.CreateGroupReq {

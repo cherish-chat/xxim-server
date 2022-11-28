@@ -1,0 +1,174 @@
+syntax = "proto3";
+package pb;
+
+message CommonReq {
+  string id = 1;
+  string token = 2;
+
+  string deviceModel = 11;
+  string deviceId = 12;
+  string osVersion = 13;
+  string platform = 14;
+
+  string appVersion = 21;
+  string language = 22;
+
+  bytes data = 31;
+
+  string ip = 41;
+  string userAgent = 42;
+}
+
+message CommonResp {
+  enum Code {
+    Success = 0;
+
+    UnknownError = 1;
+    InternalError = 2;
+    RequestError = 3;
+    AuthError = 4;
+    ToastError = 5;
+    AlertError = 7;
+    RetryError = 8;
+  }
+  Code code = 1;
+  optional string msg = 2;
+  bytes data = 3;
+}
+
+enum PushEvent {
+  // 消息推送
+  PushMsgDataList = 0;
+  // 好友通知
+  FriendNotify = 1;
+  // 群通知
+  GroupNotify = 2;
+  // 订阅号
+  SubscribeNotify = 3;
+  // 社交圈
+  SocialNotify = 4;
+}
+
+message PushBody {
+  PushEvent event = 1;
+  bytes data = 2;
+}
+
+enum ContentType {
+  UNKNOWN = 0;
+  TYPING = 1; // 正在输入
+  READ = 2; // 已读
+  REVOKE = 3; // 撤回
+
+  TEXT = 11; // 文本
+  IMAGE = 12; // 图片
+  AUDIO = 13; // 语音
+  VIDEO = 14; // 视频
+  FILE = 15; // 文件
+  LOCATION = 16; // 位置
+  CARD = 17; // 名片
+  MERGE = 18; // 合并
+  EMOJI = 19; // 表情
+  COMMAND = 20; // 命令
+
+  CUSTOM = 100; // 自定义消息
+}
+
+message MsgData {
+  message OfflinePush {
+    string title = 1;
+    string content = 2;
+    string payload = 3;
+  }
+  message Options {
+    bool offlinePush = 1;
+    bool storageForServer = 2;
+    bool storageForClient = 3;
+    bool unreadCount = 4;
+    bool needDecrypt = 5;
+    bool updateConv = 6;
+  }
+  message Receiver {
+    optional string userId = 1;
+    optional string groupId = 2;
+  }
+  string clientMsgId = 1;
+  string serverMsgId = 2;
+  string clientTime = 3;
+  string serverTime = 4;
+
+  string sender = 11;
+  string senderInfo = 12;
+  string senderConvInfo = 13;
+
+  Receiver receiver = 21;
+  string convId = 22;
+  repeated string atUsers = 23;
+
+  ContentType contentType = 31;
+  bytes content = 32;
+  string seq = 33;
+
+  Options options = 41;
+  OfflinePush offlinePush = 42;
+
+  bytes ext = 100;
+}
+
+message MsgDataList {
+  repeated MsgData msgDataList = 1;
+}
+
+message SendMsgListReq {
+  CommonReq commonReq = 1;
+  repeated MsgData msgDataList = 2;
+  optional int32 deliverAfter = 11;
+}
+
+message BatchSendMsgReq {
+  CommonReq commonReq = 1;
+  MsgData msgData = 2;
+  repeated string userIdList = 3;
+  repeated string groupIdList = 4;
+  optional int32 deliverAfter = 11;
+}
+
+message GetMsgListByConvIdReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  repeated string seqList = 3;
+  bool push = 4;
+}
+
+message GetMsgListResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2;
+}
+
+message GetMsgByIdReq {
+  CommonReq commonReq = 1;
+  optional string serverMsgId = 2;
+  optional string clientMsgId = 3;
+  bool push = 4;
+}
+
+message GetMsgByIdResp {
+  CommonResp commonResp = 1;
+  MsgData msgData = 2;
+}
+
+message BatchGetConvSeqReq {
+  CommonReq commonReq = 1;
+  repeated string convIdList = 2;
+}
+
+message BatchGetConvSeqResp {
+  CommonResp commonResp = 1;
+  message ConvSeq {
+    string convId = 1;
+    string minSeq = 2;
+    string maxSeq = 3;
+    string updateTime = 4;
+  }
+  map<string, ConvSeq> convSeqMap = 2;
+}

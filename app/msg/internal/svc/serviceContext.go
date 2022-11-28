@@ -4,18 +4,20 @@ import (
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
+	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
 	Config          config.Config
 	msgProducer     *xtdmq.TDMQProducer
 	zedis           *redis.Redis
-	mongo           *xmgo.Client
+	mysql           *gorm.DB
 	imService       imservice.ImService
 	relationService relationservice.RelationService
 	groupService    groupservice.GroupService
@@ -25,6 +27,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
+	s.Mysql().AutoMigrate(
+		msgmodel.Msg{},
+		xorm.HashKv{},
+	)
 	return s
 }
 
@@ -42,11 +48,11 @@ func (s *ServiceContext) Redis() *redis.Redis {
 	return s.zedis
 }
 
-func (s *ServiceContext) Mongo() *xmgo.Client {
-	if s.mongo == nil {
-		s.mongo = xmgo.NewClient(s.Config.Mongo)
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
 	}
-	return s.mongo
+	return s.mysql
 }
 
 func (s *ServiceContext) ImService() imservice.ImService {
