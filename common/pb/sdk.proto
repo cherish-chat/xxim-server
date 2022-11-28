@@ -125,12 +125,8 @@ message SendMsgListReq {
   optional int32 deliverAfter = 11;
 }
 
-message BatchSendMsgReq {
-  CommonReq commonReq = 1;
-  MsgData msgData = 2;
-  repeated string userIdList = 3;
-  repeated string groupIdList = 4;
-  optional int32 deliverAfter = 11;
+message SendMsgListResp {
+  CommonResp commonResp = 1;
 }
 
 message GetMsgListByConvIdReq {

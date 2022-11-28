@@ -29,12 +29,12 @@ func NewDeleteFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 
 func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFriendResp, error) {
 	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-		err := tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.CommonReq.Id, in.UserId).Delete(&relationmodel.Friend{}).Error
+		err := tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.CommonReq.UserId, in.UserId).Delete(&relationmodel.Friend{}).Error
 		if err != nil {
 			l.Errorf("delete friend failed, err: %v", err)
 			return err
 		}
-		err = tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.UserId, in.CommonReq.Id).Delete(&relationmodel.Friend{}).Error
+		err = tx.Model(&relationmodel.Friend{}).Where("userId = ? and friendId = ?", in.UserId, in.CommonReq.UserId).Delete(&relationmodel.Friend{}).Error
 		if err != nil {
 			l.Errorf("delete friend failed, err: %v", err)
 			return err
@@ -47,7 +47,7 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 	}
 	{
 		// 删除缓存
-		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), in.UserId, in.CommonReq.Id)
+		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), in.UserId, in.CommonReq.UserId)
 		if err != nil {
 			l.Errorf("FlushFriendList failed, err: %v", err)
 			return &pb.DeleteFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -55,7 +55,7 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 		// 预热缓存
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.UserId)
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.Id)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
 		}, nil)
 	}
 	if in.Block {

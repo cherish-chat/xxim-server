@@ -29,7 +29,7 @@ func NewGetMyFriendEventListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEventListReq) (*pb.GetMyFriendEventListResp, error) {
 	// 用户清空好友事件列表 最后一条事件的createTime
 	setting, err := l.svcCtx.UserService().GetUserSettings(l.ctx, &pb.GetUserSettingsReq{
-		CommonReq: &pb.CommonReq{Id: in.CommonReq.Id},
+		CommonReq: &pb.CommonReq{UserId: in.CommonReq.UserId},
 		Keys:      []pb.UserSettingKey{pb.UserSettingKey_FriendEventList_ClearTime},
 	})
 	if err != nil {
@@ -39,7 +39,7 @@ func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEvent
 	clearTime := utils.AnyToInt64(setting.Settings[int32(pb.UserSettingKey_FriendEventList_ClearTime)].Value)
 	var list []*relationmodel.RequestAddFriend
 	err = l.svcCtx.Mysql().Model(&relationmodel.RequestAddFriend{}).
-		Where("(fromUserId = ? OR toUserId = ?) AND createTime > ? AND createTime < ?", in.CommonReq.Id, in.CommonReq.Id, clearTime, pb.PageIndex(in.PageIndex)).
+		Where("(fromUserId = ? OR toUserId = ?) AND createTime > ? AND createTime < ?", in.CommonReq.UserId, in.CommonReq.UserId, clearTime, pb.PageIndex(in.PageIndex)).
 		Order("createTime desc").
 		Find(&list).Error
 	if err != nil {

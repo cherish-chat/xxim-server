@@ -44,7 +44,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 	{
 		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
 			CommonReq: &pb.CommonReq{
-				Id: userId,
+				UserId: userId,
 			},
 			Page: &pb.Page{
 				Page: 1,
@@ -65,7 +65,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 	{
 		getMyGroupList, err := l.svcCtx.GroupService().GetMyGroupList(l.ctx, &pb.GetMyGroupListReq{
 			CommonReq: &pb.CommonReq{
-				Id: userId,
+				UserId: userId,
 			},
 			Page: &pb.Page{Page: 1},
 			Filter: &pb.GetMyGroupListReq_Filter{

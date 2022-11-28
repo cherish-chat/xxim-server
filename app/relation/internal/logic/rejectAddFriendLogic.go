@@ -39,8 +39,8 @@ func (l *RejectAddFriendLogic) RejectAddFriend(in *pb.RejectAddFriendReq) (*pb.R
 	err = l.svcCtx.Mysql().Model(apply).
 		Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
 			pb.RequestAddFriendStatus_Unhandled,
-			in.ApplyUserId, in.CommonReq.Id,
-			in.CommonReq.Id, in.ApplyUserId).
+			in.ApplyUserId, in.CommonReq.UserId,
+			in.CommonReq.UserId, in.ApplyUserId).
 		Updates(map[string]interface{}{
 			"status":     apply.Status,
 			"updateTime": apply.UpdateTime,

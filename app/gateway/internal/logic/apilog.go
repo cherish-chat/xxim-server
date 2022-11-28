@@ -43,7 +43,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.CommonReq, service string, commonResp
 	}
 	attr := make(map[string]string)
 	if requester != nil {
-		attr["userId"] = requester.Id
+		attr["userId"] = requester.UserId
 		attr["appVersion"] = requester.AppVersion
 		attr["ip"] = requester.Ip
 		attr["deviceId"] = requester.DeviceId

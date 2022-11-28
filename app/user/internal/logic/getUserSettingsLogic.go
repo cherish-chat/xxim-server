@@ -27,9 +27,9 @@ func (l *GetUserSettingsLogic) GetUserSettings(in *pb.GetUserSettingsReq) (*pb.G
 	var models []*usermodel.UserSetting
 	var err error
 	if len(in.Keys) > 0 {
-		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ? and `key` in (?)", in.CommonReq.Id, in.Keys).Find(&models).Error
+		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ? and `key` in (?)", in.CommonReq.UserId, in.Keys).Find(&models).Error
 	} else {
-		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ?", in.CommonReq.Id).Find(&models).Error
+		err = l.svcCtx.Mysql().Model(&usermodel.UserSetting{}).Where("userId = ?", in.CommonReq.UserId).Find(&models).Error
 	}
 	if err != nil {
 		l.Errorf("get user settings failed, err: %v", err)

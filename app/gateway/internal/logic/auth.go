@@ -33,7 +33,7 @@ func (l *AuthLogic) Auth(in *pb.CommonReq) *pb.CommonResp {
 		}
 	}
 	// 验证token
-	code, msg := xjwt.VerifyToken(l.ctx, l.svcCtx.Redis(), in.Id, inputToken, xjwt.WithPlatform(in.Platform), xjwt.WithDeviceId(in.DeviceId))
+	code, msg := xjwt.VerifyToken(l.ctx, l.svcCtx.Redis(), in.UserId, inputToken, xjwt.WithPlatform(in.Platform), xjwt.WithDeviceId(in.DeviceId))
 	switch code {
 	case xjwt.VerifyTokenCodeOK:
 		return &pb.CommonResp{}

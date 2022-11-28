@@ -144,7 +144,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: resp})
 			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{
-					UserIds: []string{in.CommonReq.Id},
+					UserIds: []string{in.CommonReq.UserId},
 					Devices: []string{in.CommonReq.DeviceId},
 				},
 				Event: pb.PushEvent_PushMsgDataList,

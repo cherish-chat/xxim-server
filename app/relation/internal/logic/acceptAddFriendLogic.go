@@ -52,8 +52,8 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 	}
 	{
 		// 添加好友
-		friend1 := &relationmodel.Friend{FriendId: in.CommonReq.Id, UserId: in.ApplyUserId}
-		friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.Id}
+		friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
+		friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			err := xorm.Upsert(tx, friend1, []string{"friendId", "userId"}, []string{"friendId", "userId"})
 			if err != nil {
@@ -80,8 +80,8 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			err := l.svcCtx.Mysql().Model(&relationmodel.RequestAddFriend{}).
 				Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
 					pb.RequestAddFriendStatus_Unhandled,
-					in.CommonReq.Id, in.ApplyUserId,
-					in.ApplyUserId, in.CommonReq.Id).
+					in.CommonReq.UserId, in.ApplyUserId,
+					in.ApplyUserId, in.CommonReq.UserId).
 				Updates(map[string]interface{}{
 					"status":     pb.RequestAddFriendStatus_Agreed,
 					"updateTime": time.Now().UnixMilli(),
@@ -94,14 +94,14 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 	}
 	{
 		// 删除缓存
-		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), in.ApplyUserId, in.CommonReq.Id)
+		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), in.ApplyUserId, in.CommonReq.UserId)
 		if err != nil {
 			l.Errorf("FlushFriendList failed, err: %v", err)
 		}
 		// 预热缓存
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.Id)
+			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
 		}, nil)
 	}
 	return &pb.AcceptAddFriendResp{}, nil
@@ -110,11 +110,11 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 	xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendMsg", func(ctx context.Context) {
 		// 获取接受者info
-		userByIds, err := l.svcCtx.UserService().MapUserByIds(ctx, &pb.MapUserByIdsReq{Ids: []string{in.CommonReq.Id}})
+		userByIds, err := l.svcCtx.UserService().MapUserByIds(ctx, &pb.MapUserByIdsReq{Ids: []string{in.CommonReq.UserId}})
 		if err != nil {
 			l.Errorf("MapUserByIds failed, err: %v", err)
 		} else {
-			selfInfo, ok := userByIds.Users[in.CommonReq.Id]
+			selfInfo, ok := userByIds.Users[in.CommonReq.UserId]
 			if ok {
 				self := usermodel.UserFromBytes(selfInfo)
 				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
