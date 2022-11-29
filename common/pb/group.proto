@@ -427,12 +427,28 @@ message GetGroupMemberListReq {
   string groupId = 2;
   // 分页
   Page page = 3;
+  // Filter
+  message GetGroupMemberListFilter {
+    // 是否接受离线推送
+    optional bool noDisturb = 1;
+  }
+  GetGroupMemberListFilter filter = 4;
+  message GetGroupMemberListOpt {
+    // 是否只获取id
+    optional bool onlyId = 1;
+    // 是否获取消息接收选项
+    optional bool getNotifyOpt = 2;
+  }
+  GetGroupMemberListOpt opt = 5;
 }
 
 //GetGroupMemberListResp 获取群成员列表
 message GetGroupMemberListResp {
   CommonResp commonResp = 1;
-  message GroupMember {}
+  message GroupMember {
+    string userId = 1;
+    MsgNotifyOpt notifyOpt = 2;
+  }
   // 群成员列表
   repeated GroupMember groupMemberList = 2;
 }

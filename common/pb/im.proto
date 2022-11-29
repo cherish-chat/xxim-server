@@ -49,10 +49,11 @@ message BatchGetUserLatestConnResp {
 
 //MsgNotifyOpt 消息通知选项
 message MsgNotifyOpt {
-  bool preview = 1; // 是否预览
-  bool sound = 2; // 是否声音
-  string soundName = 3; // 声音名称
-  bool vibrate = 4; // 是否震动
+  bool noDisturb = 1;
+  bool preview = 2; // 是否预览
+  bool sound = 3; // 是否声音
+  string soundName = 4; // 声音名称
+  bool vibrate = 5; // 是否震动
 }
 
 //GetAppSystemConfigReq 获取系统配置

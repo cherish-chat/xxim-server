@@ -6,6 +6,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
+	"github.com/cherish-chat/xxim-server/common/pkg/mobpush"
+	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -21,6 +23,8 @@ type ServiceContext struct {
 	imService       imservice.ImService
 	relationService relationservice.RelationService
 	groupService    groupservice.GroupService
+	MobPush         *mobpush.Pusher
+	SystemConfigMgr *xconf.SystemConfigMgr
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -31,6 +35,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		msgmodel.Msg{},
 		xorm.HashKv{},
 	)
+	s.MobPush = mobpush.NewPusher(c.MobPush)
+	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
 	return s
 }
 

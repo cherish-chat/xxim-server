@@ -171,15 +171,16 @@ message SetSingleMsgNotifyOptResp {
 //GetSingleMsgNotifyOptReq 获取单聊消息通知选项
 message GetSingleMsgNotifyOptReq {
   CommonReq commonReq = 1;
-  // 群ID
-  string userId = 2;
+  // 好友ID
+  string convId = 2;
+  string userId = 3;
 }
 
 //GetSingleMsgNotifyOptResp 获取单聊消息通知选项
 message GetSingleMsgNotifyOptResp {
   CommonResp commonResp = 1;
   // 消息通知类型
-  MsgNotifyOpt opt = 2;
+  MsgNotifyOpt opt = 3;
 }
 
 //GetFriendListReq 获取好友列表

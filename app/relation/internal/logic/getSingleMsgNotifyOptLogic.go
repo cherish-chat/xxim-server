@@ -26,5 +26,14 @@ func NewGetSingleMsgNotifyOptLogic(ctx context.Context, svcCtx *svc.ServiceConte
 func (l *GetSingleMsgNotifyOptLogic) GetSingleMsgNotifyOpt(in *pb.GetSingleMsgNotifyOptReq) (*pb.GetSingleMsgNotifyOptResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.GetSingleMsgNotifyOptResp{}, nil
+	return &pb.GetSingleMsgNotifyOptResp{
+		CommonResp: pb.NewSuccessResp(),
+		Opt: &pb.MsgNotifyOpt{
+			NoDisturb: false,
+			Preview:   false,
+			Sound:     false,
+			SoundName: "",
+			Vibrate:   false,
+		},
+	}, nil
 }

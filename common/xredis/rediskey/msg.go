@@ -37,3 +37,7 @@ func ConvMembersSubscribedSplit(zmember string) (userId string, podIp string) {
 	}
 	return "", ""
 }
+
+func OfflinePushMsgListKey(convId string, uid string) string {
+	return "s:offline_push_msg:" + convId + ":" + uid
+}
