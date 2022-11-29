@@ -52,7 +52,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		Setting: groupmodel.GroupSetting{
 			AllMute:                  false,
 			SpeakLimit:               nil,
-			MaxMember:                int32(utils.AnyToInt64(l.svcCtx.SystemConfigMgr.GetCtx(l.ctx, "default_group_max_member"))),
+			MaxMember:                int32(utils.AnyToInt64(l.svcCtx.SystemConfigMgr.GetCtx(l.ctx, "app.default_group_max_member"))),
 			MemberCanStartTempChat:   true,
 			MemberCanInviteFriend:    true,
 			NewMemberHistoryMsgCount: int32(utils.AnyToInt64(l.svcCtx.SystemConfigMgr.GetCtx(l.ctx, "default_group_new_member_history_msg_count"))),

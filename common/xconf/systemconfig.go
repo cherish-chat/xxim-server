@@ -101,34 +101,42 @@ func (s *SystemConfigMgr) initData() {
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "signature.if_not_set",
+			Key:          "signature_if_not_set", // 未设置签名时的默认签名
 			Value:        "这个人很懒，还没有设置签名哦～",
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "nickname.default",
+			Key:          "nickname_default", // 默认昵称
 			Value:        "XX用户",
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "avatars.default",
+			Key:          "avatars_default", // 默认头像
 			Value:        `["https://go-zero.dev/img/footer/go-zero.svg"]`,
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "relation",
-			Key:          "friend_max_count",
+			Key:          "app.friend_max_count", // 好友最大数量
 			Value:        `20000`,
 			InputOptions: nil,
 		},
+		{
+			Namespace:   "system",
+			ServiceName: "user",
+			Key:         "app.register_max_count_per_day_ip", // 每个IP每天最大注册数量
+			Value:       `10`,
+		},
 	}
-	err := xorm.InsertMany(s.mysql, &SystemConfig{}, configs)
-	if err != nil {
-		logx.Errorf("初始化配置失败: %v", err)
+	for _, config := range configs {
+		err := xorm.InsertOne(s.mysql, config)
+		if err != nil {
+			logx.Errorf("初始化配置失败: %v", err)
+		}
 	}
 }

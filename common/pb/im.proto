@@ -55,6 +55,16 @@ message MsgNotifyOpt {
   bool vibrate = 4; // 是否震动
 }
 
+//GetAppSystemConfigReq 获取系统配置
+message GetAppSystemConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppSystemConfigResp 获取系统配置
+message GetAppSystemConfigResp {
+  CommonResp commonResp = 1;
+  map<string, string> configs = 2;
+}
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -64,4 +74,5 @@ service imService {
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
   rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc GetAppSystemConfig(GetAppSystemConfigReq) returns (GetAppSystemConfigResp);
 }

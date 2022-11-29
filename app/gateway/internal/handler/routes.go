@@ -2,12 +2,14 @@ package handler
 
 import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/grouphandler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/imhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/msghandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/relationhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/userhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/wrapper"
 	"net/http"
+	"time"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -187,6 +189,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{},
 			[]rest.Route{
+				// getAppSystemConfig
+				{
+					Method:  http.MethodPost,
+					Path:    "/white/getAppSystemConfig",
+					Handler: wrapper.WrapHandler(serverCtx, imhandler.GetAppSystemConfigConfig(serverCtx)),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/im"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
 				{
 					Method:  http.MethodGet,
 					Path:    "/ping",
@@ -219,4 +235,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 	)
+	go func() {
+		time.Sleep(1 * time.Second)
+		server.PrintRoutes()
+	}()
 }

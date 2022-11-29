@@ -61,3 +61,8 @@ func (s *ImServiceServer) SendMsg(ctx context.Context, in *pb.SendMsgReq) (*pb.S
 	l := logic.NewSendMsgLogic(ctx, s.svcCtx)
 	return l.SendMsg(in)
 }
+
+func (s *ImServiceServer) GetAppSystemConfig(ctx context.Context, in *pb.GetAppSystemConfigReq) (*pb.GetAppSystemConfigResp, error) {
+	l := logic.NewGetAppSystemConfigLogic(ctx, s.svcCtx)
+	return l.GetAppSystemConfig(in)
+}

@@ -91,3 +91,7 @@ func (x *BatchGetConvSeqReq) SetCommonReq(r *CommonReq) {
 func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

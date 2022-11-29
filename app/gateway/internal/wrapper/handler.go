@@ -43,12 +43,12 @@ func WrapHandler[REQ IReq, RESP IResp](
 		req.SetCommonReq(requester)
 		response, err := config.Do(r.Context(), req)
 		if err != nil {
-			internalErr(w, err)
+			InternalErr(w, err)
 			return
 		}
 		data, err := proto.Marshal(response)
 		if err != nil {
-			internalErr(w, err)
+			InternalErr(w, err)
 			return
 		}
 		Success(w, data, response.GetCommonResp())
@@ -65,7 +65,7 @@ func Success(w http.ResponseWriter, data []byte, commonResp *pb.CommonResp) {
 	_, _ = w.Write(resp)
 }
 
-func internalErr(w http.ResponseWriter, err error) {
+func InternalErr(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
 	resp, _ := proto.Marshal(&pb.CommonResp{
 		Code: pb.CommonResp_InternalError, // httpCode: 500
