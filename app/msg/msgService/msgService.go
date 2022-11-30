@@ -29,7 +29,6 @@ type (
 	MsgDataList                   = pb.MsgDataList
 	MsgData_OfflinePush           = pb.MsgData_OfflinePush
 	MsgData_Options               = pb.MsgData_Options
-	MsgData_Receiver              = pb.MsgData_Receiver
 	MsgMQBody                     = pb.MsgMQBody
 	PushMsgListReq                = pb.PushMsgListReq
 	SendMsgListReq                = pb.SendMsgListReq

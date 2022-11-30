@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -33,13 +32,6 @@ func NewPushMsgListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PushM
 func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, error) {
 	var convIdMsgListMap = make(map[string]*pb.MsgDataList)
 	for _, msgData := range in.MsgDataList {
-		if msgData.ConvId == "" {
-			if msgData.Receiver.UserId != nil {
-				msgData.ConvId = msgmodel.SingleConvId(msgData.Sender, *msgData.Receiver.UserId)
-			} else {
-				msgData.ConvId = *msgData.Receiver.GroupId
-			}
-		}
 		if utils.AnyToInt64(msgData.ServerTime) == 0 {
 			msgData.ServerTime = utils.AnyToString(time.Now().UnixMilli())
 		}
@@ -66,7 +58,7 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	for convId, msgDataList := range listMap {
 		convIds = append(convIds, convId)
 		for _, data := range msgDataList.MsgDataList {
-			senders = append(senders, data.Sender)
+			senders = append(senders, data.SenderId)
 		}
 	}
 	var convSubscribers = make(map[string]*pb.GetConvSubscribersResp)
@@ -147,8 +139,8 @@ func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []st
 			}
 			convId := data.ConvId
 			// 查询用户在此会话的离线推送设置
-			if data.Receiver.UserId != nil {
-				l.offlinePushUser(ctx, data, convId, *data.Receiver.UserId)
+			if data.IsSingleConv() {
+				l.offlinePushUser(ctx, data, convId, data.ReceiverUid())
 			}
 		}
 	}, propagation.MapCarrier{})
@@ -157,9 +149,9 @@ func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []st
 func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, listMap map[string]*pb.MsgDataList) {
 	for convId, msgDataList := range listMap {
 		for _, data := range msgDataList.MsgDataList {
-			if data.Receiver.UserId != nil {
+			if data.IsSingleConv() {
 				// 单聊
-				receiver := *data.Receiver.UserId
+				receiver := data.ReceiverUid()
 				// 用户是否在线
 				resp, err := l.svcCtx.ImService().GetUserConn(ctx, &pb.GetUserConnReq{
 					UserIds: []string{receiver},
@@ -173,9 +165,9 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 					continue
 				}
 				l.offlinePushUser(ctx, data, convId, receiver)
-			} else if data.Receiver.GroupId != nil {
+			} else if data.IsGroupConv() {
 				// 群聊
-				receiver := *data.Receiver.GroupId
+				receiver := data.ReceiverGid()
 				// 查询群成员
 				memberList, err := l.svcCtx.GroupService().GetGroupMemberList(ctx, &pb.GetGroupMemberListReq{
 					GroupId: receiver,

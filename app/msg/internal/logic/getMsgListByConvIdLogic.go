@@ -42,17 +42,17 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 	}
 	for i, redisMsg := range redisMsgList {
 		msg := &msgmodel.Msg{}
-		if redisMsg == xredis.NotFound || redisMsg == "" {
+		if redisMsg == xredis.NotFound {
 			id := ids[i]
 			msg.NotFound(id)
-		} else {
+		} else if redisMsg != "" {
 			err = json.Unmarshal([]byte(redisMsg), msg)
 			if err != nil {
 				l.Errorf("msg Unmarshal error: %v redisMsg: %s", err, redisMsg)
 				continue
 			}
+			msgList = append(msgList, msg)
 		}
-		msgList = append(msgList, msg)
 	}
 	return msgList, nil
 }
@@ -94,7 +94,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	// 组成想要查询的 id 列表
 	expectIds := make([]string, 0)
 	for _, seq := range in.SeqList {
-		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, utils.AnyToInt64(seq)))
+		expectIds = append(expectIds, pb.ServerMsgId(convId, utils.AnyToInt64(seq)))
 	}
 	// 查询
 	var msgList []*msgmodel.Msg
@@ -120,9 +120,9 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	}
 	for _, id := range expectIds {
 		if _, ok := msgMap[id]; !ok {
-			_, seq := msgmodel.ParseSingleServerMsgId(id)
+			_, seq := pb.ParseConvServerMsgId(id)
 			nullMsg := &msgmodel.Msg{}
-			nullMsg.NotFound(msgmodel.ServerMsgId(convId, seq))
+			nullMsg.NotFound(pb.ServerMsgId(convId, seq))
 			msgList = append(msgList, nullMsg)
 			msgMap[id] = nullMsg
 		}

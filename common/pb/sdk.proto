@@ -88,22 +88,17 @@ message MsgData {
     bool needDecrypt = 5;
     bool updateConv = 6;
   }
-  message Receiver {
-    optional string userId = 1;
-    optional string groupId = 2;
-  }
   string clientMsgId = 1;
   string serverMsgId = 2;
   string clientTime = 3;
   string serverTime = 4;
 
-  string sender = 11;
-  string senderInfo = 12;
-  string senderConvInfo = 13;
+  string senderId = 11;
+  bytes senderInfo = 12;
+  bytes senderConvInfo = 13;
 
-  Receiver receiver = 21;
-  string convId = 22;
-  repeated string atUsers = 23;
+  string convId = 21;
+  repeated string atUsers = 22;
 
   ContentType contentType = 31;
   bytes content = 32;

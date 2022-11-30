@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"time"
@@ -58,7 +57,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 		}
 		friendIds = getFriendList.Ids
 		for _, id := range friendIds {
-			convIds = append(convIds, msgmodel.SingleConvId(userId, id))
+			convIds = append(convIds, pb.SingleConvId(userId, id))
 		}
 	}
 	// 获取用户订阅的群组列表
