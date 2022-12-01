@@ -20,5 +20,7 @@ type Config struct {
 	ImRpc       zrpc.RpcClientConf
 	RelationRpc zrpc.RpcClientConf
 	GroupRpc    zrpc.RpcClientConf
+	UserRpc     zrpc.RpcClientConf
 	MobPush     mobpush.Config
+	MobAlias    string `json:",default=deviceId,options=deviceId|userId"`
 }

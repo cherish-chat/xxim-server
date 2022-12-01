@@ -31,11 +31,11 @@ func NewPusher(config Config) *Pusher {
 
 func (p *Pusher) Push(
 	ctx context.Context,
-	userIDList []string,
+	aliasList []string,
 	alert,
 	detailContent string,
 ) (resp string, err error) {
-	if len(userIDList) == 0 {
+	if len(aliasList) == 0 {
 		return "", nil
 	}
 	model := NewPushModel(p.AppKey)
@@ -100,7 +100,7 @@ func (p *Pusher) Push(
 			Target:   2,   // 目标类型：1广播；2别名；3标签；4regid；5地理位置；6用户分群；9复杂地理位置推送
 			Tags:     nil, // 客户端需要把 uid 设置为别名
 			TagsType: "",  // target:3 => 标签组合方式：1并集；2交集；3补集(3暂不考虑)
-			//Alias:     userIDList, // target:2 => 设置推送别名集合["alias1","alias2"]
+			//Alias:     aliasList, // target:2 => 设置推送别名集合["alias1","alias2"]
 			Rids:      nil, // target:4 => 设置推送Registration Id集合["id1","id2"]
 			Block:     "",  // target:6 => 用户分群ID
 			City:      "",  // target:5 => 推送地理位置 城市，地理位置推送时，city, province, country 必须有一个不为空
@@ -109,16 +109,16 @@ func (p *Pusher) Push(
 			PushAreas: nil, // target:9 时必传，复杂地理位置
 		}
 		// uid切片 最多1000个
-		var uidList = make([][]string, (len(userIDList)+1000)/1000)
-		for i := 0; i < len(userIDList); i += 1000 {
+		var tmpList = make([][]string, (len(aliasList)+1000)/1000)
+		for i := 0; i < len(aliasList); i += 1000 {
 			end := i + 1000
-			if end > len(userIDList) {
-				end = len(userIDList)
+			if end > len(aliasList) {
+				end = len(aliasList)
 			}
-			uidList[i/1000] = userIDList[i:end]
+			tmpList[i/1000] = aliasList[i:end]
 		}
-		for _, userIDList := range uidList {
-			model.PushTarget.Alias = userIDList
+		for _, aliasList := range tmpList {
+			model.PushTarget.Alias = aliasList
 			respBuf, err := p.client.Push(*model)
 			if err != nil {
 				logx.WithContext(ctx).Errorf("push error: %v", err)

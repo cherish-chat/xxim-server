@@ -148,6 +148,19 @@ message GetConvSubscribersResp {
   map<string, uidList> podIpMap = 3;
 }
 
+message OfflinePushMsgReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+  string title = 3;
+  string content = 4;
+  string payload = 5;
+  string uniqueId = 6;
+}
+
+message OfflinePushMsgResp {
+  CommonResp commonResp = 1;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -166,4 +179,6 @@ service msgService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   //GetConvSubscribers 获取一个会话里所有的消息订阅者
   rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
+  //OfflinePushMsg 离线推送消息
+  rpc OfflinePushMsg(OfflinePushMsgReq) returns (OfflinePushMsgResp) {}
 }

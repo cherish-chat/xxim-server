@@ -82,3 +82,9 @@ func (s *MsgServiceServer) GetConvSubscribers(ctx context.Context, in *pb.GetCon
 	l := logic.NewGetConvSubscribersLogic(ctx, s.svcCtx)
 	return l.GetConvSubscribers(in)
 }
+
+// OfflinePushMsg 离线推送消息
+func (s *MsgServiceServer) OfflinePushMsg(ctx context.Context, in *pb.OfflinePushMsgReq) (*pb.OfflinePushMsgResp, error) {
+	l := logic.NewOfflinePushMsgLogic(ctx, s.svcCtx)
+	return l.OfflinePushMsg(in)
+}

@@ -2,6 +2,7 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 import "common.proto";
+import "conn.proto";
 
 // userModels
 enum XB {
@@ -172,6 +173,22 @@ message SetUserSettingsResp {
 
 // ************ userSettings ************ //
 
+//BatchGetUserAllDevicesReq 批量查询用户的所有设备
+message BatchGetUserAllDevicesReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+}
+
+//BatchGetUserAllDevicesResp 批量查询用户的所有设备
+message BatchGetUserAllDevicesResp {
+  CommonResp commonResp = 1;
+  message AllDevices {
+    string userId = 1;
+    repeated string deviceIds = 2;
+  }
+  repeated AllDevices allDevices = 2;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -181,4 +198,9 @@ service userService {
   rpc GetUserHome(GetUserHomeReq) returns (GetUserHomeResp) {}
   rpc GetUserSettings(GetUserSettingsReq) returns (GetUserSettingsResp) {}
   rpc SetUserSettings(SetUserSettingsReq) returns (SetUserSettingsResp) {}
+  //AfterConnect conn hook
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  //AfterDisconnect conn hook
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
 }

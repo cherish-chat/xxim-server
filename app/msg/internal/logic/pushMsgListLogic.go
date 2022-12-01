@@ -2,8 +2,8 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
@@ -194,11 +194,11 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 	}
 }
 
-func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData, convId string, receiver string) {
+func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData, convId string, userId string) {
 	// 查询用户在此会话的离线推送设置
 	notifyOpt, err := l.svcCtx.RelationService().GetSingleMsgNotifyOpt(ctx, &pb.GetSingleMsgNotifyOptReq{
 		ConvId: convId,
-		UserId: receiver,
+		UserId: userId,
 	})
 	if err != nil {
 		l.Errorf("GetSingleMsgNotifyOpt err: %v", err)
@@ -212,25 +212,19 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 		alert, content = l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_title", "惺惺线路"), l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_content", "您有一条新消息")
 	}
 	// 推送
-	{
-		// 是否已推送
-		val, err := l.svcCtx.Redis().GetCtx(ctx, rediskey.OfflinePushMsgListKey(convId, receiver))
-		if err == nil && val != "" {
-			// 推送过
-			return
-		}
-		resp, err := l.svcCtx.MobPush.Push(ctx, []string{receiver}, alert, content)
+	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
+		_, err := NewOfflinePushMsgLogic(ctx, l.svcCtx).OfflinePushMsg(&pb.OfflinePushMsgReq{
+			UserIds:  []string{userId},
+			Title:    alert,
+			Content:  content,
+			Payload:  "",
+			UniqueId: fmt.Sprintf("%s:%s", convId, userId),
+		})
 		if err != nil {
-			l.Errorf("MobPush err: %v", err)
+			l.Errorf("OfflinePushMsg err: %v", err)
 			return
 		}
-		l.Infof("MobPush resp: %v", resp)
-		err = l.svcCtx.Redis().SetexCtx(ctx, rediskey.OfflinePushMsgListKey(convId, receiver), data.ServerMsgId, 10)
-		if err != nil {
-			l.Errorf("Redis SetexCtx err: %v", err)
-			return
-		}
-	}
+	})
 }
 
 func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgData, convId string, members ...*pb.GetGroupMemberListResp_GroupMember) {
@@ -249,33 +243,32 @@ func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgDat
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
 	noPreviewAlert, noPreviewContent := l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_title", "惺惺线路"), l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_content", "您有一条新消息")
 	// 推送
-	{
-		// 是否已推送
-		val, err := l.svcCtx.Redis().GetCtx(ctx, rediskey.OfflinePushMsgListKey(convId, data.ServerMsgId))
-		if err == nil && val != "" {
-			// 推送过
-			return
-		}
+	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
 		if len(previewUids) > 0 {
-			resp, err := l.svcCtx.MobPush.Push(ctx, previewUids, alert, content)
+			_, err := NewOfflinePushMsgLogic(ctx, l.svcCtx).OfflinePushMsg(&pb.OfflinePushMsgReq{
+				UserIds:  previewUids,
+				Title:    alert,
+				Content:  content,
+				Payload:  "",
+				UniqueId: fmt.Sprintf("%s:%s", convId, data.ServerMsgId),
+			})
 			if err != nil {
-				l.Errorf("previewUids MobPush err: %v", err)
+				l.Errorf("OfflinePushMsg err: %v", err)
 				return
 			}
-			l.Infof("previewUids MobPush resp: %v", resp)
 		}
 		if len(noPreviewUids) > 0 {
-			resp, err := l.svcCtx.MobPush.Push(ctx, noPreviewUids, noPreviewAlert, noPreviewContent)
+			_, err := NewOfflinePushMsgLogic(ctx, l.svcCtx).OfflinePushMsg(&pb.OfflinePushMsgReq{
+				UserIds:  noPreviewUids,
+				Title:    noPreviewAlert,
+				Content:  noPreviewContent,
+				Payload:  "",
+				UniqueId: fmt.Sprintf("%s:%s", convId, data.ServerMsgId),
+			})
 			if err != nil {
-				l.Errorf("noPreviewUids MobPush err: %v", err)
+				l.Errorf("OfflinePushMsg err: %v", err)
 				return
 			}
-			l.Infof("noPreviewUids MobPush resp: %v", resp)
 		}
-		err = l.svcCtx.Redis().SetexCtx(ctx, rediskey.OfflinePushMsgListKey(convId, data.ServerMsgId), data.ServerMsgId, 10)
-		if err != nil {
-			l.Errorf("Redis SetexCtx err: %v", err)
-			return
-		}
-	}
+	})
 }

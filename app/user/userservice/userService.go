@@ -13,26 +13,29 @@ import (
 )
 
 type (
-	BatchGetUserBaseInfoReq  = pb.BatchGetUserBaseInfoReq
-	BatchGetUserBaseInfoResp = pb.BatchGetUserBaseInfoResp
-	BirthdayInfo             = pb.BirthdayInfo
-	ConfirmRegisterReq       = pb.ConfirmRegisterReq
-	ConfirmRegisterResp      = pb.ConfirmRegisterResp
-	GetUserHomeReq           = pb.GetUserHomeReq
-	GetUserHomeResp          = pb.GetUserHomeResp
-	GetUserSettingsReq       = pb.GetUserSettingsReq
-	GetUserSettingsResp      = pb.GetUserSettingsResp
-	LevelInfo                = pb.LevelInfo
-	LoginReq                 = pb.LoginReq
-	LoginResp                = pb.LoginResp
-	MapUserByIdsReq          = pb.MapUserByIdsReq
-	MapUserByIdsResp         = pb.MapUserByIdsResp
-	SearchUsersByKeywordReq  = pb.SearchUsersByKeywordReq
-	SearchUsersByKeywordResp = pb.SearchUsersByKeywordResp
-	SetUserSettingsReq       = pb.SetUserSettingsReq
-	SetUserSettingsResp      = pb.SetUserSettingsResp
-	UserBaseInfo             = pb.UserBaseInfo
-	UserSetting              = pb.UserSetting
+	BatchGetUserAllDevicesReq             = pb.BatchGetUserAllDevicesReq
+	BatchGetUserAllDevicesResp            = pb.BatchGetUserAllDevicesResp
+	BatchGetUserAllDevicesResp_AllDevices = pb.BatchGetUserAllDevicesResp_AllDevices
+	BatchGetUserBaseInfoReq               = pb.BatchGetUserBaseInfoReq
+	BatchGetUserBaseInfoResp              = pb.BatchGetUserBaseInfoResp
+	BirthdayInfo                          = pb.BirthdayInfo
+	ConfirmRegisterReq                    = pb.ConfirmRegisterReq
+	ConfirmRegisterResp                   = pb.ConfirmRegisterResp
+	GetUserHomeReq                        = pb.GetUserHomeReq
+	GetUserHomeResp                       = pb.GetUserHomeResp
+	GetUserSettingsReq                    = pb.GetUserSettingsReq
+	GetUserSettingsResp                   = pb.GetUserSettingsResp
+	LevelInfo                             = pb.LevelInfo
+	LoginReq                              = pb.LoginReq
+	LoginResp                             = pb.LoginResp
+	MapUserByIdsReq                       = pb.MapUserByIdsReq
+	MapUserByIdsResp                      = pb.MapUserByIdsResp
+	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
+	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
+	SetUserSettingsReq                    = pb.SetUserSettingsReq
+	SetUserSettingsResp                   = pb.SetUserSettingsResp
+	UserBaseInfo                          = pb.UserBaseInfo
+	UserSetting                           = pb.UserSetting
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -43,6 +46,11 @@ type (
 		GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 		GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
 		SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error)
+		// AfterConnect conn hook
+		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// AfterDisconnect conn hook
+		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 	}
 
 	defaultUserService struct {
@@ -94,4 +102,21 @@ func (m *defaultUserService) GetUserSettings(ctx context.Context, in *GetUserSet
 func (m *defaultUserService) SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.SetUserSettings(ctx, in, opts...)
+}
+
+// AfterConnect conn hook
+func (m *defaultUserService) AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AfterConnect(ctx, in, opts...)
+}
+
+// AfterDisconnect conn hook
+func (m *defaultUserService) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AfterDisconnect(ctx, in, opts...)
+}
+
+func (m *defaultUserService) BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.BatchGetUserAllDevices(ctx, in, opts...)
 }

@@ -30,6 +30,8 @@ type (
 	MsgData_OfflinePush           = pb.MsgData_OfflinePush
 	MsgData_Options               = pb.MsgData_Options
 	MsgMQBody                     = pb.MsgMQBody
+	OfflinePushMsgReq             = pb.OfflinePushMsgReq
+	OfflinePushMsgResp            = pb.OfflinePushMsgResp
 	PushMsgListReq                = pb.PushMsgListReq
 	SendMsgListReq                = pb.SendMsgListReq
 	SendMsgListResp               = pb.SendMsgListResp
@@ -52,6 +54,8 @@ type (
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// GetConvSubscribers 获取一个会话里所有的消息订阅者
 		GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
+		// OfflinePushMsg 离线推送消息
+		OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error)
 	}
 
 	defaultMsgService struct {
@@ -124,4 +128,10 @@ func (m *defaultMsgService) AfterDisconnect(ctx context.Context, in *AfterDiscon
 func (m *defaultMsgService) GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.GetConvSubscribers(ctx, in, opts...)
+}
+
+// OfflinePushMsg 离线推送消息
+func (m *defaultMsgService) OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.OfflinePushMsg(ctx, in, opts...)
 }

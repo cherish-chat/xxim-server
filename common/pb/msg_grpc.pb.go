@@ -39,6 +39,8 @@ type MsgServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
+	//OfflinePushMsg 离线推送消息
+	OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error)
 }
 
 type msgServiceClient struct {
@@ -148,6 +150,15 @@ func (c *msgServiceClient) GetConvSubscribers(ctx context.Context, in *GetConvSu
 	return out, nil
 }
 
+func (c *msgServiceClient) OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error) {
+	out := new(OfflinePushMsgResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/OfflinePushMsg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -169,6 +180,8 @@ type MsgServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error)
+	//OfflinePushMsg 离线推送消息
+	OfflinePushMsg(context.Context, *OfflinePushMsgReq) (*OfflinePushMsgResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -208,6 +221,9 @@ func (UnimplementedMsgServiceServer) AfterDisconnect(context.Context, *AfterDisc
 }
 func (UnimplementedMsgServiceServer) GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConvSubscribers not implemented")
+}
+func (UnimplementedMsgServiceServer) OfflinePushMsg(context.Context, *OfflinePushMsgReq) (*OfflinePushMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OfflinePushMsg not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -420,6 +436,24 @@ func _MsgService_GetConvSubscribers_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_OfflinePushMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OfflinePushMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).OfflinePushMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/OfflinePushMsg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).OfflinePushMsg(ctx, req.(*OfflinePushMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -470,6 +504,10 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConvSubscribers",
 			Handler:    _MsgService_GetConvSubscribers_Handler,
+		},
+		{
+			MethodName: "OfflinePushMsg",
+			Handler:    _MsgService_OfflinePushMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

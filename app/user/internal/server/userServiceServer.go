@@ -61,3 +61,20 @@ func (s *UserServiceServer) SetUserSettings(ctx context.Context, in *pb.SetUserS
 	l := logic.NewSetUserSettingsLogic(ctx, s.svcCtx)
 	return l.SetUserSettings(in)
 }
+
+// AfterConnect conn hook
+func (s *UserServiceServer) AfterConnect(ctx context.Context, in *pb.AfterConnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterConnectLogic(ctx, s.svcCtx)
+	return l.AfterConnect(in)
+}
+
+// AfterDisconnect conn hook
+func (s *UserServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisconnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterDisconnectLogic(ctx, s.svcCtx)
+	return l.AfterDisconnect(in)
+}
+
+func (s *UserServiceServer) BatchGetUserAllDevices(ctx context.Context, in *pb.BatchGetUserAllDevicesReq) (*pb.BatchGetUserAllDevicesResp, error) {
+	l := logic.NewBatchGetUserAllDevicesLogic(ctx, s.svcCtx)
+	return l.BatchGetUserAllDevices(in)
+}
