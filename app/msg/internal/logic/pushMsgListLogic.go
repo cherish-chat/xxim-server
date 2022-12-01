@@ -196,7 +196,7 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 
 func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData, convId string, userId string) {
 	// 查询用户在此会话的离线推送设置
-	notifyOpt, err := l.svcCtx.RelationService().GetSingleMsgNotifyOpt(ctx, &pb.GetSingleMsgNotifyOptReq{
+	convSetting, err := l.svcCtx.RelationService().GetSingleConvSetting(ctx, &pb.GetSingleConvSettingReq{
 		ConvId: convId,
 		UserId: userId,
 	})
@@ -204,11 +204,12 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 		l.Errorf("GetSingleMsgNotifyOpt err: %v", err)
 		return
 	}
-	if notifyOpt.Opt.NoDisturb {
+	if convSetting.Setting.GetIsDisturb() {
+		// 免打扰
 		return
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
-	if !notifyOpt.Opt.Preview {
+	if !convSetting.Setting.GetNotifyPreview() {
 		alert, content = l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_title", "惺惺线路"), l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_content", "您有一条新消息")
 	}
 	// 推送

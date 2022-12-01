@@ -3,6 +3,7 @@ package xconf
 import (
 	"context"
 	"encoding/json"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -94,6 +95,25 @@ func (s *SystemConfigMgr) GetSliceCtx(ctx context.Context, key string) []string 
 		logx.WithContext(ctx).Errorf("获取配置失败: %v", err)
 	}
 	return value
+}
+
+func (s *SystemConfigMgr) MGetOrDefaultCtx(ctx context.Context, kv map[string]string) map[string]string {
+	configs := make([]*SystemConfig, 0)
+	ks := utils.AnyMapKeys(kv)
+	err := s.mysql.WithContext(ctx).Model(&SystemConfig{}).Where("namespace = ? and serviceName = ? and `key` in (?)", s.Namespace, s.ServiceName, ks).Find(&configs).Error
+	if err != nil {
+		logx.WithContext(ctx).Errorf("获取配置失败: %v", err)
+	}
+	m := make(map[string]string)
+	for _, config := range configs {
+		m[config.Key] = config.Value
+	}
+	for k, v := range kv {
+		if _, ok := m[k]; !ok {
+			m[k] = v
+		}
+	}
+	return m
 }
 
 func (s *SystemConfigMgr) initData() {

@@ -31,10 +31,8 @@ type RelationServiceClient interface {
 	BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
 	DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
-	SetSingleChatSetting(ctx context.Context, in *SetSingleChatSettingReq, opts ...grpc.CallOption) (*SetSingleChatSettingResp, error)
-	SetSingleMsgNotifyOpt(ctx context.Context, in *SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*SetSingleMsgNotifyOptResp, error)
-	GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error)
-	GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error)
+	SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error)
+	GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error)
 	GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 	GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 }
@@ -128,36 +126,18 @@ func (c *relationServiceClient) DeleteFriend(ctx context.Context, in *DeleteFrie
 	return out, nil
 }
 
-func (c *relationServiceClient) SetSingleChatSetting(ctx context.Context, in *SetSingleChatSettingReq, opts ...grpc.CallOption) (*SetSingleChatSettingResp, error) {
-	out := new(SetSingleChatSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/SetSingleChatSetting", in, out, opts...)
+func (c *relationServiceClient) SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error) {
+	out := new(SetSingleConvSettingResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/SetSingleConvSetting", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *relationServiceClient) SetSingleMsgNotifyOpt(ctx context.Context, in *SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*SetSingleMsgNotifyOptResp, error) {
-	out := new(SetSingleMsgNotifyOptResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/SetSingleMsgNotifyOpt", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *relationServiceClient) GetSingleChatSetting(ctx context.Context, in *GetSingleChatSettingReq, opts ...grpc.CallOption) (*GetSingleChatSettingResp, error) {
-	out := new(GetSingleChatSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/GetSingleChatSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *relationServiceClient) GetSingleMsgNotifyOpt(ctx context.Context, in *GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*GetSingleMsgNotifyOptResp, error) {
-	out := new(GetSingleMsgNotifyOptResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/GetSingleMsgNotifyOpt", in, out, opts...)
+func (c *relationServiceClient) GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error) {
+	out := new(GetSingleConvSettingResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/GetSingleConvSetting", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -195,10 +175,8 @@ type RelationServiceServer interface {
 	BlockUser(context.Context, *BlockUserReq) (*BlockUserResp, error)
 	DeleteBlockUser(context.Context, *DeleteBlockUserReq) (*DeleteBlockUserResp, error)
 	DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error)
-	SetSingleChatSetting(context.Context, *SetSingleChatSettingReq) (*SetSingleChatSettingResp, error)
-	SetSingleMsgNotifyOpt(context.Context, *SetSingleMsgNotifyOptReq) (*SetSingleMsgNotifyOptResp, error)
-	GetSingleChatSetting(context.Context, *GetSingleChatSettingReq) (*GetSingleChatSettingResp, error)
-	GetSingleMsgNotifyOpt(context.Context, *GetSingleMsgNotifyOptReq) (*GetSingleMsgNotifyOptResp, error)
+	SetSingleConvSetting(context.Context, *SetSingleConvSettingReq) (*SetSingleConvSettingResp, error)
+	GetSingleConvSetting(context.Context, *GetSingleConvSettingReq) (*GetSingleConvSettingResp, error)
 	GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error)
 	GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error)
 	mustEmbedUnimplementedRelationServiceServer()
@@ -235,17 +213,11 @@ func (UnimplementedRelationServiceServer) DeleteBlockUser(context.Context, *Dele
 func (UnimplementedRelationServiceServer) DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
 }
-func (UnimplementedRelationServiceServer) SetSingleChatSetting(context.Context, *SetSingleChatSettingReq) (*SetSingleChatSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSingleChatSetting not implemented")
+func (UnimplementedRelationServiceServer) SetSingleConvSetting(context.Context, *SetSingleConvSettingReq) (*SetSingleConvSettingResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSingleConvSetting not implemented")
 }
-func (UnimplementedRelationServiceServer) SetSingleMsgNotifyOpt(context.Context, *SetSingleMsgNotifyOptReq) (*SetSingleMsgNotifyOptResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSingleMsgNotifyOpt not implemented")
-}
-func (UnimplementedRelationServiceServer) GetSingleChatSetting(context.Context, *GetSingleChatSettingReq) (*GetSingleChatSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSingleChatSetting not implemented")
-}
-func (UnimplementedRelationServiceServer) GetSingleMsgNotifyOpt(context.Context, *GetSingleMsgNotifyOptReq) (*GetSingleMsgNotifyOptResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSingleMsgNotifyOpt not implemented")
+func (UnimplementedRelationServiceServer) GetSingleConvSetting(context.Context, *GetSingleConvSettingReq) (*GetSingleConvSettingResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSingleConvSetting not implemented")
 }
 func (UnimplementedRelationServiceServer) GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
@@ -428,74 +400,38 @@ func _RelationService_DeleteFriend_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RelationService_SetSingleChatSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSingleChatSettingReq)
+func _RelationService_SetSingleConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSingleConvSettingReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RelationServiceServer).SetSingleChatSetting(ctx, in)
+		return srv.(RelationServiceServer).SetSingleConvSetting(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.relationService/SetSingleChatSetting",
+		FullMethod: "/pb.relationService/SetSingleConvSetting",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).SetSingleChatSetting(ctx, req.(*SetSingleChatSettingReq))
+		return srv.(RelationServiceServer).SetSingleConvSetting(ctx, req.(*SetSingleConvSettingReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RelationService_SetSingleMsgNotifyOpt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSingleMsgNotifyOptReq)
+func _RelationService_GetSingleConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSingleConvSettingReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RelationServiceServer).SetSingleMsgNotifyOpt(ctx, in)
+		return srv.(RelationServiceServer).GetSingleConvSetting(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.relationService/SetSingleMsgNotifyOpt",
+		FullMethod: "/pb.relationService/GetSingleConvSetting",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).SetSingleMsgNotifyOpt(ctx, req.(*SetSingleMsgNotifyOptReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RelationService_GetSingleChatSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSingleChatSettingReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelationServiceServer).GetSingleChatSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.relationService/GetSingleChatSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).GetSingleChatSetting(ctx, req.(*GetSingleChatSettingReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RelationService_GetSingleMsgNotifyOpt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSingleMsgNotifyOptReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelationServiceServer).GetSingleMsgNotifyOpt(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.relationService/GetSingleMsgNotifyOpt",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).GetSingleMsgNotifyOpt(ctx, req.(*GetSingleMsgNotifyOptReq))
+		return srv.(RelationServiceServer).GetSingleConvSetting(ctx, req.(*GetSingleConvSettingReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -580,20 +516,12 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RelationService_DeleteFriend_Handler,
 		},
 		{
-			MethodName: "SetSingleChatSetting",
-			Handler:    _RelationService_SetSingleChatSetting_Handler,
+			MethodName: "SetSingleConvSetting",
+			Handler:    _RelationService_SetSingleConvSetting_Handler,
 		},
 		{
-			MethodName: "SetSingleMsgNotifyOpt",
-			Handler:    _RelationService_SetSingleMsgNotifyOpt_Handler,
-		},
-		{
-			MethodName: "GetSingleChatSetting",
-			Handler:    _RelationService_GetSingleChatSetting_Handler,
-		},
-		{
-			MethodName: "GetSingleMsgNotifyOpt",
-			Handler:    _RelationService_GetSingleMsgNotifyOpt_Handler,
+			MethodName: "GetSingleConvSetting",
+			Handler:    _RelationService_GetSingleConvSetting_Handler,
 		},
 		{
 			MethodName: "GetFriendList",

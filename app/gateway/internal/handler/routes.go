@@ -99,29 +99,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/deleteFriend",
 					Handler: wrapper.WrapHandler(serverCtx, relationhandler.DeleteFriendConfig(serverCtx)),
 				},
-				// setSingleChatSetting
+				// setSingleConvSetting
 				{
 					Method:  http.MethodPost,
-					Path:    "/setSingleChatSetting",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleChatSettingConfig(serverCtx)),
+					Path:    "/setSingleConvSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleConvSettingConfig(serverCtx)),
 				},
-				// setSingleMsgNotifyOpt
+				// getSingleConvSetting
 				{
 					Method:  http.MethodPost,
-					Path:    "/setSingleMsgNotifyOpt",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleMsgNotifyOptConfig(serverCtx)),
-				},
-				// getSingleChatSetting
-				{
-					Method:  http.MethodPost,
-					Path:    "/getSingleChatSetting",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleChatSettingConfig(serverCtx)),
-				},
-				// getSingleMsgNotifyOpt
-				{
-					Method:  http.MethodPost,
-					Path:    "/getSingleMsgNotifyOpt",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleMsgNotifyOptConfig(serverCtx)),
+					Path:    "/getSingleConvSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleConvSettingConfig(serverCtx)),
 				},
 				// getFriendList
 				{

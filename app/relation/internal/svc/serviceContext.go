@@ -35,6 +35,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		relationmodel.Friend{},
 		relationmodel.Blacklist{},
 		relationmodel.RequestAddFriend{},
+		relationmodel.SingleConvSetting{},
 	)
 	return s
 }

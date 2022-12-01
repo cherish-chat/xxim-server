@@ -60,19 +60,11 @@ func (x *DeleteFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *SetSingleChatSettingReq) SetCommonReq(r *CommonReq) {
+func (x *SetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetSingleChatSettingReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
-func (x *SetSingleMsgNotifyOptReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
-func (x *GetSingleMsgNotifyOptReq) SetCommonReq(r *CommonReq) {
+func (x *GetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 

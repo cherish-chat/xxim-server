@@ -83,6 +83,22 @@ func If[T any](cond bool, a, b T) T {
 	return b
 }
 
+func String2Bool(s string) bool {
+	if s == "1" || s == "true" || s == "True" {
+		return true
+	}
+	return false
+}
+
+func AnyMapKeys(m any) []string {
+	values := reflect.ValueOf(m).MapKeys()
+	var keys []string
+	for _, v := range values {
+		keys = append(keys, v.String())
+	}
+	return keys
+}
+
 func UpdateSlice[T any](slice []T, update func(v T) T) []T {
 	var results = make([]T, 0, len(slice))
 	for _, v := range slice {
