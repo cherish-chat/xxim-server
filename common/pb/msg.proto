@@ -77,11 +77,14 @@ message PushMsgListReq {
   repeated MsgData msgDataList = 1;
 }
 
-message GetMsgListByConvIdReq {
+message BatchGetMsgListByConvIdReq {
+  message Item {
+    string convId = 1;
+    repeated string seqList = 2;
+  }
   CommonReq commonReq = 1;
-  string convId = 2;
-  repeated string seqList = 3;
-  bool push = 4;
+  repeated Item items = 2;
+  bool push = 3;
 }
 
 message GetMsgListResp {
@@ -166,8 +169,8 @@ service msgService {
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
   rpc SendMsgListAsync(SendMsgListReq) returns (SendMsgListResp) {} // 异步发送消息 成功后只能等待推送
   rpc PushMsgList(PushMsgListReq) returns (CommonResp) {} // 推送消息
-  //GetMsgListByConvId 通过seq拉取一个会话的消息
-  rpc GetMsgListByConvId(GetMsgListByConvIdReq) returns (GetMsgListResp) {}
+  //BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+  rpc BatchGetMsgListByConvId(BatchGetMsgListByConvIdReq) returns (GetMsgListResp) {}
   //GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
   rpc GetMsgById(GetMsgByIdReq) returns (GetMsgByIdResp) {}
   //BatchSetMinSeq 批量设置用户某会话的minseq

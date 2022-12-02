@@ -47,7 +47,7 @@ return result
 
 var getConvMaxSeqSha string
 
-func GetConvMaxSeq(rc *zedis.Redis, ctx context.Context, convId string) (*convSeq, error) {
+func GetConvMaxSeq(rc *zedis.Redis, ctx context.Context, userId string, convId string) (*convSeq, error) {
 	if getConvMaxSeqSha == "" {
 		var err error
 		getConvMaxSeqSha, err = rc.ScriptLoadCtx(ctx, getConvMaxSeqScript)
@@ -55,7 +55,7 @@ func GetConvMaxSeq(rc *zedis.Redis, ctx context.Context, convId string) (*convSe
 			return nil, err
 		}
 	}
-	result, err := rc.EvalShaCtx(ctx, getConvMaxSeqSha, []string{rediskey.ConvKv(convId), rediskey.HKConvMaxSeq(), rediskey.HKConvMinSeq(), "updateTime"})
+	result, err := rc.EvalShaCtx(ctx, getConvMaxSeqSha, []string{rediskey.ConvKv(convId), rediskey.HKConvMaxSeq(), rediskey.HKConvMinSeq(userId), "updateTime"})
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ return result
 
 var batchGetConvMaxSeqSha string
 
-func BatchGetConvMaxSeq(rc *zedis.Redis, ctx context.Context, convIds []string) (map[string]*convSeq, error) {
+func BatchGetConvMaxSeq(rc *zedis.Redis, ctx context.Context, userId string, convIds []string) (map[string]*convSeq, error) {
 	if batchGetConvMaxSeqSha == "" {
 		var err error
 		batchGetConvMaxSeqSha, err = rc.ScriptLoadCtx(ctx, batchGetConvMaxSeqScript)
@@ -93,7 +93,7 @@ func BatchGetConvMaxSeq(rc *zedis.Redis, ctx context.Context, convIds []string) 
 	for _, convId := range convIds {
 		keys = append(keys, rediskey.ConvKv(convId))
 	}
-	result, err := rc.EvalShaCtx(ctx, batchGetConvMaxSeqSha, keys, rediskey.HKConvMaxSeq(), rediskey.HKConvMinSeq(), "updateTime")
+	result, err := rc.EvalShaCtx(ctx, batchGetConvMaxSeqSha, keys, rediskey.HKConvMaxSeq(), rediskey.HKConvMinSeq(userId), "updateTime")
 	if err != nil {
 		return nil, err
 	}

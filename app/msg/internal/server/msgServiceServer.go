@@ -42,10 +42,10 @@ func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListRe
 	return l.PushMsgList(in)
 }
 
-// GetMsgListByConvId 通过seq拉取一个会话的消息
-func (s *MsgServiceServer) GetMsgListByConvId(ctx context.Context, in *pb.GetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
-	l := logic.NewGetMsgListByConvIdLogic(ctx, s.svcCtx)
-	return l.GetMsgListByConvId(in)
+// BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+func (s *MsgServiceServer) BatchGetMsgListByConvId(ctx context.Context, in *pb.BatchGetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
+	l := logic.NewBatchGetMsgListByConvIdLogic(ctx, s.svcCtx)
+	return l.BatchGetMsgListByConvId(in)
 }
 
 // GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息

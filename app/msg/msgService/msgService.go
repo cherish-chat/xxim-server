@@ -13,36 +13,37 @@ import (
 )
 
 type (
-	BatchGetConvSeqReq            = pb.BatchGetConvSeqReq
-	BatchGetConvSeqResp           = pb.BatchGetConvSeqResp
-	BatchGetConvSeqResp_ConvSeq   = pb.BatchGetConvSeqResp_ConvSeq
-	BatchSetMinSeqReq             = pb.BatchSetMinSeqReq
-	BatchSetMinSeqResp            = pb.BatchSetMinSeqResp
-	GetConvSubscribersReq         = pb.GetConvSubscribersReq
-	GetConvSubscribersResp        = pb.GetConvSubscribersResp
-	GetConvSubscribersRespUidList = pb.GetConvSubscribersRespUidList
-	GetMsgByIdReq                 = pb.GetMsgByIdReq
-	GetMsgByIdResp                = pb.GetMsgByIdResp
-	GetMsgListByConvIdReq         = pb.GetMsgListByConvIdReq
-	GetMsgListResp                = pb.GetMsgListResp
-	MsgData                       = pb.MsgData
-	MsgDataList                   = pb.MsgDataList
-	MsgData_OfflinePush           = pb.MsgData_OfflinePush
-	MsgData_Options               = pb.MsgData_Options
-	MsgMQBody                     = pb.MsgMQBody
-	OfflinePushMsgReq             = pb.OfflinePushMsgReq
-	OfflinePushMsgResp            = pb.OfflinePushMsgResp
-	PushMsgListReq                = pb.PushMsgListReq
-	SendMsgListReq                = pb.SendMsgListReq
-	SendMsgListResp               = pb.SendMsgListResp
+	BatchGetConvSeqReq              = pb.BatchGetConvSeqReq
+	BatchGetConvSeqResp             = pb.BatchGetConvSeqResp
+	BatchGetConvSeqResp_ConvSeq     = pb.BatchGetConvSeqResp_ConvSeq
+	BatchGetMsgListByConvIdReq      = pb.BatchGetMsgListByConvIdReq
+	BatchGetMsgListByConvIdReq_Item = pb.BatchGetMsgListByConvIdReq_Item
+	BatchSetMinSeqReq               = pb.BatchSetMinSeqReq
+	BatchSetMinSeqResp              = pb.BatchSetMinSeqResp
+	GetConvSubscribersReq           = pb.GetConvSubscribersReq
+	GetConvSubscribersResp          = pb.GetConvSubscribersResp
+	GetConvSubscribersRespUidList   = pb.GetConvSubscribersRespUidList
+	GetMsgByIdReq                   = pb.GetMsgByIdReq
+	GetMsgByIdResp                  = pb.GetMsgByIdResp
+	GetMsgListResp                  = pb.GetMsgListResp
+	MsgData                         = pb.MsgData
+	MsgDataList                     = pb.MsgDataList
+	MsgData_OfflinePush             = pb.MsgData_OfflinePush
+	MsgData_Options                 = pb.MsgData_Options
+	MsgMQBody                       = pb.MsgMQBody
+	OfflinePushMsgReq               = pb.OfflinePushMsgReq
+	OfflinePushMsgResp              = pb.OfflinePushMsgResp
+	PushMsgListReq                  = pb.PushMsgListReq
+	SendMsgListReq                  = pb.SendMsgListReq
+	SendMsgListResp                 = pb.SendMsgListResp
 
 	MsgService interface {
 		InsertMsgDataList(ctx context.Context, in *MsgDataList, opts ...grpc.CallOption) (*MsgDataList, error)
 		SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 		SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 		PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-		// GetMsgListByConvId 通过seq拉取一个会话的消息
-		GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+		// BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+		BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
 		// GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
 		GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error)
 		// BatchSetMinSeq 批量设置用户某会话的minseq
@@ -89,10 +90,10 @@ func (m *defaultMsgService) PushMsgList(ctx context.Context, in *PushMsgListReq,
 	return client.PushMsgList(ctx, in, opts...)
 }
 
-// GetMsgListByConvId 通过seq拉取一个会话的消息
-func (m *defaultMsgService) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
+// BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+func (m *defaultMsgService) BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
-	return client.GetMsgListByConvId(ctx, in, opts...)
+	return client.BatchGetMsgListByConvId(ctx, in, opts...)
 }
 
 // GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息

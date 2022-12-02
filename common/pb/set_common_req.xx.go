@@ -4,7 +4,7 @@ func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
+func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 

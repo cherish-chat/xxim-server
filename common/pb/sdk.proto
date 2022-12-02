@@ -71,6 +71,13 @@ enum ContentType {
   EMOJI = 19; // 表情
   COMMAND = 20; // 命令
 
+  // 系统内消息
+  CONV_LIST_CHANGE = 51; // 拥有的会话列表变更 增加|删除  自己给自己发消息
+  PROFILE_CHANGE = 52;   // 个人资料变更 在线状态|昵称|头像   给好友发消息
+  CONV_INFO_CHANGE = 53; // 会话资料变更 群名称|群头像|群公告|群解散  给会话发消息
+  CONV_PROFILE_CHANGE = 54; // 会话内个人设置变更 消息通知|置顶|收入群助手    给会话发消息
+  CONV_MEMBER_CHANGE = 55; // 会话内成员变更 增加|删除|修改身份  给会话发消息
+
   CUSTOM = 100; // 自定义消息
 }
 
@@ -124,11 +131,14 @@ message SendMsgListResp {
   CommonResp commonResp = 1;
 }
 
-message GetMsgListByConvIdReq {
+message BatchGetMsgListByConvIdReq {
+  message Item {
+    string convId = 1;
+    repeated string seqList = 2;
+  }
   CommonReq commonReq = 1;
-  string convId = 2;
-  repeated string seqList = 3;
-  bool push = 4;
+  repeated Item items = 2;
+  bool push = 3;
 }
 
 message GetMsgListResp {

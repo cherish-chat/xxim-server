@@ -26,8 +26,8 @@ type MsgServiceClient interface {
 	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	//GetMsgListByConvId 通过seq拉取一个会话的消息
-	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+	//BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+	BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
 	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
 	GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
@@ -87,9 +87,9 @@ func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, 
 	return out, nil
 }
 
-func (c *msgServiceClient) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
+func (c *msgServiceClient) BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	out := new(GetMsgListResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/GetMsgListByConvId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchGetMsgListByConvId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,8 +167,8 @@ type MsgServiceServer interface {
 	SendMsgListSync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
-	//GetMsgListByConvId 通过seq拉取一个会话的消息
-	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
+	//BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+	BatchGetMsgListByConvId(context.Context, *BatchGetMsgListByConvIdReq) (*GetMsgListResp, error)
 	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
 	GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
@@ -201,8 +201,8 @@ func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgL
 func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushMsgList not implemented")
 }
-func (UnimplementedMsgServiceServer) GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMsgListByConvId not implemented")
+func (UnimplementedMsgServiceServer) BatchGetMsgListByConvId(context.Context, *BatchGetMsgListByConvIdReq) (*GetMsgListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetMsgListByConvId not implemented")
 }
 func (UnimplementedMsgServiceServer) GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMsgById not implemented")
@@ -310,20 +310,20 @@ func _MsgService_PushMsgList_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_GetMsgListByConvId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMsgListByConvIdReq)
+func _MsgService_BatchGetMsgListByConvId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetMsgListByConvIdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, in)
+		return srv.(MsgServiceServer).BatchGetMsgListByConvId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.msgService/GetMsgListByConvId",
+		FullMethod: "/pb.msgService/BatchGetMsgListByConvId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, req.(*GetMsgListByConvIdReq))
+		return srv.(MsgServiceServer).BatchGetMsgListByConvId(ctx, req.(*BatchGetMsgListByConvIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -478,8 +478,8 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_PushMsgList_Handler,
 		},
 		{
-			MethodName: "GetMsgListByConvId",
-			Handler:    _MsgService_GetMsgListByConvId_Handler,
+			MethodName: "BatchGetMsgListByConvId",
+			Handler:    _MsgService_BatchGetMsgListByConvId_Handler,
 		},
 		{
 			MethodName: "GetMsgById",

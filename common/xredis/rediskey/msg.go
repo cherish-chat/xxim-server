@@ -6,8 +6,8 @@ func ConvKv(convId string) string {
 	return "h:conv_kv:" + convId
 }
 
-func HKConvMinSeq() string {
-	return "min_seq"
+func HKConvMinSeq(userId string) string {
+	return "min_seq:" + userId
 }
 
 func HKConvMaxSeq() string {

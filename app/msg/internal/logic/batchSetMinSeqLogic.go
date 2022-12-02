@@ -32,7 +32,7 @@ func (l *BatchSetMinSeqLogic) BatchSetMinSeq(in *pb.BatchSetMinSeqReq) (*pb.Batc
 	// hmset key field value [field value ...]
 	minSeqMap := make(map[string]string)
 	for _, userId := range in.UserIdList {
-		minSeqMap[userId] = in.MinSeq
+		minSeqMap[rediskey.HKConvMinSeq(userId)] = in.MinSeq
 	}
 	err := l.svcCtx.Redis().HmsetCtx(l.ctx, rediskey.ConvKv(in.ConvId), minSeqMap)
 	if err != nil {

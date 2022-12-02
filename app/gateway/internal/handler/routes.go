@@ -154,8 +154,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// getMsgListByConvId
 				{
 					Method:  http.MethodPost,
-					Path:    "/getMsgListByConvId",
-					Handler: wrapper.WrapHandler(serverCtx, msghandler.GetMsgListByConvIdConfig(serverCtx)),
+					Path:    "/batchGetMsgListByConvId",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.BatchGetMsgListByConvIdConfig(serverCtx)),
 				},
 				// getMsgById
 				{

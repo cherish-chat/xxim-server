@@ -29,7 +29,7 @@ func (l *BatchGetConvSeqLogic) BatchGetConvSeq(in *pb.BatchGetConvSeqReq) (*pb.B
 	if len(in.ConvIdList) == 0 {
 		return &pb.BatchGetConvSeqResp{}, nil
 	}
-	convMaxSeq, err := BatchGetConvMaxSeq(l.svcCtx.Redis(), l.ctx, in.ConvIdList)
+	convMaxSeq, err := BatchGetConvMaxSeq(l.svcCtx.Redis(), l.ctx, in.CommonReq.UserId, in.ConvIdList)
 	if err != nil {
 		l.Errorf("BatchGetConvSeq BatchGetConvMaxSeq error: %v", err)
 		return &pb.BatchGetConvSeqResp{CommonResp: pb.NewRetryErrorResp()}, err
