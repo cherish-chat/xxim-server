@@ -60,7 +60,7 @@ func (l *ApiLogLogic) ApiLog(requester *pb.CommonReq, service string, commonResp
 	if err != nil {
 		errStr = err.Error()
 	}
-	xtrace.RunWithTrace(l.traceId, "InsertApiLog", func(ctx context.Context) {
+	go xtrace.RunWithTrace(l.traceId, "InsertApiLog", func(ctx context.Context) {
 		apiLog := &gatewaymodel.ApiLog{
 			Service:         service,
 			Req:             req,

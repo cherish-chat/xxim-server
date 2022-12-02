@@ -45,8 +45,8 @@ func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, e
 		// 查询会话的订阅者并推送
 		l.batchFindAndPushMsgList(convIdMsgListMap)
 		// 查询会话所有接受离线消息的成员 过滤在线用户 并推送
-		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "findAndPushOfflineMsgList", func(ctx context.Context) {
-			go l.batchFindAndPushOfflineMsgList(ctx, convIdMsgListMap)
+		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "findAndPushOfflineMsgList", func(ctx context.Context) {
+			l.batchFindAndPushOfflineMsgList(ctx, convIdMsgListMap)
 		}, propagation.MapCarrier{})
 	}
 	return &pb.CommonResp{}, nil
