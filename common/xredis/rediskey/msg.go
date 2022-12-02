@@ -6,8 +6,8 @@ func ConvKv(convId string) string {
 	return "h:conv_kv:" + convId
 }
 
-func HKConvMinSeq() string {
-	return "min_seq"
+func HKConvMinSeq(userId string) string {
+	return "min_seq:" + userId
 }
 
 func HKConvMaxSeq() string {
@@ -36,4 +36,8 @@ func ConvMembersSubscribedSplit(zmember string) (userId string, podIp string) {
 		return split[0], split[1]
 	}
 	return "", ""
+}
+
+func OfflinePushMsgListKey(uniqueId string) string {
+	return "s:offline_push_msg:" + uniqueId
 }

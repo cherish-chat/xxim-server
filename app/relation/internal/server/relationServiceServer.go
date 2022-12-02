@@ -67,27 +67,22 @@ func (s *RelationServiceServer) DeleteFriend(ctx context.Context, in *pb.DeleteF
 	return l.DeleteFriend(in)
 }
 
-func (s *RelationServiceServer) SetSingleChatSetting(ctx context.Context, in *pb.SetSingleChatSettingReq) (*pb.SetSingleChatSettingResp, error) {
-	l := logic.NewSetSingleChatSettingLogic(ctx, s.svcCtx)
-	return l.SetSingleChatSetting(in)
+func (s *RelationServiceServer) SetSingleConvSetting(ctx context.Context, in *pb.SetSingleConvSettingReq) (*pb.SetSingleConvSettingResp, error) {
+	l := logic.NewSetSingleConvSettingLogic(ctx, s.svcCtx)
+	return l.SetSingleConvSetting(in)
 }
 
-func (s *RelationServiceServer) SetSingleMsgNotifyOpt(ctx context.Context, in *pb.SetSingleMsgNotifyOptReq) (*pb.SetSingleMsgNotifyOptResp, error) {
-	l := logic.NewSetSingleMsgNotifyOptLogic(ctx, s.svcCtx)
-	return l.SetSingleMsgNotifyOpt(in)
-}
-
-func (s *RelationServiceServer) GetSingleChatSetting(ctx context.Context, in *pb.GetSingleChatSettingReq) (*pb.GetSingleChatSettingResp, error) {
-	l := logic.NewGetSingleChatSettingLogic(ctx, s.svcCtx)
-	return l.GetSingleChatSetting(in)
-}
-
-func (s *RelationServiceServer) GetSingleMsgNotifyOpt(ctx context.Context, in *pb.GetSingleMsgNotifyOptReq) (*pb.GetSingleMsgNotifyOptResp, error) {
-	l := logic.NewGetSingleMsgNotifyOptLogic(ctx, s.svcCtx)
-	return l.GetSingleMsgNotifyOpt(in)
+func (s *RelationServiceServer) GetSingleConvSetting(ctx context.Context, in *pb.GetSingleConvSettingReq) (*pb.GetSingleConvSettingResp, error) {
+	l := logic.NewGetSingleConvSettingLogic(ctx, s.svcCtx)
+	return l.GetSingleConvSetting(in)
 }
 
 func (s *RelationServiceServer) GetFriendList(ctx context.Context, in *pb.GetFriendListReq) (*pb.GetFriendListResp, error) {
 	l := logic.NewGetFriendListLogic(ctx, s.svcCtx)
 	return l.GetFriendList(in)
+}
+
+func (s *RelationServiceServer) GetMyFriendEventList(ctx context.Context, in *pb.GetMyFriendEventListReq) (*pb.GetMyFriendEventListResp, error) {
+	l := logic.NewGetMyFriendEventListLogic(ctx, s.svcCtx)
+	return l.GetMyFriendEventList(in)
 }

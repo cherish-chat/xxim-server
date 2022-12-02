@@ -42,10 +42,10 @@ func (s *MsgServiceServer) PushMsgList(ctx context.Context, in *pb.PushMsgListRe
 	return l.PushMsgList(in)
 }
 
-// GetMsgListByConvId 通过seq拉取一个会话的消息
-func (s *MsgServiceServer) GetMsgListByConvId(ctx context.Context, in *pb.GetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
-	l := logic.NewGetMsgListByConvIdLogic(ctx, s.svcCtx)
-	return l.GetMsgListByConvId(in)
+// BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+func (s *MsgServiceServer) BatchGetMsgListByConvId(ctx context.Context, in *pb.BatchGetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
+	l := logic.NewBatchGetMsgListByConvIdLogic(ctx, s.svcCtx)
+	return l.BatchGetMsgListByConvId(in)
 }
 
 // GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
@@ -81,4 +81,10 @@ func (s *MsgServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisc
 func (s *MsgServiceServer) GetConvSubscribers(ctx context.Context, in *pb.GetConvSubscribersReq) (*pb.GetConvSubscribersResp, error) {
 	l := logic.NewGetConvSubscribersLogic(ctx, s.svcCtx)
 	return l.GetConvSubscribers(in)
+}
+
+// OfflinePushMsg 离线推送消息
+func (s *MsgServiceServer) OfflinePushMsg(ctx context.Context, in *pb.OfflinePushMsgReq) (*pb.OfflinePushMsgResp, error) {
+	l := logic.NewOfflinePushMsgLogic(ctx, s.svcCtx)
+	return l.OfflinePushMsg(in)
 }

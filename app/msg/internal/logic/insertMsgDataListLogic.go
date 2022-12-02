@@ -35,7 +35,6 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	xtrace.StartFuncSpan(l.ctx, "GenModels", func(ctx context.Context) {
 		for _, msgData := range in.MsgDataList {
 			model := msgmodel.NewMsgFromPb(msgData)
-			model.AutoConvId()
 			if model.Options.StorageForServer {
 				convId := model.ConvId
 				// 给会话生成一个新的seq

@@ -38,7 +38,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		xtrace.StartFuncSpan(l.ctx, "AreFriends", func(ctx context.Context) {
 			areFriendsResp, err = NewAreFriendsLogic(ctx, l.svcCtx).AreFriends(&pb.AreFriendsReq{
 				CommonReq: in.CommonReq,
-				A:         in.CommonReq.Id,
+				A:         in.CommonReq.UserId,
 				BList:     []string{in.To},
 			})
 		})
@@ -59,14 +59,14 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 			areBlackListResp, err = NewAreBlackListLogic(ctx, l.svcCtx).AreBlackList(&pb.AreBlackListReq{
 				CommonReq: in.CommonReq,
 				A:         in.To,
-				BList:     []string{in.CommonReq.Id},
+				BList:     []string{in.CommonReq.UserId},
 			})
 		})
 		if err != nil {
 			l.Errorf("AreBlackList failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if is, ok := areBlackListResp.BlackList[in.CommonReq.Id]; is && ok {
+		if is, ok := areBlackListResp.BlackList[in.CommonReq.UserId]; is && ok {
 			// 已经被拉黑
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "对方已把你拉黑"))}, nil
 		}
@@ -84,14 +84,14 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= utils.AnyToInt64(l.svcCtx.SystemConfigMgr.Get("friend_max_count")) {
+		if int64(getFriendCountResp.Count) >= utils.AnyToInt64(l.svcCtx.SystemConfigMgr.Get("app.friend_max_count")) {
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
 	// 对方的加好友设置
 	{
 		getUserSettingsResp, err := l.svcCtx.UserService().GetUserSettings(l.ctx, &pb.GetUserSettingsReq{
-			CommonReq: &pb.CommonReq{Id: in.To},
+			CommonReq: &pb.CommonReq{UserId: in.To},
 			Keys:      []pb.UserSettingKey{pb.UserSettingKey_HowToAddFriend, pb.UserSettingKey_HowToAddFriend_NeedAnswerQuestionCorrectly_Answer},
 		})
 		if err != nil {
@@ -137,7 +137,7 @@ func (l *RequestAddFriendLogic) allowAddFriend(in *pb.RequestAddFriendReq) (*pb.
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "AcceptAddFriend", func(ctx context.Context) {
 		acceptAddFriendResp, err = NewAcceptAddFriendLogic(ctx, l.svcCtx).AcceptAddFriend(&pb.AcceptAddFriendReq{CommonReq: &pb.CommonReq{
-			Id:       in.To,
+			UserId:   in.To,
 			Language: in.CommonReq.Language,
 		}})
 	})
@@ -153,13 +153,13 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	extra := make([]*pb.RequestAddFriendExtra, 0)
 	if in.Message != "" {
 		extra = append(extra, &pb.RequestAddFriendExtra{
-			UserId:  in.CommonReq.Id,
+			UserId:  in.CommonReq.UserId,
 			Content: in.Message,
 		})
 	}
 	model := &relationmodel.RequestAddFriend{
 		Id:         utils.GenId(),
-		FromUserId: in.CommonReq.Id,
+		FromUserId: in.CommonReq.UserId,
 		ToUserId:   in.To,
 		Status:     pb.RequestAddFriendStatus_Unhandled,
 		CreateTime: now,

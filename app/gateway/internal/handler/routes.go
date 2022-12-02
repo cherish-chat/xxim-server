@@ -2,12 +2,14 @@ package handler
 
 import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/grouphandler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/imhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/msghandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/relationhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/userhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/wrapper"
 	"net/http"
+	"time"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -97,35 +99,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/deleteFriend",
 					Handler: wrapper.WrapHandler(serverCtx, relationhandler.DeleteFriendConfig(serverCtx)),
 				},
-				// setSingleChatSetting
+				// setSingleConvSetting
 				{
 					Method:  http.MethodPost,
-					Path:    "/setSingleChatSetting",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleChatSettingConfig(serverCtx)),
+					Path:    "/setSingleConvSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleConvSettingConfig(serverCtx)),
 				},
-				// setSingleMsgNotifyOpt
+				// getSingleConvSetting
 				{
 					Method:  http.MethodPost,
-					Path:    "/setSingleMsgNotifyOpt",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.SetSingleMsgNotifyOptConfig(serverCtx)),
-				},
-				// getSingleChatSetting
-				{
-					Method:  http.MethodPost,
-					Path:    "/getSingleChatSetting",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleChatSettingConfig(serverCtx)),
-				},
-				// getSingleMsgNotifyOpt
-				{
-					Method:  http.MethodPost,
-					Path:    "/getSingleMsgNotifyOpt",
-					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleMsgNotifyOptConfig(serverCtx)),
+					Path:    "/getSingleConvSetting",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetSingleConvSettingConfig(serverCtx)),
 				},
 				// getFriendList
 				{
 					Method:  http.MethodPost,
 					Path:    "/getFriendList",
 					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetFriendListConfig(serverCtx)),
+				},
+				// getMyFriendEventList
+				{
+					Method:  http.MethodPost,
+					Path:    "/getMyFriendEventList",
+					Handler: wrapper.WrapHandler(serverCtx, relationhandler.GetMyFriendEventListConfig(serverCtx)),
 				},
 			}...,
 		),
@@ -158,8 +154,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// getMsgListByConvId
 				{
 					Method:  http.MethodPost,
-					Path:    "/getMsgListByConvId",
-					Handler: wrapper.WrapHandler(serverCtx, msghandler.GetMsgListByConvIdConfig(serverCtx)),
+					Path:    "/batchGetMsgListByConvId",
+					Handler: wrapper.WrapHandler(serverCtx, msghandler.BatchGetMsgListByConvIdConfig(serverCtx)),
 				},
 				// getMsgById
 				{
@@ -176,6 +172,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/v1/msg"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				// getAppSystemConfig
+				{
+					Method:  http.MethodPost,
+					Path:    "/white/getAppSystemConfig",
+					Handler: wrapper.WrapHandler(serverCtx, imhandler.GetAppSystemConfigConfig(serverCtx)),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/im"),
 	)
 	server.AddRoutes(
 		rest.WithMiddlewares(
@@ -213,4 +223,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 	)
+	go func() {
+		time.Sleep(1 * time.Second)
+		server.PrintRoutes()
+	}()
 }

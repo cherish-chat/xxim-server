@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,23 +24,17 @@ func NewGetUserLatestConnLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetUserLatestConnLogic) GetUserLatestConn(in *pb.GetUserLatestConnReq) (*pb.GetUserLatestConnResp, error) {
-	model := &immodel.UserConnectRecord{}
-	err := l.svcCtx.Mysql().Model(model).Where("userId = ?", in.UserId).Order("connectTime desc").First(model).Error
+	var batchResp *pb.BatchGetUserLatestConnResp
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "BatchGetUserLatestConn", func(ctx context.Context) {
+		batchResp, err = NewBatchGetUserLatestConnLogic(ctx, l.svcCtx).BatchGetUserLatestConn(&pb.BatchGetUserLatestConnReq{UserIds: []string{in.UserId}})
+	})
 	if err != nil {
-		if xorm.RecordNotFound(err) {
-			return &pb.GetUserLatestConnResp{}, nil
-		} else {
-			l.Errorf("find user latest connect record failed, err: %v", err)
-			return &pb.GetUserLatestConnResp{}, err
-		}
+		l.Errorf("GetUserLatestConnLogic GetUserLatestConn err: %v", err)
+		return &pb.GetUserLatestConnResp{}, err
 	}
-	return &pb.GetUserLatestConnResp{
-		UserId:         model.UserId,
-		Ip:             model.Ips,
-		IpRegion:       model.IpRegion.Pb(),
-		ConnectedAt:    utils.AnyToString(model.ConnectTime),
-		DisconnectedAt: utils.AnyToString(model.DisconnectTime),
-		Platform:       model.Platform,
-		DeviceId:       model.DeviceId,
-	}, nil
+	if len(batchResp.UserLatestConns) == 0 {
+		return &pb.GetUserLatestConnResp{}, nil
+	}
+	return batchResp.UserLatestConns[0], nil
 }

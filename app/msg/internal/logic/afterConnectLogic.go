@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"time"
@@ -44,7 +43,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 	{
 		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
 			CommonReq: &pb.CommonReq{
-				Id: userId,
+				UserId: userId,
 			},
 			Page: &pb.Page{
 				Page: 1,
@@ -58,14 +57,14 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 		}
 		friendIds = getFriendList.Ids
 		for _, id := range friendIds {
-			convIds = append(convIds, msgmodel.SingleConvId(userId, id))
+			convIds = append(convIds, pb.SingleConvId(userId, id))
 		}
 	}
 	// 获取用户订阅的群组列表
 	{
 		getMyGroupList, err := l.svcCtx.GroupService().GetMyGroupList(l.ctx, &pb.GetMyGroupListReq{
 			CommonReq: &pb.CommonReq{
-				Id: userId,
+				UserId: userId,
 			},
 			Page: &pb.Page{Page: 1},
 			Filter: &pb.GetMyGroupListReq_Filter{

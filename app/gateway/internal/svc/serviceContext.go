@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewaymodel"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
+	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
@@ -23,6 +24,7 @@ type ServiceContext struct {
 	relationService relationservice.RelationService
 	groupService    groupservice.GroupService
 	msgService      msgservice.MsgService
+	imService       imservice.ImService
 	zedis           *redis.Redis
 	SystemConfigMgr *xconf.SystemConfigMgr
 	ConnPodsMgr     *connservice.ConnPodsMgr
@@ -82,4 +84,11 @@ func (s *ServiceContext) MsgService() msgservice.MsgService {
 		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc))
 	}
 	return s.msgService
+}
+
+func (s *ServiceContext) ImService() imservice.ImService {
+	if s.imService == nil {
+		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc))
+	}
+	return s.imService
 }

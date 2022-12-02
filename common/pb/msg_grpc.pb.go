@@ -26,8 +26,8 @@ type MsgServiceClient interface {
 	SendMsgListSync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 	SendMsgListAsync(ctx context.Context, in *SendMsgListReq, opts ...grpc.CallOption) (*SendMsgListResp, error)
 	PushMsgList(ctx context.Context, in *PushMsgListReq, opts ...grpc.CallOption) (*CommonResp, error)
-	//GetMsgListByConvId 通过seq拉取一个会话的消息
-	GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
+	//BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+	BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error)
 	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
 	GetMsgById(ctx context.Context, in *GetMsgByIdReq, opts ...grpc.CallOption) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
@@ -39,6 +39,8 @@ type MsgServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
+	//OfflinePushMsg 离线推送消息
+	OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error)
 }
 
 type msgServiceClient struct {
@@ -85,9 +87,9 @@ func (c *msgServiceClient) PushMsgList(ctx context.Context, in *PushMsgListReq, 
 	return out, nil
 }
 
-func (c *msgServiceClient) GetMsgListByConvId(ctx context.Context, in *GetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
+func (c *msgServiceClient) BatchGetMsgListByConvId(ctx context.Context, in *BatchGetMsgListByConvIdReq, opts ...grpc.CallOption) (*GetMsgListResp, error) {
 	out := new(GetMsgListResp)
-	err := c.cc.Invoke(ctx, "/pb.msgService/GetMsgListByConvId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.msgService/BatchGetMsgListByConvId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,6 +150,15 @@ func (c *msgServiceClient) GetConvSubscribers(ctx context.Context, in *GetConvSu
 	return out, nil
 }
 
+func (c *msgServiceClient) OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error) {
+	out := new(OfflinePushMsgResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/OfflinePushMsg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -156,8 +167,8 @@ type MsgServiceServer interface {
 	SendMsgListSync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
 	SendMsgListAsync(context.Context, *SendMsgListReq) (*SendMsgListResp, error)
 	PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error)
-	//GetMsgListByConvId 通过seq拉取一个会话的消息
-	GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error)
+	//BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+	BatchGetMsgListByConvId(context.Context, *BatchGetMsgListByConvIdReq) (*GetMsgListResp, error)
 	//GetMsgById 通过serverMsgId或者clientMsgId拉取一条消息
 	GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error)
 	//BatchSetMinSeq 批量设置用户某会话的minseq
@@ -169,6 +180,8 @@ type MsgServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error)
+	//OfflinePushMsg 离线推送消息
+	OfflinePushMsg(context.Context, *OfflinePushMsgReq) (*OfflinePushMsgResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -188,8 +201,8 @@ func (UnimplementedMsgServiceServer) SendMsgListAsync(context.Context, *SendMsgL
 func (UnimplementedMsgServiceServer) PushMsgList(context.Context, *PushMsgListReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushMsgList not implemented")
 }
-func (UnimplementedMsgServiceServer) GetMsgListByConvId(context.Context, *GetMsgListByConvIdReq) (*GetMsgListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMsgListByConvId not implemented")
+func (UnimplementedMsgServiceServer) BatchGetMsgListByConvId(context.Context, *BatchGetMsgListByConvIdReq) (*GetMsgListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetMsgListByConvId not implemented")
 }
 func (UnimplementedMsgServiceServer) GetMsgById(context.Context, *GetMsgByIdReq) (*GetMsgByIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMsgById not implemented")
@@ -208,6 +221,9 @@ func (UnimplementedMsgServiceServer) AfterDisconnect(context.Context, *AfterDisc
 }
 func (UnimplementedMsgServiceServer) GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConvSubscribers not implemented")
+}
+func (UnimplementedMsgServiceServer) OfflinePushMsg(context.Context, *OfflinePushMsgReq) (*OfflinePushMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OfflinePushMsg not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -294,20 +310,20 @@ func _MsgService_PushMsgList_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MsgService_GetMsgListByConvId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMsgListByConvIdReq)
+func _MsgService_BatchGetMsgListByConvId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetMsgListByConvIdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, in)
+		return srv.(MsgServiceServer).BatchGetMsgListByConvId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.msgService/GetMsgListByConvId",
+		FullMethod: "/pb.msgService/BatchGetMsgListByConvId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServiceServer).GetMsgListByConvId(ctx, req.(*GetMsgListByConvIdReq))
+		return srv.(MsgServiceServer).BatchGetMsgListByConvId(ctx, req.(*BatchGetMsgListByConvIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -420,6 +436,24 @@ func _MsgService_GetConvSubscribers_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_OfflinePushMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OfflinePushMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).OfflinePushMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/OfflinePushMsg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).OfflinePushMsg(ctx, req.(*OfflinePushMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -444,8 +478,8 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_PushMsgList_Handler,
 		},
 		{
-			MethodName: "GetMsgListByConvId",
-			Handler:    _MsgService_GetMsgListByConvId_Handler,
+			MethodName: "BatchGetMsgListByConvId",
+			Handler:    _MsgService_BatchGetMsgListByConvId_Handler,
 		},
 		{
 			MethodName: "GetMsgById",
@@ -470,6 +504,10 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetConvSubscribers",
 			Handler:    _MsgService_GetConvSubscribers_Handler,
+		},
+		{
+			MethodName: "OfflinePushMsg",
+			Handler:    _MsgService_OfflinePushMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

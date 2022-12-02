@@ -101,62 +101,32 @@ func DeleteFriendConfig[REQ *pb.DeleteFriendReq, RESP *pb.DeleteFriendResp](svcC
 	}
 }
 
-// SetSingleChatSettingConfig ...
-func SetSingleChatSettingConfig[REQ *pb.SetSingleChatSettingReq, RESP *pb.SetSingleChatSettingResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.SetSingleChatSettingReq, *pb.SetSingleChatSettingResp] {
-	return wrapper.Config[*pb.SetSingleChatSettingReq, *pb.SetSingleChatSettingResp]{
-		Do: func(ctx context.Context, in *pb.SetSingleChatSettingReq, opts ...grpc.CallOption) (*pb.SetSingleChatSettingResp, error) {
+// SetSingleConvSettingConfig ...
+func SetSingleConvSettingConfig[REQ *pb.SetSingleConvSettingReq, RESP *pb.SetSingleConvSettingResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.SetSingleConvSettingReq, *pb.SetSingleConvSettingResp] {
+	return wrapper.Config[*pb.SetSingleConvSettingReq, *pb.SetSingleConvSettingResp]{
+		Do: func(ctx context.Context, in *pb.SetSingleConvSettingReq, opts ...grpc.CallOption) (*pb.SetSingleConvSettingResp, error) {
 			requestTime := time.Now()
-			resp, err := svcCtx.RelationService().SetSingleChatSetting(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			resp, err := svcCtx.RelationService().SetSingleConvSetting(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetSingleConvSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
-		NewRequest: func() *pb.SetSingleChatSettingReq {
-			return &pb.SetSingleChatSettingReq{}
+		NewRequest: func() *pb.SetSingleConvSettingReq {
+			return &pb.SetSingleConvSettingReq{}
 		},
 	}
 }
 
-// GetSingleChatSettingConfig ...
-func GetSingleChatSettingConfig[REQ *pb.GetSingleChatSettingReq, RESP *pb.GetSingleChatSettingResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetSingleChatSettingReq, *pb.GetSingleChatSettingResp] {
-	return wrapper.Config[*pb.GetSingleChatSettingReq, *pb.GetSingleChatSettingResp]{
-		Do: func(ctx context.Context, in *pb.GetSingleChatSettingReq, opts ...grpc.CallOption) (*pb.GetSingleChatSettingResp, error) {
+// GetSingleConvSettingConfig ...
+func GetSingleConvSettingConfig[REQ *pb.GetSingleConvSettingReq, RESP *pb.GetSingleConvSettingResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetSingleConvSettingReq, *pb.GetSingleConvSettingResp] {
+	return wrapper.Config[*pb.GetSingleConvSettingReq, *pb.GetSingleConvSettingResp]{
+		Do: func(ctx context.Context, in *pb.GetSingleConvSettingReq, opts ...grpc.CallOption) (*pb.GetSingleConvSettingResp, error) {
 			requestTime := time.Now()
-			resp, err := svcCtx.RelationService().GetSingleChatSetting(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetSingleChatSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			resp, err := svcCtx.RelationService().GetSingleConvSetting(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetSingleConvSetting", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
 			return resp, err
 		},
-		NewRequest: func() *pb.GetSingleChatSettingReq {
-			return &pb.GetSingleChatSettingReq{}
-		},
-	}
-}
-
-// SetSingleMsgNotifyOptConfig ...
-func SetSingleMsgNotifyOptConfig[REQ *pb.SetSingleMsgNotifyOptReq, RESP *pb.SetSingleMsgNotifyOptResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.SetSingleMsgNotifyOptReq, *pb.SetSingleMsgNotifyOptResp] {
-	return wrapper.Config[*pb.SetSingleMsgNotifyOptReq, *pb.SetSingleMsgNotifyOptResp]{
-		Do: func(ctx context.Context, in *pb.SetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*pb.SetSingleMsgNotifyOptResp, error) {
-			requestTime := time.Now()
-			resp, err := svcCtx.RelationService().SetSingleMsgNotifyOpt(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "SetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
-			return resp, err
-		},
-		NewRequest: func() *pb.SetSingleMsgNotifyOptReq {
-			return &pb.SetSingleMsgNotifyOptReq{}
-		},
-	}
-}
-
-// GetSingleMsgNotifyOptConfig ...
-func GetSingleMsgNotifyOptConfig[REQ *pb.GetSingleMsgNotifyOptReq, RESP *pb.GetSingleMsgNotifyOptResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetSingleMsgNotifyOptReq, *pb.GetSingleMsgNotifyOptResp] {
-	return wrapper.Config[*pb.GetSingleMsgNotifyOptReq, *pb.GetSingleMsgNotifyOptResp]{
-		Do: func(ctx context.Context, in *pb.GetSingleMsgNotifyOptReq, opts ...grpc.CallOption) (*pb.GetSingleMsgNotifyOptResp, error) {
-			requestTime := time.Now()
-			resp, err := svcCtx.RelationService().GetSingleMsgNotifyOpt(ctx, in, opts...)
-			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetSingleMsgNotifyOpt", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
-			return resp, err
-		},
-		NewRequest: func() *pb.GetSingleMsgNotifyOptReq {
-			return &pb.GetSingleMsgNotifyOptReq{}
+		NewRequest: func() *pb.GetSingleConvSettingReq {
+			return &pb.GetSingleConvSettingReq{}
 		},
 	}
 }
@@ -172,6 +142,21 @@ func GetFriendListConfig[REQ *pb.GetFriendListReq, RESP *pb.GetFriendListResp](s
 		},
 		NewRequest: func() *pb.GetFriendListReq {
 			return &pb.GetFriendListReq{}
+		},
+	}
+}
+
+// GetMyFriendEventListConfig ...
+func GetMyFriendEventListConfig[REQ *pb.GetMyFriendEventListReq, RESP *pb.GetMyFriendEventListResp](svcCtx *svc.ServiceContext) wrapper.Config[*pb.GetMyFriendEventListReq, *pb.GetMyFriendEventListResp] {
+	return wrapper.Config[*pb.GetMyFriendEventListReq, *pb.GetMyFriendEventListResp]{
+		Do: func(ctx context.Context, in *pb.GetMyFriendEventListReq, opts ...grpc.CallOption) (*pb.GetMyFriendEventListResp, error) {
+			requestTime := time.Now()
+			resp, err := svcCtx.RelationService().GetMyFriendEventList(ctx, in, opts...)
+			go logic.NewApiLogLogic(ctx, svcCtx).ApiLog(in.GetCommonReq(), "GetMyFriendEventList", resp.GetCommonResp(), utils.AnyToString(in), utils.AnyToString(resp), requestTime, time.Now(), err)
+			return resp, err
+		},
+		NewRequest: func() *pb.GetMyFriendEventListReq {
+			return &pb.GetMyFriendEventListReq{}
 		},
 	}
 }

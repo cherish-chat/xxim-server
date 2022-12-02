@@ -13,13 +13,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	zedis "github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
-	"strconv"
-	"strings"
 	"time"
 )
-
-// ConvIdSeparator 会话id之间的分隔符
-const ConvIdSeparator = ":"
 
 type (
 	Msg struct {
@@ -34,13 +29,11 @@ type (
 		// 服务端接收到消息的时间 13位时间戳
 		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index;"`
 		// 发送者id
-		Sender string `bson:"sender" gorm:"column:sender;type:char(32);index;"`
+		SenderId string `bson:"senderId" gorm:"column:senderId;type:char(32);index;"`
 		// 发送者信息
-		SenderInfo string `bson:"senderInfo" gorm:"column:senderInfo;type:text;"`
+		SenderInfo xorm.Bytes `bson:"senderInfo" gorm:"column:senderInfo;type:blob;"`
 		// 发送者在会话中的信息
-		SenderConvInfo string `bson:"senderConvInfo" gorm:"column:senderConvInfo;type:text;"`
-		// 接收者id (单聊时为对方id, 群聊时为群id)
-		Receiver MsgReceiver `bson:"receiver" gorm:"column:receiver;type:JSON;"`
+		SenderConvInfo xorm.Bytes `bson:"senderConvInfo" gorm:"column:senderConvInfo;type:blob;"`
 		// 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
 		AtUsers xorm.SliceString `bson:"atUsers" gorm:"column:atUsers;type:JSON;"`
 		// 消息内容类型
@@ -62,11 +55,7 @@ type (
 		NotFound bool
 	}
 	ContentType = pb.ContentType
-	MsgReceiver struct {
-		UserId  string `bson:"userId"`  // 单聊时为对方的userId
-		GroupId string `bson:"groupId"` // 群聊时为群组id
-	}
-	MsgOptions struct {
+	MsgOptions  struct {
 		OfflinePush       bool `bson:"offlinePush"`       // 是否需要离线推送
 		StorageForServer  bool `bson:"storageForServer"`  // 服务端是否需要保存消息
 		StorageForClient  bool `bson:"storageForClient"`  // 客户端是否需要保存消息
@@ -86,32 +75,19 @@ func (m *Msg) TableName() string {
 }
 
 func NewMsgFromPb(in *pb.MsgData) *Msg {
-	userId, groupId := "", ""
-	if in.Receiver != nil {
-		if in.Receiver.UserId != nil {
-			userId = *in.Receiver.UserId
-		}
-		if in.Receiver.GroupId != nil {
-			groupId = *in.Receiver.GroupId
-		}
-	}
 	return &Msg{
 		ServerMsgId:    in.ServerMsgId,
 		ConvId:         in.ConvId,
 		ClientMsgId:    in.ClientMsgId,
 		ClientTime:     utils.AnyToInt64(in.ClientTime),
 		ServerTime:     utils.AnyToInt64(in.ServerTime),
-		Sender:         in.Sender,
+		SenderId:       in.SenderId,
 		SenderInfo:     in.SenderInfo,
 		SenderConvInfo: in.SenderConvInfo,
-		Receiver: MsgReceiver{
-			UserId:  userId,
-			GroupId: groupId,
-		},
-		AtUsers:     utils.AnyMakeSlice(in.AtUsers),
-		ContentType: in.ContentType,
-		Content:     in.Content,
-		Seq:         utils.AnyToInt64(in.Seq),
+		AtUsers:        utils.AnyMakeSlice(in.AtUsers),
+		ContentType:    in.ContentType,
+		Content:        in.Content,
+		Seq:            utils.AnyToInt64(in.Seq),
 		Options: MsgOptions{
 			OfflinePush:       in.Options.OfflinePush,
 			StorageForServer:  in.Options.StorageForServer,
@@ -131,7 +107,7 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 
 func (m *Msg) NotFound(serverId string) {
 	m.ServerMsgId = serverId
-	convId, seq := ParseConvServerMsgId(serverId)
+	convId, seq := pb.ParseConvServerMsgId(serverId)
 	m.ConvId = convId
 	m.Seq = seq
 	m.internal.NotFound = true
@@ -141,20 +117,9 @@ func (m *Msg) IsNotFound() bool {
 	return m.internal.NotFound
 }
 
-func (m *Msg) AutoConvId() *Msg {
-	if m.Receiver.GroupId == "" {
-		// 单聊
-		m.ConvId = SingleConvId(m.Sender, m.Receiver.UserId)
-	} else {
-		// 群聊
-		m.ConvId = m.Receiver.GroupId
-	}
-	return m
-}
-
 func (m *Msg) SetSeq(seq int64) *Msg {
 	m.Seq = seq
-	m.ServerMsgId = ServerMsgId(m.ConvId, seq)
+	m.ServerMsgId = pb.ServerMsgId(m.ConvId, seq)
 	return m
 }
 
@@ -182,17 +147,13 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		ClientMsgId:    m.ClientMsgId,
 		ClientTime:     utils.AnyToString(m.ClientTime),
 		ServerTime:     utils.AnyToString(m.ServerTime),
-		Sender:         m.Sender,
+		SenderId:       m.SenderId,
 		SenderInfo:     m.SenderInfo,
 		SenderConvInfo: m.SenderConvInfo,
-		Receiver: &pb.MsgData_Receiver{
-			UserId:  &m.Receiver.UserId,
-			GroupId: &m.Receiver.GroupId,
-		},
-		AtUsers:     m.AtUsers,
-		ContentType: m.ContentType,
-		Content:     m.Content,
-		Seq:         utils.AnyToString(m.Seq),
+		AtUsers:        m.AtUsers,
+		ContentType:    m.ContentType,
+		Content:        m.Content,
+		Seq:            utils.AnyToString(m.Seq),
 		Options: &pb.MsgData_Options{
 			OfflinePush:       m.Options.OfflinePush,
 			StorageForServer:  m.Options.StorageForServer,
@@ -212,38 +173,6 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 
 func (m *Msg) ExpireSeconds() int {
 	return xredis.ExpireMinutes(5)
-}
-
-func ServerMsgId(convId string, seq int64) string {
-	return convId + ConvIdSeparator + strconv.FormatInt(seq, 10)
-}
-
-func SingleConvId(id1 string, id2 string) string {
-	if id1 < id2 {
-		return id1 + ConvIdSeparator + id2
-	}
-	return id2 + ConvIdSeparator + id1
-}
-
-func ParseSingleServerMsgId(serverMsgId string) (convId string, seq int64) {
-	arr := strings.Split(serverMsgId, ConvIdSeparator)
-	if len(arr) == 3 {
-		convId = arr[0] + ConvIdSeparator + arr[1]
-		seq, _ = strconv.ParseInt(arr[2], 10, 64)
-	}
-	return
-}
-
-func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {
-	arr := strings.Split(serverMsgId, ConvIdSeparator)
-	if len(arr) == 2 {
-		convId = arr[0]
-		seq, _ = strconv.ParseInt(arr[1], 10, 64)
-	} else if len(arr) == 3 {
-		convId = arr[0] + ConvIdSeparator + arr[1]
-		seq, _ = strconv.ParseInt(arr[2], 10, 64)
-	}
-	return
 }
 
 func MsgFromMysql(
@@ -310,14 +239,6 @@ func (m Msg) Value() (driver.Value, error) {
 }
 
 func (m *Msg) Scan(src interface{}) error {
-	return json.Unmarshal(src.([]byte), m)
-}
-
-func (m MsgReceiver) Value() (driver.Value, error) {
-	return json.Marshal(m)
-}
-
-func (m *MsgReceiver) Scan(src interface{}) error {
 	return json.Unmarshal(src.([]byte), m)
 }
 

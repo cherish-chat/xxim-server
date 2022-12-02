@@ -12,3 +12,7 @@ func FriendList(userId string) string {
 func BlacklistList(userId string) string {
 	return "h:model:blacklist:" + userId
 }
+
+func SingleConvSetting(convId string, userId string) string {
+	return "s:model:single_conv_setting:" + convId + ":" + userId
+}

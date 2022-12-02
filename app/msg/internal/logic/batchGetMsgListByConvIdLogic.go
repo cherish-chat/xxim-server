@@ -17,21 +17,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetMsgListByConvIdLogic struct {
+type BatchGetMsgListByConvIdLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetMsgListByConvIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMsgListByConvIdLogic {
-	return &GetMsgListByConvIdLogic{
+func NewBatchGetMsgListByConvIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchGetMsgListByConvIdLogic {
+	return &BatchGetMsgListByConvIdLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.Msg, err error) {
+func (l *BatchGetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.Msg, err error) {
 	// 从redis中获取
 	redisMsgList, err := l.svcCtx.Redis().MgetCtx(l.ctx, utils.UpdateSlice(ids, func(v string) string {
 		return rediskey.MsgKey(v)
@@ -42,22 +42,22 @@ func (l *GetMsgListByConvIdLogic) fromRedis(ids []string) (msgList []*msgmodel.M
 	}
 	for i, redisMsg := range redisMsgList {
 		msg := &msgmodel.Msg{}
-		if redisMsg == xredis.NotFound || redisMsg == "" {
+		if redisMsg == xredis.NotFound {
 			id := ids[i]
 			msg.NotFound(id)
-		} else {
+		} else if redisMsg != "" {
 			err = json.Unmarshal([]byte(redisMsg), msg)
 			if err != nil {
 				l.Errorf("msg Unmarshal error: %v redisMsg: %s", err, redisMsg)
 				continue
 			}
+			msgList = append(msgList, msg)
 		}
-		msgList = append(msgList, msg)
 	}
 	return msgList, nil
 }
 
-func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []*msgmodel.Msg, err error) {
+func (l *BatchGetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []*msgmodel.Msg, err error) {
 	msgs, err := l.fromRedis(ids)
 	if err != nil {
 		return msgmodel.MsgFromMysql(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), ids)
@@ -84,17 +84,17 @@ func (l *GetMsgListByConvIdLogic) proxyGetMsgListByIds(ids []string) (msgList []
 	return msgs, nil
 }
 
-// GetMsgListByConvId 通过seq拉取一个会话的消息
-func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
-	if len(in.SeqList) == 0 {
-		return &pb.GetMsgListResp{}, nil
-	}
-	// 会话id
-	convId := in.ConvId
-	// 组成想要查询的 id 列表
+// BatchGetMsgListByConvId 通过seq拉取一个会话的消息
+func (l *BatchGetMsgListByConvIdLogic) BatchGetMsgListByConvId(in *pb.BatchGetMsgListByConvIdReq) (*pb.GetMsgListResp, error) {
 	expectIds := make([]string, 0)
-	for _, seq := range in.SeqList {
-		expectIds = append(expectIds, msgmodel.ServerMsgId(convId, utils.AnyToInt64(seq)))
+	for _, item := range in.Items {
+		convId := item.ConvId
+		for _, seq := range item.SeqList {
+			expectIds = append(expectIds, pb.ServerMsgId(convId, utils.AnyToInt64(seq)))
+		}
+	}
+	if len(expectIds) == 0 {
+		return &pb.GetMsgListResp{}, nil
 	}
 	// 查询
 	var msgList []*msgmodel.Msg
@@ -120,9 +120,9 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 	}
 	for _, id := range expectIds {
 		if _, ok := msgMap[id]; !ok {
-			_, seq := msgmodel.ParseSingleServerMsgId(id)
+			convId, seq := pb.ParseConvServerMsgId(id)
 			nullMsg := &msgmodel.Msg{}
-			nullMsg.NotFound(msgmodel.ServerMsgId(convId, seq))
+			nullMsg.NotFound(pb.ServerMsgId(convId, seq))
 			msgList = append(msgList, nullMsg)
 			msgMap[id] = nullMsg
 		}
@@ -144,7 +144,7 @@ func (l *GetMsgListByConvIdLogic) GetMsgListByConvId(in *pb.GetMsgListByConvIdRe
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: resp})
 			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{
 				GetUserConnReq: &pb.GetUserConnReq{
-					UserIds: []string{in.CommonReq.Id},
+					UserIds: []string{in.CommonReq.UserId},
 					Devices: []string{in.CommonReq.DeviceId},
 				},
 				Event: pb.PushEvent_PushMsgDataList,

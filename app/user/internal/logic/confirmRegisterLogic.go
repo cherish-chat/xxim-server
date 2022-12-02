@@ -46,8 +46,8 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		Id:           userTmp.UserId,
 		Password:     userTmp.Password,
 		PasswordSalt: userTmp.PasswordSalt,
-		Nickname:     l.svcCtx.SystemConfigMgr.Get("nickname.default"),
-		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars.default"), ""),
+		Nickname:     l.svcCtx.SystemConfigMgr.Get("nickname_default"),
+		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
 		RegInfo:      userTmp.RegInfo,
 	}
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)

@@ -2,6 +2,8 @@ package pb
 
 import (
 	"encoding/json"
+	"math"
+	"strconv"
 )
 
 func (x *CommonResp) SetMsg(msg string) {
@@ -133,4 +135,15 @@ func (x *IpRegion) Scan(input interface{}) error {
 
 	}
 	return nil
+}
+
+func PageIndex(pageIndex string) int64 {
+	if pageIndex == "" {
+		return math.MaxInt64
+	}
+	parseInt, err := strconv.ParseInt(pageIndex, 10, 64)
+	if err != nil {
+		return math.MaxInt64
+	}
+	return parseInt
 }

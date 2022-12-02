@@ -36,7 +36,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 	// 验证是否是我的好友
 	areFriendsResp, err := l.svcCtx.RelationService().AreFriends(l.ctx, &pb.AreFriendsReq{
 		CommonReq: in.CommonReq,
-		A:         in.CommonReq.Id,
+		A:         in.CommonReq.UserId,
 		BList:     in.FriendIds,
 	})
 	if err != nil {

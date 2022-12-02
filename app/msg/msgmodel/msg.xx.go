@@ -32,15 +32,41 @@ func CreateCustomMsgToUser(
 	return &Msg{
 		ClientMsgId:    utils.GenId(),
 		ClientTime:     time.Now().UnixMilli(),
-		Sender:         sender.Id,
-		SenderInfo:     "",
-		SenderConvInfo: "",
-		Receiver:       MsgReceiver{UserId: userId},
-		ConvId:         SingleConvId(sender.Id, userId),
+		SenderId:       sender.Id,
+		SenderInfo:     make([]byte, 0),
+		SenderConvInfo: make([]byte, 0),
+		ConvId:         pb.SingleConvId(sender.Id, userId),
 		ContentType:    contentType,
 		Content:        utils.AnyToBytes(content),
 		Options:        options,
 		OfflinePush:    offlinePush,
 		Ext:            utils.AnyToBytes(ext),
+	}
+}
+
+func CreateConvProfileChangeMsg(
+	userId string,
+	convId string,
+	content []byte,
+) *Msg {
+	return &Msg{
+		ClientMsgId:    utils.GenId(),
+		ClientTime:     time.Now().UnixMilli(),
+		SenderId:       userId,
+		SenderInfo:     make([]byte, 0),
+		SenderConvInfo: make([]byte, 0),
+		ConvId:         convId,
+		ContentType:    pb.ContentType_CONV_PROFILE_CHANGE,
+		Content:        content,
+		Options: MsgOptions{
+			OfflinePush:       false,
+			StorageForServer:  true,
+			StorageForClient:  true,
+			UpdateUnreadCount: false,
+			NeedDecrypt:       false,
+			UpdateConvMsg:     false,
+		},
+		OfflinePush: nil,
+		Ext:         make([]byte, 0),
 	}
 }

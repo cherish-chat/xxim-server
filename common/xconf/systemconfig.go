@@ -3,6 +3,7 @@ package xconf
 import (
 	"context"
 	"encoding/json"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
@@ -96,39 +97,66 @@ func (s *SystemConfigMgr) GetSliceCtx(ctx context.Context, key string) []string 
 	return value
 }
 
+func (s *SystemConfigMgr) MGetOrDefaultCtx(ctx context.Context, kv map[string]string) map[string]string {
+	configs := make([]*SystemConfig, 0)
+	ks := utils.AnyMapKeys(kv)
+	err := s.mysql.WithContext(ctx).Model(&SystemConfig{}).Where("namespace = ? and serviceName = ? and `key` in (?)", s.Namespace, s.ServiceName, ks).Find(&configs).Error
+	if err != nil {
+		logx.WithContext(ctx).Errorf("获取配置失败: %v", err)
+	}
+	m := make(map[string]string)
+	for _, config := range configs {
+		m[config.Key] = config.Value
+	}
+	for k, v := range kv {
+		if _, ok := m[k]; !ok {
+			m[k] = v
+		}
+	}
+	return m
+}
+
 func (s *SystemConfigMgr) initData() {
 	configs := []*SystemConfig{
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "signature.if_not_set",
+			Key:          "signature_if_not_set", // 未设置签名时的默认签名
 			Value:        "这个人很懒，还没有设置签名哦～",
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "nickname.default",
+			Key:          "nickname_default", // 默认昵称
 			Value:        "XX用户",
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "user",
-			Key:          "avatars.default",
+			Key:          "avatars_default", // 默认头像
 			Value:        `["https://go-zero.dev/img/footer/go-zero.svg"]`,
 			InputOptions: nil,
 		},
 		{
 			Namespace:    "system",
 			ServiceName:  "relation",
-			Key:          "friend_max_count",
+			Key:          "app.friend_max_count", // 好友最大数量
 			Value:        `20000`,
 			InputOptions: nil,
 		},
+		{
+			Namespace:   "system",
+			ServiceName: "user",
+			Key:         "app.register_max_count_per_day_ip", // 每个IP每天最大注册数量
+			Value:       `10`,
+		},
 	}
-	err := xorm.InsertMany(s.mysql, &SystemConfig{}, configs)
-	if err != nil {
-		logx.Errorf("初始化配置失败: %v", err)
+	for _, config := range configs {
+		err := xorm.InsertOne(s.mysql, config)
+		if err != nil {
+			logx.Errorf("初始化配置失败: %v", err)
+		}
 	}
 }

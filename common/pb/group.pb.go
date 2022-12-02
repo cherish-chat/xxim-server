@@ -2980,7 +2980,9 @@ type GetGroupMemberListReq struct {
 	// 群ID
 	GroupId string `protobuf:"bytes,2,opt,name=groupId,proto3" json:"groupId"`
 	// 分页
-	Page *Page `protobuf:"bytes,3,opt,name=page,proto3" json:"page"`
+	Page   *Page                                           `protobuf:"bytes,3,opt,name=page,proto3" json:"page"`
+	Filter *GetGroupMemberListReq_GetGroupMemberListFilter `protobuf:"bytes,4,opt,name=filter,proto3" json:"filter"`
+	Opt    *GetGroupMemberListReq_GetGroupMemberListOpt    `protobuf:"bytes,5,opt,name=opt,proto3" json:"opt"`
 }
 
 func (x *GetGroupMemberListReq) Reset() {
@@ -3032,6 +3034,20 @@ func (x *GetGroupMemberListReq) GetGroupId() string {
 func (x *GetGroupMemberListReq) GetPage() *Page {
 	if x != nil {
 		return x.Page
+	}
+	return nil
+}
+
+func (x *GetGroupMemberListReq) GetFilter() *GetGroupMemberListReq_GetGroupMemberListFilter {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+func (x *GetGroupMemberListReq) GetOpt() *GetGroupMemberListReq_GetGroupMemberListOpt {
+	if x != nil {
+		return x.Opt
 	}
 	return nil
 }
@@ -3651,16 +3667,125 @@ func (x *GroupSetting_JoinGroupOpt) GetAnswer() string {
 	return ""
 }
 
+// Filter
+type GetGroupMemberListReq_GetGroupMemberListFilter struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// 是否接受离线推送
+	NoDisturb *bool `protobuf:"varint,1,opt,name=noDisturb,proto3,oneof" json:"noDisturb"`
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListFilter) Reset() {
+	*x = GetGroupMemberListReq_GetGroupMemberListFilter{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_group_proto_msgTypes[54]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListFilter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGroupMemberListReq_GetGroupMemberListFilter) ProtoMessage() {}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListFilter) ProtoReflect() protoreflect.Message {
+	mi := &file_group_proto_msgTypes[54]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetGroupMemberListReq_GetGroupMemberListFilter.ProtoReflect.Descriptor instead.
+func (*GetGroupMemberListReq_GetGroupMemberListFilter) Descriptor() ([]byte, []int) {
+	return file_group_proto_rawDescGZIP(), []int{43, 0}
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListFilter) GetNoDisturb() bool {
+	if x != nil && x.NoDisturb != nil {
+		return *x.NoDisturb
+	}
+	return false
+}
+
+type GetGroupMemberListReq_GetGroupMemberListOpt struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// 是否只获取id
+	OnlyId *bool `protobuf:"varint,1,opt,name=onlyId,proto3,oneof" json:"onlyId"`
+	// 是否获取消息接收选项
+	GetNotifyOpt *bool `protobuf:"varint,2,opt,name=getNotifyOpt,proto3,oneof" json:"getNotifyOpt"`
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListOpt) Reset() {
+	*x = GetGroupMemberListReq_GetGroupMemberListOpt{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_group_proto_msgTypes[55]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListOpt) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetGroupMemberListReq_GetGroupMemberListOpt) ProtoMessage() {}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListOpt) ProtoReflect() protoreflect.Message {
+	mi := &file_group_proto_msgTypes[55]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetGroupMemberListReq_GetGroupMemberListOpt.ProtoReflect.Descriptor instead.
+func (*GetGroupMemberListReq_GetGroupMemberListOpt) Descriptor() ([]byte, []int) {
+	return file_group_proto_rawDescGZIP(), []int{43, 1}
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListOpt) GetOnlyId() bool {
+	if x != nil && x.OnlyId != nil {
+		return *x.OnlyId
+	}
+	return false
+}
+
+func (x *GetGroupMemberListReq_GetGroupMemberListOpt) GetGetNotifyOpt() bool {
+	if x != nil && x.GetNotifyOpt != nil {
+		return *x.GetNotifyOpt
+	}
+	return false
+}
+
 type GetGroupMemberListResp_GroupMember struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	UserId    string        `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId"`
+	NotifyOpt *MsgNotifyOpt `protobuf:"bytes,2,opt,name=notifyOpt,proto3" json:"notifyOpt"`
 }
 
 func (x *GetGroupMemberListResp_GroupMember) Reset() {
 	*x = GetGroupMemberListResp_GroupMember{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_group_proto_msgTypes[54]
+		mi := &file_group_proto_msgTypes[56]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3673,7 +3798,7 @@ func (x *GetGroupMemberListResp_GroupMember) String() string {
 func (*GetGroupMemberListResp_GroupMember) ProtoMessage() {}
 
 func (x *GetGroupMemberListResp_GroupMember) ProtoReflect() protoreflect.Message {
-	mi := &file_group_proto_msgTypes[54]
+	mi := &file_group_proto_msgTypes[56]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3687,6 +3812,20 @@ func (x *GetGroupMemberListResp_GroupMember) ProtoReflect() protoreflect.Message
 // Deprecated: Use GetGroupMemberListResp_GroupMember.ProtoReflect.Descriptor instead.
 func (*GetGroupMemberListResp_GroupMember) Descriptor() ([]byte, []int) {
 	return file_group_proto_rawDescGZIP(), []int{44, 0}
+}
+
+func (x *GetGroupMemberListResp_GroupMember) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetGroupMemberListResp_GroupMember) GetNotifyOpt() *MsgNotifyOpt {
+	if x != nil {
+		return x.NotifyOpt
+	}
+	return nil
 }
 
 // 过滤
@@ -3705,7 +3844,7 @@ type GetMyGroupListReq_Filter struct {
 func (x *GetMyGroupListReq_Filter) Reset() {
 	*x = GetMyGroupListReq_Filter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_group_proto_msgTypes[55]
+		mi := &file_group_proto_msgTypes[57]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3718,7 +3857,7 @@ func (x *GetMyGroupListReq_Filter) String() string {
 func (*GetMyGroupListReq_Filter) ProtoMessage() {}
 
 func (x *GetMyGroupListReq_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_group_proto_msgTypes[55]
+	mi := &file_group_proto_msgTypes[57]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3757,7 +3896,7 @@ type GetMyGroupListResp_Group struct {
 func (x *GetMyGroupListResp_Group) Reset() {
 	*x = GetMyGroupListResp_Group{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_group_proto_msgTypes[56]
+		mi := &file_group_proto_msgTypes[58]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -3770,7 +3909,7 @@ func (x *GetMyGroupListResp_Group) String() string {
 func (*GetMyGroupListResp_Group) ProtoMessage() {}
 
 func (x *GetMyGroupListResp_Group) ProtoReflect() protoreflect.Message {
-	mi := &file_group_proto_msgTypes[56]
+	mi := &file_group_proto_msgTypes[58]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4166,26 +4305,52 @@ var file_group_proto_rawDesc = []byte{
 	0x65, 0x6d, 0x62, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d,
 	0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
 	0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63,
-	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x7c, 0x0a, 0x15, 0x47, 0x65, 0x74,
-	0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52,
-	0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f,
-	0x6e, 0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12,
-	0x18, 0x0a, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64, 0x12, 0x1c, 0x0a, 0x04, 0x70, 0x61, 0x67,
-	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x62, 0x2e, 0x50, 0x61, 0x67,
-	0x65, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x22, 0xa9, 0x01, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x47,
-	0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65,
-	0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d,
-	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
-	0x73, 0x70, 0x12, 0x50, 0x0a, 0x0f, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65,
-	0x72, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x70, 0x62,
-	0x2e, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c,
-	0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x2e, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d,
-	0x62, 0x65, 0x72, 0x52, 0x0f, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72,
-	0x4c, 0x69, 0x73, 0x74, 0x1a, 0x0d, 0x0a, 0x0b, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d,
-	0x62, 0x65, 0x72, 0x22, 0x58, 0x0a, 0x0f, 0x44, 0x69, 0x73, 0x6d, 0x69, 0x73, 0x73, 0x47, 0x72,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0xd3, 0x03, 0x0a, 0x15, 0x47, 0x65,
+	0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74,
+	0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d,
+	0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71,
+	0x12, 0x18, 0x0a, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x49, 0x64, 0x12, 0x1c, 0x0a, 0x04, 0x70, 0x61,
+	0x67, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x62, 0x2e, 0x50, 0x61,
+	0x67, 0x65, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x4a, 0x0a, 0x06, 0x66, 0x69, 0x6c, 0x74,
+	0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x32, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65,
+	0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74,
+	0x52, 0x65, 0x71, 0x2e, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62,
+	0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x06, 0x66, 0x69,
+	0x6c, 0x74, 0x65, 0x72, 0x12, 0x41, 0x0a, 0x03, 0x6f, 0x70, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x2f, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d,
+	0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x2e, 0x47, 0x65, 0x74,
+	0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x4f,
+	0x70, 0x74, 0x52, 0x03, 0x6f, 0x70, 0x74, 0x1a, 0x4b, 0x0a, 0x18, 0x47, 0x65, 0x74, 0x47, 0x72,
+	0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x69, 0x6c,
+	0x74, 0x65, 0x72, 0x12, 0x21, 0x0a, 0x09, 0x6e, 0x6f, 0x44, 0x69, 0x73, 0x74, 0x75, 0x72, 0x62,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52, 0x09, 0x6e, 0x6f, 0x44, 0x69, 0x73, 0x74,
+	0x75, 0x72, 0x62, 0x88, 0x01, 0x01, 0x42, 0x0c, 0x0a, 0x0a, 0x5f, 0x6e, 0x6f, 0x44, 0x69, 0x73,
+	0x74, 0x75, 0x72, 0x62, 0x1a, 0x79, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70,
+	0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x70, 0x74, 0x12, 0x1b, 0x0a,
+	0x06, 0x6f, 0x6e, 0x6c, 0x79, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52,
+	0x06, 0x6f, 0x6e, 0x6c, 0x79, 0x49, 0x64, 0x88, 0x01, 0x01, 0x12, 0x27, 0x0a, 0x0c, 0x67, 0x65,
+	0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x4f, 0x70, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08,
+	0x48, 0x01, 0x52, 0x0c, 0x67, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x4f, 0x70, 0x74,
+	0x88, 0x01, 0x01, 0x42, 0x09, 0x0a, 0x07, 0x5f, 0x6f, 0x6e, 0x6c, 0x79, 0x49, 0x64, 0x42, 0x0f,
+	0x0a, 0x0d, 0x5f, 0x67, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x4f, 0x70, 0x74, 0x22,
+	0xf1, 0x01, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62,
+	0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x50, 0x0a, 0x0f, 0x67, 0x72,
+	0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x18, 0x02, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75,
+	0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x2e,
+	0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x52, 0x0f, 0x67, 0x72, 0x6f,
+	0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x4c, 0x69, 0x73, 0x74, 0x1a, 0x55, 0x0a, 0x0b,
+	0x47, 0x72, 0x6f, 0x75, 0x70, 0x4d, 0x65, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x75,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65,
+	0x72, 0x49, 0x64, 0x12, 0x2e, 0x0a, 0x09, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x79, 0x4f, 0x70, 0x74,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x70, 0x62, 0x2e, 0x4d, 0x73, 0x67, 0x4e,
+	0x6f, 0x74, 0x69, 0x66, 0x79, 0x4f, 0x70, 0x74, 0x52, 0x09, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x79,
+	0x4f, 0x70, 0x74, 0x22, 0x58, 0x0a, 0x0f, 0x44, 0x69, 0x73, 0x6d, 0x69, 0x73, 0x73, 0x47, 0x72,
 	0x6f, 0x75, 0x70, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
 	0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43,
 	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
@@ -4373,194 +4538,199 @@ func file_group_proto_rawDescGZIP() []byte {
 }
 
 var file_group_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_group_proto_msgTypes = make([]protoimpl.MessageInfo, 58)
+var file_group_proto_msgTypes = make([]protoimpl.MessageInfo, 60)
 var file_group_proto_goTypes = []interface{}{
-	(GroupDisturbOpt)(0),                       // 0: pb.GroupDisturbOpt
-	(GroupRole)(0),                             // 1: pb.GroupRole
-	(GroupSetting_JoinGroupOpt_Type)(0),        // 2: pb.GroupSetting.JoinGroupOpt.Type
-	(GetMyGroupListReq_Opt)(0),                 // 3: pb.GetMyGroupListReq.Opt
-	(*CreateGroupReq)(nil),                     // 4: pb.CreateGroupReq
-	(*CreateGroupResp)(nil),                    // 5: pb.CreateGroupResp
-	(*GetGroupHomeReq)(nil),                    // 6: pb.GetGroupHomeReq
-	(*GetGroupHomeResp)(nil),                   // 7: pb.GetGroupHomeResp
-	(*InviteFriendToGroupReq)(nil),             // 8: pb.InviteFriendToGroupReq
-	(*InviteFriendToGroupResp)(nil),            // 9: pb.InviteFriendToGroupResp
-	(*CreateGroupNoticeReq)(nil),               // 10: pb.CreateGroupNoticeReq
-	(*CreateGroupNoticeResp)(nil),              // 11: pb.CreateGroupNoticeResp
-	(*DeleteGroupNoticeReq)(nil),               // 12: pb.DeleteGroupNoticeReq
-	(*DeleteGroupNoticeResp)(nil),              // 13: pb.DeleteGroupNoticeResp
-	(*EditGroupNoticeReq)(nil),                 // 14: pb.EditGroupNoticeReq
-	(*EditGroupNoticeResp)(nil),                // 15: pb.EditGroupNoticeResp
-	(*GetGroupNoticeListReq)(nil),              // 16: pb.GetGroupNoticeListReq
-	(*GroupNotice)(nil),                        // 17: pb.GroupNotice
-	(*GetGroupNoticeListResp)(nil),             // 18: pb.GetGroupNoticeListResp
-	(*SetGroupMemberInfoReq)(nil),              // 19: pb.SetGroupMemberInfoReq
-	(*SetGroupMemberInfoResp)(nil),             // 20: pb.SetGroupMemberInfoResp
-	(*GetGroupMemberInfoReq)(nil),              // 21: pb.GetGroupMemberInfoReq
-	(*GroupMemberInfo)(nil),                    // 22: pb.GroupMemberInfo
-	(*GetGroupMemberInfoResp)(nil),             // 23: pb.GetGroupMemberInfoResp
-	(*EditGroupInfoReq)(nil),                   // 24: pb.EditGroupInfoReq
-	(*EditGroupInfoResp)(nil),                  // 25: pb.EditGroupInfoResp
-	(*SetGroupSettingReq)(nil),                 // 26: pb.SetGroupSettingReq
-	(*GroupSetting)(nil),                       // 27: pb.GroupSetting
-	(*SetGroupSettingResp)(nil),                // 28: pb.SetGroupSettingResp
-	(*GetGroupSettingReq)(nil),                 // 29: pb.GetGroupSettingReq
-	(*GetGroupSettingResp)(nil),                // 30: pb.GetGroupSettingResp
-	(*TransferGroupOwnerReq)(nil),              // 31: pb.TransferGroupOwnerReq
-	(*TransferGroupOwnerResp)(nil),             // 32: pb.TransferGroupOwnerResp
-	(*SetGroupMemberRoleReq)(nil),              // 33: pb.SetGroupMemberRoleReq
-	(*SetGroupMemberRoleResp)(nil),             // 34: pb.SetGroupMemberRoleResp
-	(*KickGroupMemberReq)(nil),                 // 35: pb.KickGroupMemberReq
-	(*KickGroupMemberResp)(nil),                // 36: pb.KickGroupMemberResp
-	(*QuitGroupReq)(nil),                       // 37: pb.QuitGroupReq
-	(*QuitGroupResp)(nil),                      // 38: pb.QuitGroupResp
-	(*BanGroupMemberReq)(nil),                  // 39: pb.BanGroupMemberReq
-	(*BanGroupMemberResp)(nil),                 // 40: pb.BanGroupMemberResp
-	(*BanAllGroupMemberReq)(nil),               // 41: pb.BanAllGroupMemberReq
-	(*BanAllGroupMemberResp)(nil),              // 42: pb.BanAllGroupMemberResp
-	(*UnbanGroupMemberReq)(nil),                // 43: pb.UnbanGroupMemberReq
-	(*UnbanGroupMemberResp)(nil),               // 44: pb.UnbanGroupMemberResp
-	(*UnbanAllGroupMemberReq)(nil),             // 45: pb.UnbanAllGroupMemberReq
-	(*UnbanAllGroupMemberResp)(nil),            // 46: pb.UnbanAllGroupMemberResp
-	(*GetGroupMemberListReq)(nil),              // 47: pb.GetGroupMemberListReq
-	(*GetGroupMemberListResp)(nil),             // 48: pb.GetGroupMemberListResp
-	(*DismissGroupReq)(nil),                    // 49: pb.DismissGroupReq
-	(*DismissGroupResp)(nil),                   // 50: pb.DismissGroupResp
-	(*SetGroupMsgNotifyTypeReq)(nil),           // 51: pb.SetGroupMsgNotifyTypeReq
-	(*SetGroupMsgNotifyTypeResp)(nil),          // 52: pb.SetGroupMsgNotifyTypeResp
-	(*GetMyGroupListReq)(nil),                  // 53: pb.GetMyGroupListReq
-	(*GetMyGroupListResp)(nil),                 // 54: pb.GetMyGroupListResp
-	(*GetGroupHomeResp_MemberStatistics)(nil),  // 55: pb.GetGroupHomeResp.MemberStatistics
-	(*GroupSetting_MemberPermission)(nil),      // 56: pb.GroupSetting.MemberPermission
-	(*GroupSetting_JoinGroupOpt)(nil),          // 57: pb.GroupSetting.JoinGroupOpt
-	(*GetGroupMemberListResp_GroupMember)(nil), // 58: pb.GetGroupMemberListResp.GroupMember
-	(*GetMyGroupListReq_Filter)(nil),           // 59: pb.GetMyGroupListReq.Filter
-	(*GetMyGroupListResp_Group)(nil),           // 60: pb.GetMyGroupListResp.Group
-	nil,                                        // 61: pb.GetMyGroupListResp.GroupMapEntry
-	(*CommonReq)(nil),                          // 62: pb.CommonReq
-	(*CommonResp)(nil),                         // 63: pb.CommonResp
-	(*Page)(nil),                               // 64: pb.Page
-	(*MsgNotifyOpt)(nil),                       // 65: pb.MsgNotifyOpt
+	(GroupDisturbOpt)(0),                                   // 0: pb.GroupDisturbOpt
+	(GroupRole)(0),                                         // 1: pb.GroupRole
+	(GroupSetting_JoinGroupOpt_Type)(0),                    // 2: pb.GroupSetting.JoinGroupOpt.Type
+	(GetMyGroupListReq_Opt)(0),                             // 3: pb.GetMyGroupListReq.Opt
+	(*CreateGroupReq)(nil),                                 // 4: pb.CreateGroupReq
+	(*CreateGroupResp)(nil),                                // 5: pb.CreateGroupResp
+	(*GetGroupHomeReq)(nil),                                // 6: pb.GetGroupHomeReq
+	(*GetGroupHomeResp)(nil),                               // 7: pb.GetGroupHomeResp
+	(*InviteFriendToGroupReq)(nil),                         // 8: pb.InviteFriendToGroupReq
+	(*InviteFriendToGroupResp)(nil),                        // 9: pb.InviteFriendToGroupResp
+	(*CreateGroupNoticeReq)(nil),                           // 10: pb.CreateGroupNoticeReq
+	(*CreateGroupNoticeResp)(nil),                          // 11: pb.CreateGroupNoticeResp
+	(*DeleteGroupNoticeReq)(nil),                           // 12: pb.DeleteGroupNoticeReq
+	(*DeleteGroupNoticeResp)(nil),                          // 13: pb.DeleteGroupNoticeResp
+	(*EditGroupNoticeReq)(nil),                             // 14: pb.EditGroupNoticeReq
+	(*EditGroupNoticeResp)(nil),                            // 15: pb.EditGroupNoticeResp
+	(*GetGroupNoticeListReq)(nil),                          // 16: pb.GetGroupNoticeListReq
+	(*GroupNotice)(nil),                                    // 17: pb.GroupNotice
+	(*GetGroupNoticeListResp)(nil),                         // 18: pb.GetGroupNoticeListResp
+	(*SetGroupMemberInfoReq)(nil),                          // 19: pb.SetGroupMemberInfoReq
+	(*SetGroupMemberInfoResp)(nil),                         // 20: pb.SetGroupMemberInfoResp
+	(*GetGroupMemberInfoReq)(nil),                          // 21: pb.GetGroupMemberInfoReq
+	(*GroupMemberInfo)(nil),                                // 22: pb.GroupMemberInfo
+	(*GetGroupMemberInfoResp)(nil),                         // 23: pb.GetGroupMemberInfoResp
+	(*EditGroupInfoReq)(nil),                               // 24: pb.EditGroupInfoReq
+	(*EditGroupInfoResp)(nil),                              // 25: pb.EditGroupInfoResp
+	(*SetGroupSettingReq)(nil),                             // 26: pb.SetGroupSettingReq
+	(*GroupSetting)(nil),                                   // 27: pb.GroupSetting
+	(*SetGroupSettingResp)(nil),                            // 28: pb.SetGroupSettingResp
+	(*GetGroupSettingReq)(nil),                             // 29: pb.GetGroupSettingReq
+	(*GetGroupSettingResp)(nil),                            // 30: pb.GetGroupSettingResp
+	(*TransferGroupOwnerReq)(nil),                          // 31: pb.TransferGroupOwnerReq
+	(*TransferGroupOwnerResp)(nil),                         // 32: pb.TransferGroupOwnerResp
+	(*SetGroupMemberRoleReq)(nil),                          // 33: pb.SetGroupMemberRoleReq
+	(*SetGroupMemberRoleResp)(nil),                         // 34: pb.SetGroupMemberRoleResp
+	(*KickGroupMemberReq)(nil),                             // 35: pb.KickGroupMemberReq
+	(*KickGroupMemberResp)(nil),                            // 36: pb.KickGroupMemberResp
+	(*QuitGroupReq)(nil),                                   // 37: pb.QuitGroupReq
+	(*QuitGroupResp)(nil),                                  // 38: pb.QuitGroupResp
+	(*BanGroupMemberReq)(nil),                              // 39: pb.BanGroupMemberReq
+	(*BanGroupMemberResp)(nil),                             // 40: pb.BanGroupMemberResp
+	(*BanAllGroupMemberReq)(nil),                           // 41: pb.BanAllGroupMemberReq
+	(*BanAllGroupMemberResp)(nil),                          // 42: pb.BanAllGroupMemberResp
+	(*UnbanGroupMemberReq)(nil),                            // 43: pb.UnbanGroupMemberReq
+	(*UnbanGroupMemberResp)(nil),                           // 44: pb.UnbanGroupMemberResp
+	(*UnbanAllGroupMemberReq)(nil),                         // 45: pb.UnbanAllGroupMemberReq
+	(*UnbanAllGroupMemberResp)(nil),                        // 46: pb.UnbanAllGroupMemberResp
+	(*GetGroupMemberListReq)(nil),                          // 47: pb.GetGroupMemberListReq
+	(*GetGroupMemberListResp)(nil),                         // 48: pb.GetGroupMemberListResp
+	(*DismissGroupReq)(nil),                                // 49: pb.DismissGroupReq
+	(*DismissGroupResp)(nil),                               // 50: pb.DismissGroupResp
+	(*SetGroupMsgNotifyTypeReq)(nil),                       // 51: pb.SetGroupMsgNotifyTypeReq
+	(*SetGroupMsgNotifyTypeResp)(nil),                      // 52: pb.SetGroupMsgNotifyTypeResp
+	(*GetMyGroupListReq)(nil),                              // 53: pb.GetMyGroupListReq
+	(*GetMyGroupListResp)(nil),                             // 54: pb.GetMyGroupListResp
+	(*GetGroupHomeResp_MemberStatistics)(nil),              // 55: pb.GetGroupHomeResp.MemberStatistics
+	(*GroupSetting_MemberPermission)(nil),                  // 56: pb.GroupSetting.MemberPermission
+	(*GroupSetting_JoinGroupOpt)(nil),                      // 57: pb.GroupSetting.JoinGroupOpt
+	(*GetGroupMemberListReq_GetGroupMemberListFilter)(nil), // 58: pb.GetGroupMemberListReq.GetGroupMemberListFilter
+	(*GetGroupMemberListReq_GetGroupMemberListOpt)(nil),    // 59: pb.GetGroupMemberListReq.GetGroupMemberListOpt
+	(*GetGroupMemberListResp_GroupMember)(nil),             // 60: pb.GetGroupMemberListResp.GroupMember
+	(*GetMyGroupListReq_Filter)(nil),                       // 61: pb.GetMyGroupListReq.Filter
+	(*GetMyGroupListResp_Group)(nil),                       // 62: pb.GetMyGroupListResp.Group
+	nil,                                                    // 63: pb.GetMyGroupListResp.GroupMapEntry
+	(*CommonReq)(nil),                                      // 64: pb.CommonReq
+	(*CommonResp)(nil),                                     // 65: pb.CommonResp
+	(*Page)(nil),                                           // 66: pb.Page
+	(*MsgNotifyOpt)(nil),                                   // 67: pb.MsgNotifyOpt
 }
 var file_group_proto_depIdxs = []int32{
-	62, // 0: pb.CreateGroupReq.commonReq:type_name -> pb.CommonReq
-	63, // 1: pb.CreateGroupResp.commonResp:type_name -> pb.CommonResp
-	62, // 2: pb.GetGroupHomeReq.commonReq:type_name -> pb.CommonReq
-	63, // 3: pb.GetGroupHomeResp.commonResp:type_name -> pb.CommonResp
+	64, // 0: pb.CreateGroupReq.commonReq:type_name -> pb.CommonReq
+	65, // 1: pb.CreateGroupResp.commonResp:type_name -> pb.CommonResp
+	64, // 2: pb.GetGroupHomeReq.commonReq:type_name -> pb.CommonReq
+	65, // 3: pb.GetGroupHomeResp.commonResp:type_name -> pb.CommonResp
 	55, // 4: pb.GetGroupHomeResp.memberStatistics:type_name -> pb.GetGroupHomeResp.MemberStatistics
-	62, // 5: pb.InviteFriendToGroupReq.commonReq:type_name -> pb.CommonReq
-	63, // 6: pb.InviteFriendToGroupResp.commonResp:type_name -> pb.CommonResp
-	62, // 7: pb.CreateGroupNoticeReq.commonReq:type_name -> pb.CommonReq
-	63, // 8: pb.CreateGroupNoticeResp.commonResp:type_name -> pb.CommonResp
-	62, // 9: pb.DeleteGroupNoticeReq.commonReq:type_name -> pb.CommonReq
-	63, // 10: pb.DeleteGroupNoticeResp.commonResp:type_name -> pb.CommonResp
-	62, // 11: pb.EditGroupNoticeReq.commonReq:type_name -> pb.CommonReq
-	63, // 12: pb.EditGroupNoticeResp.commonResp:type_name -> pb.CommonResp
-	62, // 13: pb.GetGroupNoticeListReq.commonReq:type_name -> pb.CommonReq
-	64, // 14: pb.GetGroupNoticeListReq.page:type_name -> pb.Page
-	63, // 15: pb.GetGroupNoticeListResp.commonResp:type_name -> pb.CommonResp
+	64, // 5: pb.InviteFriendToGroupReq.commonReq:type_name -> pb.CommonReq
+	65, // 6: pb.InviteFriendToGroupResp.commonResp:type_name -> pb.CommonResp
+	64, // 7: pb.CreateGroupNoticeReq.commonReq:type_name -> pb.CommonReq
+	65, // 8: pb.CreateGroupNoticeResp.commonResp:type_name -> pb.CommonResp
+	64, // 9: pb.DeleteGroupNoticeReq.commonReq:type_name -> pb.CommonReq
+	65, // 10: pb.DeleteGroupNoticeResp.commonResp:type_name -> pb.CommonResp
+	64, // 11: pb.EditGroupNoticeReq.commonReq:type_name -> pb.CommonReq
+	65, // 12: pb.EditGroupNoticeResp.commonResp:type_name -> pb.CommonResp
+	64, // 13: pb.GetGroupNoticeListReq.commonReq:type_name -> pb.CommonReq
+	66, // 14: pb.GetGroupNoticeListReq.page:type_name -> pb.Page
+	65, // 15: pb.GetGroupNoticeListResp.commonResp:type_name -> pb.CommonResp
 	17, // 16: pb.GetGroupNoticeListResp.groupNotices:type_name -> pb.GroupNotice
-	62, // 17: pb.SetGroupMemberInfoReq.commonReq:type_name -> pb.CommonReq
+	64, // 17: pb.SetGroupMemberInfoReq.commonReq:type_name -> pb.CommonReq
 	0,  // 18: pb.SetGroupMemberInfoReq.disturbMore:type_name -> pb.GroupDisturbOpt
-	63, // 19: pb.SetGroupMemberInfoResp.commonResp:type_name -> pb.CommonResp
-	62, // 20: pb.GetGroupMemberInfoReq.commonReq:type_name -> pb.CommonReq
+	65, // 19: pb.SetGroupMemberInfoResp.commonResp:type_name -> pb.CommonResp
+	64, // 20: pb.GetGroupMemberInfoReq.commonReq:type_name -> pb.CommonReq
 	0,  // 21: pb.GroupMemberInfo.disturbMore:type_name -> pb.GroupDisturbOpt
-	63, // 22: pb.GetGroupMemberInfoResp.commonResp:type_name -> pb.CommonResp
+	65, // 22: pb.GetGroupMemberInfoResp.commonResp:type_name -> pb.CommonResp
 	22, // 23: pb.GetGroupMemberInfoResp.groupMemberInfo:type_name -> pb.GroupMemberInfo
-	62, // 24: pb.EditGroupInfoReq.commonReq:type_name -> pb.CommonReq
-	63, // 25: pb.EditGroupInfoResp.commonResp:type_name -> pb.CommonResp
-	62, // 26: pb.SetGroupSettingReq.commonReq:type_name -> pb.CommonReq
+	64, // 24: pb.EditGroupInfoReq.commonReq:type_name -> pb.CommonReq
+	65, // 25: pb.EditGroupInfoResp.commonResp:type_name -> pb.CommonResp
+	64, // 26: pb.SetGroupSettingReq.commonReq:type_name -> pb.CommonReq
 	27, // 27: pb.SetGroupSettingReq.groupSetting:type_name -> pb.GroupSetting
 	57, // 28: pb.GroupSetting.joinGroupOpt:type_name -> pb.GroupSetting.JoinGroupOpt
-	63, // 29: pb.SetGroupSettingResp.commonResp:type_name -> pb.CommonResp
-	62, // 30: pb.GetGroupSettingReq.commonReq:type_name -> pb.CommonReq
-	63, // 31: pb.GetGroupSettingResp.commonResp:type_name -> pb.CommonResp
+	65, // 29: pb.SetGroupSettingResp.commonResp:type_name -> pb.CommonResp
+	64, // 30: pb.GetGroupSettingReq.commonReq:type_name -> pb.CommonReq
+	65, // 31: pb.GetGroupSettingResp.commonResp:type_name -> pb.CommonResp
 	27, // 32: pb.GetGroupSettingResp.groupSetting:type_name -> pb.GroupSetting
-	62, // 33: pb.TransferGroupOwnerReq.commonReq:type_name -> pb.CommonReq
-	63, // 34: pb.TransferGroupOwnerResp.commonResp:type_name -> pb.CommonResp
-	62, // 35: pb.SetGroupMemberRoleReq.commonReq:type_name -> pb.CommonReq
+	64, // 33: pb.TransferGroupOwnerReq.commonReq:type_name -> pb.CommonReq
+	65, // 34: pb.TransferGroupOwnerResp.commonResp:type_name -> pb.CommonResp
+	64, // 35: pb.SetGroupMemberRoleReq.commonReq:type_name -> pb.CommonReq
 	1,  // 36: pb.SetGroupMemberRoleReq.role:type_name -> pb.GroupRole
-	63, // 37: pb.SetGroupMemberRoleResp.commonResp:type_name -> pb.CommonResp
-	62, // 38: pb.KickGroupMemberReq.commonReq:type_name -> pb.CommonReq
-	63, // 39: pb.KickGroupMemberResp.commonResp:type_name -> pb.CommonResp
-	62, // 40: pb.QuitGroupReq.commonReq:type_name -> pb.CommonReq
-	63, // 41: pb.QuitGroupResp.commonResp:type_name -> pb.CommonResp
-	62, // 42: pb.BanGroupMemberReq.commonReq:type_name -> pb.CommonReq
-	63, // 43: pb.BanGroupMemberResp.commonResp:type_name -> pb.CommonResp
-	62, // 44: pb.BanAllGroupMemberReq.commonReq:type_name -> pb.CommonReq
-	63, // 45: pb.BanAllGroupMemberResp.commonResp:type_name -> pb.CommonResp
-	62, // 46: pb.UnbanGroupMemberReq.commonReq:type_name -> pb.CommonReq
-	63, // 47: pb.UnbanGroupMemberResp.commonResp:type_name -> pb.CommonResp
-	62, // 48: pb.UnbanAllGroupMemberReq.commonReq:type_name -> pb.CommonReq
-	63, // 49: pb.UnbanAllGroupMemberResp.commonResp:type_name -> pb.CommonResp
-	62, // 50: pb.GetGroupMemberListReq.commonReq:type_name -> pb.CommonReq
-	64, // 51: pb.GetGroupMemberListReq.page:type_name -> pb.Page
-	63, // 52: pb.GetGroupMemberListResp.commonResp:type_name -> pb.CommonResp
-	58, // 53: pb.GetGroupMemberListResp.groupMemberList:type_name -> pb.GetGroupMemberListResp.GroupMember
-	62, // 54: pb.DismissGroupReq.commonReq:type_name -> pb.CommonReq
-	63, // 55: pb.DismissGroupResp.commonResp:type_name -> pb.CommonResp
-	62, // 56: pb.SetGroupMsgNotifyTypeReq.commonReq:type_name -> pb.CommonReq
-	65, // 57: pb.SetGroupMsgNotifyTypeReq.opt:type_name -> pb.MsgNotifyOpt
-	63, // 58: pb.SetGroupMsgNotifyTypeResp.commonResp:type_name -> pb.CommonResp
-	62, // 59: pb.GetMyGroupListReq.commonReq:type_name -> pb.CommonReq
-	64, // 60: pb.GetMyGroupListReq.page:type_name -> pb.Page
-	59, // 61: pb.GetMyGroupListReq.filter:type_name -> pb.GetMyGroupListReq.Filter
-	3,  // 62: pb.GetMyGroupListReq.opt:type_name -> pb.GetMyGroupListReq.Opt
-	63, // 63: pb.GetMyGroupListResp.commonResp:type_name -> pb.CommonResp
-	61, // 64: pb.GetMyGroupListResp.groupMap:type_name -> pb.GetMyGroupListResp.GroupMapEntry
-	2,  // 65: pb.GroupSetting.JoinGroupOpt.type:type_name -> pb.GroupSetting.JoinGroupOpt.Type
-	60, // 66: pb.GetMyGroupListResp.GroupMapEntry.value:type_name -> pb.GetMyGroupListResp.Group
-	4,  // 67: pb.groupService.CreateGroup:input_type -> pb.CreateGroupReq
-	6,  // 68: pb.groupService.GetGroupHome:input_type -> pb.GetGroupHomeReq
-	8,  // 69: pb.groupService.InviteFriendToGroup:input_type -> pb.InviteFriendToGroupReq
-	10, // 70: pb.groupService.CreateGroupNotice:input_type -> pb.CreateGroupNoticeReq
-	12, // 71: pb.groupService.DeleteGroupNotice:input_type -> pb.DeleteGroupNoticeReq
-	16, // 72: pb.groupService.GetGroupNoticeList:input_type -> pb.GetGroupNoticeListReq
-	19, // 73: pb.groupService.SetGroupMemberInfo:input_type -> pb.SetGroupMemberInfoReq
-	21, // 74: pb.groupService.GetGroupMemberInfo:input_type -> pb.GetGroupMemberInfoReq
-	24, // 75: pb.groupService.EditGroupInfo:input_type -> pb.EditGroupInfoReq
-	26, // 76: pb.groupService.SetGroupSetting:input_type -> pb.SetGroupSettingReq
-	29, // 77: pb.groupService.GetGroupSetting:input_type -> pb.GetGroupSettingReq
-	31, // 78: pb.groupService.TransferGroupOwner:input_type -> pb.TransferGroupOwnerReq
-	33, // 79: pb.groupService.SetGroupMemberRole:input_type -> pb.SetGroupMemberRoleReq
-	35, // 80: pb.groupService.KickGroupMember:input_type -> pb.KickGroupMemberReq
-	37, // 81: pb.groupService.QuitGroup:input_type -> pb.QuitGroupReq
-	39, // 82: pb.groupService.BanGroupMember:input_type -> pb.BanGroupMemberReq
-	41, // 83: pb.groupService.BanAllGroupMember:input_type -> pb.BanAllGroupMemberReq
-	43, // 84: pb.groupService.UnbanGroupMember:input_type -> pb.UnbanGroupMemberReq
-	45, // 85: pb.groupService.UnbanAllGroupMember:input_type -> pb.UnbanAllGroupMemberReq
-	47, // 86: pb.groupService.GetGroupMemberList:input_type -> pb.GetGroupMemberListReq
-	49, // 87: pb.groupService.DismissGroup:input_type -> pb.DismissGroupReq
-	51, // 88: pb.groupService.SetGroupMsgNotifyType:input_type -> pb.SetGroupMsgNotifyTypeReq
-	53, // 89: pb.groupService.GetMyGroupList:input_type -> pb.GetMyGroupListReq
-	5,  // 90: pb.groupService.CreateGroup:output_type -> pb.CreateGroupResp
-	7,  // 91: pb.groupService.GetGroupHome:output_type -> pb.GetGroupHomeResp
-	9,  // 92: pb.groupService.InviteFriendToGroup:output_type -> pb.InviteFriendToGroupResp
-	11, // 93: pb.groupService.CreateGroupNotice:output_type -> pb.CreateGroupNoticeResp
-	13, // 94: pb.groupService.DeleteGroupNotice:output_type -> pb.DeleteGroupNoticeResp
-	18, // 95: pb.groupService.GetGroupNoticeList:output_type -> pb.GetGroupNoticeListResp
-	20, // 96: pb.groupService.SetGroupMemberInfo:output_type -> pb.SetGroupMemberInfoResp
-	23, // 97: pb.groupService.GetGroupMemberInfo:output_type -> pb.GetGroupMemberInfoResp
-	25, // 98: pb.groupService.EditGroupInfo:output_type -> pb.EditGroupInfoResp
-	28, // 99: pb.groupService.SetGroupSetting:output_type -> pb.SetGroupSettingResp
-	30, // 100: pb.groupService.GetGroupSetting:output_type -> pb.GetGroupSettingResp
-	32, // 101: pb.groupService.TransferGroupOwner:output_type -> pb.TransferGroupOwnerResp
-	34, // 102: pb.groupService.SetGroupMemberRole:output_type -> pb.SetGroupMemberRoleResp
-	36, // 103: pb.groupService.KickGroupMember:output_type -> pb.KickGroupMemberResp
-	38, // 104: pb.groupService.QuitGroup:output_type -> pb.QuitGroupResp
-	40, // 105: pb.groupService.BanGroupMember:output_type -> pb.BanGroupMemberResp
-	42, // 106: pb.groupService.BanAllGroupMember:output_type -> pb.BanAllGroupMemberResp
-	44, // 107: pb.groupService.UnbanGroupMember:output_type -> pb.UnbanGroupMemberResp
-	46, // 108: pb.groupService.UnbanAllGroupMember:output_type -> pb.UnbanAllGroupMemberResp
-	48, // 109: pb.groupService.GetGroupMemberList:output_type -> pb.GetGroupMemberListResp
-	50, // 110: pb.groupService.DismissGroup:output_type -> pb.DismissGroupResp
-	52, // 111: pb.groupService.SetGroupMsgNotifyType:output_type -> pb.SetGroupMsgNotifyTypeResp
-	54, // 112: pb.groupService.GetMyGroupList:output_type -> pb.GetMyGroupListResp
-	90, // [90:113] is the sub-list for method output_type
-	67, // [67:90] is the sub-list for method input_type
-	67, // [67:67] is the sub-list for extension type_name
-	67, // [67:67] is the sub-list for extension extendee
-	0,  // [0:67] is the sub-list for field type_name
+	65, // 37: pb.SetGroupMemberRoleResp.commonResp:type_name -> pb.CommonResp
+	64, // 38: pb.KickGroupMemberReq.commonReq:type_name -> pb.CommonReq
+	65, // 39: pb.KickGroupMemberResp.commonResp:type_name -> pb.CommonResp
+	64, // 40: pb.QuitGroupReq.commonReq:type_name -> pb.CommonReq
+	65, // 41: pb.QuitGroupResp.commonResp:type_name -> pb.CommonResp
+	64, // 42: pb.BanGroupMemberReq.commonReq:type_name -> pb.CommonReq
+	65, // 43: pb.BanGroupMemberResp.commonResp:type_name -> pb.CommonResp
+	64, // 44: pb.BanAllGroupMemberReq.commonReq:type_name -> pb.CommonReq
+	65, // 45: pb.BanAllGroupMemberResp.commonResp:type_name -> pb.CommonResp
+	64, // 46: pb.UnbanGroupMemberReq.commonReq:type_name -> pb.CommonReq
+	65, // 47: pb.UnbanGroupMemberResp.commonResp:type_name -> pb.CommonResp
+	64, // 48: pb.UnbanAllGroupMemberReq.commonReq:type_name -> pb.CommonReq
+	65, // 49: pb.UnbanAllGroupMemberResp.commonResp:type_name -> pb.CommonResp
+	64, // 50: pb.GetGroupMemberListReq.commonReq:type_name -> pb.CommonReq
+	66, // 51: pb.GetGroupMemberListReq.page:type_name -> pb.Page
+	58, // 52: pb.GetGroupMemberListReq.filter:type_name -> pb.GetGroupMemberListReq.GetGroupMemberListFilter
+	59, // 53: pb.GetGroupMemberListReq.opt:type_name -> pb.GetGroupMemberListReq.GetGroupMemberListOpt
+	65, // 54: pb.GetGroupMemberListResp.commonResp:type_name -> pb.CommonResp
+	60, // 55: pb.GetGroupMemberListResp.groupMemberList:type_name -> pb.GetGroupMemberListResp.GroupMember
+	64, // 56: pb.DismissGroupReq.commonReq:type_name -> pb.CommonReq
+	65, // 57: pb.DismissGroupResp.commonResp:type_name -> pb.CommonResp
+	64, // 58: pb.SetGroupMsgNotifyTypeReq.commonReq:type_name -> pb.CommonReq
+	67, // 59: pb.SetGroupMsgNotifyTypeReq.opt:type_name -> pb.MsgNotifyOpt
+	65, // 60: pb.SetGroupMsgNotifyTypeResp.commonResp:type_name -> pb.CommonResp
+	64, // 61: pb.GetMyGroupListReq.commonReq:type_name -> pb.CommonReq
+	66, // 62: pb.GetMyGroupListReq.page:type_name -> pb.Page
+	61, // 63: pb.GetMyGroupListReq.filter:type_name -> pb.GetMyGroupListReq.Filter
+	3,  // 64: pb.GetMyGroupListReq.opt:type_name -> pb.GetMyGroupListReq.Opt
+	65, // 65: pb.GetMyGroupListResp.commonResp:type_name -> pb.CommonResp
+	63, // 66: pb.GetMyGroupListResp.groupMap:type_name -> pb.GetMyGroupListResp.GroupMapEntry
+	2,  // 67: pb.GroupSetting.JoinGroupOpt.type:type_name -> pb.GroupSetting.JoinGroupOpt.Type
+	67, // 68: pb.GetGroupMemberListResp.GroupMember.notifyOpt:type_name -> pb.MsgNotifyOpt
+	62, // 69: pb.GetMyGroupListResp.GroupMapEntry.value:type_name -> pb.GetMyGroupListResp.Group
+	4,  // 70: pb.groupService.CreateGroup:input_type -> pb.CreateGroupReq
+	6,  // 71: pb.groupService.GetGroupHome:input_type -> pb.GetGroupHomeReq
+	8,  // 72: pb.groupService.InviteFriendToGroup:input_type -> pb.InviteFriendToGroupReq
+	10, // 73: pb.groupService.CreateGroupNotice:input_type -> pb.CreateGroupNoticeReq
+	12, // 74: pb.groupService.DeleteGroupNotice:input_type -> pb.DeleteGroupNoticeReq
+	16, // 75: pb.groupService.GetGroupNoticeList:input_type -> pb.GetGroupNoticeListReq
+	19, // 76: pb.groupService.SetGroupMemberInfo:input_type -> pb.SetGroupMemberInfoReq
+	21, // 77: pb.groupService.GetGroupMemberInfo:input_type -> pb.GetGroupMemberInfoReq
+	24, // 78: pb.groupService.EditGroupInfo:input_type -> pb.EditGroupInfoReq
+	26, // 79: pb.groupService.SetGroupSetting:input_type -> pb.SetGroupSettingReq
+	29, // 80: pb.groupService.GetGroupSetting:input_type -> pb.GetGroupSettingReq
+	31, // 81: pb.groupService.TransferGroupOwner:input_type -> pb.TransferGroupOwnerReq
+	33, // 82: pb.groupService.SetGroupMemberRole:input_type -> pb.SetGroupMemberRoleReq
+	35, // 83: pb.groupService.KickGroupMember:input_type -> pb.KickGroupMemberReq
+	37, // 84: pb.groupService.QuitGroup:input_type -> pb.QuitGroupReq
+	39, // 85: pb.groupService.BanGroupMember:input_type -> pb.BanGroupMemberReq
+	41, // 86: pb.groupService.BanAllGroupMember:input_type -> pb.BanAllGroupMemberReq
+	43, // 87: pb.groupService.UnbanGroupMember:input_type -> pb.UnbanGroupMemberReq
+	45, // 88: pb.groupService.UnbanAllGroupMember:input_type -> pb.UnbanAllGroupMemberReq
+	47, // 89: pb.groupService.GetGroupMemberList:input_type -> pb.GetGroupMemberListReq
+	49, // 90: pb.groupService.DismissGroup:input_type -> pb.DismissGroupReq
+	51, // 91: pb.groupService.SetGroupMsgNotifyType:input_type -> pb.SetGroupMsgNotifyTypeReq
+	53, // 92: pb.groupService.GetMyGroupList:input_type -> pb.GetMyGroupListReq
+	5,  // 93: pb.groupService.CreateGroup:output_type -> pb.CreateGroupResp
+	7,  // 94: pb.groupService.GetGroupHome:output_type -> pb.GetGroupHomeResp
+	9,  // 95: pb.groupService.InviteFriendToGroup:output_type -> pb.InviteFriendToGroupResp
+	11, // 96: pb.groupService.CreateGroupNotice:output_type -> pb.CreateGroupNoticeResp
+	13, // 97: pb.groupService.DeleteGroupNotice:output_type -> pb.DeleteGroupNoticeResp
+	18, // 98: pb.groupService.GetGroupNoticeList:output_type -> pb.GetGroupNoticeListResp
+	20, // 99: pb.groupService.SetGroupMemberInfo:output_type -> pb.SetGroupMemberInfoResp
+	23, // 100: pb.groupService.GetGroupMemberInfo:output_type -> pb.GetGroupMemberInfoResp
+	25, // 101: pb.groupService.EditGroupInfo:output_type -> pb.EditGroupInfoResp
+	28, // 102: pb.groupService.SetGroupSetting:output_type -> pb.SetGroupSettingResp
+	30, // 103: pb.groupService.GetGroupSetting:output_type -> pb.GetGroupSettingResp
+	32, // 104: pb.groupService.TransferGroupOwner:output_type -> pb.TransferGroupOwnerResp
+	34, // 105: pb.groupService.SetGroupMemberRole:output_type -> pb.SetGroupMemberRoleResp
+	36, // 106: pb.groupService.KickGroupMember:output_type -> pb.KickGroupMemberResp
+	38, // 107: pb.groupService.QuitGroup:output_type -> pb.QuitGroupResp
+	40, // 108: pb.groupService.BanGroupMember:output_type -> pb.BanGroupMemberResp
+	42, // 109: pb.groupService.BanAllGroupMember:output_type -> pb.BanAllGroupMemberResp
+	44, // 110: pb.groupService.UnbanGroupMember:output_type -> pb.UnbanGroupMemberResp
+	46, // 111: pb.groupService.UnbanAllGroupMember:output_type -> pb.UnbanAllGroupMemberResp
+	48, // 112: pb.groupService.GetGroupMemberList:output_type -> pb.GetGroupMemberListResp
+	50, // 113: pb.groupService.DismissGroup:output_type -> pb.DismissGroupResp
+	52, // 114: pb.groupService.SetGroupMsgNotifyType:output_type -> pb.SetGroupMsgNotifyTypeResp
+	54, // 115: pb.groupService.GetMyGroupList:output_type -> pb.GetMyGroupListResp
+	93, // [93:116] is the sub-list for method output_type
+	70, // [70:93] is the sub-list for method input_type
+	70, // [70:70] is the sub-list for extension type_name
+	70, // [70:70] is the sub-list for extension extendee
+	0,  // [0:70] is the sub-list for field type_name
 }
 
 func init() { file_group_proto_init() }
@@ -5220,7 +5390,7 @@ func file_group_proto_init() {
 			}
 		}
 		file_group_proto_msgTypes[54].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetGroupMemberListResp_GroupMember); i {
+			switch v := v.(*GetGroupMemberListReq_GetGroupMemberListFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5232,7 +5402,7 @@ func file_group_proto_init() {
 			}
 		}
 		file_group_proto_msgTypes[55].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetMyGroupListReq_Filter); i {
+			switch v := v.(*GetGroupMemberListReq_GetGroupMemberListOpt); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -5244,6 +5414,30 @@ func file_group_proto_init() {
 			}
 		}
 		file_group_proto_msgTypes[56].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetGroupMemberListResp_GroupMember); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_group_proto_msgTypes[57].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMyGroupListReq_Filter); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_group_proto_msgTypes[58].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetMyGroupListResp_Group); i {
 			case 0:
 				return &v.state
@@ -5265,13 +5459,15 @@ func file_group_proto_init() {
 	file_group_proto_msgTypes[20].OneofWrappers = []interface{}{}
 	file_group_proto_msgTypes[23].OneofWrappers = []interface{}{}
 	file_group_proto_msgTypes[52].OneofWrappers = []interface{}{}
+	file_group_proto_msgTypes[54].OneofWrappers = []interface{}{}
+	file_group_proto_msgTypes[55].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_group_proto_rawDesc,
 			NumEnums:      4,
-			NumMessages:   58,
+			NumMessages:   60,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

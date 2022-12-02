@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"github.com/zeromicro/go-zero/core/mr"
 	"go.opentelemetry.io/otel/propagation"
 	"strconv"
 
@@ -27,16 +28,33 @@ func NewSendMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendMsgLo
 }
 
 func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
+	var fs []func()
+	var failedConnParams []*pb.ConnParam
+	var successConnParams []*pb.ConnParam
 	for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-		xtrace.StartFuncSpan(l.ctx, "SendMsgToConnection", func(ctx context.Context) {
-			_, err := pod.SendMsg(l.ctx, in)
-			if err != nil {
-				l.Errorf("SendMsg error: %v", err)
-			}
-		}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
-			"userIds.length": strconv.Itoa(len(in.GetUserConnReq.UserIds)),
-			"event":          in.Event.String(),
-		}))
+		pod := *pod
+		fs = append(fs, func() {
+			xtrace.StartFuncSpan(l.ctx, "SendMsgToConnection", func(ctx context.Context) {
+				resp, err := pod.SendMsg(l.ctx, in)
+				if err != nil {
+					l.Errorf("SendMsg error: %v", err)
+					return
+				}
+				l.Infof("resp.SuccessConnParams.length: %v", len(resp.SuccessConnParams))
+				l.Infof("resp.FailedConnParams.length: %v", len(resp.FailedConnParams))
+				failedConnParams = append(failedConnParams, resp.FailedConnParams...)
+				successConnParams = append(successConnParams, resp.SuccessConnParams...)
+			}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+				"userIds.length": strconv.Itoa(len(in.GetUserConnReq.UserIds)),
+				"event":          in.Event.String(),
+			}))
+		})
 	}
-	return &pb.SendMsgResp{}, nil
+	mr.FinishVoid(fs...)
+
+	return &pb.SendMsgResp{
+		CommonResp:        pb.NewSuccessResp(),
+		SuccessConnParams: successConnParams,
+		FailedConnParams:  failedConnParams,
+	}, nil
 }

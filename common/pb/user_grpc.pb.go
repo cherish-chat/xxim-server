@@ -25,10 +25,16 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
 	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
+	BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
 	GetUserHome(ctx context.Context, in *GetUserHomeReq, opts ...grpc.CallOption) (*GetUserHomeResp, error)
 	GetUserSettings(ctx context.Context, in *GetUserSettingsReq, opts ...grpc.CallOption) (*GetUserSettingsResp, error)
 	SetUserSettings(ctx context.Context, in *SetUserSettingsReq, opts ...grpc.CallOption) (*SetUserSettingsResp, error)
+	//AfterConnect conn hook
+	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	//AfterDisconnect conn hook
+	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 }
 
 type userServiceClient struct {
@@ -60,6 +66,15 @@ func (c *userServiceClient) ConfirmRegister(ctx context.Context, in *ConfirmRegi
 func (c *userServiceClient) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
 	out := new(MapUserByIdsResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/MapUserByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error) {
+	out := new(BatchGetUserBaseInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/BatchGetUserBaseInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,6 +117,33 @@ func (c *userServiceClient) SetUserSettings(ctx context.Context, in *SetUserSett
 	return out, nil
 }
 
+func (c *userServiceClient) AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AfterConnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AfterDisconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error) {
+	out := new(BatchGetUserAllDevicesResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/BatchGetUserAllDevices", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -109,10 +151,16 @@ type UserServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error)
 	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
+	BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
 	GetUserHome(context.Context, *GetUserHomeReq) (*GetUserHomeResp, error)
 	GetUserSettings(context.Context, *GetUserSettingsReq) (*GetUserSettingsResp, error)
 	SetUserSettings(context.Context, *SetUserSettingsReq) (*SetUserSettingsResp, error)
+	//AfterConnect conn hook
+	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
+	//AfterDisconnect conn hook
+	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
+	BatchGetUserAllDevices(context.Context, *BatchGetUserAllDevicesReq) (*BatchGetUserAllDevicesResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -129,6 +177,9 @@ func (UnimplementedUserServiceServer) ConfirmRegister(context.Context, *ConfirmR
 func (UnimplementedUserServiceServer) MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapUserByIds not implemented")
 }
+func (UnimplementedUserServiceServer) BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetUserBaseInfo not implemented")
+}
 func (UnimplementedUserServiceServer) SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchUsersByKeyword not implemented")
 }
@@ -140,6 +191,15 @@ func (UnimplementedUserServiceServer) GetUserSettings(context.Context, *GetUserS
 }
 func (UnimplementedUserServiceServer) SetUserSettings(context.Context, *SetUserSettingsReq) (*SetUserSettingsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserSettings not implemented")
+}
+func (UnimplementedUserServiceServer) AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AfterConnect not implemented")
+}
+func (UnimplementedUserServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
+}
+func (UnimplementedUserServiceServer) BatchGetUserAllDevices(context.Context, *BatchGetUserAllDevicesReq) (*BatchGetUserAllDevicesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetUserAllDevices not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -204,6 +264,24 @@ func _UserService_MapUserByIds_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).MapUserByIds(ctx, req.(*MapUserByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_BatchGetUserBaseInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetUserBaseInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BatchGetUserBaseInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/BatchGetUserBaseInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BatchGetUserBaseInfo(ctx, req.(*BatchGetUserBaseInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -280,6 +358,60 @@ func _UserService_SetUserSettings_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_AfterConnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AfterConnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AfterConnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AfterConnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AfterConnect(ctx, req.(*AfterConnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AfterDisconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AfterDisconnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AfterDisconnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AfterDisconnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AfterDisconnect(ctx, req.(*AfterDisconnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_BatchGetUserAllDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetUserAllDevicesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BatchGetUserAllDevices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/BatchGetUserAllDevices",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BatchGetUserAllDevices(ctx, req.(*BatchGetUserAllDevicesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -300,6 +432,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_MapUserByIds_Handler,
 		},
 		{
+			MethodName: "BatchGetUserBaseInfo",
+			Handler:    _UserService_BatchGetUserBaseInfo_Handler,
+		},
+		{
 			MethodName: "SearchUsersByKeyword",
 			Handler:    _UserService_SearchUsersByKeyword_Handler,
 		},
@@ -314,6 +450,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetUserSettings",
 			Handler:    _UserService_SetUserSettings_Handler,
+		},
+		{
+			MethodName: "AfterConnect",
+			Handler:    _UserService_AfterConnect_Handler,
+		},
+		{
+			MethodName: "AfterDisconnect",
+			Handler:    _UserService_AfterDisconnect_Handler,
+		},
+		{
+			MethodName: "BatchGetUserAllDevices",
+			Handler:    _UserService_BatchGetUserAllDevices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

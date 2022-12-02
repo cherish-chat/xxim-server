@@ -4,7 +4,7 @@ func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
+func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
@@ -60,19 +60,11 @@ func (x *DeleteFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *SetSingleChatSettingReq) SetCommonReq(r *CommonReq) {
+func (x *SetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetSingleChatSettingReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
-func (x *SetSingleMsgNotifyOptReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
-func (x *GetSingleMsgNotifyOptReq) SetCommonReq(r *CommonReq) {
+func (x *GetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
@@ -85,5 +77,13 @@ func (x *GetMsgByIdReq) SetCommonReq(r *CommonReq) {
 }
 
 func (x *BatchGetConvSeqReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

@@ -36,14 +36,36 @@ message GetUserLatestConnResp {
   string deviceId = 7;
 }
 
-//MsgNotifyOpt 消息通知选项
-message MsgNotifyOpt {
-  bool preview = 1; // 是否预览
-  bool sound = 2; // 是否声音
-  string soundName = 3; // 声音名称
-  bool vibrate = 4; // 是否震动
+//batchGetUserLatestConnReq 批量获取用户最新连接信息
+message BatchGetUserLatestConnReq {
+  repeated string userIds = 1;
 }
 
+//batchGetUserLatestConnResp 批量获取用户最新连接信息
+message BatchGetUserLatestConnResp {
+  CommonResp commonResp = 1;
+  repeated GetUserLatestConnResp userLatestConns = 2;
+}
+
+//MsgNotifyOpt 消息通知选项
+message MsgNotifyOpt {
+  bool noDisturb = 1;
+  bool preview = 2; // 是否预览
+  bool sound = 3; // 是否声音
+  string soundName = 4; // 声音名称
+  bool vibrate = 5; // 是否震动
+}
+
+//GetAppSystemConfigReq 获取系统配置
+message GetAppSystemConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppSystemConfigResp 获取系统配置
+message GetAppSystemConfigResp {
+  CommonResp commonResp = 1;
+  map<string, string> configs = 2;
+}
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -51,5 +73,7 @@ service imService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
+  rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc GetAppSystemConfig(GetAppSystemConfigReq) returns (GetAppSystemConfigResp);
 }

@@ -2,6 +2,7 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 import "common.proto";
+import "conn.proto";
 
 // userModels
 enum XB {
@@ -91,6 +92,17 @@ message MapUserByIdsResp {
   map<string, bytes> users = 2;
 }
 
+//batchGetUserBaseInfo 批量获取用户基本信息
+message BatchGetUserBaseInfoReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+message BatchGetUserBaseInfoResp {
+  CommonResp commonResp = 1;
+  repeated UserBaseInfo userBaseInfos = 2;
+}
+
 message SearchUsersByKeywordReq {
   CommonReq commonReq = 1;
   string keyword = 2;
@@ -127,6 +139,9 @@ enum UserSettingKey {
   HowToAddFriend = 0; // 如何添加好友
   HowToAddFriend_NeedAnswerQuestionCorrectly_Question = 1; // 如何添加好友 需要回答的问题
   HowToAddFriend_NeedAnswerQuestionCorrectly_Answer = 2; // 如何添加好友 需要回答的问题的答案
+
+  // 好友通知列表 点击清空按钮 设置的createTime
+  FriendEventList_ClearTime = 21;
 }
 
 //获取用户settings
@@ -158,12 +173,34 @@ message SetUserSettingsResp {
 
 // ************ userSettings ************ //
 
+//BatchGetUserAllDevicesReq 批量查询用户的所有设备
+message BatchGetUserAllDevicesReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+}
+
+//BatchGetUserAllDevicesResp 批量查询用户的所有设备
+message BatchGetUserAllDevicesResp {
+  CommonResp commonResp = 1;
+  message AllDevices {
+    string userId = 1;
+    repeated string deviceIds = 2;
+  }
+  repeated AllDevices allDevices = 2;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
   rpc MapUserByIds(MapUserByIdsReq) returns (MapUserByIdsResp) {}
+  rpc BatchGetUserBaseInfo(BatchGetUserBaseInfoReq) returns (BatchGetUserBaseInfoResp) {}
   rpc SearchUsersByKeyword(SearchUsersByKeywordReq) returns (SearchUsersByKeywordResp) {}
   rpc GetUserHome(GetUserHomeReq) returns (GetUserHomeResp) {}
   rpc GetUserSettings(GetUserSettingsReq) returns (GetUserSettingsResp) {}
   rpc SetUserSettings(SetUserSettingsReq) returns (SetUserSettingsResp) {}
+  //AfterConnect conn hook
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  //AfterDisconnect conn hook
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
 }

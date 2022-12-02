@@ -37,6 +37,11 @@ func (s *UserServiceServer) MapUserByIds(ctx context.Context, in *pb.MapUserById
 	return l.MapUserByIds(in)
 }
 
+func (s *UserServiceServer) BatchGetUserBaseInfo(ctx context.Context, in *pb.BatchGetUserBaseInfoReq) (*pb.BatchGetUserBaseInfoResp, error) {
+	l := logic.NewBatchGetUserBaseInfoLogic(ctx, s.svcCtx)
+	return l.BatchGetUserBaseInfo(in)
+}
+
 func (s *UserServiceServer) SearchUsersByKeyword(ctx context.Context, in *pb.SearchUsersByKeywordReq) (*pb.SearchUsersByKeywordResp, error) {
 	l := logic.NewSearchUsersByKeywordLogic(ctx, s.svcCtx)
 	return l.SearchUsersByKeyword(in)
@@ -55,4 +60,21 @@ func (s *UserServiceServer) GetUserSettings(ctx context.Context, in *pb.GetUserS
 func (s *UserServiceServer) SetUserSettings(ctx context.Context, in *pb.SetUserSettingsReq) (*pb.SetUserSettingsResp, error) {
 	l := logic.NewSetUserSettingsLogic(ctx, s.svcCtx)
 	return l.SetUserSettings(in)
+}
+
+// AfterConnect conn hook
+func (s *UserServiceServer) AfterConnect(ctx context.Context, in *pb.AfterConnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterConnectLogic(ctx, s.svcCtx)
+	return l.AfterConnect(in)
+}
+
+// AfterDisconnect conn hook
+func (s *UserServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisconnectReq) (*pb.CommonResp, error) {
+	l := logic.NewAfterDisconnectLogic(ctx, s.svcCtx)
+	return l.AfterDisconnect(in)
+}
+
+func (s *UserServiceServer) BatchGetUserAllDevices(ctx context.Context, in *pb.BatchGetUserAllDevicesReq) (*pb.BatchGetUserAllDevicesResp, error) {
+	l := logic.NewBatchGetUserAllDevicesLogic(ctx, s.svcCtx)
+	return l.BatchGetUserAllDevices(in)
 }
