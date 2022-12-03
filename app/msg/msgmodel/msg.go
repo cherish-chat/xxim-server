@@ -32,8 +32,6 @@ type (
 		SenderId string `bson:"senderId" gorm:"column:senderId;type:char(32);index;"`
 		// 发送者信息
 		SenderInfo xorm.Bytes `bson:"senderInfo" gorm:"column:senderInfo;type:blob;"`
-		// 发送者在会话中的信息
-		SenderConvInfo xorm.Bytes `bson:"senderConvInfo" gorm:"column:senderConvInfo;type:blob;"`
 		// 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
 		AtUsers xorm.SliceString `bson:"atUsers" gorm:"column:atUsers;type:JSON;"`
 		// 消息内容类型
@@ -76,18 +74,17 @@ func (m *Msg) TableName() string {
 
 func NewMsgFromPb(in *pb.MsgData) *Msg {
 	return &Msg{
-		ServerMsgId:    in.ServerMsgId,
-		ConvId:         in.ConvId,
-		ClientMsgId:    in.ClientMsgId,
-		ClientTime:     utils.AnyToInt64(in.ClientTime),
-		ServerTime:     utils.AnyToInt64(in.ServerTime),
-		SenderId:       in.SenderId,
-		SenderInfo:     in.SenderInfo,
-		SenderConvInfo: in.SenderConvInfo,
-		AtUsers:        utils.AnyMakeSlice(in.AtUsers),
-		ContentType:    in.ContentType,
-		Content:        in.Content,
-		Seq:            utils.AnyToInt64(in.Seq),
+		ServerMsgId: in.ServerMsgId,
+		ConvId:      in.ConvId,
+		ClientMsgId: in.ClientMsgId,
+		ClientTime:  utils.AnyToInt64(in.ClientTime),
+		ServerTime:  utils.AnyToInt64(in.ServerTime),
+		SenderId:    in.SenderId,
+		SenderInfo:  in.SenderInfo,
+		AtUsers:     utils.AnyMakeSlice(in.AtUsers),
+		ContentType: in.ContentType,
+		Content:     in.Content,
+		Seq:         utils.AnyToInt64(in.Seq),
 		Options: MsgOptions{
 			OfflinePush:       in.Options.OfflinePush,
 			StorageForServer:  in.Options.StorageForServer,
@@ -142,18 +139,17 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		offlinePush = &MsgOfflinePush{}
 	}
 	return &pb.MsgData{
-		ServerMsgId:    m.ServerMsgId,
-		ConvId:         m.ConvId,
-		ClientMsgId:    m.ClientMsgId,
-		ClientTime:     utils.AnyToString(m.ClientTime),
-		ServerTime:     utils.AnyToString(m.ServerTime),
-		SenderId:       m.SenderId,
-		SenderInfo:     m.SenderInfo,
-		SenderConvInfo: m.SenderConvInfo,
-		AtUsers:        m.AtUsers,
-		ContentType:    m.ContentType,
-		Content:        m.Content,
-		Seq:            utils.AnyToString(m.Seq),
+		ServerMsgId: m.ServerMsgId,
+		ConvId:      m.ConvId,
+		ClientMsgId: m.ClientMsgId,
+		ClientTime:  utils.AnyToString(m.ClientTime),
+		ServerTime:  utils.AnyToString(m.ServerTime),
+		SenderId:    m.SenderId,
+		SenderInfo:  m.SenderInfo,
+		AtUsers:     m.AtUsers,
+		ContentType: m.ContentType,
+		Content:     m.Content,
+		Seq:         utils.AnyToString(m.Seq),
 		Options: &pb.MsgData_Options{
 			OfflinePush:       m.Options.OfflinePush,
 			StorageForServer:  m.Options.StorageForServer,

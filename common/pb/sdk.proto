@@ -39,14 +39,8 @@ message CommonResp {
 enum PushEvent {
   // 消息推送
   PushMsgDataList = 0;
-  // 好友通知
-  FriendNotify = 1;
-  // 群通知
-  GroupNotify = 2;
-  // 订阅号
-  SubscribeNotify = 3;
-  // 社交圈
-  SocialNotify = 4;
+  // 通知推送
+  PushNoticeDataList = 1;
 }
 
 message PushBody {
@@ -88,12 +82,18 @@ message MsgData {
     string payload = 3;
   }
   message Options {
-    bool offlinePush = 1;
-    bool storageForServer = 2;
-    bool storageForClient = 3;
-    bool unreadCount = 4;
-    bool needDecrypt = 5;
-    bool updateConv = 6;
+    // 服务端是否需要保存消息
+    bool storageForServer = 1;
+    // 客户端是否需要保存消息
+    bool storageForClient = 2;
+    // 是否需要解密 （端对端加密技术，服务端无法解密）
+    bool needDecrypt = 3;
+    // 是否需要离线推送
+    bool offlinePush = 4;
+    // 是否需要重新渲染会话
+    bool updateConvMsg = 5;
+    // 消息是否需要计入未读数
+    bool updateUnreadCount = 6;
   }
   string clientMsgId = 1;
   string serverMsgId = 2;
@@ -119,6 +119,40 @@ message MsgData {
 
 message MsgDataList {
   repeated MsgData msgDataList = 1;
+}
+
+//通知数据
+message NoticeData {
+  message Options {
+    // 客户端是否需要保存消息
+    bool storageForClient = 1;
+    // 是否需要重新渲染会话
+    bool updateConvMsg = 2;
+    // 只推送在线用户一次
+    bool onlinePushOnce = 3;
+  }
+  // 会话信息
+  string convId = 1; // 会话id (notice:$noticeId)
+  int32 unreadCount = 2; // 会话未读数
+  // 未读数量是绝对值还是增量
+  bool unreadAbsolute = 3;
+
+  // 消息信息
+  string noticeId = 11;
+  string createTime = 12;
+  string title = 13; // 消息标题(显示在会话列表)
+  int32 contentType = 14; // 通知数据类型
+  bytes content = 15; // 消息数据
+
+  // 附加信息
+  Options options = 21; // 通知选项
+
+  // 扩展信息
+  bytes ext = 31; // 扩展字段
+}
+
+message NoticeDataList {
+  repeated NoticeData noticeDataList = 1;
 }
 
 message SendMsgListReq {

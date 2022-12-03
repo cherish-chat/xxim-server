@@ -2,18 +2,13 @@ package logic
 
 import (
 	"context"
-	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
-	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
-	"google.golang.org/protobuf/proto"
-	"time"
-
-	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
-	"github.com/cherish-chat/xxim-server/common/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -116,7 +111,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-		resp, err := NewGetSingleConvSettingLogic(ctx, l.svcCtx).GetSingleConvSetting(&pb.GetSingleConvSettingReq{
+		_, err := NewGetSingleConvSettingLogic(ctx, l.svcCtx).GetSingleConvSetting(&pb.GetSingleConvSettingReq{
 			CommonReq: in.CommonReq,
 			ConvId:    in.Setting.ConvId,
 			UserId:    in.Setting.UserId,
@@ -125,21 +120,21 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			l.Errorf("CacheWarm: %v", err)
 			return
 		}
-		// 发送消息通知
-		xtrace.StartFuncSpan(ctx, "SendMsg", func(ctx context.Context) {
-			bytes, _ := proto.Marshal(resp)
-			for i := 0; i < 10; i++ {
-				_, err := msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
-					msgmodel.CreateConvProfileChangeMsg(in.Setting.UserId, in.Setting.ConvId, bytes).ToMsgData(),
-				})
-				if err != nil {
-					l.Errorf("SendMsg: %v", err)
-					time.Sleep(time.Second)
-					continue
-				}
-				break
-			}
-		})
+		// TODO 发送消息通知
+		//xtrace.StartFuncSpan(ctx, "SendMsg", func(ctx context.Context) {
+		//	bytes, _ := proto.Marshal(resp)
+		//	for i := 0; i < 10; i++ {
+		//		_, err := msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
+		//			msgmodel.CreateConvProfileChangeMsg(in.Setting.UserId, in.Setting.ConvId, bytes).ToMsgData(),
+		//		})
+		//		if err != nil {
+		//			l.Errorf("SendMsg: %v", err)
+		//			time.Sleep(time.Second)
+		//			continue
+		//		}
+		//		break
+		//	}
+		//})
 	}, propagation.MapCarrier{})
 	return &pb.SetSingleConvSettingResp{}, nil
 }

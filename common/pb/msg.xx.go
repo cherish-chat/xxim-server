@@ -9,7 +9,7 @@ import (
 const IdSeparator = "-"
 const SinglePrefix = "single:"
 const GroupPrefix = "group:"
-const SubPrefix = "sub:"
+const NoticePrefix = "notice:"
 
 func (x *MsgData) IsSingleConv() bool {
 	return strings.HasPrefix(x.ConvId, SinglePrefix)
@@ -34,8 +34,8 @@ func (x *MsgData) IsGroupConv() bool {
 	return strings.HasPrefix(x.ConvId, GroupPrefix)
 }
 
-func (x *MsgData) IsSubConv() bool {
-	return strings.HasPrefix(x.ConvId, SubPrefix)
+func (x *MsgData) IsNoticeConv() bool {
+	return strings.HasPrefix(x.ConvId, NoticePrefix)
 }
 
 func ServerMsgId(convId string, seq int64) string {
@@ -50,11 +50,11 @@ func SingleConvId(id1 string, id2 string) string {
 }
 
 func GroupConvId(groupId string) string {
-	return SinglePrefix + groupId
+	return GroupPrefix + groupId
 }
 
-func SubConvId(subId string) string {
-	return SinglePrefix + subId
+func NoticeConvId(noticeId string) string {
+	return NoticePrefix + noticeId
 }
 
 func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {

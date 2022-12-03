@@ -34,11 +34,12 @@ func (p *Pusher) Push(
 	aliasList []string,
 	alert,
 	detailContent string,
+	workNo string,
 ) (resp string, err error) {
 	if len(aliasList) == 0 {
 		return "", nil
 	}
-	model := NewPushModel(p.AppKey)
+	model := NewPushModel(p.AppKey).setWorkno(workNo)
 	// PushNotify
 	{
 		iosProduct := 1
@@ -65,7 +66,7 @@ func (p *Pusher) Push(
 			Url:            "",            // 1 link跳转 moblink功能的的uri
 			CustomNotify:   nil,
 			AndroidNotify: &AndroidNotify{
-				Warn:             "123",          // 提醒类型： 1提示音；2震动；3指示灯，如果多个组合则对应编号组合如：12 标识提示音+震动
+				Warn:             "12",           // 提醒类型： 1提示音；2震动；3指示灯，如果多个组合则对应编号组合如：12 标识提示音+震动
 				Style:            0,              // 显示样式标识 0,"普通通知"，1,"BigTextStyle通知，点击后显示大段文字内容"，2,"BigPictureStyle，大图模式"，3,"横幅通知"，默认：0
 				Content:          []string{},     // 推送内容
 				Sound:            p.AndroidSound, // 自定义声音
