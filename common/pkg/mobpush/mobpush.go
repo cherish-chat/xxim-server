@@ -34,12 +34,11 @@ func (p *Pusher) Push(
 	aliasList []string,
 	alert,
 	detailContent string,
-	workNo string,
 ) (resp string, err error) {
 	if len(aliasList) == 0 {
 		return "", nil
 	}
-	model := NewPushModel(p.AppKey).setWorkno(workNo)
+	model := NewPushModel(p.AppKey)
 	// PushNotify
 	{
 		iosProduct := 1

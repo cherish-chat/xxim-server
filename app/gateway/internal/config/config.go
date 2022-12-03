@@ -16,6 +16,7 @@ type Config struct {
 	GroupRpc     zrpc.RpcClientConf
 	MsgRpc       zrpc.RpcClientConf
 	ImRpc        zrpc.RpcClientConf
+	NoticeRpc    zrpc.RpcClientConf
 	Ip2RegionUrl string `json:",default=https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb"`
 	EnablePulsar bool   `json:",default=false"`
 	EnableSSL    bool   `json:",default=false"`

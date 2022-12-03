@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -120,21 +121,28 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			l.Errorf("CacheWarm: %v", err)
 			return
 		}
-		// TODO 发送消息通知
-		//xtrace.StartFuncSpan(ctx, "SendMsg", func(ctx context.Context) {
-		//	bytes, _ := proto.Marshal(resp)
-		//	for i := 0; i < 10; i++ {
-		//		_, err := msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
-		//			msgmodel.CreateConvProfileChangeMsg(in.Setting.UserId, in.Setting.ConvId, bytes).ToMsgData(),
-		//		})
-		//		if err != nil {
-		//			l.Errorf("SendMsg: %v", err)
-		//			time.Sleep(time.Second)
-		//			continue
-		//		}
-		//		break
-		//	}
-		//})
+		// TODO 发送消息通知 // TODO 一定通知成功（事务）
+		l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+			CommonReq: in.CommonReq,
+			NoticeData: &pb.NoticeData{
+				ConvId:         noticemodel.ConvId_ConvSettingChanged,
+				UnreadCount:    0,
+				UnreadAbsolute: false,
+				NoticeId:       "",
+				CreateTime:     "",
+				Title:          "",
+				ContentType:    1,
+				Content:        nil,
+				Options: &pb.NoticeData_Options{
+					StorageForClient: false,
+					UpdateConvMsg:    false,
+					OnlinePushOnce:   false,
+				},
+				Ext: nil,
+			},
+			UserId:      utils.AnyPtr(in.Setting.UserId),
+			IsBroadcast: nil,
+		})
 	}, propagation.MapCarrier{})
 	return &pb.SetSingleConvSettingResp{}, nil
 }
