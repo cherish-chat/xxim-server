@@ -46,7 +46,7 @@ message MsgData {
   string convId = 21; // 会话id (单聊时 single:user1-user2，群聊时 group:groupId，通知号 notice:noticeId)
   repeated string atUsers = 22;   // 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
 
-  ContentType contentType = 31; // 消息内容类型
+  int32 contentType = 31; // 消息内容类型
   bytes content = 32; // 消息内容
   string seq = 33; // 消息序号 会话内唯一且递增
 

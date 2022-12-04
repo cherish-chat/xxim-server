@@ -82,7 +82,7 @@ func NewMsgFromPb(in *pb.MsgData) *Msg {
 		SenderId:    in.SenderId,
 		SenderInfo:  in.SenderInfo,
 		AtUsers:     utils.AnyMakeSlice(in.AtUsers),
-		ContentType: in.ContentType,
+		ContentType: ContentType(in.ContentType),
 		Content:     in.Content,
 		Seq:         utils.AnyToInt64(in.Seq),
 		Options: MsgOptions{
@@ -147,7 +147,7 @@ func (m *Msg) ToMsgData() *pb.MsgData {
 		SenderId:    m.SenderId,
 		SenderInfo:  m.SenderInfo,
 		AtUsers:     m.AtUsers,
-		ContentType: m.ContentType,
+		ContentType: int32(m.ContentType),
 		Content:     m.Content,
 		Seq:         utils.AnyToString(m.Seq),
 		Options: &pb.MsgData_Options{
