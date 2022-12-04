@@ -48,28 +48,6 @@ message PushBody {
   bytes data = 2;
 }
 
-enum ContentType {
-  UNKNOWN = 0;
-  TYPING = 1; // 正在输入
-  READ = 2; // 已读
-  REVOKE = 3; // 撤回
-
-  TEXT = 11; // 文本
-  IMAGE = 12; // 图片
-  AUDIO = 13; // 语音
-  VIDEO = 14; // 视频
-  FILE = 15; // 文件
-  LOCATION = 16; // 位置
-  CARD = 17; // 名片
-  MERGE = 18; // 合并
-  EMOJI = 19; // 表情
-  COMMAND = 20; // 命令
-  RICH_TXT = 21; // 富文本
-  MARKDOWN = 22; // markdown
-
-  CUSTOM = 100; // 自定义消息
-}
-
 message MsgData {
   message OfflinePush {
     string title = 1;
@@ -101,7 +79,7 @@ message MsgData {
   string convId = 21;
   repeated string atUsers = 22;
 
-  ContentType contentType = 31;
+  int32 contentType = 31;
   bytes content = 32;
   string seq = 33;
 
