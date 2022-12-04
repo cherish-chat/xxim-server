@@ -183,8 +183,7 @@ message BatchGetConvSeqResp {
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
   CommonReq commonReq = 1;
-  string noticeId = 2;
-  bool success = 3; // 是否消费成功
+  repeated string noticeIds = 2;
 }
 
 message AckNoticeDataResp {
