@@ -163,6 +163,18 @@ message OfflinePushMsgResp {
   CommonResp commonResp = 1;
 }
 
+// GetConvOnlineCountReq 获取一个会话里所有的在线用户
+message GetConvOnlineCountReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+}
+
+message GetConvOnlineCountResp {
+  CommonResp commonResp = 1;
+  int32 user = 2;
+  int32 device = 3;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -183,4 +195,6 @@ service msgService {
   rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
   //OfflinePushMsg 离线推送消息
   rpc OfflinePushMsg(OfflinePushMsgReq) returns (OfflinePushMsgResp) {}
+  //GetConvOnlineCount 获取一个会话里所有的在线用户
+  rpc GetConvOnlineCount(GetConvOnlineCountReq) returns (GetConvOnlineCountResp) {}
 }

@@ -88,3 +88,9 @@ func (s *MsgServiceServer) OfflinePushMsg(ctx context.Context, in *pb.OfflinePus
 	l := logic.NewOfflinePushMsgLogic(ctx, s.svcCtx)
 	return l.OfflinePushMsg(in)
 }
+
+// GetConvOnlineCount 获取一个会话里所有的在线用户
+func (s *MsgServiceServer) GetConvOnlineCount(ctx context.Context, in *pb.GetConvOnlineCountReq) (*pb.GetConvOnlineCountResp, error) {
+	l := logic.NewGetConvOnlineCountLogic(ctx, s.svcCtx)
+	return l.GetConvOnlineCount(in)
+}

@@ -237,6 +237,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/shields/:convId",
+					Handler: ShieldHandler(serverCtx),
+				},
+			}...,
+		),
+	)
 	go func() {
 		time.Sleep(1 * time.Second)
 		server.PrintRoutes()

@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/rest/httpx"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"log"
@@ -100,5 +101,32 @@ func AuthHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 		wrapper.Success(w, nil, resp)
+	}
+}
+
+func ShieldHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &struct {
+			ConvId string `path:"convId"`
+		}{}
+		err := httpx.Parse(r, req)
+		if err != nil {
+			logx.WithContext(r.Context()).Errorf("parse request error: %v", err)
+			wrapper.RequestValidateErr(w, err.Error())
+			return
+		}
+		if req.ConvId == "" {
+			logx.WithContext(r.Context()).Errorf("convId is empty")
+			wrapper.RequestValidateErr(w, "convId is required")
+			return
+		}
+		svgResp, err := logic.NewShieldLogic(r, svcCtx).Shield(req.ConvId)
+		if err != nil {
+			wrapper.InternalErr(w, err)
+			return
+		}
+		// 返回 svg
+		w.Header().Set("Content-Type", "image/svg+xml")
+		_, _ = w.Write([]byte(svgResp))
 	}
 }
