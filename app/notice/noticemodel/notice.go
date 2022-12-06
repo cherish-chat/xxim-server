@@ -53,6 +53,7 @@ func (m *Notice) Upsert(tx *gorm.DB) error {
 			"content":     m.Content,
 			"options":     m.Options,
 			"ext":         m.Ext,
+			"createTime":  m.CreateTime,
 		}),
 	}).Create(m).Error
 }

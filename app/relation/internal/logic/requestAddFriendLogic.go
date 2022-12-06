@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -194,7 +195,7 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 			ConvId:         noticemodel.ConvId_FriendNotice,
 			UnreadCount:    0,
 			UnreadAbsolute: false,
-			NoticeId:       "",
+			NoticeId:       fmt.Sprintf("%s", in.To),
 			CreateTime:     "",
 			Title:          "",
 			ContentType:    1,

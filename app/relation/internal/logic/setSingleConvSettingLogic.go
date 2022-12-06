@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
@@ -128,7 +129,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 				ConvId:         noticemodel.ConvId_ConvSettingChanged,
 				UnreadCount:    0,
 				UnreadAbsolute: false,
-				NoticeId:       "",
+				NoticeId:       fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
 				CreateTime:     "",
 				Title:          "",
 				ContentType:    1,
