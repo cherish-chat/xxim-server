@@ -114,7 +114,7 @@ func (p *TDMQConsumer) Consume(
 							logx.Errorf("redis incr error:%v", err)
 						}
 						if count == 12 {
-							// 重试12次，放弃，TODO 告警
+							// 重试12次，丢到死信队列，TODO 告警
 						}
 						p.consumer.ReconsumeLater(receive, GetRetryDelay(count))
 					} else {

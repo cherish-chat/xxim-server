@@ -127,10 +127,10 @@ func (l *BatchGetMsgListByConvIdLogic) BatchGetMsgListByConvId(in *pb.BatchGetMs
 			msgMap[id] = nullMsg
 		}
 	}
-	// seq正序排序
+	// seq倒序排序
 	xtrace.StartFuncSpan(l.ctx, "SortMsgList", func(ctx context.Context) {
 		sort.Slice(msgList, func(i, j int) bool {
-			return msgList[i].Seq < msgList[j].Seq
+			return msgList[i].Seq > msgList[j].Seq
 		})
 	})
 	var resp []*pb.MsgData

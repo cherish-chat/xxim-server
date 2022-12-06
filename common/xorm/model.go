@@ -14,14 +14,6 @@ func (m M) Get(key string, defaultValue string) string {
 	return defaultValue
 }
 
-func (m *M) MarshalJSON() ([]byte, error) {
-	return json.Marshal(m)
-}
-
-func (m *M) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, m)
-}
-
 func (m M) Value() (driver.Value, error) {
 	return json.Marshal(m)
 }

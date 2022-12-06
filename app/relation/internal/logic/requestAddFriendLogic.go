@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -186,10 +188,27 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
-	l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
-		GetUserConnReq: &pb.GetUserConnReq{UserIds: []string{in.To}},
-		Event:          pb.PushEvent_FriendNotify,
-		Data:           nil,
+	// TODO 一定通知成功（事务）
+	l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+		CommonReq: in.CommonReq,
+		NoticeData: &pb.NoticeData{
+			ConvId:         noticemodel.ConvId_FriendNotice,
+			UnreadCount:    0,
+			UnreadAbsolute: false,
+			NoticeId:       fmt.Sprintf("%s", in.To),
+			CreateTime:     "",
+			Title:          "",
+			ContentType:    1,
+			Content:        nil,
+			Options: &pb.NoticeData_Options{
+				StorageForClient: false,
+				UpdateConvMsg:    false,
+				OnlinePushOnce:   false,
+			},
+			Ext: nil,
+		},
+		UserId:      utils.AnyPtr(in.To),
+		IsBroadcast: nil,
 	})
 	return &pb.RequestAddFriendResp{}, nil
 }

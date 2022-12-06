@@ -20,6 +20,8 @@ type (
 	BatchGetMsgListByConvIdReq_Item = pb.BatchGetMsgListByConvIdReq_Item
 	BatchSetMinSeqReq               = pb.BatchSetMinSeqReq
 	BatchSetMinSeqResp              = pb.BatchSetMinSeqResp
+	GetConvOnlineCountReq           = pb.GetConvOnlineCountReq
+	GetConvOnlineCountResp          = pb.GetConvOnlineCountResp
 	GetConvSubscribersReq           = pb.GetConvSubscribersReq
 	GetConvSubscribersResp          = pb.GetConvSubscribersResp
 	GetConvSubscribersRespUidList   = pb.GetConvSubscribersRespUidList
@@ -57,6 +59,8 @@ type (
 		GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
 		// OfflinePushMsg 离线推送消息
 		OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error)
+		// GetConvOnlineCount 获取一个会话里所有的在线用户
+		GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error)
 	}
 
 	defaultMsgService struct {
@@ -135,4 +139,10 @@ func (m *defaultMsgService) GetConvSubscribers(ctx context.Context, in *GetConvS
 func (m *defaultMsgService) OfflinePushMsg(ctx context.Context, in *OfflinePushMsgReq, opts ...grpc.CallOption) (*OfflinePushMsgResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.OfflinePushMsg(ctx, in, opts...)
+}
+
+// GetConvOnlineCount 获取一个会话里所有的在线用户
+func (m *defaultMsgService) GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.GetConvOnlineCount(ctx, in, opts...)
 }

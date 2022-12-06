@@ -11,5 +11,6 @@ type Config struct {
 	ImRpc        zrpc.RpcClientConf
 	UserRpc      zrpc.RpcClientConf
 	MsgRpc       zrpc.RpcClientConf
+	NoticeRpc    zrpc.RpcClientConf
 	Ip2RegionUrl string `json:",default=https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb"`
 }

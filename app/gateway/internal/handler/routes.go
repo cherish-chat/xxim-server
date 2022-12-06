@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/grouphandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/imhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/msghandler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/noticehandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/relationhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler/userhandler"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
@@ -177,6 +178,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{},
 			[]rest.Route{
+				// ackNoticeData
+				{
+					Method:  http.MethodPost,
+					Path:    "/ackNoticeData",
+					Handler: wrapper.WrapHandler(serverCtx, noticehandler.AckNoticeDataConfig(serverCtx)),
+				},
+			}...),
+		rest.WithPrefix("/v1/notice"),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
 				// getAppSystemConfig
 				{
 					Method:  http.MethodPost,
@@ -219,6 +233,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/authVerify",
 					Handler: AuthHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/shields/:convId",
+					Handler: ShieldHandler(serverCtx),
 				},
 			}...,
 		),

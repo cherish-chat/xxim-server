@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/im/immodel"
+	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
-
-	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
-	"github.com/cherish-chat/xxim-server/common/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -77,6 +76,11 @@ func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	fs = append(fs, func() error {
 		var err error
 		_, err = l.svcCtx.MsgService().AfterConnect(l.ctx, in)
+		return err
+	})
+	fs = append(fs, func() error {
+		var err error
+		_, err = l.svcCtx.NoticeService().AfterConnect(l.ctx, in)
 		return err
 	})
 	err := mr.Finish(fs...)

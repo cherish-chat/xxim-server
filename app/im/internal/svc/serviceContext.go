@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/app/im/internal/config"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
+	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -19,6 +20,7 @@ type ServiceContext struct {
 	zedis           *redis.Redis
 	mysql           *gorm.DB
 	msgService      msgservice.MsgService
+	noticeService   noticeservice.NoticeService
 	SystemConfigMgr *xconf.SystemConfigMgr
 }
 
@@ -41,6 +43,13 @@ func (s *ServiceContext) MsgService() msgservice.MsgService {
 		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc))
 	}
 	return s.msgService
+}
+
+func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
+	if s.noticeService == nil {
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+	}
+	return s.noticeService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

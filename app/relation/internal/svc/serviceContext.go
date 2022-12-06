@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
+	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/internal/config"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
@@ -21,6 +22,7 @@ type ServiceContext struct {
 	imService       imservice.ImService
 	userService     userservice.UserService
 	msgService      msgservice.MsgService
+	noticeService   noticeservice.NoticeService
 	SystemConfigMgr *xconf.SystemConfigMgr
 	*i18n.I18N
 }
@@ -73,4 +75,11 @@ func (s *ServiceContext) MsgService() msgservice.MsgService {
 		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc))
 	}
 	return s.msgService
+}
+
+func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
+	if s.noticeService == nil {
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+	}
+	return s.noticeService
 }
