@@ -44,6 +44,7 @@ message SendNoticeDataReq {
   NoticeData noticeData = 2;
   optional string userId = 3; // 指定用户id
   optional bool isBroadcast = 4; // 是否广播
+  optional bool inserted = 5; // 是否已经插入（应该提前upsert数据 让程序可以查询到 查询成功后直接推送）
 }
 
 message SendNoticeDataResp {

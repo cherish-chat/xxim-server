@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 type (
@@ -73,5 +74,24 @@ func (m *Notice) ToProto() *pb.NoticeData {
 			OnlinePushOnce:   m.Options.OnlinePushOnce,
 		},
 		Ext: m.Ext,
+	}
+}
+
+func NoticeFromPB(data *pb.NoticeData, isBroadcast bool, userId string) *Notice {
+	return &Notice{
+		NoticeId:    utils.If(data.NoticeId != "", data.NoticeId, utils.GenId()),
+		ConvId:      data.ConvId,
+		CreateTime:  utils.If(data.CreateTime != "", utils.AnyToInt64(data.CreateTime), time.Now().UnixMilli()),
+		Title:       data.Title,
+		ContentType: data.ContentType,
+		Content:     data.Content,
+		Options: NoticeOption{
+			StorageForClient: data.Options.StorageForClient,
+			UpdateConvMsg:    data.Options.UpdateConvMsg,
+			OnlinePushOnce:   data.Options.OnlinePushOnce,
+		},
+		IsBroadcast: isBroadcast,
+		Ext:         data.Ext,
+		UserId:      userId,
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
@@ -182,33 +183,47 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 	}
 	// 插入 添加好友请求
 	{
-		err := xorm.InsertOne(l.svcCtx.Mysql(), model)
+		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+			err := xorm.InsertOne(tx, model)
+			if err != nil {
+				l.Errorf("InsertOne failed, err: %v", err)
+			}
+			return err
+		}, func(tx *gorm.DB) error {
+			data := &pb.NoticeData{
+				ConvId:         noticemodel.ConvId_FriendNotice,
+				UnreadCount:    0,
+				UnreadAbsolute: false,
+				NoticeId:       fmt.Sprintf("%s", in.To),
+				CreateTime:     "",
+				Title:          "",
+				ContentType:    1,
+				Content:        nil,
+				Options: &pb.NoticeData_Options{
+					StorageForClient: false,
+					UpdateConvMsg:    false,
+					OnlinePushOnce:   false,
+				},
+				Ext: nil,
+			}
+			m := noticemodel.NoticeFromPB(data, false, in.To)
+			err := m.Upsert(tx)
+			if err != nil {
+				l.Errorf("Upsert failed, err: %v", err)
+			}
+			return err
+		})
 		if err != nil {
-			l.Errorf("InsertOne failed, err: %v", err)
+			l.Errorf("Transaction failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
-	// TODO 一定通知成功（事务）
 	l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-		CommonReq: in.CommonReq,
-		NoticeData: &pb.NoticeData{
-			ConvId:         noticemodel.ConvId_FriendNotice,
-			UnreadCount:    0,
-			UnreadAbsolute: false,
-			NoticeId:       fmt.Sprintf("%s", in.To),
-			CreateTime:     "",
-			Title:          "",
-			ContentType:    1,
-			Content:        nil,
-			Options: &pb.NoticeData_Options{
-				StorageForClient: false,
-				UpdateConvMsg:    false,
-				OnlinePushOnce:   false,
-			},
-			Ext: nil,
-		},
+		CommonReq:   in.CommonReq,
+		NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s", in.To)},
 		UserId:      utils.AnyPtr(in.To),
 		IsBroadcast: nil,
+		Inserted:    utils.AnyPtr(true),
 	})
 	return &pb.RequestAddFriendResp{}, nil
 }
