@@ -2,13 +2,12 @@
 SERVICE_NAME="msg"
 FILENAME="${SERVICE_NAME}.proto"
 
-ln -s ../../../common/pb/${FILENAME} ./${FILENAME} || echo "link exists"
+ln -s ../../../common/pb/${FILENAME} ${FILENAME} || echo "link exists"
 ln -s ../../../common/pb/common.proto ./common.proto || echo "link exists"
-ln -s ../../../common/pb/im.proto ./im.proto || echo "link exists"
 # shellcheck disable=SC2046
 protoc --proto_path=$(dirname ../../../common/pb/common.proto) common.proto --go_out=../../../common
 # shellcheck disable=SC2046
-protoc --proto_path=$(dirname ../../../common/pb/common.proto) im.proto --go_out=../../../common
+protoc -I=$(dirname ../../../common/pb/${FILENAME}) "${FILENAME}" --validate_out="lang=go:../../../common"
 # shellcheck disable=SC2046
 goctl rpc protoc -I=$(dirname ../../../common/pb/${FILENAME}) ${FILENAME} -v --go_out=../../../common --go-grpc_out=../../../common  --zrpc_out=.. --style=goZero
 # shellcheck disable=SC2013

@@ -59,7 +59,7 @@ enum ConvType {
 }
 
 enum ContentType {
-  UNKNOWN = 0;
+  UNKNOWN_Content = 0;
   TYPING = 1; // 正在输入
   READ = 2; // 已读
   REVOKE = 3; // 撤回
