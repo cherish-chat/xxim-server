@@ -10,7 +10,6 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"google.golang.org/protobuf/proto"
 	"io"
@@ -129,17 +128,5 @@ func ShieldHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		// 返回 svg
 		w.Header().Set("Content-Type", "image/svg+xml")
 		_, _ = w.Write([]byte(svgResp))
-	}
-}
-
-func Cors(svcCtx *svc.ServiceContext) rest.Middleware {
-	return func(next http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, User-Agent, X-Real-IP, X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host, X-Forwarded-Port, X-Forwarded-Server")
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-			next(w, r)
-		}
 	}
 }
