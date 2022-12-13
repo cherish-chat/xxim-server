@@ -19,6 +19,7 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
 	server := rest.MustNewServer(c.RestConf)
+	server.Use(handler.Cors(ctx))
 	defer server.Stop()
 
 	handler.RegisterHandlers(server, ctx)
