@@ -139,10 +139,13 @@ func (l *RequestAddFriendLogic) allowAddFriend(in *pb.RequestAddFriendReq) (*pb.
 	var acceptAddFriendResp *pb.AcceptAddFriendResp
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "AcceptAddFriend", func(ctx context.Context) {
-		acceptAddFriendResp, err = NewAcceptAddFriendLogic(ctx, l.svcCtx).AcceptAddFriend(&pb.AcceptAddFriendReq{CommonReq: &pb.CommonReq{
-			UserId:   in.To,
-			Language: in.CommonReq.Language,
-		}})
+		acceptAddFriendResp, err = NewAcceptAddFriendLogic(ctx, l.svcCtx).AcceptAddFriend(&pb.AcceptAddFriendReq{
+			CommonReq: &pb.CommonReq{
+				UserId:   in.To,
+				Language: in.CommonReq.Language,
+			},
+			ApplyUserId: in.CommonReq.UserId},
+		)
 	})
 	if err != nil {
 		l.Errorf("AcceptAddFriend failed, err: %v", err)
