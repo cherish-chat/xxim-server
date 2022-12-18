@@ -68,18 +68,21 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
 	l.Infof("user %s connected", utils.AnyToString(param))
 	// 加入用户连接
-	l.userConnMapLock.Lock()
-	if _, ok := l.userConnMap[param.UserId]; !ok {
-		l.userConnMap[param.UserId] = connMap{}
+	f := func() {
+		defer l.userConnMapLock.Unlock()
+		l.userConnMapLock.Lock()
+		if _, ok := l.userConnMap[param.UserId]; !ok {
+			l.userConnMap[param.UserId] = connMap{}
+		}
+		if _, ok := l.userConnMap[param.UserId][param.Platform]; !ok {
+			l.userConnMap[param.UserId][param.Platform] = deviceMap{}
+		}
+		if _, ok := l.userConnMap[param.UserId][param.Platform][param.DeviceId]; ok {
+			l.userConnMap[param.UserId][param.Platform][param.DeviceId].Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+		}
+		l.userConnMap[param.UserId][param.Platform][param.DeviceId] = c
 	}
-	if _, ok := l.userConnMap[param.UserId][param.Platform]; !ok {
-		l.userConnMap[param.UserId][param.Platform] = deviceMap{}
-	}
-	if _, ok := l.userConnMap[param.UserId][param.Platform][param.DeviceId]; ok {
-		l.userConnMap[param.UserId][param.Platform][param.DeviceId].Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
-	}
-	l.userConnMap[param.UserId][param.Platform][param.DeviceId] = c
-	l.userConnMapLock.Unlock()
+	f()
 	// 告知客户端连接成功
 	_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
 	go func() {
@@ -115,24 +118,27 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	l.Infof("user %s disconnected", utils.AnyToString(c.ConnParam))
 	// 删除用户连接
-	l.userConnMapLock.Lock()
-	if _, ok := l.userConnMap[c.ConnParam.UserId]; !ok {
-		return
+	f := func() {
+		defer l.userConnMapLock.Unlock()
+		l.userConnMapLock.Lock()
+		if _, ok := l.userConnMap[c.ConnParam.UserId]; !ok {
+			return
+		}
+		if _, ok := l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform]; !ok {
+			return
+		}
+		if _, ok := l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform][c.ConnParam.DeviceId]; !ok {
+			return
+		}
+		delete(l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform], c.ConnParam.DeviceId)
+		if len(l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform]) == 0 {
+			delete(l.userConnMap[c.ConnParam.UserId], c.ConnParam.Platform)
+		}
+		if len(l.userConnMap[c.ConnParam.UserId]) == 0 {
+			delete(l.userConnMap, c.ConnParam.UserId)
+		}
 	}
-	if _, ok := l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform]; !ok {
-		return
-	}
-	if _, ok := l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform][c.ConnParam.DeviceId]; !ok {
-		return
-	}
-	delete(l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform], c.ConnParam.DeviceId)
-	if len(l.userConnMap[c.ConnParam.UserId][c.ConnParam.Platform]) == 0 {
-		delete(l.userConnMap[c.ConnParam.UserId], c.ConnParam.Platform)
-	}
-	if len(l.userConnMap[c.ConnParam.UserId]) == 0 {
-		delete(l.userConnMap, c.ConnParam.UserId)
-	}
-	l.userConnMapLock.Unlock()
+	f()
 	l.stats()
 	go func() {
 		for {
