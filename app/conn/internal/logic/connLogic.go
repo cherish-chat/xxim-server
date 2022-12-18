@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
@@ -213,10 +214,16 @@ func (l *ConnLogic) BuildSearchUserConnFilter(in *pb.GetUserConnReq) func(conn *
 	}
 }
 
-func (l *ConnLogic) KickUserConn(in *pb.KickUserConnReq) error {
-	conns := l.GetConnsByFilter(l.BuildSearchUserConnFilter(in.GetUserConnReq))
+func (l *ConnLogic) KickUserConn(ctx context.Context, in *pb.KickUserConnReq) error {
+	var conns []*types.UserConn
+	xtrace.StartFuncSpan(ctx, "GetConnsByFilter", func(ctx context.Context) {
+		conns = l.GetConnsByFilter(l.BuildSearchUserConnFilter(in.GetUserConnReq))
+	})
 	for _, c := range conns {
-		err := l.KickConn(c)
+		var err error
+		xtrace.StartFuncSpan(ctx, "KickUserConn", func(ctx context.Context) {
+			err = l.KickConn(c)
+		})
 		if err != nil {
 			return err
 		}
