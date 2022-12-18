@@ -1,7 +1,7 @@
 package rediskey
 
-func UserConnLock(userId string) string {
-	return "conn:user_lock:" + userId
+func UserConnLock() string {
+	return "conn:user_lock"
 }
 
 func UserConnLockExpire() int {
