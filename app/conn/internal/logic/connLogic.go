@@ -8,11 +8,12 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
-	"sync"
 	"time"
 )
 
@@ -23,7 +24,7 @@ type deviceMap map[string]*types.UserConn // key: deviceId, value: *types.UserCo
 type ConnLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	userConnMapLock sync.RWMutex
+	userConnMapLock map[string]*redis.RedisLock
 	userConnMap     map[string]connMap // key: userId, value: connMap
 }
 
@@ -64,13 +65,31 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 	return int(resp.Code), nil
 }
 
+func (l *ConnLogic) Lock(userId string, do func()) {
+	for {
+		if _, ok := l.userConnMapLock[userId]; !ok {
+			lock := redis.NewRedisLock(l.svcCtx.Redis(), rediskey.UserConnLock(userId))
+			lock.SetExpire(rediskey.UserConnLockExpire())
+			l.userConnMapLock[userId] = lock
+		}
+		if ok, err := l.userConnMapLock[userId].Acquire(); !ok || err != nil {
+			if err != nil {
+				l.Errorf("lock user conn failed, userId: %s, err: %v", userId, err)
+			}
+			time.Sleep(time.Millisecond * 100)
+			continue
+		}
+		do()
+		l.userConnMapLock[userId].Release()
+		break
+	}
+}
+
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
 	l.Infof("user %s connected", utils.AnyToString(param))
 	// 加入用户连接
-	f := func() {
-		defer l.userConnMapLock.Unlock()
-		l.userConnMapLock.Lock()
+	l.Lock(param.UserId, func() {
 		if _, ok := l.userConnMap[param.UserId]; !ok {
 			l.userConnMap[param.UserId] = connMap{}
 		}
@@ -81,8 +100,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 			l.userConnMap[param.UserId][param.Platform][param.DeviceId].Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
 		}
 		l.userConnMap[param.UserId][param.Platform][param.DeviceId] = c
-	}
-	f()
+	})
 	// 告知客户端连接成功
 	_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
 	go func() {
@@ -118,9 +136,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	l.Infof("user %s disconnected", utils.AnyToString(c.ConnParam))
 	// 删除用户连接
-	f := func() {
-		defer l.userConnMapLock.Unlock()
-		l.userConnMapLock.Lock()
+	l.Lock(c.ConnParam.UserId, func() {
 		if _, ok := l.userConnMap[c.ConnParam.UserId]; !ok {
 			return
 		}
@@ -136,9 +152,9 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 		}
 		if len(l.userConnMap[c.ConnParam.UserId]) == 0 {
 			delete(l.userConnMap, c.ConnParam.UserId)
+			delete(l.userConnMapLock, c.ConnParam.UserId)
 		}
-	}
-	f()
+	})
 	l.stats()
 	go func() {
 		for {
@@ -182,8 +198,6 @@ func (l *ConnLogic) Stats() {
 }
 
 func (l *ConnLogic) stats() {
-	l.userConnMapLock.RLock()
-	defer l.userConnMapLock.RUnlock()
 	// 统计在线用户数
 	onlineUserCount := len(l.userConnMap)
 	// 统计在线设备数
@@ -262,8 +276,6 @@ func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {
 }
 
 func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*types.UserConn {
-	l.userConnMapLock.RLock()
-	defer l.userConnMapLock.RUnlock()
 	conns := make([]*types.UserConn, 0)
 	for _, cm := range l.userConnMap {
 		for _, dm := range cm {
