@@ -24,7 +24,7 @@ type deviceMap map[string]*types.UserConn // key: deviceId, value: *types.UserCo
 type ConnLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	userConnMapLock map[string]*redis.RedisLock
+	userConnMapLock *redis.RedisLock
 	userConnMap     map[string]connMap // key: userId, value: connMap
 }
 
@@ -34,7 +34,7 @@ func InitConnLogic(svcCtx *svc.ServiceContext) *ConnLogic {
 	if singletonConnLogic == nil {
 		l := &ConnLogic{svcCtx: svcCtx}
 		l.Logger = logx.WithContext(context.Background())
-		l.userConnMapLock = make(map[string]*redis.RedisLock)
+		l.userConnMapLock = redis.NewRedisLock(l.svcCtx.Redis(), rediskey.UserConnLock())
 		l.userConnMap = map[string]connMap{}
 		singletonConnLogic = l
 	}
@@ -66,22 +66,17 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 	return int(resp.Code), nil
 }
 
-func (l *ConnLogic) Lock(userId string, do func()) {
+func (l *ConnLogic) Lock(do func()) {
 	for {
-		if _, ok := l.userConnMapLock[userId]; !ok {
-			lock := redis.NewRedisLock(l.svcCtx.Redis(), rediskey.UserConnLock(userId))
-			lock.SetExpire(rediskey.UserConnLockExpire())
-			l.userConnMapLock[userId] = lock
-		}
-		if ok, err := l.userConnMapLock[userId].Acquire(); !ok || err != nil {
+		if ok, err := l.userConnMapLock.Acquire(); !ok || err != nil {
 			if err != nil {
-				l.Errorf("lock user conn failed, userId: %s, err: %v", userId, err)
+				l.Errorf("lock user conn failed, err: %v", err)
 			}
 			time.Sleep(time.Millisecond * 100)
 			continue
 		}
 		do()
-		l.userConnMapLock[userId].Release()
+		l.userConnMapLock.Release()
 		break
 	}
 }
@@ -90,7 +85,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
 	l.Infof("user %s connected", utils.AnyToString(param))
 	// 加入用户连接
-	l.Lock(param.UserId, func() {
+	l.Lock(func() {
 		if _, ok := l.userConnMap[param.UserId]; !ok {
 			l.userConnMap[param.UserId] = connMap{}
 		}
@@ -137,7 +132,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	l.Infof("user %s disconnected", utils.AnyToString(c.ConnParam))
 	// 删除用户连接
-	l.Lock(c.ConnParam.UserId, func() {
+	l.Lock(func() {
 		if _, ok := l.userConnMap[c.ConnParam.UserId]; !ok {
 			return
 		}
@@ -153,7 +148,6 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 		}
 		if len(l.userConnMap[c.ConnParam.UserId]) == 0 {
 			delete(l.userConnMap, c.ConnParam.UserId)
-			delete(l.userConnMapLock, c.ConnParam.UserId)
 		}
 	})
 	l.stats()
@@ -262,31 +256,36 @@ func (l *ConnLogic) KickConn(c *types.UserConn) error {
 }
 
 func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {
-	conns := l.GetConnsByFilter(l.BuildSearchUserConnFilter(in.GetUserConnReq))
-	data, _ := proto.Marshal(&pb.PushBody{
-		Event: in.Event,
-		Data:  in.Data,
-	})
-	for _, c := range conns {
-		err := l.SendMsgToConn(c, data)
-		if err != nil {
-			return err
+	var err error
+	l.Lock(func() {
+		conns := l.GetConnsByFilter(l.BuildSearchUserConnFilter(in.GetUserConnReq))
+		data, _ := proto.Marshal(&pb.PushBody{
+			Event: in.Event,
+			Data:  in.Data,
+		})
+		for _, c := range conns {
+			err = l.SendMsgToConn(c, data)
+			if err != nil {
+				break
+			}
 		}
-	}
-	return nil
+	})
+	return err
 }
 
 func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*types.UserConn {
 	conns := make([]*types.UserConn, 0)
-	for _, cm := range l.userConnMap {
-		for _, dm := range cm {
-			for _, c := range dm {
-				if filter(c) {
-					conns = append(conns, c)
+	l.Lock(func() {
+		for _, cm := range l.userConnMap {
+			for _, dm := range cm {
+				for _, c := range dm {
+					if filter(c) {
+						conns = append(conns, c)
+					}
 				}
 			}
 		}
-	}
+	})
 	return conns
 }
 
