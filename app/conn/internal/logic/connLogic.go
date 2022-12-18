@@ -34,6 +34,7 @@ func InitConnLogic(svcCtx *svc.ServiceContext) *ConnLogic {
 	if singletonConnLogic == nil {
 		l := &ConnLogic{svcCtx: svcCtx}
 		l.Logger = logx.WithContext(context.Background())
+		l.userConnMapLock = make(map[string]*redis.RedisLock)
 		l.userConnMap = map[string]connMap{}
 		singletonConnLogic = l
 	}
