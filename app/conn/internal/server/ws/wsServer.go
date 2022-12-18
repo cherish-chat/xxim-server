@@ -120,12 +120,13 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer c.Close(websocket.StatusInternalError, "")
 
-	err = s.subscribe(c.CloseRead(r.Context()), &types.UserConn{
+	ctx := c.CloseRead(r.Context())
+	err = s.subscribe(ctx, &types.UserConn{
 		Conn: &userConn{
 			ws: c,
 		},
 		ConnParam:   param,
-		Ctx:         r.Context(),
+		Ctx:         ctx,
 		ConnectedAt: time.Now(),
 	})
 	if errors.Is(err, context.Canceled) {

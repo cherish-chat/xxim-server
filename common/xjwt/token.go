@@ -27,7 +27,7 @@ type (
 		Base64PubKey string `json:"base64PubKey"`
 		Data         string `json:"data"`
 		Platform     string `json:"platform"`
-		DeviceId     string `json:"serviceId"`
+		DeviceId     string `json:"deviceId"`
 		DeviceModel  string `json:"deviceModel"`
 	}
 )
