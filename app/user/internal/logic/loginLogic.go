@@ -53,8 +53,11 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	// 密码正确
 	// 生成token
-	//uniqueSuffix := fmt.Sprintf("%s:%s", in.CommonReq.Platform, in.CommonReq.DeviceId) // 如果你不限制同设备登录多次一个账号，可以使用这行代码
+	// 是否允许同平台多设备登录
 	uniqueSuffix := fmt.Sprintf("%s", in.CommonReq.Platform)
+	if l.svcCtx.Config.EnableMultiDeviceLogin {
+		uniqueSuffix = fmt.Sprintf("%s:%s", in.CommonReq.Platform, in.CommonReq.DeviceId)
+	}
 	tokenObj := xjwt.GenerateToken(user.Id, uniqueSuffix,
 		xjwt.WithPlatform(in.CommonReq.Platform),
 		xjwt.WithDeviceId(in.CommonReq.DeviceId),
