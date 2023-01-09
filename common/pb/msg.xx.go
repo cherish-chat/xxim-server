@@ -57,6 +57,27 @@ func NoticeConvId(noticeId string) string {
 	return NoticePrefix + noticeId
 }
 
+func IsSingleConv(convId string) bool {
+	return strings.HasPrefix(convId, SinglePrefix)
+}
+
+func ParseSingleConv(convId string) []string {
+	arr := strings.Split(strings.TrimPrefix(convId, SinglePrefix), IdSeparator)
+	return arr
+}
+
+func IsGroupConv(convId string) bool {
+	return strings.HasPrefix(convId, GroupPrefix)
+}
+
+func ParseGroupConv(convId string) string {
+	return strings.TrimPrefix(convId, GroupPrefix)
+}
+
+func IsNoticeConv(convId string) bool {
+	return strings.HasPrefix(convId, NoticePrefix)
+}
+
 func ParseConvServerMsgId(serverMsgId string) (convId string, seq int64) {
 	arr := strings.Split(serverMsgId, IdSeparator)
 	if len(arr) == 2 {
