@@ -28,7 +28,7 @@ func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
 			logx.WithContext(c.Ctx).Errorf("OnReceiveBody error: %s", err.Error())
 		}
 		data, _ := proto.Marshal(&pb.PushBody{
-			Event: pb.PushEvent_ReturnResponse,
+			Event: pb.PushEvent_PushResponseBody,
 			Data:  bodyData,
 		})
 		err = l.SendMsgToConn(c, data)
@@ -43,15 +43,15 @@ func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
 
 func (l *ConnLogic) onReceiveBody(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	switch body.Event {
-	case pb.RequestEvent_SendMsgList:
+	case pb.ActiveEvent_SendMsgList:
 		return l.onReceiveSendMsgList(c, body)
-	case pb.RequestEvent_SyncConvSeq:
+	case pb.ActiveEvent_SyncConvSeq:
 		return l.onReceiveSyncConvSeq(c, body)
-	case pb.RequestEvent_SyncMsgList:
+	case pb.ActiveEvent_SyncMsgList:
 		return l.onReceiveSyncMsgList(c, body)
-	case pb.RequestEvent_AckNotice:
+	case pb.ActiveEvent_AckNotice:
 		return l.onReceiveAckNotice(c, body)
-	case pb.RequestEvent_GetMsgById:
+	case pb.ActiveEvent_GetMsgById:
 		return l.onReceiveGetMsgById(c, body)
 	default:
 		return nil, errors.New("invalid event")
@@ -84,6 +84,7 @@ func (l *ConnLogic) onReceiveSendMsgList(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
+		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -114,6 +115,7 @@ func (l *ConnLogic) onReceiveSyncConvSeq(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
+		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -144,6 +146,7 @@ func (l *ConnLogic) onReceiveSyncMsgList(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
+		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -174,6 +177,7 @@ func (l *ConnLogic) onReceiveAckNotice(c *types.UserConn, body *pb.RequestBody) 
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
+		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -204,6 +208,7 @@ func (l *ConnLogic) onReceiveGetMsgById(c *types.UserConn, body *pb.RequestBody)
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
+		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }

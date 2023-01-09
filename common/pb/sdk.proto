@@ -1,48 +1,13 @@
 syntax = "proto3";
 package pb;
 
-message CommonReq {
-  string userId = 1;
-  string token = 2;
-
-  string deviceModel = 11;
-  string deviceId = 12;
-  string osVersion = 13;
-  string platform = 14;
-
-  string appVersion = 21;
-  string language = 22;
-
-  bytes data = 31;
-
-  string ip = 41;
-  string userAgent = 42;
-}
-
-message CommonResp {
-  enum Code {
-    Success = 0;
-
-    UnknownError = 1;
-    InternalError = 2;
-    RequestError = 3;
-    AuthError = 4;
-    ToastError = 5;
-    AlertError = 7;
-    RetryError = 8;
-  }
-  Code code = 1;
-  optional string msg = 2;
-  bytes data = 3;
-}
-
 enum PushEvent {
   // 消息推送
   PushMsgDataList = 0;
   // 通知推送
   PushNoticeDataList = 1;
   // 响应返回
-  ReturnResponse = 2;
+  PushResponseBody = 2;
 }
 
 message PushBody {
@@ -51,7 +16,7 @@ message PushBody {
 }
 
 // 客户端发送事件
-enum RequestEvent {
+enum ActiveEvent {
   // 发送消息
   SendMsgList = 0;
   // 批量获取会话的消息seq
@@ -66,16 +31,28 @@ enum RequestEvent {
 
 // 客户端发送的消息体
 message RequestBody {
-  RequestEvent event = 1;
+  ActiveEvent event = 1;
   string reqId = 2;
   bytes data = 3;
 }
 
 // 服务端返回响应的消息体
 message ResponseBody {
-  RequestEvent event = 1;
+  enum Code {
+    Success = 0;
+
+    UnknownError = 1;
+    InternalError = 2;
+    RequestError = 3;
+    AuthError = 4;
+    ToastError = 5;
+    AlertError = 7;
+    RetryError = 8;
+  }
+  ActiveEvent event = 1;
   string reqId = 2;
-  bytes data = 3;
+  Code code = 3;
+  bytes data = 4;
 }
 
 message MsgData {
@@ -158,13 +135,11 @@ message NoticeDataList {
 }
 
 message SendMsgListReq {
-  CommonReq commonReq = 1;
   repeated MsgData msgDataList = 2;
   optional int32 deliverAfter = 11;
 }
 
 message SendMsgListResp {
-  CommonResp commonResp = 1;
 }
 
 message BatchGetMsgListByConvIdReq {
@@ -172,35 +147,29 @@ message BatchGetMsgListByConvIdReq {
     string convId = 1;
     repeated string seqList = 2;
   }
-  CommonReq commonReq = 1;
   repeated Item items = 2;
   bool push = 3;
 }
 
 message GetMsgListResp {
-  CommonResp commonResp = 1;
   repeated MsgData msgDataList = 2;
 }
 
 message GetMsgByIdReq {
-  CommonReq commonReq = 1;
   optional string serverMsgId = 2;
   optional string clientMsgId = 3;
   bool push = 4;
 }
 
 message GetMsgByIdResp {
-  CommonResp commonResp = 1;
   MsgData msgData = 2;
 }
 
 message BatchGetConvSeqReq {
-  CommonReq commonReq = 1;
   repeated string convIdList = 2;
 }
 
 message BatchGetConvSeqResp {
-  CommonResp commonResp = 1;
   message ConvSeq {
     string convId = 1;
     string minSeq = 2;
@@ -212,10 +181,7 @@ message BatchGetConvSeqResp {
 
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
-  CommonReq commonReq = 1;
   repeated string noticeIds = 2;
 }
 
-message AckNoticeDataResp {
-  CommonResp commonResp = 1;
-}
+message AckNoticeDataResp {}
