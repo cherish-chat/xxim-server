@@ -84,7 +84,6 @@ func (l *ConnLogic) onReceiveSendMsgList(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
-		Code:  int32(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -115,7 +114,6 @@ func (l *ConnLogic) onReceiveSyncConvSeq(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
-		Code:  int32(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -146,7 +144,6 @@ func (l *ConnLogic) onReceiveSyncMsgList(c *types.UserConn, body *pb.RequestBody
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
-		Code:  int32(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -177,7 +174,6 @@ func (l *ConnLogic) onReceiveAckNotice(c *types.UserConn, body *pb.RequestBody) 
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
-		Code:  int32(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
@@ -208,7 +204,6 @@ func (l *ConnLogic) onReceiveGetMsgById(c *types.UserConn, body *pb.RequestBody)
 	return &pb.ResponseBody{
 		Event: body.Event,
 		ReqId: body.ReqId,
-		Code:  int32(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
 }
