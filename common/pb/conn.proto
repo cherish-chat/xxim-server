@@ -49,11 +49,42 @@ enum PushEvent {
   PushMsgDataList = 0;
   // 通知推送
   PushNoticeDataList = 1;
+  // 响应返回
+  ReturnResponse = 2;
 }
 
 message PushBody {
   PushEvent event = 1;
   bytes data = 2;
+}
+
+// 客户端发送事件
+enum RequestEvent {
+  // 发送消息
+  SendMsgList = 0;
+  // 批量获取会话的消息seq
+  SyncConvSeq = 1;
+  // 批量同步消息列表
+  SyncMsgList = 2;
+  // 确认消费通知
+  AckNotice = 3;
+  // 获取一条消息
+  GetMsgById = 4;
+}
+
+// 客户端发送的消息体
+message RequestBody {
+  RequestEvent event = 1;
+  string reqId = 2;
+  bytes data = 3;
+}
+
+// 服务端返回响应的消息体
+message ResponseBody {
+  RequestEvent event = 1;
+  string reqId = 2;
+  int32 code = 3;
+  bytes data = 4;
 }
 
 message SendMsgReq {

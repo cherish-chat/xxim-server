@@ -13,4 +13,6 @@ type Config struct {
 	zrpc.RpcServerConf
 	Websocket HttpConfig
 	ImRpc     zrpc.RpcClientConf
+	MsgRpc    zrpc.RpcClientConf
+	NoticeRpc zrpc.RpcClientConf
 }

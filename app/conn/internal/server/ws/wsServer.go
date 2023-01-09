@@ -22,6 +22,11 @@ type Server struct {
 	addSubscriber    func(c *types.UserConn)
 	deleteSubscriber func(c *types.UserConn)
 	beforeConnect    func(ctx context.Context, param types.ConnParam) (int, error)
+	onReceive        func(c *types.UserConn, typ int, msg []byte)
+}
+
+func (s *Server) SetOnReceive(f func(c *types.UserConn, typ int, msg []byte)) {
+	s.onReceive = f
 }
 
 func (s *Server) SetBeforeConnect(f func(ctx context.Context, param types.ConnParam) (int, error)) {
@@ -91,6 +96,11 @@ func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {
 	return c.ws.Write(ctx, websocket.MessageType(typ), msg)
 }
 
+func (c *userConn) Read(ctx context.Context) (typ int, msg []byte, err error) {
+	messageType, data, err := c.ws.Read(ctx)
+	return int(messageType), data, err
+}
+
 func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	logger := logx.WithContext(r.Context())
 	headers := make(map[string]string)
@@ -121,14 +131,16 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	defer c.Close(websocket.StatusInternalError, "")
 
 	ctx := c.CloseRead(r.Context())
-	err = s.subscribe(ctx, &types.UserConn{
+	userConn := &types.UserConn{
 		Conn: &userConn{
 			ws: c,
 		},
 		ConnParam:   param,
 		Ctx:         ctx,
 		ConnectedAt: time.Now(),
-	})
+	}
+	err = s.subscribe(ctx, userConn)
+	go s.loopRead(ctx, userConn)
 	if errors.Is(err, context.Canceled) {
 		return
 	}
@@ -155,4 +167,20 @@ func (s *Server) subscribe(ctx context.Context, c *types.UserConn) error {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.serveMux.ServeHTTP(w, r)
+}
+
+func (s *Server) loopRead(ctx context.Context, conn *types.UserConn) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			typ, msg, err := conn.Conn.Read(ctx)
+			if err != nil {
+				logx.Errorf("failed to read message: %v", err)
+				continue
+			}
+			s.onReceive(conn, typ, msg)
+		}
+	}
 }
