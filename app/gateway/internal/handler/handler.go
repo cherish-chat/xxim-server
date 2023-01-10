@@ -48,7 +48,7 @@ func WsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				Timeout:   3 * time.Second,
 				KeepAlive: 3 * time.Second,
 			}).DialContext,
-			MaxIdleConns:          100,
+			MaxIdleConns:          0,
 			IdleConnTimeout:       90 * time.Second,
 			TLSHandshakeTimeout:   3 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,

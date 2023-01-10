@@ -41,6 +41,10 @@ func WrapHandler[REQ IReq, RESP IResp](
 		}
 		requester.Data = nil
 		req.SetCommonReq(requester)
+		if err := req.Validate(); err != nil {
+			RequestValidateErr(w, err.Error())
+			return
+		}
 		response, err := config.Do(r.Context(), req)
 		if err != nil {
 			InternalErr(w, err)

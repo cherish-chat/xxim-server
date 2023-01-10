@@ -27,7 +27,7 @@ type (
 		Base64PubKey string `json:"base64PubKey"`
 		Data         string `json:"data"`
 		Platform     string `json:"platform"`
-		DeviceId     string `json:"serviceId"`
+		DeviceId     string `json:"deviceId"`
 		DeviceModel  string `json:"deviceModel"`
 	}
 )
@@ -116,7 +116,7 @@ func VerifyToken(
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			// token不存在
-			return VerifyTokenCodeExpire, ""
+			return VerifyTokenCodeExpire, "token不存在"
 		}
 		logger.Errorf("redis Hget error: %v, key: %s, hkey: %s", err, key, hkey)
 		return VerifyTokenCodeInternalError, "服务器内部错误"

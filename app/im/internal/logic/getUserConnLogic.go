@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
+	"go.opentelemetry.io/otel/propagation"
 
 	"github.com/cherish-chat/xxim-server/app/im/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -28,8 +30,15 @@ func (l *GetUserConnLogic) GetUserConn(in *pb.GetUserConnReq) (*pb.GetUserConnRe
 	var respList []*pb.GetUserConnResp
 	fs := make([]func() error, 0)
 	for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
+		podValue := *pod
 		fs = append(fs, func() error {
-			resp, err := pod.GetUserConn(l.ctx, in)
+			var resp *pb.GetUserConnResp
+			var err error
+			xtrace.StartFuncSpan(l.ctx, "GetUserConn", func(ctx context.Context) {
+				resp, err = podValue.GetUserConn(l.ctx, in)
+			}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+				"podIpPort": podValue.PodIpPort,
+			}))
 			if err == nil {
 				respList = append(respList, resp)
 			}

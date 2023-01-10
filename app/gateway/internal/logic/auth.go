@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xjwt"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -34,6 +35,11 @@ func (l *AuthLogic) Auth(in *pb.CommonReq) *pb.CommonResp {
 	}
 	// 验证token
 	code, msg := xjwt.VerifyToken(l.ctx, l.svcCtx.Redis(), in.UserId, inputToken, xjwt.WithPlatform(in.Platform), xjwt.WithDeviceId(in.DeviceId))
+	// msg url 解码
+	tmp, err := url.QueryUnescape(msg)
+	if err == nil {
+		msg = tmp
+	}
 	switch code {
 	case xjwt.VerifyTokenCodeOK:
 		return &pb.CommonResp{}

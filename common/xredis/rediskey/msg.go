@@ -41,3 +41,7 @@ func ConvMembersSubscribedSplit(zmember string) (userId string, podIp string) {
 func OfflinePushMsgListKey(uniqueId string) string {
 	return "s:offline_push_msg:" + uniqueId
 }
+
+func SyncSendMsgLimiter() string {
+	return "token_limter:sync_send_msg_limiter"
+}

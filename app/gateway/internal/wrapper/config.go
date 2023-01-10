@@ -11,6 +11,7 @@ type IReq interface {
 	proto.Message
 	GetCommonReq() *pb.CommonReq
 	SetCommonReq(*pb.CommonReq)
+	Validate() error
 }
 
 type IResp interface {

@@ -204,10 +204,10 @@ func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) 
 	}
 	for i, val := range vals {
 		user := &User{}
-		if val == xredis.NotFound || val == "" {
+		if val == xredis.NotFound {
 			id := ids[i]
 			user.NotFound(id)
-		} else {
+		} else if val != "" {
 			err = json.Unmarshal([]byte(val), user)
 			if err != nil {
 				logx.WithContext(ctx).Errorf("convert user error: %s", err.Error())

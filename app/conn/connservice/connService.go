@@ -22,6 +22,8 @@ type (
 	KickUserConnReq    = pb.KickUserConnReq
 	KickUserConnResp   = pb.KickUserConnResp
 	PushBody           = pb.PushBody
+	RequestBody        = pb.RequestBody
+	ResponseBody       = pb.ResponseBody
 	SendMsgReq         = pb.SendMsgReq
 	SendMsgResp        = pb.SendMsgResp
 

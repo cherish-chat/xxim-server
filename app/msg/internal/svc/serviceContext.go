@@ -10,23 +10,26 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pkg/mobpush"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
+	"github.com/zeromicro/go-zero/core/limit"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	msgProducer     *xtdmq.TDMQProducer
-	zedis           *redis.Redis
-	mysql           *gorm.DB
-	imService       imservice.ImService
-	relationService relationservice.RelationService
-	groupService    groupservice.GroupService
-	userService     userservice.UserService
-	MobPush         *mobpush.Pusher
-	SystemConfigMgr *xconf.SystemConfigMgr
+	Config             config.Config
+	msgProducer        *xtdmq.TDMQProducer
+	zedis              *redis.Redis
+	mysql              *gorm.DB
+	imService          imservice.ImService
+	relationService    relationservice.RelationService
+	groupService       groupservice.GroupService
+	userService        userservice.UserService
+	MobPush            *mobpush.Pusher
+	SystemConfigMgr    *xconf.SystemConfigMgr
+	SyncSendMsgLimiter *limit.TokenLimiter
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,6 +42,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	)
 	s.MobPush = mobpush.NewPusher(c.MobPush)
 	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.SyncSendMsgLimiter = limit.NewTokenLimiter(c.SyncSendMsgLimit.Rate, c.SyncSendMsgLimit.Burst, s.Redis(), rediskey.SyncSendMsgLimiter())
 	return s
 }
 

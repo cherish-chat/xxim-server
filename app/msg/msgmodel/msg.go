@@ -31,13 +31,13 @@ type (
 		// 发送者id
 		SenderId string `bson:"senderId" gorm:"column:senderId;type:char(32);index;"`
 		// 发送者信息
-		SenderInfo xorm.Bytes `bson:"senderInfo" gorm:"column:senderInfo;type:blob;"`
+		SenderInfo []byte `bson:"senderInfo" gorm:"column:senderInfo;type:blob;"`
 		// 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
 		AtUsers xorm.SliceString `bson:"atUsers" gorm:"column:atUsers;type:JSON;"`
 		// 消息内容类型
 		ContentType ContentType `bson:"contentType" gorm:"column:contentType;type:tinyint;"`
 		// 消息内容
-		Content xorm.Bytes `bson:"content" gorm:"column:content;type:blob;"`
+		Content []byte `bson:"content" gorm:"column:content;type:blob;"`
 		// 消息序号 会话内唯一且递增
 		Seq int64 `bson:"seq" gorm:"column:seq;type:bigint;index;"`
 		// 消息选项
@@ -45,7 +45,7 @@ type (
 		// 离线推送
 		OfflinePush *MsgOfflinePush `bson:"offlinePush,omitempty" gorm:"column:offlinePush;type:JSON;"`
 		// 扩展字段
-		Ext xorm.Bytes `bson:"ext" gorm:"column:ext;type:blob;"`
+		Ext []byte `bson:"ext" gorm:"column:ext;type:blob;"`
 		// internal
 		internal MsgInternal `bson:"-" gorm:"-"`
 	}

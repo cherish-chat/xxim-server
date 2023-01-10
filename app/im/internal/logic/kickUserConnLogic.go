@@ -27,8 +27,9 @@ func NewKickUserConnLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Kick
 func (l *KickUserConnLogic) KickUserConn(in *pb.KickUserConnReq) (*pb.KickUserConnResp, error) {
 	fs := make([]func() error, 0)
 	for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
+		podValue := *pod
 		fs = append(fs, func() error {
-			_, err := pod.KickUserConn(l.ctx, in)
+			_, err := podValue.KickUserConn(l.ctx, in)
 			return err
 		})
 	}

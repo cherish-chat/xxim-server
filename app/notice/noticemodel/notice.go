@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 type (
@@ -17,9 +17,9 @@ type (
 		CreateTime  int64        `gorm:"column:createTime;type:bigint(13);not null" json:"createTime"`
 		Title       string       `gorm:"column:title;type:varchar(255);not null" json:"title"`
 		ContentType int32        `gorm:"column:contentType;type:int(11);not null" json:"contentType"`
-		Content     xorm.Bytes   `gorm:"column:content;type:blob;not null" json:"content"`
+		Content     []byte       `gorm:"column:content;type:blob;not null" json:"content"`
 		Options     NoticeOption `gorm:"column:options;type:json;" json:"options"`
-		Ext         xorm.Bytes   `gorm:"column:ext;type:blob;" json:"ext"`
+		Ext         []byte       `gorm:"column:ext;type:blob;" json:"ext"`
 		UserId      string       `gorm:"column:userId;type:char(32);not null;index;default:'';" json:"userId"`
 		IsBroadcast bool         `gorm:"column:isBroadcast;type:tinyint(1);not null;default:0" json:"isBroadcast"`
 		// 推送失效
@@ -73,5 +73,24 @@ func (m *Notice) ToProto() *pb.NoticeData {
 			OnlinePushOnce:   m.Options.OnlinePushOnce,
 		},
 		Ext: m.Ext,
+	}
+}
+
+func NoticeFromPB(data *pb.NoticeData, isBroadcast bool, userId string) *Notice {
+	return &Notice{
+		NoticeId:    utils.If(data.NoticeId != "", data.NoticeId, utils.GenId()),
+		ConvId:      data.ConvId,
+		CreateTime:  utils.If(data.CreateTime != "", utils.AnyToInt64(data.CreateTime), time.Now().UnixMilli()),
+		Title:       data.Title,
+		ContentType: data.ContentType,
+		Content:     data.Content,
+		Options: NoticeOption{
+			StorageForClient: data.Options.StorageForClient,
+			UpdateConvMsg:    data.Options.UpdateConvMsg,
+			OnlinePushOnce:   data.Options.OnlinePushOnce,
+		},
+		IsBroadcast: isBroadcast,
+		Ext:         data.Ext,
+		UserId:      userId,
 	}
 }

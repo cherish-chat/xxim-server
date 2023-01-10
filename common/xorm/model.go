@@ -41,14 +41,3 @@ func (s SliceString) Value() (driver.Value, error) {
 func (s *SliceString) Scan(src interface{}) error {
 	return json.Unmarshal(src.([]byte), s)
 }
-
-type Bytes []byte
-
-func (b Bytes) Value() (driver.Value, error) {
-	return []byte(b), nil
-}
-
-func (b *Bytes) Scan(src interface{}) error {
-	*b = src.([]byte)
-	return nil
-}

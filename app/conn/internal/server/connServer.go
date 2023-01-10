@@ -22,6 +22,7 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 	server.SetBeforeConnect(l.BeforeConnect)
 	server.SetAddSubscriber(l.AddSubscriber)
 	server.SetDeleteSubscriber(l.DeleteSubscriber)
+	server.SetOnReceive(l.OnReceive)
 	s.Server = server
 	go l.Stats()
 	return s
