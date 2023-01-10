@@ -182,12 +182,15 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 		if err != nil {
 			if errors.Is(err, io.EOF) {
 				// 正常关闭
+			} else if websocket.CloseStatus(err) == websocket.StatusNormalClosure ||
+				websocket.CloseStatus(err) == websocket.StatusGoingAway {
+				// 正常关闭
 			} else {
 				logx.Errorf("failed to read message: %v", err)
 			}
 			return
 		}
-		logx.WithContext(ctx).Infof("read message.length: %s", len(msg))
+		logx.WithContext(ctx).Infof("read message.length: %d", len(msg))
 		go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
 			s.onReceive(ctx, conn, typ, msg)
 		}, propagation.MapCarrier{

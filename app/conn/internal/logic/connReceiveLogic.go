@@ -67,6 +67,13 @@ func (l *ConnLogic) onReceiveSendMsgList(ctx context.Context, c *types.UserConn,
 	}
 	var resp *pb.SendMsgListResp
 	xtrace.StartFuncSpan(ctx, "onReceiveSendMsgList", func(ctx context.Context) {
+		req.CommonReq = &pb.CommonReq{
+			UserId:   c.ConnParam.UserId,
+			Token:    c.ConnParam.Token,
+			DeviceId: c.ConnParam.DeviceId,
+			Platform: c.ConnParam.Platform,
+			Ip:       c.ConnParam.Ips,
+		}
 		resp, err = l.svcCtx.MsgService().SendMsgListAsync(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.ReqId,
@@ -93,6 +100,13 @@ func (l *ConnLogic) onReceiveSyncConvSeq(ctx context.Context, c *types.UserConn,
 	}
 	var resp *pb.BatchGetConvSeqResp
 	xtrace.StartFuncSpan(ctx, "onReceiveSyncConvSeq", func(ctx context.Context) {
+		req.CommonReq = &pb.CommonReq{
+			UserId:   c.ConnParam.UserId,
+			Token:    c.ConnParam.Token,
+			DeviceId: c.ConnParam.DeviceId,
+			Platform: c.ConnParam.Platform,
+			Ip:       c.ConnParam.Ips,
+		}
 		resp, err = l.svcCtx.MsgService().BatchGetConvSeq(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.ReqId,
@@ -119,6 +133,13 @@ func (l *ConnLogic) onReceiveSyncMsgList(ctx context.Context, c *types.UserConn,
 	}
 	var resp *pb.GetMsgListResp
 	xtrace.StartFuncSpan(ctx, "onReceiveSyncMsgList", func(ctx context.Context) {
+		req.CommonReq = &pb.CommonReq{
+			UserId:   c.ConnParam.UserId,
+			Token:    c.ConnParam.Token,
+			DeviceId: c.ConnParam.DeviceId,
+			Platform: c.ConnParam.Platform,
+			Ip:       c.ConnParam.Ips,
+		}
 		resp, err = l.svcCtx.MsgService().BatchGetMsgListByConvId(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.ReqId,
@@ -145,6 +166,13 @@ func (l *ConnLogic) onReceiveAckNotice(ctx context.Context, c *types.UserConn, b
 	}
 	var resp *pb.AckNoticeDataResp
 	xtrace.StartFuncSpan(ctx, "onReceiveAckNotice", func(ctx context.Context) {
+		req.CommonReq = &pb.CommonReq{
+			UserId:   c.ConnParam.UserId,
+			Token:    c.ConnParam.Token,
+			DeviceId: c.ConnParam.DeviceId,
+			Platform: c.ConnParam.Platform,
+			Ip:       c.ConnParam.Ips,
+		}
 		resp, err = l.svcCtx.NoticeService().AckNoticeData(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.ReqId,
@@ -171,6 +199,13 @@ func (l *ConnLogic) onReceiveGetMsgById(ctx context.Context, c *types.UserConn, 
 	}
 	var resp *pb.GetMsgByIdResp
 	xtrace.StartFuncSpan(ctx, "onReceiveAckNotice", func(ctx context.Context) {
+		req.CommonReq = &pb.CommonReq{
+			UserId:   c.ConnParam.UserId,
+			Token:    c.ConnParam.Token,
+			DeviceId: c.ConnParam.DeviceId,
+			Platform: c.ConnParam.Platform,
+			Ip:       c.ConnParam.Ips,
+		}
 		resp, err = l.svcCtx.MsgService().GetMsgById(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.ReqId,
