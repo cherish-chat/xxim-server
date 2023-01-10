@@ -126,14 +126,15 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
 	}
-	code, err := s.beforeConnect(r.Context(), param)
-	if err != nil {
-		logger.Errorf("beforeConnect error: %v, code:", err, code)
-		return
-	}
 	c, err := websocket.Accept(w, r, nil)
 	if err != nil {
 		logger.Errorf("failed to accept websocket connection: %v", err)
+		return
+	}
+	code, err := s.beforeConnect(r.Context(), param)
+	if err != nil {
+		logger.Errorf("beforeConnect error: %v, code:", err, code)
+		c.Close(websocket.StatusCode(types.WebsocketStatusCodeAuthFailed(code)), err.Error())
 		return
 	}
 	defer c.Close(websocket.StatusInternalError, "")

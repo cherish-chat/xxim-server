@@ -42,3 +42,7 @@ type (
 		Headers     map[string]string // 其他参数
 	}
 )
+
+func WebsocketStatusCodeAuthFailed(code int) int {
+	return 3000
+}
