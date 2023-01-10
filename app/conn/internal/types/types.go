@@ -32,6 +32,10 @@ type (
 		UserId      string            // uid
 		Token       string            // token
 		DeviceId    string            // 设备id
+		DeviceModel string            // 设备型号
+		OsVersion   string            // 系统版本
+		AppVersion  string            // app版本
+		Language    string            // 语言
 		Platform    string            // ios, android, web, pc, mac, linux, windows
 		Ips         string            // ip
 		NetworkUsed string            // 4G/5G/WIFI

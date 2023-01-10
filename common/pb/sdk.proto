@@ -27,6 +27,8 @@ enum ActiveEvent {
   AckNotice = 3;
   // 获取一条消息
   GetMsgById = 4;
+  // 自定义请求
+  CustomRequest = 100;
 }
 
 // 客户端发送的消息体
@@ -148,7 +150,6 @@ message BatchGetMsgListByConvIdReq {
     repeated string seqList = 2;
   }
   repeated Item items = 2;
-  bool push = 3;
 }
 
 message GetMsgListResp {
@@ -158,7 +159,6 @@ message GetMsgListResp {
 message GetMsgByIdReq {
   optional string serverMsgId = 2;
   optional string clientMsgId = 3;
-  bool push = 4;
 }
 
 message GetMsgByIdResp {

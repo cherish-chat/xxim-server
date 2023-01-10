@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
@@ -20,13 +21,26 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 		body := &pb.RequestBody{}
 		var bodyData []byte
 		err := proto.Unmarshal(msg, body)
+		var respBody *pb.ResponseBody
 		if err == nil {
-			var respBody *pb.ResponseBody
 			respBody, err = l.onReceiveBody(ctx, c, body)
 			bodyData, _ = proto.Marshal(respBody)
 		}
 		if err != nil {
 			logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
+			code := pb.ResponseBody_InternalError
+			if errors.Is(err, xerr.InvalidParamError) {
+				code = pb.ResponseBody_RequestError
+			}
+			if respBody != nil {
+				code = respBody.Code
+			}
+			bodyData, _ = proto.Marshal(&pb.ResponseBody{
+				Event: body.Event,
+				ReqId: body.ReqId,
+				Code:  code,
+				Data:  nil,
+			})
 		}
 		data, _ := proto.Marshal(&pb.PushBody{
 			Event: pb.PushEvent_PushResponseBody,
@@ -59,7 +73,7 @@ func (l *ConnLogic) onReceiveBody(ctx context.Context, c *types.UserConn, body *
 	case pb.ActiveEvent_GetMsgById:
 		return l.onReceiveGetMsgById(ctx, c, body)
 	default:
-		return nil, errors.New("invalid event")
+		return nil, xerr.InvalidParamError
 	}
 }
 

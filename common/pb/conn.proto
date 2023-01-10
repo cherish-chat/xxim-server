@@ -70,6 +70,8 @@ enum ActiveEvent {
   AckNotice = 3;
   // 获取一条消息
   GetMsgById = 4;
+  // 自定义请求
+  CustomRequest = 100;
 }
 
 // 客户端发送的消息体

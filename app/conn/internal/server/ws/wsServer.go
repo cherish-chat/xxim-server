@@ -117,9 +117,13 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		UserId:      r.URL.Query().Get("userId"),
 		Token:       r.URL.Query().Get("token"),
 		DeviceId:    r.URL.Query().Get("deviceId"),
+		DeviceModel: r.URL.Query().Get("deviceModel"),
+		OsVersion:   r.URL.Query().Get("osVersion"),
+		AppVersion:  r.URL.Query().Get("appVersion"),
+		Language:    r.URL.Query().Get("language"),
 		Platform:    r.URL.Query().Get("platform"),
-		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Ips:         xhttp.GetRequestIP(r),
+		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
 	}
 	code, err := s.beforeConnect(r.Context(), param)

@@ -1,6 +1,7 @@
 package xerr
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -13,3 +14,7 @@ func IsCanceled(err error) bool {
 	}
 	return false
 }
+
+var (
+	InvalidParamError = errors.New("invalid param")
+)
