@@ -142,8 +142,8 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		Ctx:         ctx,
 		ConnectedAt: time.Now(),
 	}
-	err = s.subscribe(ctx, userConn)
 	go s.loopRead(ctx, userConn)
+	err = s.subscribe(ctx, userConn)
 	if errors.Is(err, context.Canceled) {
 		return
 	}
