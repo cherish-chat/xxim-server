@@ -21,7 +21,7 @@ type (
 		SetBeforeConnect(f func(ctx context.Context, param ConnParam) (int, error))
 		SetAddSubscriber(f func(c *UserConn))
 		SetDeleteSubscriber(f func(c *UserConn))
-		SetOnReceive(f func(c *UserConn, typ int, msg []byte))
+		SetOnReceive(f func(ctx context.Context, c *UserConn, typ int, msg []byte))
 		Start() error
 	}
 	MsgBytes struct {

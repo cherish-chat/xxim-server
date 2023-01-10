@@ -12,7 +12,7 @@ import (
 	"nhooyr.io/websocket"
 )
 
-func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
+func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, msg []byte) {
 	switch websocket.MessageType(typ) {
 	case websocket.MessageBinary:
 		// 接收到消息
@@ -21,11 +21,11 @@ func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
 		err := proto.Unmarshal(msg, body)
 		if err == nil {
 			var respBody *pb.ResponseBody
-			respBody, err = l.onReceiveBody(c, body)
+			respBody, err = l.onReceiveBody(ctx, c, body)
 			bodyData, _ = proto.Marshal(respBody)
 		}
 		if err != nil {
-			logx.WithContext(c.Ctx).Errorf("OnReceiveBody error: %s", err.Error())
+			logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 		}
 		data, _ := proto.Marshal(&pb.PushBody{
 			Event: pb.PushEvent_PushResponseBody,
@@ -33,7 +33,7 @@ func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
 		})
 		err = l.SendMsgToConn(c, data)
 		if err != nil {
-			logx.WithContext(c.Ctx).Errorf("SendMsgToConn error: %s", err.Error())
+			logx.WithContext(ctx).Errorf("SendMsgToConn error: %s", err.Error())
 		}
 	default:
 		// 无效的消息类型
@@ -41,24 +41,24 @@ func (l *ConnLogic) OnReceive(c *types.UserConn, typ int, msg []byte) {
 	}
 }
 
-func (l *ConnLogic) onReceiveBody(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveBody(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	switch body.Event {
 	case pb.ActiveEvent_SendMsgList:
-		return l.onReceiveSendMsgList(c, body)
+		return l.onReceiveSendMsgList(ctx, c, body)
 	case pb.ActiveEvent_SyncConvSeq:
-		return l.onReceiveSyncConvSeq(c, body)
+		return l.onReceiveSyncConvSeq(ctx, c, body)
 	case pb.ActiveEvent_SyncMsgList:
-		return l.onReceiveSyncMsgList(c, body)
+		return l.onReceiveSyncMsgList(ctx, c, body)
 	case pb.ActiveEvent_AckNotice:
-		return l.onReceiveAckNotice(c, body)
+		return l.onReceiveAckNotice(ctx, c, body)
 	case pb.ActiveEvent_GetMsgById:
-		return l.onReceiveGetMsgById(c, body)
+		return l.onReceiveGetMsgById(ctx, c, body)
 	default:
 		return nil, errors.New("invalid event")
 	}
 }
 
-func (l *ConnLogic) onReceiveSendMsgList(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveSendMsgList(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	req := &pb.SendMsgListReq{}
 	err := proto.Unmarshal(body.Data, req)
 	if err != nil {
@@ -66,17 +66,12 @@ func (l *ConnLogic) onReceiveSendMsgList(c *types.UserConn, body *pb.RequestBody
 		return nil, err
 	}
 	var resp *pb.SendMsgListResp
-	xtrace.RunWithTrace("", "onReceiveSendMsgList", func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, "onReceiveSendMsgList", func(ctx context.Context) {
 		resp, err = l.svcCtx.MsgService().SendMsgListAsync(ctx, req)
-	}, propagation.MapCarrier{
-		"req-id":    body.ReqId,
-		"event":     body.Event.String(),
-		"user-id":   c.ConnParam.UserId,
-		"platform":  c.ConnParam.Platform,
-		"device-id": c.ConnParam.DeviceId,
-		"ip":        c.ConnParam.Ips,
-		"net-type":  c.ConnParam.NetworkUsed,
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"req-id": body.ReqId,
+		"event":  body.Event.String(),
+	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("SendMsgList error: %s", err.Error())
 	}
@@ -89,7 +84,7 @@ func (l *ConnLogic) onReceiveSendMsgList(c *types.UserConn, body *pb.RequestBody
 	}, err
 }
 
-func (l *ConnLogic) onReceiveSyncConvSeq(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveSyncConvSeq(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	req := &pb.BatchGetConvSeqReq{}
 	err := proto.Unmarshal(body.Data, req)
 	if err != nil {
@@ -97,17 +92,12 @@ func (l *ConnLogic) onReceiveSyncConvSeq(c *types.UserConn, body *pb.RequestBody
 		return nil, err
 	}
 	var resp *pb.BatchGetConvSeqResp
-	xtrace.RunWithTrace("", "onReceiveSyncConvSeq", func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, "onReceiveSyncConvSeq", func(ctx context.Context) {
 		resp, err = l.svcCtx.MsgService().BatchGetConvSeq(ctx, req)
-	}, propagation.MapCarrier{
-		"req-id":    body.ReqId,
-		"event":     body.Event.String(),
-		"user-id":   c.ConnParam.UserId,
-		"platform":  c.ConnParam.Platform,
-		"device-id": c.ConnParam.DeviceId,
-		"ip":        c.ConnParam.Ips,
-		"net-type":  c.ConnParam.NetworkUsed,
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"req-id": body.ReqId,
+		"event":  body.Event.String(),
+	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("BatchGetConvSeq error: %s", err.Error())
 	}
@@ -120,7 +110,7 @@ func (l *ConnLogic) onReceiveSyncConvSeq(c *types.UserConn, body *pb.RequestBody
 	}, err
 }
 
-func (l *ConnLogic) onReceiveSyncMsgList(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveSyncMsgList(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	req := &pb.BatchGetMsgListByConvIdReq{}
 	err := proto.Unmarshal(body.Data, req)
 	if err != nil {
@@ -128,17 +118,12 @@ func (l *ConnLogic) onReceiveSyncMsgList(c *types.UserConn, body *pb.RequestBody
 		return nil, err
 	}
 	var resp *pb.GetMsgListResp
-	xtrace.RunWithTrace("", "onReceiveSyncMsgList", func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, "onReceiveSyncMsgList", func(ctx context.Context) {
 		resp, err = l.svcCtx.MsgService().BatchGetMsgListByConvId(ctx, req)
-	}, propagation.MapCarrier{
-		"req-id":    body.ReqId,
-		"event":     body.Event.String(),
-		"user-id":   c.ConnParam.UserId,
-		"platform":  c.ConnParam.Platform,
-		"device-id": c.ConnParam.DeviceId,
-		"ip":        c.ConnParam.Ips,
-		"net-type":  c.ConnParam.NetworkUsed,
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"req-id": body.ReqId,
+		"event":  body.Event.String(),
+	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("BatchGetMsgListByConvId error: %s", err.Error())
 	}
@@ -151,7 +136,7 @@ func (l *ConnLogic) onReceiveSyncMsgList(c *types.UserConn, body *pb.RequestBody
 	}, err
 }
 
-func (l *ConnLogic) onReceiveAckNotice(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveAckNotice(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	req := &pb.AckNoticeDataReq{}
 	err := proto.Unmarshal(body.Data, req)
 	if err != nil {
@@ -159,17 +144,12 @@ func (l *ConnLogic) onReceiveAckNotice(c *types.UserConn, body *pb.RequestBody) 
 		return nil, err
 	}
 	var resp *pb.AckNoticeDataResp
-	xtrace.RunWithTrace("", "onReceiveAckNotice", func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, "onReceiveAckNotice", func(ctx context.Context) {
 		resp, err = l.svcCtx.NoticeService().AckNoticeData(ctx, req)
-	}, propagation.MapCarrier{
-		"req-id":    body.ReqId,
-		"event":     body.Event.String(),
-		"user-id":   c.ConnParam.UserId,
-		"platform":  c.ConnParam.Platform,
-		"device-id": c.ConnParam.DeviceId,
-		"ip":        c.ConnParam.Ips,
-		"net-type":  c.ConnParam.NetworkUsed,
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"req-id": body.ReqId,
+		"event":  body.Event.String(),
+	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("AckNoticeData error: %s", err.Error())
 	}
@@ -182,7 +162,7 @@ func (l *ConnLogic) onReceiveAckNotice(c *types.UserConn, body *pb.RequestBody) 
 	}, err
 }
 
-func (l *ConnLogic) onReceiveGetMsgById(c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func (l *ConnLogic) onReceiveGetMsgById(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
 	req := &pb.GetMsgByIdReq{}
 	err := proto.Unmarshal(body.Data, req)
 	if err != nil {
@@ -190,17 +170,12 @@ func (l *ConnLogic) onReceiveGetMsgById(c *types.UserConn, body *pb.RequestBody)
 		return nil, err
 	}
 	var resp *pb.GetMsgByIdResp
-	xtrace.RunWithTrace("", "onReceiveGetMsgById", func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, "onReceiveAckNotice", func(ctx context.Context) {
 		resp, err = l.svcCtx.MsgService().GetMsgById(ctx, req)
-	}, propagation.MapCarrier{
-		"req-id":    body.ReqId,
-		"event":     body.Event.String(),
-		"user-id":   c.ConnParam.UserId,
-		"platform":  c.ConnParam.Platform,
-		"device-id": c.ConnParam.DeviceId,
-		"ip":        c.ConnParam.Ips,
-		"net-type":  c.ConnParam.NetworkUsed,
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"req-id": body.ReqId,
+		"event":  body.Event.String(),
+	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("GetMsgById error: %s", err.Error())
 	}

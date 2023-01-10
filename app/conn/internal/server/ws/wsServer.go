@@ -7,9 +7,12 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.opentelemetry.io/otel/propagation"
 	"net"
 	"net/http"
+	"strconv"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -22,10 +25,10 @@ type Server struct {
 	addSubscriber    func(c *types.UserConn)
 	deleteSubscriber func(c *types.UserConn)
 	beforeConnect    func(ctx context.Context, param types.ConnParam) (int, error)
-	onReceive        func(c *types.UserConn, typ int, msg []byte)
+	onReceive        func(ctx context.Context, c *types.UserConn, typ int, msg []byte)
 }
 
-func (s *Server) SetOnReceive(f func(c *types.UserConn, typ int, msg []byte)) {
+func (s *Server) SetOnReceive(f func(ctx context.Context, c *types.UserConn, typ int, msg []byte)) {
 	s.onReceive = f
 }
 
@@ -175,12 +178,23 @@ func (s *Server) loopRead(ctx context.Context, conn *types.UserConn) {
 		case <-ctx.Done():
 			return
 		default:
+			logx.WithContext(ctx).Infof("start read")
 			typ, msg, err := conn.Conn.Read(ctx)
 			if err != nil {
 				logx.Errorf("failed to read message: %v", err)
 				continue
 			}
-			s.onReceive(conn, typ, msg)
+			logx.WithContext(ctx).Infof("read message.length: %s", len(msg))
+			go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
+				s.onReceive(ctx, conn, typ, msg)
+			}, propagation.MapCarrier{
+				"length":      strconv.Itoa(len(msg)),
+				"userId":      conn.ConnParam.UserId,
+				"platform":    conn.ConnParam.Platform,
+				"deviceId":    conn.ConnParam.DeviceId,
+				"ips":         conn.ConnParam.Ips,
+				"networkUsed": conn.ConnParam.NetworkUsed,
+			})
 		}
 	}
 }
