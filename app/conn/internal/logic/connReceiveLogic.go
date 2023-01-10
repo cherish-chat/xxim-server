@@ -10,6 +10,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
+	"strconv"
 )
 
 func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, msg []byte) {
@@ -31,7 +32,11 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 			Event: pb.PushEvent_PushResponseBody,
 			Data:  bodyData,
 		})
-		err = l.SendMsgToConn(c, data)
+		xtrace.StartFuncSpan(ctx, "ReturnResponse", func(ctx context.Context) {
+			err = l.SendMsgToConn(c, data)
+		}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+			"dataLength": strconv.Itoa(len(data)),
+		}))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("SendMsgToConn error: %s", err.Error())
 		}
