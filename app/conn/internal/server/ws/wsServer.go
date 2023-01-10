@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
+	"io"
 	"net"
 	"net/http"
 	"strconv"
@@ -133,7 +134,8 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer c.Close(websocket.StatusInternalError, "")
 
-	ctx := c.CloseRead(r.Context())
+	ctx, cancelFunc := context.WithCancel(r.Context())
+	//ctx := c.CloseRead(r.Context())
 	userConn := &types.UserConn{
 		Conn: &userConn{
 			ws: c,
@@ -142,7 +144,7 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		Ctx:         ctx,
 		ConnectedAt: time.Now(),
 	}
-	go s.loopRead(ctx, userConn)
+	go s.loopRead(ctx, cancelFunc, userConn)
 	err = s.subscribe(ctx, userConn)
 	if errors.Is(err, context.Canceled) {
 		return
@@ -172,29 +174,29 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.serveMux.ServeHTTP(w, r)
 }
 
-func (s *Server) loopRead(ctx context.Context, conn *types.UserConn) {
+func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, conn *types.UserConn) {
+	defer cancelFunc()
 	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			logx.WithContext(ctx).Infof("start read")
-			typ, msg, err := conn.Conn.Read(ctx)
-			if err != nil {
+		logx.WithContext(ctx).Infof("start read")
+		typ, msg, err := conn.Conn.Read(ctx)
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				// 正常关闭
+			} else {
 				logx.Errorf("failed to read message: %v", err)
-				continue
 			}
-			logx.WithContext(ctx).Infof("read message.length: %s", len(msg))
-			go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
-				s.onReceive(ctx, conn, typ, msg)
-			}, propagation.MapCarrier{
-				"length":      strconv.Itoa(len(msg)),
-				"userId":      conn.ConnParam.UserId,
-				"platform":    conn.ConnParam.Platform,
-				"deviceId":    conn.ConnParam.DeviceId,
-				"ips":         conn.ConnParam.Ips,
-				"networkUsed": conn.ConnParam.NetworkUsed,
-			})
+			return
 		}
+		logx.WithContext(ctx).Infof("read message.length: %s", len(msg))
+		go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
+			s.onReceive(ctx, conn, typ, msg)
+		}, propagation.MapCarrier{
+			"length":      strconv.Itoa(len(msg)),
+			"userId":      conn.ConnParam.UserId,
+			"platform":    conn.ConnParam.Platform,
+			"deviceId":    conn.ConnParam.DeviceId,
+			"ips":         conn.ConnParam.Ips,
+			"networkUsed": conn.ConnParam.NetworkUsed,
+		})
 	}
 }
