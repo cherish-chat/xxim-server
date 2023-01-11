@@ -201,7 +201,7 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 				CreateTime:     "",
 				Title:          "",
 				ContentType:    1,
-				Content:        nil,
+				Content:        []byte{},
 				Options: &pb.NoticeData_Options{
 					StorageForClient: false,
 					UpdateConvMsg:    false,

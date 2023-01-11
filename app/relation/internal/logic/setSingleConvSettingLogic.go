@@ -121,7 +121,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 				CreateTime:     "",
 				Title:          "",
 				ContentType:    1,
-				Content:        nil,
+				Content:        []byte{},
 				Options: &pb.NoticeData_Options{
 					StorageForClient: false,
 					UpdateConvMsg:    false,
