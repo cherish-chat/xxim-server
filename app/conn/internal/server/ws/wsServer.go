@@ -127,7 +127,13 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
 	}
-	c, err := websocket.Accept(w, r, nil)
+	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
+		Subprotocols:         nil,
+		InsecureSkipVerify:   true,
+		OriginPatterns:       nil,
+		CompressionMode:      0,
+		CompressionThreshold: 0,
+	})
 	if err != nil {
 		logger.Errorf("failed to accept websocket connection: %v", err)
 		return
