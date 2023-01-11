@@ -56,15 +56,17 @@ func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEvent
 			otherUserIdList = append(otherUserIdList, friend.FromUserId)
 		}
 	}
-	otherUserIdList = utils.Set(otherUserIdList)
-	userListResp, err := l.svcCtx.UserService().BatchGetUserBaseInfo(l.ctx, &pb.BatchGetUserBaseInfoReq{Ids: otherUserIdList})
-	if err != nil {
-		l.Errorf("get user info error: %v", err)
-		return &pb.GetMyFriendEventListResp{CommonResp: pb.NewRetryErrorResp()}, err
-	}
 	var userMap = make(map[string]*pb.UserBaseInfo)
-	for _, user := range userListResp.UserBaseInfos {
-		userMap[user.Id] = user
+	{
+		otherUserIdList = utils.Set(otherUserIdList)
+		userListResp, err := l.svcCtx.UserService().BatchGetUserBaseInfo(l.ctx, &pb.BatchGetUserBaseInfoReq{Ids: otherUserIdList})
+		if err != nil {
+			l.Errorf("get user info error: %v", err)
+			return &pb.GetMyFriendEventListResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		for _, user := range userListResp.UserBaseInfos {
+			userMap[user.Id] = user
+		}
 	}
 	for _, v := range list {
 		var extra *pb.RequestAddFriendExtra

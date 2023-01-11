@@ -12,6 +12,10 @@ func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *BatchGetMsgListByConvIdReq) Path() string {
+	return "msg/SyncMsgList"
+}
+
 func (x *CreateGroupReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
@@ -80,8 +84,16 @@ func (x *GetMsgByIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *GetMsgByIdReq) Path() string {
+	return "msg/GetMsgById"
+}
+
 func (x *BatchGetConvSeqReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *BatchGetConvSeqReq) Path() string {
+	return "msg/BatchGetConvSeq"
 }
 
 func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
@@ -94,4 +106,8 @@ func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
 
 func (x *AckNoticeDataReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *AckNoticeDataReq) Path() string {
+	return "msg/AckNoticeData"
 }

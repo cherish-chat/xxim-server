@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
@@ -26,17 +27,17 @@ type Route[REQ IReq, RESP IResp] struct {
 	Do         func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error)
 }
 
-var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error){}
+var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error){}
 
-func AddRoute[REQ IReq, RESP IResp](page string, route Route[REQ, RESP]) {
-	routeMap[page] = func(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
+	routeMap[method] = func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 		return OnReceiveCustom(ctx, c, body, route.NewRequest(), route.Do)
 	}
 }
 
-func OnReceive(page string, ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
-	if fn, ok := routeMap[page]; ok {
+func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
+	if fn, ok := routeMap[method]; ok {
 		return fn(ctx, c, body)
 	}
-	return nil, nil
+	return nil, xerr.InvalidParamError
 }

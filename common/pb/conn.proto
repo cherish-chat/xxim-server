@@ -81,6 +81,11 @@ message RequestBody {
   bytes data = 3;
 }
 
+message CustomRequestBody {
+  string method = 1;
+  bytes data = 2;
+}
+
 // 服务端返回响应的消息体
 message ResponseBody {
   enum Code {

@@ -11,14 +11,20 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type IBody interface {
+	GetData() []byte
+	GetReqId() string
+	GetEvent() pb.ActiveEvent
+}
+
 func OnReceiveCustom[REQ IReq, RESP IResp](
 	ctx context.Context,
 	c *types.UserConn,
-	body *pb.RequestBody,
+	body IBody,
 	req REQ,
 	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
 ) (*pb.ResponseBody, error) {
-	err := proto.Unmarshal(body.Data, req)
+	err := proto.Unmarshal(body.GetData(), req)
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", req.Path(), err.Error())
 		return nil, err
@@ -38,8 +44,8 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		})
 		resp, err = do(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
-		"req-id": body.ReqId,
-		"event":  body.Event.String(),
+		"req-id": body.GetReqId(),
+		"event":  body.GetEvent().String(),
 	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s error: %s", req.Path(), err.Error())
@@ -50,8 +56,8 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		reqLog(c, body, req, resp, err)
 	}, nil)
 	return &pb.ResponseBody{
-		Event: body.Event,
-		ReqId: body.ReqId,
+		Event: body.GetEvent(),
+		ReqId: body.GetReqId(),
 		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
 		Data:  respBuff,
 	}, err
