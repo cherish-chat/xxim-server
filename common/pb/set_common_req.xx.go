@@ -4,6 +4,10 @@ func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *SendMsgListReq) Path() string {
+	return "msg/SendMsgListAsync"
+}
+
 func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
