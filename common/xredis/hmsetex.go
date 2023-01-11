@@ -6,21 +6,6 @@ import (
 )
 
 // hmsetex lua script;
-const hmsetex = `
-local key = KEYS[1]
-local ttl = tonumber(ARGV[1])
-local fields = {}
-for i = 2, #ARGV, 2 do
-	table.insert(fields, ARGV[i])
-end
-local values = {}
-for i = 3, #ARGV, 2 do
-	table.insert(values, ARGV[i])
-end
-redis.call('HMSET', key, unpack(fields), unpack(values))
-redis.call('EXPIRE', key, ttl)
-return 1
-`
 
 var hmsetexSha = ""
 
@@ -41,3 +26,13 @@ func HMSetEx(rc *redis.Redis, ctx context.Context, key string, fields map[string
 	_, err := rc.EvalShaCtx(ctx, hmsetexSha, []string{key}, args...)
 	return err
 }
+
+// hmsetex lua script;
+const hmsetex = `
+local key = KEYS[1]
+local ttl = ARGV[1]
+local exists = redis.call('EXISTS', key)
+redis.call('HMSET', key, unpack(ARGV, 2))
+redis.call('EXPIRE', key, ttl)
+end
+` // hmsetex key ttl field value [field value ...]
