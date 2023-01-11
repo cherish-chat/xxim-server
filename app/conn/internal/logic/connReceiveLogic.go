@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
@@ -61,6 +62,12 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 }
 
 func (l *ConnLogic) onReceiveBody(ctx context.Context, c *types.UserConn, body *pb.RequestBody) (*pb.ResponseBody, error) {
+	if body.Event == pb.ActiveEvent_CustomRequest {
+
+	} else {
+		page := strconv.Itoa(int(body.Event.Number()))
+		return conngateway.OnReceive(page, ctx, c, body)
+	}
 	switch body.Event {
 	case pb.ActiveEvent_SendMsgList:
 		return l.onReceiveSendMsgList(ctx, c, body)

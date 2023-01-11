@@ -48,14 +48,45 @@ func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEvent
 	}
 	var respList []*pb.FriendEvent
 	var pageIndex int64 = math.MaxInt64
+	var otherUserIdList []string
+	for _, friend := range list {
+		if friend.FromUserId == in.CommonReq.UserId {
+			otherUserIdList = append(otherUserIdList, friend.ToUserId)
+		} else {
+			otherUserIdList = append(otherUserIdList, friend.FromUserId)
+		}
+	}
+	otherUserIdList = utils.Set(otherUserIdList)
+	userListResp, err := l.svcCtx.UserService().BatchGetUserBaseInfo(l.ctx, &pb.BatchGetUserBaseInfoReq{Ids: otherUserIdList})
+	if err != nil {
+		l.Errorf("get user info error: %v", err)
+		return &pb.GetMyFriendEventListResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	var userMap = make(map[string]*pb.UserBaseInfo)
+	for _, user := range userListResp.UserBaseInfos {
+		userMap[user.Id] = user
+	}
 	for _, v := range list {
+		var extra *pb.RequestAddFriendExtra
+		if len(v.Extra) > 0 {
+			extra = v.Extra[0]
+		}
+		otherId := v.FromUserId
+		if v.FromUserId == in.CommonReq.UserId {
+			otherId = v.ToUserId
+		}
+		info, ok := userMap[otherId]
+		if !ok {
+			info = &pb.UserBaseInfo{Id: otherId, Nickname: "用户已注销", Avatar: ""}
+		}
 		respList = append(respList, &pb.FriendEvent{
-			FromUserId: v.FromUserId,
-			ToUserId:   v.ToUserId,
-			Status:     v.Status,
-			CreateTime: utils.AnyToString(v.CreateTime),
-			UpdateTime: utils.AnyToString(v.UpdateTime),
-			Extra:      v.Extra,
+			FromUserId:    v.FromUserId,
+			ToUserId:      v.ToUserId,
+			OtherUserInfo: info,
+			Status:        v.Status,
+			CreateTime:    utils.AnyToString(v.CreateTime),
+			UpdateTime:    utils.AnyToString(v.UpdateTime),
+			Extra:         extra,
 		})
 		if v.CreateTime < pageIndex {
 			pageIndex = v.CreateTime
