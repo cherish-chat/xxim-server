@@ -5,6 +5,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
+	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
+	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -12,13 +14,15 @@ import (
 )
 
 type ServiceContext struct {
-	Config        config.Config
-	Mgo           *xmgo.Client
-	imService     imservice.ImService
-	msgService    msgservice.MsgService
-	noticeService noticeservice.NoticeService
-	zedis         *redis.Redis
-	PodIp         string
+	Config          config.Config
+	Mgo             *xmgo.Client
+	imService       imservice.ImService
+	msgService      msgservice.MsgService
+	noticeService   noticeservice.NoticeService
+	relationService relationservice.RelationService
+	userService     userservice.UserService
+	zedis           *redis.Redis
+	PodIp           string
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -55,4 +59,18 @@ func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
 		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
 	}
 	return s.noticeService
+}
+
+func (s *ServiceContext) RelationService() relationservice.RelationService {
+	if s.relationService == nil {
+		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc))
+	}
+	return s.relationService
+}
+
+func (s *ServiceContext) UserService() userservice.UserService {
+	if s.userService == nil {
+		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
+	}
+	return s.userService
 }

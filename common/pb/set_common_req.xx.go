@@ -32,6 +32,10 @@ func (x *SearchUsersByKeywordReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *SearchUsersByKeywordReq) Path() string {
+	return "user/SearchUsersByKeyword"
+}
+
 func (x *GetUserHomeReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
@@ -40,16 +44,32 @@ func (x *GetUserSettingsReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *GetUserSettingsReq) Path() string {
+	return "user/GetUserSettings"
+}
+
 func (x *SetUserSettingsReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *SetUserSettingsReq) Path() string {
+	return "user/SetUserSettings"
 }
 
 func (x *RequestAddFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *RequestAddFriendReq) Path() string {
+	return "relation/RequestAddFriend"
+}
+
 func (x *AcceptAddFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *AcceptAddFriendReq) Path() string {
+	return "relation/AcceptAddFriend"
 }
 
 func (x *RejectAddFriendReq) SetCommonReq(r *CommonReq) {
@@ -98,6 +118,10 @@ func (x *BatchGetConvSeqReq) Path() string {
 
 func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *GetMyFriendEventListReq) Path() string {
+	return "relation/GetMyFriendEventList"
 }
 
 func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {

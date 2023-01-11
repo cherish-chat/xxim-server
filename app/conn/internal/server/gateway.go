@@ -7,54 +7,122 @@ import (
 )
 
 func (s *ConnServer) registerGateway() {
-	// SendMsgListReq SendMsgListResp
 	{
-		route := conngateway.Route[*pb.SendMsgListReq, *pb.SendMsgListResp]{
-			NewRequest: func() *pb.SendMsgListReq {
-				return &pb.SendMsgListReq{}
-			},
-			Do: s.svcCtx.MsgService().SendMsgListAsync,
+		// SendMsgListReq SendMsgListResp
+		{
+			route := conngateway.Route[*pb.SendMsgListReq, *pb.SendMsgListResp]{
+				NewRequest: func() *pb.SendMsgListReq {
+					return &pb.SendMsgListReq{}
+				},
+				Do: s.svcCtx.MsgService().SendMsgListAsync,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SendMsgList.Number())), route)
 		}
-		conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SendMsgList.Number())), route)
+		// BatchGetConvSeqReq BatchGetConvSeqResp
+		{
+			route := conngateway.Route[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
+				NewRequest: func() *pb.BatchGetConvSeqReq {
+					return &pb.BatchGetConvSeqReq{}
+				},
+				Do: s.svcCtx.MsgService().BatchGetConvSeq,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncConvSeq.Number())), route)
+		}
+		// BatchGetMsgListByConvIdReq GetMsgListResp
+		{
+			route := conngateway.Route[*pb.BatchGetMsgListByConvIdReq, *pb.GetMsgListResp]{
+				NewRequest: func() *pb.BatchGetMsgListByConvIdReq {
+					return &pb.BatchGetMsgListByConvIdReq{}
+				},
+				Do: s.svcCtx.MsgService().BatchGetMsgListByConvId,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncMsgList.Number())), route)
+		}
+		// GetMsgByIdReq GetMsgByIdResp
+		{
+			route := conngateway.Route[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
+				NewRequest: func() *pb.GetMsgByIdReq {
+					return &pb.GetMsgByIdReq{}
+				},
+				Do: s.svcCtx.MsgService().GetMsgById,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_GetMsgById.Number())), route)
+		}
+		// AckNoticeDataReq AckNoticeDataResp
+		{
+			route := conngateway.Route[*pb.AckNoticeDataReq, *pb.AckNoticeDataResp]{
+				NewRequest: func() *pb.AckNoticeDataReq {
+					return &pb.AckNoticeDataReq{}
+				},
+				Do: s.svcCtx.NoticeService().AckNoticeData,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_AckNotice.Number())), route)
+		}
 	}
-	// BatchGetConvSeqReq BatchGetConvSeqResp
+	// relation
 	{
-		route := conngateway.Route[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
-			NewRequest: func() *pb.BatchGetConvSeqReq {
-				return &pb.BatchGetConvSeqReq{}
-			},
-			Do: s.svcCtx.MsgService().BatchGetConvSeq,
+		// AcceptAddFriendReq AcceptAddFriendResp
+		{
+			route := conngateway.Route[*pb.AcceptAddFriendReq, *pb.AcceptAddFriendResp]{
+				NewRequest: func() *pb.AcceptAddFriendReq {
+					return &pb.AcceptAddFriendReq{}
+				},
+				Do: s.svcCtx.RelationService().AcceptAddFriend,
+			}
+			conngateway.AddRoute("/v1/relation/acceptAddFriend", route)
 		}
-		conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncConvSeq.Number())), route)
+		// GetMyFriendEventListReq GetMyFriendEventListResp
+		{
+			route := conngateway.Route[*pb.GetMyFriendEventListReq, *pb.GetMyFriendEventListResp]{
+				NewRequest: func() *pb.GetMyFriendEventListReq {
+					return &pb.GetMyFriendEventListReq{}
+				},
+				Do: s.svcCtx.RelationService().GetMyFriendEventList,
+			}
+			conngateway.AddRoute("/v1/relation/getMyFriendEventList", route)
+		}
+		// RequestAddFriendReq RequestAddFriendResp
+		{
+			route := conngateway.Route[*pb.RequestAddFriendReq, *pb.RequestAddFriendResp]{
+				NewRequest: func() *pb.RequestAddFriendReq {
+					return &pb.RequestAddFriendReq{}
+				},
+				Do: s.svcCtx.RelationService().RequestAddFriend,
+			}
+			conngateway.AddRoute("/v1/relation/requestAddFriend", route)
+		}
 	}
-	// BatchGetMsgListByConvIdReq GetMsgListResp
+	// user
 	{
-		route := conngateway.Route[*pb.BatchGetMsgListByConvIdReq, *pb.GetMsgListResp]{
-			NewRequest: func() *pb.BatchGetMsgListByConvIdReq {
-				return &pb.BatchGetMsgListByConvIdReq{}
-			},
-			Do: s.svcCtx.MsgService().BatchGetMsgListByConvId,
+		// SearchUsersByKeywordReq SearchUsersByKeywordResp
+		{
+			route := conngateway.Route[*pb.SearchUsersByKeywordReq, *pb.SearchUsersByKeywordResp]{
+				NewRequest: func() *pb.SearchUsersByKeywordReq {
+					return &pb.SearchUsersByKeywordReq{}
+				},
+				Do: s.svcCtx.UserService().SearchUsersByKeyword,
+			}
+			conngateway.AddRoute("/v1/user/searchUsersByKeyword", route)
 		}
-		conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncMsgList.Number())), route)
-	}
-	// AckNoticeDataReq AckNoticeDataResp
-	{
-		route := conngateway.Route[*pb.AckNoticeDataReq, *pb.AckNoticeDataResp]{
-			NewRequest: func() *pb.AckNoticeDataReq {
-				return &pb.AckNoticeDataReq{}
-			},
-			Do: s.svcCtx.NoticeService().AckNoticeData,
+		// GetUserSettingsReq GetUserSettingsResp
+		{
+			route := conngateway.Route[*pb.GetUserSettingsReq, *pb.GetUserSettingsResp]{
+				NewRequest: func() *pb.GetUserSettingsReq {
+					return &pb.GetUserSettingsReq{}
+				},
+				Do: s.svcCtx.UserService().GetUserSettings,
+			}
+			conngateway.AddRoute("/v1/user/getUserSettings", route)
 		}
-		conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_AckNotice.Number())), route)
-	}
-	// GetMsgByIdReq GetMsgByIdResp
-	{
-		route := conngateway.Route[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
-			NewRequest: func() *pb.GetMsgByIdReq {
-				return &pb.GetMsgByIdReq{}
-			},
-			Do: s.svcCtx.MsgService().GetMsgById,
+		// SetUserSettingsReq SetUserSettingsResp
+		{
+			route := conngateway.Route[*pb.SetUserSettingsReq, *pb.SetUserSettingsResp]{
+				NewRequest: func() *pb.SetUserSettingsReq {
+					return &pb.SetUserSettingsReq{}
+				},
+				Do: s.svcCtx.UserService().SetUserSettings,
+			}
+			conngateway.AddRoute("/v1/user/setUserSettings", route)
 		}
-		conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_GetMsgById.Number())), route)
 	}
 }
