@@ -91,6 +91,16 @@ func (s *ConnServer) registerGateway() {
 			}
 			conngateway.AddRoute("/v1/relation/requestAddFriend", route)
 		}
+		// GetFriendListReq GetFriendListResp
+		{
+			route := conngateway.Route[*pb.GetFriendListReq, *pb.GetFriendListResp]{
+				NewRequest: func() *pb.GetFriendListReq {
+					return &pb.GetFriendListReq{}
+				},
+				Do: s.svcCtx.RelationService().GetFriendList,
+			}
+			conngateway.AddRoute("/v1/relation/getFriendList", route)
+		}
 	}
 	// user
 	{

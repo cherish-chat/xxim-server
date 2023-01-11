@@ -100,6 +100,10 @@ func (x *GetFriendListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *GetFriendListReq) Path() string {
+	return "relation/GetFriendList"
+}
+
 func (x *GetMsgByIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
