@@ -55,8 +55,9 @@ func NewServer(
 		deleteSubscriber: func(c *types.UserConn) {},
 		beforeConnect:    func(ctx context.Context, param types.ConnParam) (int, error) { return 0, nil },
 	}
-	s.serveMux.HandleFunc("/", s.subscribeHandler)
-	s.serveMux.HandleFunc("/ws", s.subscribeHandler)
+	// 跨域配置
+	s.serveMux.Handle("/", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
+	s.serveMux.Handle("/ws", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
 	return s
 }
 
@@ -207,4 +208,17 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 			"networkUsed": conn.ConnParam.NetworkUsed,
 		})
 	}
+}
+
+func (s *Server) corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == "OPTIONS" {
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
