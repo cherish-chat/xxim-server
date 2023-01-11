@@ -5,8 +5,6 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
-// hmsetex lua script;
-
 var hmsetexSha = ""
 
 // HMSetEx sets the hash with ttl.
@@ -34,5 +32,5 @@ local ttl = ARGV[1]
 local exists = redis.call('EXISTS', key)
 redis.call('HMSET', key, unpack(ARGV, 2))
 redis.call('EXPIRE', key, ttl)
-end
+return 1
 ` // hmsetex key ttl field value [field value ...]
