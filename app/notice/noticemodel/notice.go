@@ -12,8 +12,8 @@ import (
 
 type (
 	Notice struct {
-		NoticeId    string       `gorm:"column:noticeId;type:char(96);primary_key;not null" json:"noticeId"`
-		ConvId      string       `gorm:"column:convId;type:char(96);not null" json:"convId"`
+		NoticeId    string       `gorm:"column:noticeId;type:char(96);not null;index:unique_index,unique;" json:"noticeId"`
+		ConvId      string       `gorm:"column:convId;type:char(96);not null;index:unique_index,unique;" json:"convId"`
 		CreateTime  int64        `gorm:"column:createTime;type:bigint(13);not null" json:"createTime"`
 		Title       string       `gorm:"column:title;type:varchar(255);not null" json:"title"`
 		ContentType int32        `gorm:"column:contentType;type:int(11);not null" json:"contentType"`
@@ -46,7 +46,7 @@ func (m *NoticeOption) Scan(input interface{}) error {
 
 func (m *Notice) Upsert(tx *gorm.DB) error {
 	return tx.Clauses(clause.OnConflict{
-		Columns: []clause.Column{{Name: "noticeId"}},
+		Columns: []clause.Column{{Name: "noticeId"}, {Name: "convId"}},
 		DoUpdates: clause.Assignments(map[string]interface{}{
 			"title":       m.Title,
 			"contentType": m.ContentType,

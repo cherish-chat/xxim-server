@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -66,6 +68,27 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 				return err
 			}
 			return nil
+		}, func(tx *gorm.DB) error {
+			data := &pb.NoticeData{
+				ConvId:         noticemodel.ConvId_SyncFriendList,
+				UnreadCount:    0,
+				UnreadAbsolute: false,
+				NoticeId:       fmt.Sprintf("%s", in.ApplyUserId),
+				ContentType:    0,
+				Content:        []byte{},
+				Options: &pb.NoticeData_Options{
+					StorageForClient: false,
+					UpdateConvMsg:    false,
+					OnlinePushOnce:   false,
+				},
+				Ext: nil,
+			}
+			m := noticemodel.NoticeFromPB(data, false, in.ApplyUserId)
+			err := m.Upsert(tx)
+			if err != nil {
+				l.Errorf("Upsert failed, err: %v", err)
+			}
+			return err
 		})
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
@@ -108,6 +131,17 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			}})
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+				return err
+			}
+			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+				CommonReq:   in.CommonReq,
+				NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s", in.ApplyUserId)},
+				UserId:      utils.AnyPtr(in.ApplyUserId),
+				IsBroadcast: nil,
+				Inserted:    utils.AnyPtr(true),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
 			}
 			return err
 		})
