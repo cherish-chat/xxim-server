@@ -43,21 +43,11 @@ func (l *GetConvSubscribersLogic) GetConvSubscribers(in *pb.GetConvSubscribersRe
 		return &pb.GetConvSubscribersResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	userIds := make([]string, 0)
-	podIpMap := make(map[string]*pb.GetConvSubscribersRespUidList)
 	for _, pair := range val {
-		userId, podIp := rediskey.ConvMembersSubscribedSplit(pair.Key)
+		userId := rediskey.ConvMembersSubscribedSplit(pair.Key)
 		userIds = append(userIds, userId)
-		if _, ok := podIpMap[podIp]; !ok {
-			podIpMap[podIp] = &pb.GetConvSubscribersRespUidList{
-				PodIp:   podIp,
-				UserIds: make([]string, 0),
-			}
-		}
-		podIpMap[podIp].UserIds = append(podIpMap[podIp].UserIds, userId)
-		podIpMap[podIp].UserIds = utils.Set(podIpMap[podIp].UserIds)
 	}
 	return &pb.GetConvSubscribersResp{
 		UserIdList: utils.Set(userIds),
-		PodIpMap:   podIpMap,
 	}, nil
 }

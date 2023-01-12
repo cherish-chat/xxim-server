@@ -31,7 +31,7 @@ func NewAfterConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Afte
 
 // AfterConnect conn hook
 func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp, error) {
-	err := l.SetUserSubscriptions(in.ConnParam.UserId, in.ConnParam.PodIp)
+	err := l.SetUserSubscriptions(in.ConnParam.UserId)
 	if err != nil {
 		return &pb.CommonResp{}, err
 	}
@@ -53,7 +53,7 @@ func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	return &pb.CommonResp{}, nil
 }
 
-func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) error {
+func (l *AfterConnectLogic) SetUserSubscriptions(userId string) error {
 	var convIds []string
 	// 获取用户订阅的通知号列表
 	{
@@ -76,7 +76,7 @@ func (l *AfterConnectLogic) SetUserSubscriptions(userId string, podIp string) er
 		for _, id := range convIds {
 			keys = append(keys, rediskey.NoticeConvMembersSubscribed(id))
 		}
-		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId, podIp), 60*60*24)
+		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*60*24)
 		if err != nil {
 			l.Errorf("mzaddex error: %v", err)
 			return err

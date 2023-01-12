@@ -50,10 +50,10 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
+	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
+	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
 	{
 		// 添加好友
-		friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
-		friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			err := xorm.Upsert(tx, friend1, []string{"friendId", "userId"}, []string{"friendId", "userId"})
 			if err != nil {
@@ -71,8 +71,6 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			l.Errorf("InsertOne failed, err: %v", err)
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		// 接受者发送消息：我们已经是好友了，快来聊天吧
-		go l.sendMsg(in)
 	}
 	{
 		// 设置申请状态
@@ -98,11 +96,23 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		if err != nil {
 			l.Errorf("FlushFriendList failed, err: %v", err)
 		}
+		// 接受者发送消息：我们已经是好友了，快来聊天吧
+		go l.sendMsg(in)
 		// 预热缓存
-		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
+		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
 		}, nil)
+		// 刷新订阅
+		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{
+				friend1.UserId, friend1.FriendId,
+			}})
+			if err != nil {
+				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+			}
+			return err
+		})
 	}
 	return &pb.AcceptAddFriendResp{}, nil
 }

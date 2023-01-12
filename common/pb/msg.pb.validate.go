@@ -2268,52 +2268,6 @@ func (m *GetConvSubscribersResp) validate(all bool) error {
 		}
 	}
 
-	{
-		sorted_keys := make([]string, len(m.GetPodIpMap()))
-		i := 0
-		for key := range m.GetPodIpMap() {
-			sorted_keys[i] = key
-			i++
-		}
-		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
-		for _, key := range sorted_keys {
-			val := m.GetPodIpMap()[key]
-			_ = val
-
-			// no validation rules for PodIpMap[key]
-
-			if all {
-				switch v := interface{}(val).(type) {
-				case interface{ ValidateAll() error }:
-					if err := v.ValidateAll(); err != nil {
-						errors = append(errors, GetConvSubscribersRespValidationError{
-							field:  fmt.Sprintf("PodIpMap[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				case interface{ Validate() error }:
-					if err := v.Validate(); err != nil {
-						errors = append(errors, GetConvSubscribersRespValidationError{
-							field:  fmt.Sprintf("PodIpMap[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				}
-			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
-				if err := v.Validate(); err != nil {
-					return GetConvSubscribersRespValidationError{
-						field:  fmt.Sprintf("PodIpMap[%v]", key),
-						reason: "embedded message failed validation",
-						cause:  err,
-					}
-				}
-			}
-
-		}
-	}
-
 	if len(errors) > 0 {
 		return GetConvSubscribersRespMultiError(errors)
 	}
@@ -2932,6 +2886,137 @@ var _ interface {
 	ErrorName() string
 } = GetConvOnlineCountRespValidationError{}
 
+// Validate checks the field values on FlushUsersSubConvReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FlushUsersSubConvReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FlushUsersSubConvReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FlushUsersSubConvReqMultiError, or nil if none found.
+func (m *FlushUsersSubConvReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FlushUsersSubConvReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, FlushUsersSubConvReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, FlushUsersSubConvReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return FlushUsersSubConvReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return FlushUsersSubConvReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// FlushUsersSubConvReqMultiError is an error wrapping multiple validation
+// errors returned by FlushUsersSubConvReq.ValidateAll() if the designated
+// constraints aren't met.
+type FlushUsersSubConvReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FlushUsersSubConvReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FlushUsersSubConvReqMultiError) AllErrors() []error { return m }
+
+// FlushUsersSubConvReqValidationError is the validation error returned by
+// FlushUsersSubConvReq.Validate if the designated constraints aren't met.
+type FlushUsersSubConvReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FlushUsersSubConvReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FlushUsersSubConvReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FlushUsersSubConvReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FlushUsersSubConvReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FlushUsersSubConvReqValidationError) ErrorName() string {
+	return "FlushUsersSubConvReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FlushUsersSubConvReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFlushUsersSubConvReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FlushUsersSubConvReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FlushUsersSubConvReqValidationError{}
+
 // Validate checks the field values on MsgData_OfflinePush with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3367,108 +3452,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = BatchGetConvSeqResp_ConvSeqValidationError{}
-
-// Validate checks the field values on GetConvSubscribersRespUidList with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetConvSubscribersRespUidList) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetConvSubscribersRespUidList with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// GetConvSubscribersRespUidListMultiError, or nil if none found.
-func (m *GetConvSubscribersRespUidList) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetConvSubscribersRespUidList) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for PodIp
-
-	if len(errors) > 0 {
-		return GetConvSubscribersRespUidListMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetConvSubscribersRespUidListMultiError is an error wrapping multiple
-// validation errors returned by GetConvSubscribersRespUidList.ValidateAll()
-// if the designated constraints aren't met.
-type GetConvSubscribersRespUidListMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetConvSubscribersRespUidListMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetConvSubscribersRespUidListMultiError) AllErrors() []error { return m }
-
-// GetConvSubscribersRespUidListValidationError is the validation error
-// returned by GetConvSubscribersRespUidList.Validate if the designated
-// constraints aren't met.
-type GetConvSubscribersRespUidListValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetConvSubscribersRespUidListValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetConvSubscribersRespUidListValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetConvSubscribersRespUidListValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetConvSubscribersRespUidListValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetConvSubscribersRespUidListValidationError) ErrorName() string {
-	return "GetConvSubscribersRespUidListValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetConvSubscribersRespUidListValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetConvSubscribersRespUidList.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetConvSubscribersRespUidListValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetConvSubscribersRespUidListValidationError{}
