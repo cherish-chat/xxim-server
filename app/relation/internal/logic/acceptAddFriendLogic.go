@@ -96,8 +96,6 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		if err != nil {
 			l.Errorf("FlushFriendList failed, err: %v", err)
 		}
-		// 接受者发送消息：我们已经是好友了，快来聊天吧
-		go l.sendMsg(in)
 		// 预热缓存
 		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
@@ -113,6 +111,8 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			}
 			return err
 		})
+		// 接受者发送消息：我们已经是好友了，快来聊天吧
+		go l.sendMsg(in)
 	}
 	return &pb.AcceptAddFriendResp{}, nil
 }
