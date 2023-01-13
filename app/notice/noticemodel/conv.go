@@ -31,7 +31,7 @@ var (
 )
 
 func ConvIdUser(uid string) string {
-	return pb.NoticeConvId(uid)
+	return pb.NoticeConvId("user@" + uid)
 }
 
 type (
