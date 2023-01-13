@@ -106,7 +106,7 @@ func (l *GetUserNoticeDataLogic) GetUserNoticeData(in *pb.GetUserNoticeDataReq) 
 				if dest.Options.OnlinePushOnce {
 					// 设置为失效
 					dest.PushInvalid = true
-					err := tx.Model(dest).Where("noticeId = ?", dest.NoticeId).Update("pushInvalid", true).Error
+					err := tx.Model(dest).Where("noticeId = ? AND convId = ?", dest.NoticeId, dest.ConvId).Update("pushInvalid", true).Error
 					if err != nil {
 						l.Errorf("update notice pushInvalid error: %v", err)
 						return err
