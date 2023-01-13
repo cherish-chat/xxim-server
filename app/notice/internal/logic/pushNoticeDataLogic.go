@@ -41,9 +41,19 @@ func (l *PushNoticeDataLogic) PushNoticeData(in *pb.PushNoticeDataReq) (*pb.Push
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	if notice.IsBroadcast {
-		return l.pushBroadcastNoticeData(in, notice)
+		var resp *pb.PushNoticeDataResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "pushBroadcastNoticeData", func(ctx context.Context) {
+			resp, err = l.pushBroadcastNoticeData(in, notice)
+		})
+		return resp, err
 	} else if notice.UserId != "" {
-		return l.pushUserNoticeData(in, notice, notice.UserId)
+		var resp *pb.PushNoticeDataResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "pushUserNoticeData", func(ctx context.Context) {
+			resp, err = l.pushUserNoticeData(in, notice, notice.UserId)
+		})
+		return resp, err
 	}
 	// 删除垃圾数据
 	l.svcCtx.Mysql().Model(notice).Where("noticeId = ?", in.NoticeId).Delete(notice)
@@ -55,7 +65,7 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 		getNoticeConvAllSubscribersResp *pb.GetNoticeConvAllSubscribersResp
 		err                             error
 	)
-	xtrace.StartFuncSpan(l.ctx, "", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "GetNoticeConvAllSubscribers", func(ctx context.Context) {
 		getNoticeConvAllSubscribersResp, err = NewGetNoticeConvAllSubscribersLogic(ctx, l.svcCtx).GetNoticeConvAllSubscribers(&pb.GetNoticeConvAllSubscribersReq{
 			CommonReq: in.CommonReq,
 			ConvId:    notice.ConvId,

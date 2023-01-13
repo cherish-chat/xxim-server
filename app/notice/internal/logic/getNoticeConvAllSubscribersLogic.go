@@ -47,6 +47,7 @@ func (l *GetNoticeConvAllSubscribersLogic) GetNoticeConvAllSubscribers(in *pb.Ge
 		userId := rediskey.ConvMembersSubscribedSplit(pair.Key)
 		userIds = append(userIds, userId)
 	}
+	logx.WithContext(l.ctx).Infof("get conv subscribers: %v", userIds)
 	return &pb.GetNoticeConvAllSubscribersResp{
 		UserIds: utils.Set(userIds),
 	}, nil
