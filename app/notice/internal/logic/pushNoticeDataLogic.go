@@ -84,13 +84,16 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 	}
 	var fs []func() error
 	for _, tmpf := range tmpfs {
+		if len(tmpf) == 0 {
+			continue
+		}
 		fs = append(fs, func() error {
 			for _, f := range tmpf {
 				if err := f(); err != nil {
 					return err
 				}
 			}
-			return err
+			return nil
 		})
 	}
 	err = mr.Finish(fs...)
