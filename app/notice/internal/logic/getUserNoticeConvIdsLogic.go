@@ -42,7 +42,7 @@ func (l *GetUserNoticeConvIdsLogic) GetUserNoticeConvIds(in *pb.GetUserNoticeCon
 		l.Errorf("get friend list failed, err: %v", err)
 		return &pb.GetUserNoticeConvIdsResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	friends := append(getFriendList.Ids, in.UserId)
+	friends := getFriendList.Ids
 	for _, friend := range friends {
 		convIds = append(convIds, noticemodel.ConvIdUser(friend))
 	}
