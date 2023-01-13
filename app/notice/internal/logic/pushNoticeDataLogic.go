@@ -32,7 +32,7 @@ func NewPushNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pu
 // PushNoticeData 推送通知数据
 func (l *PushNoticeDataLogic) PushNoticeData(in *pb.PushNoticeDataReq) (*pb.PushNoticeDataResp, error) {
 	notice := &noticemodel.Notice{}
-	err := l.svcCtx.Mysql().Model(notice).Where("noticeId = ?", in.NoticeId).First(notice).Error
+	err := l.svcCtx.Mysql().Model(notice).Where("noticeId = ? AND convId = ?", in.NoticeId, in.ConvId).First(notice).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return &pb.PushNoticeDataResp{}, nil
@@ -56,7 +56,7 @@ func (l *PushNoticeDataLogic) PushNoticeData(in *pb.PushNoticeDataReq) (*pb.Push
 		return resp, err
 	}
 	// 删除垃圾数据
-	l.svcCtx.Mysql().Model(notice).Where("noticeId = ?", in.NoticeId).Delete(notice)
+	l.svcCtx.Mysql().Model(notice).Where("noticeId = ? AND convId = ?", in.NoticeId, in.ConvId).Delete(notice)
 	return &pb.PushNoticeDataResp{}, nil
 }
 

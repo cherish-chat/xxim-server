@@ -85,8 +85,11 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *pb.UpdateUserInfoReq) (*pb.Upda
 	// 刷新订阅
 	utils.RetryProxy(l.ctx, 5, 1*time.Second, func() error {
 		_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-			CommonReq:   in.CommonReq,
-			NoticeData:  &pb.NoticeData{NoticeId: "UpdateUserInfo"},
+			CommonReq: in.CommonReq,
+			NoticeData: &pb.NoticeData{
+				NoticeId: "UpdateUserInfo",
+				ConvId:   noticemodel.ConvIdUser(in.CommonReq.UserId),
+			},
 			UserId:      nil,
 			IsBroadcast: utils.AnyPtr(true),
 			Inserted:    utils.AnyPtr(true),

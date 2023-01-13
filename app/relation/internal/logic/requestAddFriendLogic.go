@@ -222,8 +222,11 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 		}
 	}
 	l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-		CommonReq:   in.CommonReq,
-		NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s", in.To)},
+		CommonReq: in.CommonReq,
+		NoticeData: &pb.NoticeData{
+			NoticeId: fmt.Sprintf("%s", in.To),
+			ConvId:   noticemodel.ConvId_FriendNotice,
+		},
 		UserId:      utils.AnyPtr(in.To),
 		IsBroadcast: nil,
 		Inserted:    utils.AnyPtr(true),

@@ -55,6 +55,7 @@ message SendNoticeDataResp {
 message PushNoticeDataReq {
   CommonReq commonReq = 1;
   string noticeId = 2;
+  string convId = 3;
 }
 
 message PushNoticeDataResp {
@@ -76,7 +77,8 @@ message GetUserNoticeDataResp {
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
   CommonReq commonReq = 1;
-  repeated string noticeIds = 2;
+  string noticeId = 2;
+  string convId = 3;
 }
 
 message AckNoticeDataResp {

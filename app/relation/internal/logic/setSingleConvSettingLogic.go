@@ -153,8 +153,11 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			return
 		}
 		l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-			CommonReq:   in.CommonReq,
-			NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId)},
+			CommonReq: in.CommonReq,
+			NoticeData: &pb.NoticeData{
+				NoticeId: fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
+				ConvId:   noticemodel.ConvId_ConvSettingChanged,
+			},
 			UserId:      utils.AnyPtr(in.Setting.UserId),
 			IsBroadcast: nil,
 			Inserted:    utils.AnyPtr(true),

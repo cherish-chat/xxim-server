@@ -141,8 +141,11 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 				return err
 			}
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-				CommonReq:   in.CommonReq,
-				NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s", in.ApplyUserId)},
+				CommonReq: in.CommonReq,
+				NoticeData: &pb.NoticeData{
+					NoticeId: fmt.Sprintf("%s", in.ApplyUserId),
+					ConvId:   noticemodel.ConvId_SyncFriendList,
+				},
 				UserId:      utils.AnyPtr(in.ApplyUserId),
 				IsBroadcast: nil,
 				Inserted:    utils.AnyPtr(true),

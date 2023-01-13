@@ -36,7 +36,7 @@ func (l *SendNoticeDataLogic) SendNoticeData(in *pb.SendNoticeDataReq) (*pb.Send
 	if in.GetInserted() {
 		// 已插入 查询
 		m = &noticemodel.Notice{}
-		err := l.svcCtx.Mysql().Model(m).Where("noticeId = ?", in.NoticeData.NoticeId).First(m).Error
+		err := l.svcCtx.Mysql().Model(m).Where("noticeId = ? AND convId = ?", in.NoticeData.NoticeId, in.NoticeData.ConvId).First(m).Error
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
 				return &pb.SendNoticeDataResp{CommonResp: pb.NewToastErrorResp("通知不存在")}, nil
@@ -62,6 +62,7 @@ func (l *SendNoticeDataLogic) SendNoticeData(in *pb.SendNoticeDataReq) (*pb.Send
 			resp, err := NewPushNoticeDataLogic(ctx, l.svcCtx).PushNoticeData(&pb.PushNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeId:  m.NoticeId,
+				ConvId:    m.ConvId,
 			})
 			if err == nil {
 				break

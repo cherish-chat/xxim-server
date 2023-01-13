@@ -671,6 +671,8 @@ func (m *PushNoticeDataReq) validate(all bool) error {
 
 	// no validation rules for NoticeId
 
+	// no validation rules for ConvId
+
 	if len(errors) > 0 {
 		return PushNoticeDataReqMultiError(errors)
 	}
@@ -1232,6 +1234,10 @@ func (m *AckNoticeDataReq) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for NoticeId
+
+	// no validation rules for ConvId
 
 	if len(errors) > 0 {
 		return AckNoticeDataReqMultiError(errors)
