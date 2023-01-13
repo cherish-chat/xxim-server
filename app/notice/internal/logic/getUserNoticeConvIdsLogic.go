@@ -29,7 +29,9 @@ func (l *GetUserNoticeConvIdsLogic) GetUserNoticeConvIds(in *pb.GetUserNoticeCon
 	var convIds = noticemodel.DefaultConvIds
 	// 获取用户的所有好友id
 	getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
-		CommonReq: in.CommonReq,
+		CommonReq: &pb.CommonReq{
+			UserId: in.UserId,
+		},
 		Page: &pb.Page{
 			Page: 1,
 			Size: 999999,
