@@ -14,6 +14,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -127,11 +128,17 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
 	}
+	compressionMode := websocket.CompressionNoContextTakeover
+	// https://github.com/nhooyr/websocket/issues/218
+	// 如果是Safari浏览器，不压缩
+	if strings.Contains(r.UserAgent(), "Safari") {
+		compressionMode = websocket.CompressionDisabled
+	}
 	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
 		Subprotocols:         nil,
 		InsecureSkipVerify:   true,
 		OriginPatterns:       nil,
-		CompressionMode:      0,
+		CompressionMode:      compressionMode,
 		CompressionThreshold: 0,
 	})
 	if err != nil {
