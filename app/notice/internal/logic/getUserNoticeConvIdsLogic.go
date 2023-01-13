@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,11 +40,11 @@ func (l *GetUserNoticeConvIdsLogic) GetUserNoticeConvIds(in *pb.GetUserNoticeCon
 		l.Errorf("get friend list failed, err: %v", err)
 		return &pb.GetUserNoticeConvIdsResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	friends := getFriendList.Ids
+	friends := append(getFriendList.Ids, in.CommonReq.UserId)
 	for _, friend := range friends {
 		convIds = append(convIds, noticemodel.ConvIdUser(friend))
 	}
 	return &pb.GetUserNoticeConvIdsResp{
-		ConvIds: convIds,
+		ConvIds: utils.Set(convIds),
 	}, nil
 }
