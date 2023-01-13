@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
+	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/config"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
@@ -18,6 +19,7 @@ type ServiceContext struct {
 	zedis           *redis.Redis
 	mysql           *gorm.DB
 	imService       imservice.ImService
+	noticeService   noticeservice.NoticeService
 	SystemConfigMgr *xconf.SystemConfigMgr
 	*i18n.I18N
 }
@@ -58,4 +60,11 @@ func (s *ServiceContext) ImService() imservice.ImService {
 		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc))
 	}
 	return s.imService
+}
+
+func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
+	if s.noticeService == nil {
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+	}
+	return s.noticeService
 }

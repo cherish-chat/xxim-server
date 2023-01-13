@@ -19,6 +19,7 @@ type IBody interface {
 
 func OnReceiveCustom[REQ IReq, RESP IResp](
 	ctx context.Context,
+	method string,
 	c *types.UserConn,
 	body IBody,
 	req REQ,
@@ -26,11 +27,11 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 ) (*pb.ResponseBody, error) {
 	err := proto.Unmarshal(body.GetData(), req)
 	if err != nil {
-		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", req.Path(), err.Error())
+		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", method, err.Error())
 		return nil, err
 	}
 	var resp RESP
-	xtrace.StartFuncSpan(ctx, req.Path(), func(ctx context.Context) {
+	xtrace.StartFuncSpan(ctx, method, func(ctx context.Context) {
 		req.SetCommonReq(&pb.CommonReq{
 			UserId:      c.ConnParam.UserId,
 			Token:       c.ConnParam.Token,
@@ -48,7 +49,7 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		"event":  body.GetEvent().String(),
 	}))
 	if err != nil {
-		logx.WithContext(c.Ctx).Errorf("%s error: %s", req.Path(), err.Error())
+		logx.WithContext(c.Ctx).Errorf("%s error: %s", method, err.Error())
 	}
 	respBuff, _ := proto.Marshal(resp)
 	// 请求日志

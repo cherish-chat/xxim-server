@@ -133,6 +133,13 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
+			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
+				UserIds: []string{friend1.UserId, friend1.FriendId},
+			})
+			if err != nil {
+				l.Errorf("SetUserSubscriptions failed, err: %v", err)
+				return err
+			}
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 				CommonReq:   in.CommonReq,
 				NoticeData:  &pb.NoticeData{NoticeId: fmt.Sprintf("%s", in.ApplyUserId)},

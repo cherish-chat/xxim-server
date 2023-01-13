@@ -30,6 +30,10 @@ var (
 	}
 )
 
+func ConvIdUser(uid string) string {
+	return pb.NoticeConvId(uid)
+}
+
 type (
 	ConvType   int32
 	JumpType   int32

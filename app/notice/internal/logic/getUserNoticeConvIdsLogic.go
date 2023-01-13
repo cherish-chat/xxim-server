@@ -25,7 +25,25 @@ func NewGetUserNoticeConvIdsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // GetUserNoticeConvIds 获取用户所有的通知号
 func (l *GetUserNoticeConvIdsLogic) GetUserNoticeConvIds(in *pb.GetUserNoticeConvIdsReq) (*pb.GetUserNoticeConvIdsResp, error) {
+	var convIds = noticemodel.DefaultConvIds
+	// 获取用户的所有好友id
+	getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
+		CommonReq: in.CommonReq,
+		Page: &pb.Page{
+			Page: 1,
+			Size: 999999,
+		},
+		Opt: pb.GetFriendListReq_OnlyId,
+	})
+	if err != nil {
+		l.Errorf("get friend list failed, err: %v", err)
+		return &pb.GetUserNoticeConvIdsResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	friends := getFriendList.Ids
+	for _, friend := range friends {
+		convIds = append(convIds, noticemodel.ConvIdUser(friend))
+	}
 	return &pb.GetUserNoticeConvIdsResp{
-		ConvIds: noticemodel.DefaultConvIds,
+		ConvIds: convIds,
 	}, nil
 }

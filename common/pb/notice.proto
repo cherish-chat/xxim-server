@@ -105,6 +105,11 @@ message GetNoticeConvAllSubscribersResp {
   repeated string userIds = 2;
 }
 
+message SetUserSubscriptionsReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+}
+
 service noticeService {
   //AfterConnect conn hook
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -122,4 +127,6 @@ service noticeService {
   rpc GetUserNoticeConvIds(GetUserNoticeConvIdsReq) returns (GetUserNoticeConvIdsResp);
   //GetNoticeConvAllSubscribers 获取通知号所有的订阅者
   rpc GetNoticeConvAllSubscribers(GetNoticeConvAllSubscribersReq) returns (GetNoticeConvAllSubscribersResp);
+  //SetUserSubscriptions 设置用户订阅
+  rpc SetUserSubscriptions(SetUserSubscriptionsReq) returns (CommonResp);
 }

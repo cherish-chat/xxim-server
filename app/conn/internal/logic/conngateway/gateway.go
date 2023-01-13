@@ -14,7 +14,6 @@ type IReq interface {
 	GetCommonReq() *pb.CommonReq
 	SetCommonReq(*pb.CommonReq)
 	Validate() error
-	Path() string
 }
 
 type IResp interface {
@@ -31,7 +30,7 @@ var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBod
 
 func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 	routeMap[method] = func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
-		return OnReceiveCustom(ctx, c, body, route.NewRequest(), route.Do)
+		return OnReceiveCustom(ctx, method, c, body, route.NewRequest(), route.Do)
 	}
 }
 

@@ -28,6 +28,7 @@ type (
 	PushNoticeDataResp              = pb.PushNoticeDataResp
 	SendNoticeDataReq               = pb.SendNoticeDataReq
 	SendNoticeDataResp              = pb.SendNoticeDataResp
+	SetUserSubscriptionsReq         = pb.SetUserSubscriptionsReq
 
 	NoticeService interface {
 		// AfterConnect conn hook
@@ -46,6 +47,8 @@ type (
 		GetUserNoticeConvIds(ctx context.Context, in *GetUserNoticeConvIdsReq, opts ...grpc.CallOption) (*GetUserNoticeConvIdsResp, error)
 		// GetNoticeConvAllSubscribers 获取通知号所有的订阅者
 		GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error)
+		// SetUserSubscriptions 设置用户订阅
+		SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultNoticeService struct {
@@ -105,4 +108,10 @@ func (m *defaultNoticeService) GetUserNoticeConvIds(ctx context.Context, in *Get
 func (m *defaultNoticeService) GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error) {
 	client := pb.NewNoticeServiceClient(m.cli.Conn())
 	return client.GetNoticeConvAllSubscribers(ctx, in, opts...)
+}
+
+// SetUserSubscriptions 设置用户订阅
+func (m *defaultNoticeService) SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := pb.NewNoticeServiceClient(m.cli.Conn())
+	return client.SetUserSubscriptions(ctx, in, opts...)
 }

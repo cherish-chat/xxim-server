@@ -1972,6 +1972,137 @@ var _ interface {
 	ErrorName() string
 } = GetNoticeConvAllSubscribersRespValidationError{}
 
+// Validate checks the field values on SetUserSubscriptionsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetUserSubscriptionsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetUserSubscriptionsReq with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetUserSubscriptionsReqMultiError, or nil if none found.
+func (m *SetUserSubscriptionsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetUserSubscriptionsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetUserSubscriptionsReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetUserSubscriptionsReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetUserSubscriptionsReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetUserSubscriptionsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetUserSubscriptionsReqMultiError is an error wrapping multiple validation
+// errors returned by SetUserSubscriptionsReq.ValidateAll() if the designated
+// constraints aren't met.
+type SetUserSubscriptionsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetUserSubscriptionsReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetUserSubscriptionsReqMultiError) AllErrors() []error { return m }
+
+// SetUserSubscriptionsReqValidationError is the validation error returned by
+// SetUserSubscriptionsReq.Validate if the designated constraints aren't met.
+type SetUserSubscriptionsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetUserSubscriptionsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetUserSubscriptionsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetUserSubscriptionsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetUserSubscriptionsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetUserSubscriptionsReqValidationError) ErrorName() string {
+	return "SetUserSubscriptionsReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetUserSubscriptionsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetUserSubscriptionsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetUserSubscriptionsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetUserSubscriptionsReqValidationError{}
+
 // Validate checks the field values on NoticeData_Options with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

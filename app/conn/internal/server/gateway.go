@@ -134,5 +134,15 @@ func (s *ConnServer) registerGateway() {
 			}
 			conngateway.AddRoute("/v1/user/setUserSettings", route)
 		}
+		// UpdateUserInfoReq UpdateUserInfoResp
+		{
+			route := conngateway.Route[*pb.UpdateUserInfoReq, *pb.UpdateUserInfoResp]{
+				NewRequest: func() *pb.UpdateUserInfoReq {
+					return &pb.UpdateUserInfoReq{}
+				},
+				Do: s.svcCtx.UserService().UpdateUserInfo,
+			}
+			conngateway.AddRoute("/v1/user/updateUserInfo", route)
+		}
 	}
 }
