@@ -12,7 +12,7 @@ import (
 
 type (
 	Notice struct {
-		NoticeId    string       `gorm:"column:noticeId;type:char(96);not null;index:unique_index,unique;" json:"noticeId"`
+		NoticeId    string       `gorm:"column:noticeId;type:char(96);not null;index:unique_index,unique;index;" json:"noticeId"`
 		ConvId      string       `gorm:"column:convId;type:char(96);not null;index:unique_index,unique;" json:"convId"`
 		CreateTime  int64        `gorm:"column:createTime;type:bigint(13);not null" json:"createTime"`
 		Title       string       `gorm:"column:title;type:varchar(255);not null" json:"title"`
