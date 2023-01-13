@@ -83,11 +83,12 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 		})
 	}
 	var fs []func() error
-	for _, tmpf := range tmpfs {
+	for i, tmpf := range tmpfs {
 		if len(tmpf) == 0 {
 			continue
 		}
 		fs = append(fs, func() error {
+			l.Infof("pushBroadcastNoticeData mr.Run[%d] start", i)
 			for _, f := range tmpf {
 				if err := f(); err != nil {
 					return err
@@ -95,6 +96,10 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 			}
 			return nil
 		})
+	}
+	if len(fs) == 0 {
+		l.Infof("pushBroadcastNoticeData no user need push")
+		return &pb.PushNoticeDataResp{}, nil
 	}
 	err = mr.Finish(fs...)
 	if err != nil {
