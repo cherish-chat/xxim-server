@@ -75,26 +75,11 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 		l.Errorf("pushBroadcastNoticeData GetNoticeConvAllSubscribers err: %v", err)
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	var tmpfs [8][]func() error
-	for i, userId := range getNoticeConvAllSubscribersResp.UserIds {
-		tmpfs[i%8] = append(tmpfs[i%8], func() error {
+	var fs []func() error
+	for _, userId := range getNoticeConvAllSubscribersResp.UserIds {
+		fs = append(fs, func() error {
 			_, err := l.pushUserNoticeData(in, notice, userId)
 			return err
-		})
-	}
-	var fs []func() error
-	for i, tmpf := range tmpfs {
-		if len(tmpf) == 0 {
-			continue
-		}
-		fs = append(fs, func() error {
-			l.Infof("pushBroadcastNoticeData mr.Run[%d] start", i)
-			for _, f := range tmpf {
-				if err := f(); err != nil {
-					return err
-				}
-			}
-			return nil
 		})
 	}
 	if len(fs) == 0 {
