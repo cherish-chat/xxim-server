@@ -181,7 +181,8 @@ message BatchGetConvSeqResp {
 
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
-  repeated string noticeIds = 2;
+  string noticeId = 2;
+  string convId = 3;
 }
 
 message AckNoticeDataResp {}
