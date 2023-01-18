@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
+	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
@@ -103,7 +104,9 @@ func (l *PushNoticeDataLogic) pushUserNoticeData(in *pb.PushNoticeDataReq, notic
 			CommonReq: in.CommonReq,
 			UserId:    userId,
 		})
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"userId": userId,
+	}))
 	if err != nil {
 		l.Errorf("pushUserNoticeData GetUserNoticeData err: %v", err)
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err

@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"github.com/zeromicro/go-zero/core/mr"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
@@ -29,11 +30,20 @@ func NewSetUserSubscriptionsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // SetUserSubscriptions 设置用户订阅
 func (l *SetUserSubscriptionsLogic) SetUserSubscriptions(in *pb.SetUserSubscriptionsReq) (*pb.CommonResp, error) {
+	var fs []func() error
 	for _, id := range in.UserIds {
-		err := l.SetUserSub(id)
-		if err != nil {
-			return pb.NewRetryErrorResp(), nil
-		}
+		idCopy := id
+		fs = append(fs, func() error {
+			err := l.SetUserSub(idCopy)
+			if err != nil {
+				l.Errorf("set user sub error: %v", err)
+			}
+			return err
+		})
+	}
+	err := mr.Finish(fs...)
+	if err != nil {
+		return pb.NewRetryErrorResp(), err
 	}
 	return pb.NewSuccessResp(), nil
 }
