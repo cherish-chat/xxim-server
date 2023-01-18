@@ -57,7 +57,10 @@ func (l *GetMyGroupListLogic) getMyGroupListDefault(in *pb.GetMyGroupListReq) (*
 			groupMap[id] = groupmodel.GroupFromBytes(group).GroupBaseInfo()
 		}
 	}
-	return &pb.GetMyGroupListResp{}, nil
+	return &pb.GetMyGroupListResp{
+		GroupMap: groupMap,
+		Ids:      myGroupListOnlyId.Ids,
+	}, nil
 }
 
 func (l *GetMyGroupListLogic) getMyGroupListOnlyId(in *pb.GetMyGroupListReq) (*pb.GetMyGroupListResp, error) {
