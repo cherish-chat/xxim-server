@@ -80,8 +80,8 @@ func (l *GetUserNoticeDataLogic) GetUserNoticeData(in *pb.GetUserNoticeDataReq) 
 			for i, convId := range getUserNoticeConvIdsResp.ConvIds {
 				if values[i] == "" {
 					// 设置为当前时间
-					values[i] = utils.AnyToString(time.Now().UnixMilli())
-					err = l.svcCtx.Redis().HsetCtx(l.ctx, rediskey.UserAckRecord(in.UserId, deviceId), convId, values[i])
+					values[i] = "0"
+					err = l.svcCtx.Redis().HsetCtx(l.ctx, rediskey.UserAckRecord(in.UserId, deviceId), convId, utils.AnyToString(time.Now().UnixMilli()))
 					if err != nil {
 						l.Errorf("hset user ack record error: %v", err)
 						return err
