@@ -1,8 +1,8 @@
 package rediskey
 
 const (
-	FriendListExpire    = 60 * 5
-	BlacklistListExpire = 60 * 10
+	FriendListExpire    = 60 * 60 * 24
+	BlacklistListExpire = 60 * 60 * 24 * 2
 )
 
 func FriendList(userId string) string {

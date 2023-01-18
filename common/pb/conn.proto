@@ -49,11 +49,60 @@ enum PushEvent {
   PushMsgDataList = 0;
   // 通知推送
   PushNoticeDataList = 1;
+  // 响应返回
+  PushResponseBody = 2;
 }
 
 message PushBody {
   PushEvent event = 1;
   bytes data = 2;
+}
+
+// 客户端发送事件
+enum ActiveEvent {
+  // 发送消息
+  SendMsgList = 0;
+  // 批量获取会话的消息seq
+  SyncConvSeq = 1;
+  // 批量同步消息列表
+  SyncMsgList = 2;
+  // 确认消费通知
+  AckNotice = 3;
+  // 获取一条消息
+  GetMsgById = 4;
+  // 自定义请求
+  CustomRequest = 100;
+}
+
+// 客户端发送的消息体
+message RequestBody {
+  ActiveEvent event = 1;
+  string reqId = 2;
+  bytes data = 3;
+}
+
+message CustomRequestBody {
+  string method = 1;
+  bytes data = 2;
+}
+
+// 服务端返回响应的消息体
+message ResponseBody {
+  enum Code {
+    Success = 0;
+
+    UnknownError = 1;
+    InternalError = 2;
+    RequestError = 3;
+    AuthError = 4;
+    ToastError = 5;
+    AlertError = 7;
+    RetryError = 8;
+  }
+  ActiveEvent event = 1;
+  string reqId = 2;
+  Code code = 3;
+  bytes data = 4;
 }
 
 message SendMsgReq {

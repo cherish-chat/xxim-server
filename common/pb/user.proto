@@ -189,6 +189,18 @@ message BatchGetUserAllDevicesResp {
   repeated AllDevices allDevices = 2;
 }
 
+//UpdateUserInfoReq 更新用户信息
+message UpdateUserInfoReq {
+  CommonReq commonReq = 1;
+  optional string nickname = 2;
+  optional string avatar = 3;
+  optional string signature = 4;
+}
+
+message UpdateUserInfoResp {
+  CommonResp commonResp = 1;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -203,4 +215,5 @@ service userService {
   //AfterDisconnect conn hook
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp) {}
 }

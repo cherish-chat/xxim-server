@@ -24,5 +24,5 @@ func NewKickUserConnLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Kick
 }
 
 func (l *KickUserConnLogic) KickUserConn(in *pb.KickUserConnReq) (*pb.KickUserConnResp, error) {
-	return &pb.KickUserConnResp{}, GetConnLogic().KickUserConn(in)
+	return &pb.KickUserConnResp{}, GetConnLogic().KickUserConn(l.ctx, in)
 }

@@ -94,3 +94,9 @@ func (s *MsgServiceServer) GetConvOnlineCount(ctx context.Context, in *pb.GetCon
 	l := logic.NewGetConvOnlineCountLogic(ctx, s.svcCtx)
 	return l.GetConvOnlineCount(in)
 }
+
+// FlushUsersSubConv 刷新用户订阅的会话
+func (s *MsgServiceServer) FlushUsersSubConv(ctx context.Context, in *pb.FlushUsersSubConvReq) (*pb.CommonResp, error) {
+	l := logic.NewFlushUsersSubConvLogic(ctx, s.svcCtx)
+	return l.FlushUsersSubConv(in)
+}

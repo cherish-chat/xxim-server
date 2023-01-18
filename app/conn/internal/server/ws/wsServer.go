@@ -7,9 +7,14 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.opentelemetry.io/otel/propagation"
+	"io"
 	"net"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -22,6 +27,11 @@ type Server struct {
 	addSubscriber    func(c *types.UserConn)
 	deleteSubscriber func(c *types.UserConn)
 	beforeConnect    func(ctx context.Context, param types.ConnParam) (int, error)
+	onReceive        func(ctx context.Context, c *types.UserConn, typ int, msg []byte)
+}
+
+func (s *Server) SetOnReceive(f func(ctx context.Context, c *types.UserConn, typ int, msg []byte)) {
+	s.onReceive = f
 }
 
 func (s *Server) SetBeforeConnect(f func(ctx context.Context, param types.ConnParam) (int, error)) {
@@ -46,8 +56,9 @@ func NewServer(
 		deleteSubscriber: func(c *types.UserConn) {},
 		beforeConnect:    func(ctx context.Context, param types.ConnParam) (int, error) { return 0, nil },
 	}
-	s.serveMux.HandleFunc("/", s.subscribeHandler)
-	s.serveMux.HandleFunc("/ws", s.subscribeHandler)
+	// 跨域配置
+	s.serveMux.Handle("/", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
+	s.serveMux.Handle("/ws", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
 	return s
 }
 
@@ -91,6 +102,11 @@ func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {
 	return c.ws.Write(ctx, websocket.MessageType(typ), msg)
 }
 
+func (c *userConn) Read(ctx context.Context) (typ int, msg []byte, err error) {
+	messageType, data, err := c.ws.Read(ctx)
+	return int(messageType), data, err
+}
+
 func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 	logger := logx.WithContext(r.Context())
 	headers := make(map[string]string)
@@ -103,31 +119,52 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		UserId:      r.URL.Query().Get("userId"),
 		Token:       r.URL.Query().Get("token"),
 		DeviceId:    r.URL.Query().Get("deviceId"),
+		DeviceModel: r.URL.Query().Get("deviceModel"),
+		OsVersion:   r.URL.Query().Get("osVersion"),
+		AppVersion:  r.URL.Query().Get("appVersion"),
+		Language:    r.URL.Query().Get("language"),
 		Platform:    r.URL.Query().Get("platform"),
-		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Ips:         xhttp.GetRequestIP(r),
+		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
 	}
-	code, err := s.beforeConnect(r.Context(), param)
-	if err != nil {
-		logger.Errorf("beforeConnect error: %v, code:", err, code)
-		return
+	compressionMode := websocket.CompressionNoContextTakeover
+	// https://github.com/nhooyr/websocket/issues/218
+	// 如果是Safari浏览器，不压缩
+	if strings.Contains(r.UserAgent(), "Safari") {
+		compressionMode = websocket.CompressionDisabled
 	}
-	c, err := websocket.Accept(w, r, nil)
+	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
+		Subprotocols:         nil,
+		InsecureSkipVerify:   true,
+		OriginPatterns:       nil,
+		CompressionMode:      compressionMode,
+		CompressionThreshold: 0,
+	})
 	if err != nil {
 		logger.Errorf("failed to accept websocket connection: %v", err)
 		return
 	}
+	code, err := s.beforeConnect(r.Context(), param)
+	if err != nil {
+		logger.Errorf("beforeConnect error: %v, code:", err, code)
+		c.Close(websocket.StatusCode(types.WebsocketStatusCodeAuthFailed(code)), err.Error())
+		return
+	}
 	defer c.Close(websocket.StatusInternalError, "")
 
-	err = s.subscribe(c.CloseRead(r.Context()), &types.UserConn{
+	ctx, cancelFunc := context.WithCancel(r.Context())
+	//ctx := c.CloseRead(r.Context())
+	userConn := &types.UserConn{
 		Conn: &userConn{
 			ws: c,
 		},
 		ConnParam:   param,
-		Ctx:         r.Context(),
+		Ctx:         ctx,
 		ConnectedAt: time.Now(),
-	})
+	}
+	go s.loopRead(ctx, cancelFunc, userConn)
+	err = s.subscribe(ctx, userConn)
 	if errors.Is(err, context.Canceled) {
 		return
 	}
@@ -154,4 +191,47 @@ func (s *Server) subscribe(ctx context.Context, c *types.UserConn) error {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.serveMux.ServeHTTP(w, r)
+}
+
+func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, conn *types.UserConn) {
+	defer cancelFunc()
+	for {
+		logx.WithContext(ctx).Infof("start read")
+		typ, msg, err := conn.Conn.Read(ctx)
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				// 正常关闭
+			} else if websocket.CloseStatus(err) == websocket.StatusNormalClosure ||
+				websocket.CloseStatus(err) == websocket.StatusGoingAway {
+				// 正常关闭
+			} else {
+				logx.Errorf("failed to read message: %v", err)
+			}
+			return
+		}
+		logx.WithContext(ctx).Infof("read message.length: %d", len(msg))
+		go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
+			s.onReceive(ctx, conn, typ, msg)
+		}, propagation.MapCarrier{
+			"length":      strconv.Itoa(len(msg)),
+			"userId":      conn.ConnParam.UserId,
+			"platform":    conn.ConnParam.Platform,
+			"deviceId":    conn.ConnParam.DeviceId,
+			"ips":         conn.ConnParam.Ips,
+			"networkUsed": conn.ConnParam.NetworkUsed,
+		})
+	}
+}
+
+func (s *Server) corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == "OPTIONS" {
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

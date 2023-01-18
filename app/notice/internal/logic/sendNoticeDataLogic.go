@@ -32,38 +32,37 @@ func NewSendNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 
 // SendNoticeData 发送通知数据
 func (l *SendNoticeDataLogic) SendNoticeData(in *pb.SendNoticeDataReq) (*pb.SendNoticeDataResp, error) {
-	m := &noticemodel.Notice{
-		NoticeId:    utils.If(in.NoticeData.NoticeId != "", in.NoticeData.NoticeId, utils.GenId()),
-		ConvId:      in.NoticeData.ConvId,
-		CreateTime:  utils.If(in.NoticeData.CreateTime != "", utils.AnyToInt64(in.NoticeData.CreateTime), time.Now().UnixMilli()),
-		Title:       in.NoticeData.Title,
-		ContentType: in.NoticeData.ContentType,
-		Content:     in.NoticeData.Content,
-		Options: noticemodel.NoticeOption{
-			StorageForClient: in.NoticeData.Options.StorageForClient,
-			UpdateConvMsg:    in.NoticeData.Options.UpdateConvMsg,
-			OnlinePushOnce:   in.NoticeData.Options.OnlinePushOnce,
-		},
-		IsBroadcast: in.GetIsBroadcast(),
-		Ext:         in.NoticeData.Ext,
-		UserId:      in.GetUserId(),
-	}
-	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-		err := m.Upsert(tx)
+	var m *noticemodel.Notice
+	if in.GetInserted() {
+		// 已插入 查询
+		m = &noticemodel.Notice{}
+		err := l.svcCtx.Mysql().Model(m).Where("noticeId = ? AND convId = ?", in.NoticeData.NoticeId, in.NoticeData.ConvId).First(m).Error
 		if err != nil {
-			l.Errorf("upsert notice error: %v", err)
-			return err
+			if err == gorm.ErrRecordNotFound {
+				return &pb.SendNoticeDataResp{CommonResp: pb.NewToastErrorResp("通知不存在")}, nil
+			}
+			return &pb.SendNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		return nil
-	})
-	if err != nil {
-		return &pb.SendNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, nil
+	} else {
+		m = noticemodel.NoticeFromPB(in.NoticeData, in.GetIsBroadcast(), in.GetUserId())
+		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+			err := m.Upsert(tx)
+			if err != nil {
+				l.Errorf("upsert notice error: %v", err)
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			return &pb.SendNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, nil
+		}
 	}
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "PushNoticeData", func(ctx context.Context) {
 		for i := 0; i < 12; i++ {
 			resp, err := NewPushNoticeDataLogic(ctx, l.svcCtx).PushNoticeData(&pb.PushNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeId:  m.NoticeId,
+				ConvId:    m.ConvId,
 			})
 			if err == nil {
 				break

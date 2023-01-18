@@ -11,6 +11,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
+	"gorm.io/gorm"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -105,9 +106,38 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 		if len(updateMap) == 0 {
 			return &pb.SetSingleConvSettingResp{}, nil
 		}
-		err := xorm.Update(l.svcCtx.Mysql(), setting, updateMap, xorm.Where("convId = ? AND userId = ?", in.Setting.ConvId, in.Setting.UserId))
+		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+			err := xorm.Update(tx, setting, updateMap, xorm.Where("convId = ? AND userId = ?", in.Setting.ConvId, in.Setting.UserId))
+			if err != nil {
+				l.Errorf("SetSingleConvSetting: %v", err)
+			}
+			return err
+		}, func(tx *gorm.DB) error {
+			data := &pb.NoticeData{
+				ConvId:         noticemodel.ConvId_ConvSettingChanged,
+				UnreadCount:    0,
+				UnreadAbsolute: false,
+				NoticeId:       fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
+				CreateTime:     "",
+				Title:          "",
+				ContentType:    1,
+				Content:        []byte{},
+				Options: &pb.NoticeData_Options{
+					StorageForClient: false,
+					UpdateConvMsg:    false,
+					OnlinePushOnce:   false,
+				},
+				Ext: nil,
+			}
+			m := noticemodel.NoticeFromPB(data, false, in.Setting.UserId)
+			err := m.Upsert(tx)
+			if err != nil {
+				l.Errorf("upsert notice error: %v", err)
+			}
+			return err
+		})
 		if err != nil {
-			l.Errorf("SetSingleConvSetting: %v", err)
+			l.Errorf("Transaction error: %v", err)
 			return &pb.SetSingleConvSettingResp{CommonResp: pb.NewRetryErrorResp()}, nil
 		}
 	}
@@ -122,27 +152,15 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			l.Errorf("CacheWarm: %v", err)
 			return
 		}
-		// TODO 发送消息通知 // TODO 一定通知成功（事务）
 		l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 			CommonReq: in.CommonReq,
 			NoticeData: &pb.NoticeData{
-				ConvId:         noticemodel.ConvId_ConvSettingChanged,
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
-				CreateTime:     "",
-				Title:          "",
-				ContentType:    1,
-				Content:        nil,
-				Options: &pb.NoticeData_Options{
-					StorageForClient: false,
-					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
-				},
-				Ext: nil,
+				NoticeId: fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
+				ConvId:   noticemodel.ConvId_ConvSettingChanged,
 			},
 			UserId:      utils.AnyPtr(in.Setting.UserId),
 			IsBroadcast: nil,
+			Inserted:    utils.AnyPtr(true),
 		})
 	}, propagation.MapCarrier{})
 	return &pb.SetSingleConvSettingResp{}, nil

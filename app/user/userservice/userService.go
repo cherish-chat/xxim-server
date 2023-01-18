@@ -34,6 +34,8 @@ type (
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
 	SetUserSettingsReq                    = pb.SetUserSettingsReq
 	SetUserSettingsResp                   = pb.SetUserSettingsResp
+	UpdateUserInfoReq                     = pb.UpdateUserInfoReq
+	UpdateUserInfoResp                    = pb.UpdateUserInfoResp
 	UserBaseInfo                          = pb.UserBaseInfo
 	UserSetting                           = pb.UserSetting
 
@@ -51,6 +53,7 @@ type (
 		// AfterDisconnect conn hook
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
+		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
 	}
 
 	defaultUserService struct {
@@ -119,4 +122,9 @@ func (m *defaultUserService) AfterDisconnect(ctx context.Context, in *AfterDisco
 func (m *defaultUserService) BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.BatchGetUserAllDevices(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserInfo(ctx, in, opts...)
 }

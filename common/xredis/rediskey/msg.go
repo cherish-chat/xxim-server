@@ -1,7 +1,5 @@
 package rediskey
 
-import "strings"
-
 func ConvKv(convId string) string {
 	return "h:conv_kv:" + convId
 }
@@ -26,18 +24,18 @@ func ConvMembersSubscribed(convId string) string {
 	return "s:conv_members_subscribed:" + convId
 }
 
-func ConvMemberPodIp(userId string, podIp string) string {
-	return userId + "@" + podIp
+func ConvMemberPodIp(userId string) string {
+	return userId
 }
 
-func ConvMembersSubscribedSplit(zmember string) (userId string, podIp string) {
-	split := strings.Split(zmember, "@")
-	if len(split) == 2 {
-		return split[0], split[1]
-	}
-	return "", ""
+func ConvMembersSubscribedSplit(zmember string) string {
+	return zmember
 }
 
 func OfflinePushMsgListKey(uniqueId string) string {
 	return "s:offline_push_msg:" + uniqueId
+}
+
+func SyncSendMsgLimiter() string {
+	return "token_limter:sync_send_msg_limiter"
 }

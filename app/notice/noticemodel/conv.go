@@ -8,6 +8,7 @@ var (
 	ConvId_ConvInfoChanged    = pb.NoticeConvId("ConvInfoChanged")
 	ConvId_ConvSettingChanged = pb.NoticeConvId("ConvSettingChanged")
 	ConvId_ConvMemberChanged  = pb.NoticeConvId("ConvMemberChanged")
+	ConvId_SyncFriendList     = pb.NoticeConvId("SyncFriendList")
 	ConvId_FriendNotice       = pb.NoticeConvId("FriendNotice") // 好友通知
 	ConvId_GroupNotice        = pb.NoticeConvId("GroupNotice")  // 群通知
 	ConvId_SystemNotice       = pb.NoticeConvId("SystemNotice") // 系统通知
@@ -21,12 +22,21 @@ var (
 		ConvId_ConvInfoChanged,
 		ConvId_ConvSettingChanged,
 		ConvId_ConvMemberChanged,
+		ConvId_SyncFriendList,
 		ConvId_FriendNotice,
 		ConvId_GroupNotice,
 		ConvId_SystemNotice,
 		ConvId_WorldNotice,
 	}
 )
+
+func ConvIdUser(uid string) string {
+	return pb.NoticeConvId("user@" + uid)
+}
+
+func ConvIdGroup(gid string) string {
+	return pb.NoticeConvId("group@" + gid)
+}
 
 type (
 	ConvType   int32

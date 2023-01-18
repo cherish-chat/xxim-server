@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -50,10 +52,10 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
+	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
+	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
 	{
 		// 添加好友
-		friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
-		friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			err := xorm.Upsert(tx, friend1, []string{"friendId", "userId"}, []string{"friendId", "userId"})
 			if err != nil {
@@ -66,13 +68,32 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 				return err
 			}
 			return nil
+		}, func(tx *gorm.DB) error {
+			data := &pb.NoticeData{
+				ConvId:         noticemodel.ConvId_SyncFriendList,
+				UnreadCount:    0,
+				UnreadAbsolute: false,
+				NoticeId:       fmt.Sprintf("%s", in.ApplyUserId),
+				ContentType:    0,
+				Content:        []byte{},
+				Options: &pb.NoticeData_Options{
+					StorageForClient: false,
+					UpdateConvMsg:    false,
+					OnlinePushOnce:   false,
+				},
+				Ext: nil,
+			}
+			m := noticemodel.NoticeFromPB(data, false, in.ApplyUserId)
+			err := m.Upsert(tx)
+			if err != nil {
+				l.Errorf("Upsert failed, err: %v", err)
+			}
+			return err
 		})
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		// 接受者发送消息：我们已经是好友了，快来聊天吧
-		go l.sendMsg(in)
 	}
 	{
 		// 设置申请状态
@@ -99,10 +120,43 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			l.Errorf("FlushFriendList failed, err: %v", err)
 		}
 		// 预热缓存
-		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
+		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
 		}, nil)
+		// 刷新订阅
+		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{
+				friend1.UserId, friend1.FriendId,
+			}})
+			if err != nil {
+				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+				return err
+			}
+			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
+				UserIds: []string{friend1.UserId, friend1.FriendId},
+			})
+			if err != nil {
+				l.Errorf("SetUserSubscriptions failed, err: %v", err)
+				return err
+			}
+			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+				CommonReq: in.CommonReq,
+				NoticeData: &pb.NoticeData{
+					NoticeId: fmt.Sprintf("%s", in.ApplyUserId),
+					ConvId:   noticemodel.ConvId_SyncFriendList,
+				},
+				UserId:      utils.AnyPtr(in.ApplyUserId),
+				IsBroadcast: nil,
+				Inserted:    utils.AnyPtr(true),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
+			}
+			return err
+		})
+		// 接受者发送消息：我们已经是好友了，快来聊天吧
+		l.sendMsg(in)
 	}
 	return &pb.AcceptAddFriendResp{}, nil
 }

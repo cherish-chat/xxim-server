@@ -143,11 +143,6 @@ message GetConvSubscribersReq {
 message GetConvSubscribersResp {
   CommonResp commonResp = 1;
   repeated string userIdList = 2;
-  message uidList {
-    repeated string userIds = 1;
-    string podIp = 2;
-  }
-  map<string, uidList> podIpMap = 3;
 }
 
 message OfflinePushMsgReq {
@@ -175,6 +170,12 @@ message GetConvOnlineCountResp {
   int32 device = 3;
 }
 
+//FlushUsersSubConvReq 刷新用户订阅的会话
+message FlushUsersSubConvReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -197,4 +198,6 @@ service msgService {
   rpc OfflinePushMsg(OfflinePushMsgReq) returns (OfflinePushMsgResp) {}
   //GetConvOnlineCount 获取一个会话里所有的在线用户
   rpc GetConvOnlineCount(GetConvOnlineCountReq) returns (GetConvOnlineCountResp) {}
+  //FlushUsersSubConv 刷新用户订阅的会话
+  rpc FlushUsersSubConv(FlushUsersSubConvReq) returns (CommonResp) {}
 }

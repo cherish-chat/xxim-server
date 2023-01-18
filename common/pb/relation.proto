@@ -196,14 +196,16 @@ message FriendEvent {
   string fromUserId = 1;
   // 接收人
   string toUserId = 2;
+  // 另一个人的用户信息
+  UserBaseInfo otherUserInfo = 3;
   // 申请状态
-  RequestAddFriendStatus status = 3;
+  RequestAddFriendStatus status = 4;
   // 申请时间
-  string createTime = 4;
+  string createTime = 5;
   // 更新时间
-  string updateTime = 5;
+  string updateTime = 6;
   // 附加信息
-  repeated RequestAddFriendExtra extra = 6;
+  RequestAddFriendExtra extra = 7;
 }
 
 message GetMyFriendEventListResp {

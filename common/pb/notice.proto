@@ -44,6 +44,7 @@ message SendNoticeDataReq {
   NoticeData noticeData = 2;
   optional string userId = 3; // 指定用户id
   optional bool isBroadcast = 4; // 是否广播
+  optional bool inserted = 5; // 是否已经插入（应该提前upsert数据 让程序可以查询到 查询成功后直接推送）
 }
 
 message SendNoticeDataResp {
@@ -54,6 +55,7 @@ message SendNoticeDataResp {
 message PushNoticeDataReq {
   CommonReq commonReq = 1;
   string noticeId = 2;
+  string convId = 3;
 }
 
 message PushNoticeDataResp {
@@ -75,7 +77,8 @@ message GetUserNoticeDataResp {
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
   CommonReq commonReq = 1;
-  repeated string noticeIds = 2;
+  string noticeId = 2;
+  string convId = 3;
 }
 
 message AckNoticeDataResp {
@@ -104,6 +107,11 @@ message GetNoticeConvAllSubscribersResp {
   repeated string userIds = 2;
 }
 
+message SetUserSubscriptionsReq {
+  CommonReq commonReq = 1;
+  repeated string userIds = 2;
+}
+
 service noticeService {
   //AfterConnect conn hook
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -121,4 +129,6 @@ service noticeService {
   rpc GetUserNoticeConvIds(GetUserNoticeConvIdsReq) returns (GetUserNoticeConvIdsResp);
   //GetNoticeConvAllSubscribers 获取通知号所有的订阅者
   rpc GetNoticeConvAllSubscribers(GetNoticeConvAllSubscribersReq) returns (GetNoticeConvAllSubscribersResp);
+  //SetUserSubscriptions 设置用户订阅
+  rpc SetUserSubscriptions(SetUserSubscriptionsReq) returns (CommonResp);
 }

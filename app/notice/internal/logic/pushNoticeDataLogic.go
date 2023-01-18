@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/mr"
+	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
@@ -32,7 +33,7 @@ func NewPushNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pu
 // PushNoticeData 推送通知数据
 func (l *PushNoticeDataLogic) PushNoticeData(in *pb.PushNoticeDataReq) (*pb.PushNoticeDataResp, error) {
 	notice := &noticemodel.Notice{}
-	err := l.svcCtx.Mysql().Model(notice).Where("noticeId = ?", in.NoticeId).First(notice).Error
+	err := l.svcCtx.Mysql().Model(notice).Where("noticeId = ? AND convId = ?", in.NoticeId, in.ConvId).First(notice).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return &pb.PushNoticeDataResp{}, nil
@@ -41,12 +42,22 @@ func (l *PushNoticeDataLogic) PushNoticeData(in *pb.PushNoticeDataReq) (*pb.Push
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	if notice.IsBroadcast {
-		return l.pushBroadcastNoticeData(in, notice)
+		var resp *pb.PushNoticeDataResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "pushBroadcastNoticeData", func(ctx context.Context) {
+			resp, err = l.pushBroadcastNoticeData(in, notice)
+		})
+		return resp, err
 	} else if notice.UserId != "" {
-		return l.pushUserNoticeData(in, notice, notice.UserId)
+		var resp *pb.PushNoticeDataResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "pushUserNoticeData", func(ctx context.Context) {
+			resp, err = l.pushUserNoticeData(in, notice, notice.UserId)
+		})
+		return resp, err
 	}
 	// 删除垃圾数据
-	l.svcCtx.Mysql().Model(notice).Where("noticeId = ?", in.NoticeId).Delete(notice)
+	l.svcCtx.Mysql().Model(notice).Where("noticeId = ? AND convId = ?", in.NoticeId, in.ConvId).Delete(notice)
 	return &pb.PushNoticeDataResp{}, nil
 }
 
@@ -55,7 +66,7 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 		getNoticeConvAllSubscribersResp *pb.GetNoticeConvAllSubscribersResp
 		err                             error
 	)
-	xtrace.StartFuncSpan(l.ctx, "", func(ctx context.Context) {
+	xtrace.StartFuncSpan(l.ctx, "GetNoticeConvAllSubscribers", func(ctx context.Context) {
 		getNoticeConvAllSubscribersResp, err = NewGetNoticeConvAllSubscribersLogic(ctx, l.svcCtx).GetNoticeConvAllSubscribers(&pb.GetNoticeConvAllSubscribersReq{
 			CommonReq: in.CommonReq,
 			ConvId:    notice.ConvId,
@@ -65,21 +76,15 @@ func (l *PushNoticeDataLogic) pushBroadcastNoticeData(in *pb.PushNoticeDataReq, 
 		l.Errorf("pushBroadcastNoticeData GetNoticeConvAllSubscribers err: %v", err)
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	var tmpfs [8][]func() error
-	for i, userId := range getNoticeConvAllSubscribersResp.UserIds {
-		tmpfs[i%8] = append(tmpfs[i%8], func() error {
-			_, err := l.pushUserNoticeData(in, notice, userId)
-			return err
-		})
+	if len(getNoticeConvAllSubscribersResp.UserIds) == 0 {
+		l.Infof("pushBroadcastNoticeData no user need push")
+		return &pb.PushNoticeDataResp{}, nil
 	}
 	var fs []func() error
-	for _, tmpf := range tmpfs {
+	for _, userId := range getNoticeConvAllSubscribersResp.UserIds {
+		copyUserId := userId
 		fs = append(fs, func() error {
-			for _, f := range tmpf {
-				if err := f(); err != nil {
-					return err
-				}
-			}
+			_, err := l.pushUserNoticeData(in, notice, copyUserId)
 			return err
 		})
 	}
@@ -99,7 +104,9 @@ func (l *PushNoticeDataLogic) pushUserNoticeData(in *pb.PushNoticeDataReq, notic
 			CommonReq: in.CommonReq,
 			UserId:    userId,
 		})
-	})
+	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+		"userId": userId,
+	}))
 	if err != nil {
 		l.Errorf("pushUserNoticeData GetUserNoticeData err: %v", err)
 		return &pb.PushNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err

@@ -3,10 +3,15 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
+	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"gorm.io/gorm"
 	"strconv"
 	"time"
 
@@ -89,13 +94,122 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		return &pb.CreateGroupResp{CommonResp: inviteFriendToGroupResp.CommonResp}, nil
 	}
 	// 插入群表
-	err = xorm.InsertOne(l.svcCtx.Mysql(), group)
+	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+		err := xorm.InsertOne(l.svcCtx.Mysql(), group)
+		if err != nil {
+			l.Errorf("CreateGroup InsertOne error: %v", err)
+			return err
+		}
+		return nil
+	}, func(tx *gorm.DB) error {
+		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = UpdateGroupInfo
+		data := &pb.NoticeData{
+			ConvId:         noticemodel.ConvIdGroup(group.Id),
+			UnreadCount:    0,
+			UnreadAbsolute: false,
+			NoticeId:       "UpdateGroupInfo",
+			ContentType:    0,
+			Content:        []byte{},
+			Options: &pb.NoticeData_Options{
+				StorageForClient: false,
+				UpdateConvMsg:    false,
+				OnlinePushOnce:   false,
+			},
+			Ext: nil,
+		}
+		m := noticemodel.NoticeFromPB(data, true, "")
+		err := m.Upsert(tx)
+		if err != nil {
+			l.Errorf("Upsert failed, err: %v", err)
+		}
+		return err
+	})
 	if err != nil {
-		// retry
-		l.Errorf("CreateGroup InsertOne error: %v", err)
 		return &pb.CreateGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
+	{
+		// 删除缓存
+		// 预热缓存
+		// 刷新订阅
+		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: append(in.Members, in.CommonReq.UserId)})
+			if err != nil {
+				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+				return err
+			}
+			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
+				UserIds: append(in.Members, in.CommonReq.UserId),
+			})
+			if err != nil {
+				l.Errorf("SetUserSubscriptions failed, err: %v", err)
+				return err
+			}
+			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+				CommonReq: in.CommonReq,
+				NoticeData: &pb.NoticeData{
+					NoticeId: "UpdateGroupInfo",
+					ConvId:   noticemodel.ConvIdGroup(group.Id),
+				},
+				UserId:      nil,
+				IsBroadcast: utils.AnyPtr(true),
+				Inserted:    utils.AnyPtr(true),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
+			}
+			return err
+		})
+		// 群主发送消息：欢迎加入群聊
+		l.sendMsg(in, group)
+	}
+
 	return &pb.CreateGroupResp{
 		GroupId: utils.AnyPtr(group.Id),
 	}, nil
+}
+
+func (l *CreateGroupLogic) sendMsg(in *pb.CreateGroupReq, group *groupmodel.Group) {
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendMsg", func(ctx context.Context) {
+		// 获取接受者info
+		userByIds, err := l.svcCtx.UserService().MapUserByIds(ctx, &pb.MapUserByIdsReq{Ids: []string{in.CommonReq.UserId}})
+		if err != nil {
+			l.Errorf("MapUserByIds failed, err: %v", err)
+		} else {
+			selfInfo, ok := userByIds.Users[in.CommonReq.UserId]
+			if ok {
+				self := usermodel.UserFromBytes(selfInfo)
+				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
+					msgmodel.CreateTextMsgToGroup(
+						&pb.UserBaseInfo{
+							Id:       self.Id,
+							Nickname: self.Nickname,
+							Avatar:   self.Avatar,
+							Xb:       self.Xb,
+							Birthday: self.Birthday,
+						},
+						group.Id,
+						l.svcCtx.T(in.CommonReq.Language, "欢迎加入群聊"),
+						msgmodel.MsgOptions{
+							OfflinePush:       true,
+							StorageForServer:  true,
+							StorageForClient:  true,
+							UpdateUnreadCount: false,
+							NeedDecrypt:       false,
+							UpdateConvMsg:     true,
+						},
+						&msgmodel.MsgOfflinePush{
+							Title:   group.Name,
+							Content: "欢迎加入群聊",
+							Payload: "",
+						},
+						nil,
+					).ToMsgData(),
+				})
+				if err != nil {
+					l.Errorf("SendMsgSync failed, err: %v", err)
+					err = nil
+				}
+			}
+		}
+	}, nil)
 }

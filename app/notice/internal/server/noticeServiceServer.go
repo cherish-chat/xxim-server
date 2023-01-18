@@ -69,3 +69,9 @@ func (s *NoticeServiceServer) GetNoticeConvAllSubscribers(ctx context.Context, i
 	l := logic.NewGetNoticeConvAllSubscribersLogic(ctx, s.svcCtx)
 	return l.GetNoticeConvAllSubscribers(in)
 }
+
+// SetUserSubscriptions 设置用户订阅
+func (s *NoticeServiceServer) SetUserSubscriptions(ctx context.Context, in *pb.SetUserSubscriptionsReq) (*pb.CommonResp, error) {
+	l := logic.NewSetUserSubscriptionsLogic(ctx, s.svcCtx)
+	return l.SetUserSubscriptions(in)
+}

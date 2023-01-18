@@ -57,5 +57,6 @@ func (l *GetFriendListLogic) getFriendListOnlyId(in *pb.GetFriendListReq) (*pb.G
 		l.Errorf("get friend list error: %v", err)
 		return &pb.GetFriendListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
+	myFriendList = append(myFriendList, in.CommonReq.UserId)
 	return &pb.GetFriendListResp{CommonResp: pb.NewSuccessResp(), Ids: myFriendList}, nil
 }

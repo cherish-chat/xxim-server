@@ -17,11 +17,14 @@ type (
 	AfterDisconnectReq = pb.AfterDisconnectReq
 	ConnMQBody         = pb.ConnMQBody
 	ConnParam          = pb.ConnParam
+	CustomRequestBody  = pb.CustomRequestBody
 	GetUserConnReq     = pb.GetUserConnReq
 	GetUserConnResp    = pb.GetUserConnResp
 	KickUserConnReq    = pb.KickUserConnReq
 	KickUserConnResp   = pb.KickUserConnResp
 	PushBody           = pb.PushBody
+	RequestBody        = pb.RequestBody
+	ResponseBody       = pb.ResponseBody
 	SendMsgReq         = pb.SendMsgReq
 	SendMsgResp        = pb.SendMsgResp
 

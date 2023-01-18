@@ -32,10 +32,10 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 	var failedConnParams []*pb.ConnParam
 	var successConnParams []*pb.ConnParam
 	for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-		pod := *pod
+		podValue := *pod
 		fs = append(fs, func() {
 			xtrace.StartFuncSpan(l.ctx, "SendMsgToConnection", func(ctx context.Context) {
-				resp, err := pod.SendMsg(l.ctx, in)
+				resp, err := podValue.SendMsg(l.ctx, in)
 				if err != nil {
 					l.Errorf("SendMsg error: %v", err)
 					return

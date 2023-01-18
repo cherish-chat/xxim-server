@@ -91,3 +91,11 @@ func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
 func (x *AckNoticeDataReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *UpdateUserInfoReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetMyGroupListReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

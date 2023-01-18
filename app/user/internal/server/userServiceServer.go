@@ -78,3 +78,8 @@ func (s *UserServiceServer) BatchGetUserAllDevices(ctx context.Context, in *pb.B
 	l := logic.NewBatchGetUserAllDevicesLogic(ctx, s.svcCtx)
 	return l.BatchGetUserAllDevices(in)
 }
+
+func (s *UserServiceServer) UpdateUserInfo(ctx context.Context, in *pb.UpdateUserInfoReq) (*pb.UpdateUserInfoResp, error) {
+	l := logic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
+	return l.UpdateUserInfo(in)
+}
