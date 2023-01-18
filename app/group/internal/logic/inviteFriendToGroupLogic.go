@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
@@ -61,17 +62,18 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroupWithoutVerify(in *pb.Invit
 			CreateTime: l.now.UnixMilli(),
 		})
 	}
-	err := xorm.InsertMany(l.svcCtx.Mysql(), &groupmodel.GroupMember{}, members)
+	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+		err := xorm.InsertMany(tx, &groupmodel.GroupMember{}, members)
+		if err != nil {
+			l.Errorf("InviteFriendToGroup InsertMany error: %v", err)
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "邀请失败"), l.svcCtx.T(in.CommonReq.Language, "群成员可能已经存在"))}, nil
 	}
 	if in.MinSeq != nil {
-		//// 获取最大seq
-		//batchGetConvSeq, err := l.svcCtx.MsgService().BatchGetConvSeq(l.ctx, &pb.BatchGetConvSeqReq{ConvIdList: []string{in.GroupId}})
-		//if err != nil {
-		//	l.Errorf("InviteFriendToGroup BatchGetConvSeq error: %v", err)
-		//	return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
-		//}
 		// 设置群成员的最小消息序列号
 		_, err = l.svcCtx.MsgService().BatchSetMinSeq(l.ctx, &pb.BatchSetMinSeqReq{
 			CommonReq:  in.CommonReq,

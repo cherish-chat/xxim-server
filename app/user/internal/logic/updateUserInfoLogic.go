@@ -57,7 +57,7 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *pb.UpdateUserInfoReq) (*pb.Upda
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:selfId  noticeId = UpdateUserInfo
+		// 发送一条订阅号消息 订阅号的convId = notice:user@selfId  noticeId = UpdateUserInfo
 		data := &pb.NoticeData{
 			ConvId:         noticemodel.ConvIdUser(in.CommonReq.UserId),
 			UnreadCount:    0,
@@ -82,7 +82,6 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *pb.UpdateUserInfoReq) (*pb.Upda
 	if err != nil {
 		return &pb.UpdateUserInfoResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	// 刷新订阅
 	utils.RetryProxy(l.ctx, 5, 1*time.Second, func() error {
 		_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 			CommonReq: in.CommonReq,

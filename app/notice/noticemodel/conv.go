@@ -34,6 +34,10 @@ func ConvIdUser(uid string) string {
 	return pb.NoticeConvId("user@" + uid)
 }
 
+func ConvIdGroup(gid string) string {
+	return pb.NoticeConvId("group@" + gid)
+}
+
 type (
 	ConvType   int32
 	JumpType   int32
