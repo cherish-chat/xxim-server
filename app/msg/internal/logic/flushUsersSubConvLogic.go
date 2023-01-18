@@ -83,7 +83,7 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 		}
 		groupIds = getMyGroupList.Ids
 		for _, id := range groupIds {
-			convIds = append(convIds, id)
+			convIds = append(convIds, pb.GroupConvId(id))
 		}
 	}
 	// mzadd and setex
