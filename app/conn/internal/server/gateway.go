@@ -7,6 +7,7 @@ import (
 )
 
 func (s *ConnServer) registerGateway() {
+	// 自带的
 	{
 		// SendMsgListReq SendMsgListResp
 		{
@@ -143,6 +144,19 @@ func (s *ConnServer) registerGateway() {
 				Do: s.svcCtx.UserService().UpdateUserInfo,
 			}
 			conngateway.AddRoute("/v1/user/updateUserInfo", route)
+		}
+	}
+	// group
+	{
+		// CreateGroupReq CreateGroupResp
+		{
+			route := conngateway.Route[*pb.CreateGroupReq, *pb.CreateGroupResp]{
+				NewRequest: func() *pb.CreateGroupReq {
+					return &pb.CreateGroupReq{}
+				},
+				Do: s.svcCtx.GroupService().CreateGroup,
+			}
+			conngateway.AddRoute("/v1/group/createGroup", route)
 		}
 	}
 }

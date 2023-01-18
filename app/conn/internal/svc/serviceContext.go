@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/config"
+	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
@@ -21,6 +22,7 @@ type ServiceContext struct {
 	noticeService   noticeservice.NoticeService
 	relationService relationservice.RelationService
 	userService     userservice.UserService
+	groupService    groupservice.GroupService
 	zedis           *redis.Redis
 	PodIp           string
 }
@@ -73,4 +75,11 @@ func (s *ServiceContext) UserService() userservice.UserService {
 		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
 	}
 	return s.userService
+}
+
+func (s *ServiceContext) GroupService() groupservice.GroupService {
+	if s.groupService == nil {
+		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
+	}
+	return s.groupService
 }
