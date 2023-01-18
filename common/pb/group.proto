@@ -507,14 +507,30 @@ message GetMyGroupListReq {
   Opt opt = 10;
 }
 
+message GroupBaseInfo {
+  string id = 1;
+  string name = 2;
+  string avatar = 3;
+}
+
 //GetMyGroupListResp 获取我的群聊列表
 message GetMyGroupListResp {
   CommonResp commonResp = 1;
-  message Group {}
   // 群聊列表
-  map<string, Group> groupMap = 2;
+  map<string, GroupBaseInfo> groupMap = 2;
   // ids
   repeated string ids = 3;
+}
+
+//mapGroupByIds 获取群聊信息
+message MapGroupByIdsReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+message MapGroupByIdsResp {
+  CommonResp commonResp = 1;
+  map<string, bytes> groupMap = 2;
 }
 
 service groupService {
@@ -564,4 +580,6 @@ service groupService {
   rpc SetGroupMsgNotifyType(SetGroupMsgNotifyTypeReq) returns (SetGroupMsgNotifyTypeResp) {}
   //GetMyGroupList 获取我的群聊列表
   rpc GetMyGroupList(GetMyGroupListReq) returns (GetMyGroupListResp) {}
+  //MapGroupByIds 获取群聊信息
+  rpc MapGroupByIds(MapGroupByIdsReq) returns (MapGroupByIdsResp) {}
 }

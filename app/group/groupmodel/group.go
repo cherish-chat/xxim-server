@@ -58,10 +58,32 @@ func (m *Group) TableName() string {
 	return "group"
 }
 
+func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {
+	return &pb.GroupBaseInfo{
+		Id:     m.Id,
+		Name:   m.Name,
+		Avatar: m.Avatar,
+	}
+}
+
+func (m *Group) Bytes() []byte {
+	data, _ := json.Marshal(m)
+	return data
+}
+
 func (m GroupSetting) Value() (driver.Value, error) {
 	return json.Marshal(m)
 }
 
 func (m *GroupSetting) Scan(src interface{}) error {
 	return json.Unmarshal(src.([]byte), m)
+}
+
+func GroupFromBytes(data []byte) *Group {
+	group := &Group{}
+	err := json.Unmarshal(data, group)
+	if err != nil {
+		return nil
+	}
+	return group
 }

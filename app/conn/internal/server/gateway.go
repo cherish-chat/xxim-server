@@ -158,5 +158,15 @@ func (s *ConnServer) registerGateway() {
 			}
 			conngateway.AddRoute("/v1/group/createGroup", route)
 		}
+		// GetMyGroupListReq GetMyGroupListResp
+		{
+			route := conngateway.Route[*pb.GetMyGroupListReq, *pb.GetMyGroupListResp]{
+				NewRequest: func() *pb.GetMyGroupListReq {
+					return &pb.GetMyGroupListReq{}
+				},
+				Do: s.svcCtx.GroupService().GetMyGroupList,
+			}
+			conngateway.AddRoute("/v1/group/getMyGroupList", route)
+		}
 	}
 }

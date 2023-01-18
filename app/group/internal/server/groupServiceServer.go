@@ -159,3 +159,9 @@ func (s *GroupServiceServer) GetMyGroupList(ctx context.Context, in *pb.GetMyGro
 	l := logic.NewGetMyGroupListLogic(ctx, s.svcCtx)
 	return l.GetMyGroupList(in)
 }
+
+// MapGroupByIds 获取群聊信息
+func (s *GroupServiceServer) MapGroupByIds(ctx context.Context, in *pb.MapGroupByIdsReq) (*pb.MapGroupByIdsResp, error) {
+	l := logic.NewMapGroupByIdsLogic(ctx, s.svcCtx)
+	return l.MapGroupByIds(in)
+}

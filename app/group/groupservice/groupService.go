@@ -46,7 +46,7 @@ type (
 	GetMyGroupListReq                              = pb.GetMyGroupListReq
 	GetMyGroupListReq_Filter                       = pb.GetMyGroupListReq_Filter
 	GetMyGroupListResp                             = pb.GetMyGroupListResp
-	GetMyGroupListResp_Group                       = pb.GetMyGroupListResp_Group
+	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
 	GroupNotice                                    = pb.GroupNotice
 	GroupSetting                                   = pb.GroupSetting
@@ -56,6 +56,8 @@ type (
 	InviteFriendToGroupResp                        = pb.InviteFriendToGroupResp
 	KickGroupMemberReq                             = pb.KickGroupMemberReq
 	KickGroupMemberResp                            = pb.KickGroupMemberResp
+	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
+	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
 	QuitGroupReq                                   = pb.QuitGroupReq
 	QuitGroupResp                                  = pb.QuitGroupResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
@@ -120,6 +122,8 @@ type (
 		SetGroupMsgNotifyType(ctx context.Context, in *SetGroupMsgNotifyTypeReq, opts ...grpc.CallOption) (*SetGroupMsgNotifyTypeResp, error)
 		// GetMyGroupList 获取我的群聊列表
 		GetMyGroupList(ctx context.Context, in *GetMyGroupListReq, opts ...grpc.CallOption) (*GetMyGroupListResp, error)
+		// MapGroupByIds 获取群聊信息
+		MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error)
 	}
 
 	defaultGroupService struct {
@@ -269,4 +273,10 @@ func (m *defaultGroupService) SetGroupMsgNotifyType(ctx context.Context, in *Set
 func (m *defaultGroupService) GetMyGroupList(ctx context.Context, in *GetMyGroupListReq, opts ...grpc.CallOption) (*GetMyGroupListResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.GetMyGroupList(ctx, in, opts...)
+}
+
+// MapGroupByIds 获取群聊信息
+func (m *defaultGroupService) MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.MapGroupByIds(ctx, in, opts...)
 }

@@ -7092,6 +7092,112 @@ var _ interface {
 	ErrorName() string
 } = GetMyGroupListReqValidationError{}
 
+// Validate checks the field values on GroupBaseInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GroupBaseInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GroupBaseInfo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GroupBaseInfoMultiError, or
+// nil if none found.
+func (m *GroupBaseInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GroupBaseInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for Avatar
+
+	if len(errors) > 0 {
+		return GroupBaseInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// GroupBaseInfoMultiError is an error wrapping multiple validation errors
+// returned by GroupBaseInfo.ValidateAll() if the designated constraints
+// aren't met.
+type GroupBaseInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GroupBaseInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GroupBaseInfoMultiError) AllErrors() []error { return m }
+
+// GroupBaseInfoValidationError is the validation error returned by
+// GroupBaseInfo.Validate if the designated constraints aren't met.
+type GroupBaseInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GroupBaseInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GroupBaseInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GroupBaseInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GroupBaseInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GroupBaseInfoValidationError) ErrorName() string { return "GroupBaseInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GroupBaseInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGroupBaseInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GroupBaseInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GroupBaseInfoValidationError{}
+
 // Validate checks the field values on GetMyGroupListResp with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -7268,6 +7374,268 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetMyGroupListRespValidationError{}
+
+// Validate checks the field values on MapGroupByIdsReq with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MapGroupByIdsReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MapGroupByIdsReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MapGroupByIdsReqMultiError, or nil if none found.
+func (m *MapGroupByIdsReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MapGroupByIdsReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MapGroupByIdsReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MapGroupByIdsReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MapGroupByIdsReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return MapGroupByIdsReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// MapGroupByIdsReqMultiError is an error wrapping multiple validation errors
+// returned by MapGroupByIdsReq.ValidateAll() if the designated constraints
+// aren't met.
+type MapGroupByIdsReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MapGroupByIdsReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MapGroupByIdsReqMultiError) AllErrors() []error { return m }
+
+// MapGroupByIdsReqValidationError is the validation error returned by
+// MapGroupByIdsReq.Validate if the designated constraints aren't met.
+type MapGroupByIdsReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MapGroupByIdsReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MapGroupByIdsReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MapGroupByIdsReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MapGroupByIdsReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MapGroupByIdsReqValidationError) ErrorName() string { return "MapGroupByIdsReqValidationError" }
+
+// Error satisfies the builtin error interface
+func (e MapGroupByIdsReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMapGroupByIdsReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MapGroupByIdsReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MapGroupByIdsReqValidationError{}
+
+// Validate checks the field values on MapGroupByIdsResp with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *MapGroupByIdsResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MapGroupByIdsResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MapGroupByIdsRespMultiError, or nil if none found.
+func (m *MapGroupByIdsResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MapGroupByIdsResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MapGroupByIdsRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MapGroupByIdsRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MapGroupByIdsRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for GroupMap
+
+	if len(errors) > 0 {
+		return MapGroupByIdsRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// MapGroupByIdsRespMultiError is an error wrapping multiple validation errors
+// returned by MapGroupByIdsResp.ValidateAll() if the designated constraints
+// aren't met.
+type MapGroupByIdsRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MapGroupByIdsRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MapGroupByIdsRespMultiError) AllErrors() []error { return m }
+
+// MapGroupByIdsRespValidationError is the validation error returned by
+// MapGroupByIdsResp.Validate if the designated constraints aren't met.
+type MapGroupByIdsRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MapGroupByIdsRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MapGroupByIdsRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MapGroupByIdsRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MapGroupByIdsRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MapGroupByIdsRespValidationError) ErrorName() string {
+	return "MapGroupByIdsRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MapGroupByIdsRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMapGroupByIdsResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MapGroupByIdsRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MapGroupByIdsRespValidationError{}
 
 // Validate checks the field values on GetGroupHomeResp_MemberStatistics with
 // the rules defined in the proto definition for this message. If any rules
@@ -8067,105 +8435,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetMyGroupListReq_FilterValidationError{}
-
-// Validate checks the field values on GetMyGroupListResp_Group with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetMyGroupListResp_Group) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetMyGroupListResp_Group with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetMyGroupListResp_GroupMultiError, or nil if none found.
-func (m *GetMyGroupListResp_Group) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetMyGroupListResp_Group) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return GetMyGroupListResp_GroupMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetMyGroupListResp_GroupMultiError is an error wrapping multiple validation
-// errors returned by GetMyGroupListResp_Group.ValidateAll() if the designated
-// constraints aren't met.
-type GetMyGroupListResp_GroupMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetMyGroupListResp_GroupMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetMyGroupListResp_GroupMultiError) AllErrors() []error { return m }
-
-// GetMyGroupListResp_GroupValidationError is the validation error returned by
-// GetMyGroupListResp_Group.Validate if the designated constraints aren't met.
-type GetMyGroupListResp_GroupValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetMyGroupListResp_GroupValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetMyGroupListResp_GroupValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetMyGroupListResp_GroupValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetMyGroupListResp_GroupValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetMyGroupListResp_GroupValidationError) ErrorName() string {
-	return "GetMyGroupListResp_GroupValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetMyGroupListResp_GroupValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetMyGroupListResp_Group.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetMyGroupListResp_GroupValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetMyGroupListResp_GroupValidationError{}

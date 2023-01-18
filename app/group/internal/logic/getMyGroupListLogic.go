@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,7 +35,28 @@ func (l *GetMyGroupListLogic) GetMyGroupList(in *pb.GetMyGroupListReq) (*pb.GetM
 }
 
 func (l *GetMyGroupListLogic) getMyGroupListDefault(in *pb.GetMyGroupListReq) (*pb.GetMyGroupListResp, error) {
-	// todo: add your logic here and delete this line
+	myGroupListOnlyId, err := l.getMyGroupListOnlyId(in)
+	if err != nil {
+		return &pb.GetMyGroupListResp{}, err
+	}
+	var groupMap = make(map[string]*pb.GroupBaseInfo)
+	// 使用id获取群聊信息
+	var mapGroupByIdsResp *pb.MapGroupByIdsResp
+	xtrace.StartFuncSpan(l.ctx, "MapGroupByIds", func(ctx context.Context) {
+		mapGroupByIdsResp, err = NewMapGroupByIdsLogic(ctx, l.svcCtx).MapGroupByIds(&pb.MapGroupByIdsReq{
+			Ids: myGroupListOnlyId.Ids,
+		})
+	})
+	if err != nil {
+		l.Errorf("get group list error: %v", err)
+		return &pb.GetMyGroupListResp{}, err
+	}
+	for _, id := range myGroupListOnlyId.Ids {
+		group, ok := mapGroupByIdsResp.GroupMap[id]
+		if ok {
+			groupMap[id] = groupmodel.GroupFromBytes(group).GroupBaseInfo()
+		}
+	}
 	return &pb.GetMyGroupListResp{}, nil
 }
 
