@@ -21,3 +21,11 @@ func GroupMemberListByUserId(userId string) string {
 func GroupMemberListByUserIdExpire() int {
 	return xredis.ExpireMinutes(5)
 }
+
+func GroupMemberKey(groupId string, userId string) string {
+	return "s:model:group_member:" + groupId + ":" + userId
+}
+
+func GroupMemberExpire() int {
+	return xredis.ExpireMinutes(5)
+}

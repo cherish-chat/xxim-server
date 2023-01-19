@@ -13,18 +13,12 @@ import (
 )
 
 type (
-	BanAllGroupMemberReq                           = pb.BanAllGroupMemberReq
-	BanAllGroupMemberResp                          = pb.BanAllGroupMemberResp
-	BanGroupMemberReq                              = pb.BanGroupMemberReq
-	BanGroupMemberResp                             = pb.BanGroupMemberResp
 	CreateGroupNoticeReq                           = pb.CreateGroupNoticeReq
 	CreateGroupNoticeResp                          = pb.CreateGroupNoticeResp
 	CreateGroupReq                                 = pb.CreateGroupReq
 	CreateGroupResp                                = pb.CreateGroupResp
 	DeleteGroupNoticeReq                           = pb.DeleteGroupNoticeReq
 	DeleteGroupNoticeResp                          = pb.DeleteGroupNoticeResp
-	DismissGroupReq                                = pb.DismissGroupReq
-	DismissGroupResp                               = pb.DismissGroupResp
 	EditGroupInfoReq                               = pb.EditGroupInfoReq
 	EditGroupInfoResp                              = pb.EditGroupInfoResp
 	EditGroupNoticeReq                             = pb.EditGroupNoticeReq
@@ -41,39 +35,24 @@ type (
 	GetGroupMemberListResp_GroupMember             = pb.GetGroupMemberListResp_GroupMember
 	GetGroupNoticeListReq                          = pb.GetGroupNoticeListReq
 	GetGroupNoticeListResp                         = pb.GetGroupNoticeListResp
-	GetGroupSettingReq                             = pb.GetGroupSettingReq
-	GetGroupSettingResp                            = pb.GetGroupSettingResp
 	GetMyGroupListReq                              = pb.GetMyGroupListReq
 	GetMyGroupListReq_Filter                       = pb.GetMyGroupListReq_Filter
 	GetMyGroupListResp                             = pb.GetMyGroupListResp
 	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
 	GroupNotice                                    = pb.GroupNotice
-	GroupSetting                                   = pb.GroupSetting
-	GroupSetting_JoinGroupOpt                      = pb.GroupSetting_JoinGroupOpt
-	GroupSetting_MemberPermission                  = pb.GroupSetting_MemberPermission
 	InviteFriendToGroupReq                         = pb.InviteFriendToGroupReq
 	InviteFriendToGroupResp                        = pb.InviteFriendToGroupResp
 	KickGroupMemberReq                             = pb.KickGroupMemberReq
 	KickGroupMemberResp                            = pb.KickGroupMemberResp
 	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
-	QuitGroupReq                                   = pb.QuitGroupReq
-	QuitGroupResp                                  = pb.QuitGroupResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
 	SetGroupMemberInfoResp                         = pb.SetGroupMemberInfoResp
-	SetGroupMemberRoleReq                          = pb.SetGroupMemberRoleReq
-	SetGroupMemberRoleResp                         = pb.SetGroupMemberRoleResp
-	SetGroupMsgNotifyTypeReq                       = pb.SetGroupMsgNotifyTypeReq
-	SetGroupMsgNotifyTypeResp                      = pb.SetGroupMsgNotifyTypeResp
-	SetGroupSettingReq                             = pb.SetGroupSettingReq
-	SetGroupSettingResp                            = pb.SetGroupSettingResp
+	SyncGroupMemberCountReq                        = pb.SyncGroupMemberCountReq
+	SyncGroupMemberCountResp                       = pb.SyncGroupMemberCountResp
 	TransferGroupOwnerReq                          = pb.TransferGroupOwnerReq
 	TransferGroupOwnerResp                         = pb.TransferGroupOwnerResp
-	UnbanAllGroupMemberReq                         = pb.UnbanAllGroupMemberReq
-	UnbanAllGroupMemberResp                        = pb.UnbanAllGroupMemberResp
-	UnbanGroupMemberReq                            = pb.UnbanGroupMemberReq
-	UnbanGroupMemberResp                           = pb.UnbanGroupMemberResp
 
 	GroupService interface {
 		// CreateGroup 创建群聊
@@ -94,36 +73,18 @@ type (
 		GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
 		// EditGroupInfo 编辑群信息
 		EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
-		// SetGroupSetting 设置群设置
-		SetGroupSetting(ctx context.Context, in *SetGroupSettingReq, opts ...grpc.CallOption) (*SetGroupSettingResp, error)
-		// GetGroupSetting 获取群设置
-		GetGroupSetting(ctx context.Context, in *GetGroupSettingReq, opts ...grpc.CallOption) (*GetGroupSettingResp, error)
 		// TransferGroupOwner 转让群主
 		TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error)
-		// SetGroupMemberRole 设置群成员角色
-		SetGroupMemberRole(ctx context.Context, in *SetGroupMemberRoleReq, opts ...grpc.CallOption) (*SetGroupMemberRoleResp, error)
 		// KickGroupMember 踢出群成员
 		KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error)
-		// QuitGroup 退出群聊
-		QuitGroup(ctx context.Context, in *QuitGroupReq, opts ...grpc.CallOption) (*QuitGroupResp, error)
-		// BanGroupMember 禁言群成员
-		BanGroupMember(ctx context.Context, in *BanGroupMemberReq, opts ...grpc.CallOption) (*BanGroupMemberResp, error)
-		// BanAllGroupMember 禁言全部群成员
-		BanAllGroupMember(ctx context.Context, in *BanAllGroupMemberReq, opts ...grpc.CallOption) (*BanAllGroupMemberResp, error)
-		// UnbanGroupMember 解除禁言群成员
-		UnbanGroupMember(ctx context.Context, in *UnbanGroupMemberReq, opts ...grpc.CallOption) (*UnbanGroupMemberResp, error)
-		// UnbanAllGroupMember 解除禁言全部群成员
-		UnbanAllGroupMember(ctx context.Context, in *UnbanAllGroupMemberReq, opts ...grpc.CallOption) (*UnbanAllGroupMemberResp, error)
 		// GetGroupMemberList 获取群成员列表
 		GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error)
-		// DismissGroup 解散群聊
-		DismissGroup(ctx context.Context, in *DismissGroupReq, opts ...grpc.CallOption) (*DismissGroupResp, error)
-		// SetGroupMsgNotifyType 设置群消息通知选项
-		SetGroupMsgNotifyType(ctx context.Context, in *SetGroupMsgNotifyTypeReq, opts ...grpc.CallOption) (*SetGroupMsgNotifyTypeResp, error)
 		// GetMyGroupList 获取我的群聊列表
 		GetMyGroupList(ctx context.Context, in *GetMyGroupListReq, opts ...grpc.CallOption) (*GetMyGroupListResp, error)
 		// MapGroupByIds 获取群聊信息
 		MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error)
+		// SyncGroupMemberCount 同步群成员数量
+		SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error)
 	}
 
 	defaultGroupService struct {
@@ -191,28 +152,10 @@ func (m *defaultGroupService) EditGroupInfo(ctx context.Context, in *EditGroupIn
 	return client.EditGroupInfo(ctx, in, opts...)
 }
 
-// SetGroupSetting 设置群设置
-func (m *defaultGroupService) SetGroupSetting(ctx context.Context, in *SetGroupSettingReq, opts ...grpc.CallOption) (*SetGroupSettingResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.SetGroupSetting(ctx, in, opts...)
-}
-
-// GetGroupSetting 获取群设置
-func (m *defaultGroupService) GetGroupSetting(ctx context.Context, in *GetGroupSettingReq, opts ...grpc.CallOption) (*GetGroupSettingResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.GetGroupSetting(ctx, in, opts...)
-}
-
 // TransferGroupOwner 转让群主
 func (m *defaultGroupService) TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.TransferGroupOwner(ctx, in, opts...)
-}
-
-// SetGroupMemberRole 设置群成员角色
-func (m *defaultGroupService) SetGroupMemberRole(ctx context.Context, in *SetGroupMemberRoleReq, opts ...grpc.CallOption) (*SetGroupMemberRoleResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.SetGroupMemberRole(ctx, in, opts...)
 }
 
 // KickGroupMember 踢出群成员
@@ -221,52 +164,10 @@ func (m *defaultGroupService) KickGroupMember(ctx context.Context, in *KickGroup
 	return client.KickGroupMember(ctx, in, opts...)
 }
 
-// QuitGroup 退出群聊
-func (m *defaultGroupService) QuitGroup(ctx context.Context, in *QuitGroupReq, opts ...grpc.CallOption) (*QuitGroupResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.QuitGroup(ctx, in, opts...)
-}
-
-// BanGroupMember 禁言群成员
-func (m *defaultGroupService) BanGroupMember(ctx context.Context, in *BanGroupMemberReq, opts ...grpc.CallOption) (*BanGroupMemberResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.BanGroupMember(ctx, in, opts...)
-}
-
-// BanAllGroupMember 禁言全部群成员
-func (m *defaultGroupService) BanAllGroupMember(ctx context.Context, in *BanAllGroupMemberReq, opts ...grpc.CallOption) (*BanAllGroupMemberResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.BanAllGroupMember(ctx, in, opts...)
-}
-
-// UnbanGroupMember 解除禁言群成员
-func (m *defaultGroupService) UnbanGroupMember(ctx context.Context, in *UnbanGroupMemberReq, opts ...grpc.CallOption) (*UnbanGroupMemberResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.UnbanGroupMember(ctx, in, opts...)
-}
-
-// UnbanAllGroupMember 解除禁言全部群成员
-func (m *defaultGroupService) UnbanAllGroupMember(ctx context.Context, in *UnbanAllGroupMemberReq, opts ...grpc.CallOption) (*UnbanAllGroupMemberResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.UnbanAllGroupMember(ctx, in, opts...)
-}
-
 // GetGroupMemberList 获取群成员列表
 func (m *defaultGroupService) GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.GetGroupMemberList(ctx, in, opts...)
-}
-
-// DismissGroup 解散群聊
-func (m *defaultGroupService) DismissGroup(ctx context.Context, in *DismissGroupReq, opts ...grpc.CallOption) (*DismissGroupResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.DismissGroup(ctx, in, opts...)
-}
-
-// SetGroupMsgNotifyType 设置群消息通知选项
-func (m *defaultGroupService) SetGroupMsgNotifyType(ctx context.Context, in *SetGroupMsgNotifyTypeReq, opts ...grpc.CallOption) (*SetGroupMsgNotifyTypeResp, error) {
-	client := pb.NewGroupServiceClient(m.cli.Conn())
-	return client.SetGroupMsgNotifyType(ctx, in, opts...)
 }
 
 // GetMyGroupList 获取我的群聊列表
@@ -279,4 +180,10 @@ func (m *defaultGroupService) GetMyGroupList(ctx context.Context, in *GetMyGroup
 func (m *defaultGroupService) MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.MapGroupByIds(ctx, in, opts...)
+}
+
+// SyncGroupMemberCount 同步群成员数量
+func (m *defaultGroupService) SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.SyncGroupMemberCount(ctx, in, opts...)
 }

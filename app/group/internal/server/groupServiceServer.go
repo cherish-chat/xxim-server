@@ -76,28 +76,10 @@ func (s *GroupServiceServer) EditGroupInfo(ctx context.Context, in *pb.EditGroup
 	return l.EditGroupInfo(in)
 }
 
-// SetGroupSetting 设置群设置
-func (s *GroupServiceServer) SetGroupSetting(ctx context.Context, in *pb.SetGroupSettingReq) (*pb.SetGroupSettingResp, error) {
-	l := logic.NewSetGroupSettingLogic(ctx, s.svcCtx)
-	return l.SetGroupSetting(in)
-}
-
-// GetGroupSetting 获取群设置
-func (s *GroupServiceServer) GetGroupSetting(ctx context.Context, in *pb.GetGroupSettingReq) (*pb.GetGroupSettingResp, error) {
-	l := logic.NewGetGroupSettingLogic(ctx, s.svcCtx)
-	return l.GetGroupSetting(in)
-}
-
 // TransferGroupOwner 转让群主
 func (s *GroupServiceServer) TransferGroupOwner(ctx context.Context, in *pb.TransferGroupOwnerReq) (*pb.TransferGroupOwnerResp, error) {
 	l := logic.NewTransferGroupOwnerLogic(ctx, s.svcCtx)
 	return l.TransferGroupOwner(in)
-}
-
-// SetGroupMemberRole 设置群成员角色
-func (s *GroupServiceServer) SetGroupMemberRole(ctx context.Context, in *pb.SetGroupMemberRoleReq) (*pb.SetGroupMemberRoleResp, error) {
-	l := logic.NewSetGroupMemberRoleLogic(ctx, s.svcCtx)
-	return l.SetGroupMemberRole(in)
 }
 
 // KickGroupMember 踢出群成员
@@ -106,52 +88,10 @@ func (s *GroupServiceServer) KickGroupMember(ctx context.Context, in *pb.KickGro
 	return l.KickGroupMember(in)
 }
 
-// QuitGroup 退出群聊
-func (s *GroupServiceServer) QuitGroup(ctx context.Context, in *pb.QuitGroupReq) (*pb.QuitGroupResp, error) {
-	l := logic.NewQuitGroupLogic(ctx, s.svcCtx)
-	return l.QuitGroup(in)
-}
-
-// BanGroupMember 禁言群成员
-func (s *GroupServiceServer) BanGroupMember(ctx context.Context, in *pb.BanGroupMemberReq) (*pb.BanGroupMemberResp, error) {
-	l := logic.NewBanGroupMemberLogic(ctx, s.svcCtx)
-	return l.BanGroupMember(in)
-}
-
-// BanAllGroupMember 禁言全部群成员
-func (s *GroupServiceServer) BanAllGroupMember(ctx context.Context, in *pb.BanAllGroupMemberReq) (*pb.BanAllGroupMemberResp, error) {
-	l := logic.NewBanAllGroupMemberLogic(ctx, s.svcCtx)
-	return l.BanAllGroupMember(in)
-}
-
-// UnbanGroupMember 解除禁言群成员
-func (s *GroupServiceServer) UnbanGroupMember(ctx context.Context, in *pb.UnbanGroupMemberReq) (*pb.UnbanGroupMemberResp, error) {
-	l := logic.NewUnbanGroupMemberLogic(ctx, s.svcCtx)
-	return l.UnbanGroupMember(in)
-}
-
-// UnbanAllGroupMember 解除禁言全部群成员
-func (s *GroupServiceServer) UnbanAllGroupMember(ctx context.Context, in *pb.UnbanAllGroupMemberReq) (*pb.UnbanAllGroupMemberResp, error) {
-	l := logic.NewUnbanAllGroupMemberLogic(ctx, s.svcCtx)
-	return l.UnbanAllGroupMember(in)
-}
-
 // GetGroupMemberList 获取群成员列表
 func (s *GroupServiceServer) GetGroupMemberList(ctx context.Context, in *pb.GetGroupMemberListReq) (*pb.GetGroupMemberListResp, error) {
 	l := logic.NewGetGroupMemberListLogic(ctx, s.svcCtx)
 	return l.GetGroupMemberList(in)
-}
-
-// DismissGroup 解散群聊
-func (s *GroupServiceServer) DismissGroup(ctx context.Context, in *pb.DismissGroupReq) (*pb.DismissGroupResp, error) {
-	l := logic.NewDismissGroupLogic(ctx, s.svcCtx)
-	return l.DismissGroup(in)
-}
-
-// SetGroupMsgNotifyType 设置群消息通知选项
-func (s *GroupServiceServer) SetGroupMsgNotifyType(ctx context.Context, in *pb.SetGroupMsgNotifyTypeReq) (*pb.SetGroupMsgNotifyTypeResp, error) {
-	l := logic.NewSetGroupMsgNotifyTypeLogic(ctx, s.svcCtx)
-	return l.SetGroupMsgNotifyType(in)
 }
 
 // GetMyGroupList 获取我的群聊列表
@@ -164,4 +104,10 @@ func (s *GroupServiceServer) GetMyGroupList(ctx context.Context, in *pb.GetMyGro
 func (s *GroupServiceServer) MapGroupByIds(ctx context.Context, in *pb.MapGroupByIdsReq) (*pb.MapGroupByIdsResp, error) {
 	l := logic.NewMapGroupByIdsLogic(ctx, s.svcCtx)
 	return l.MapGroupByIds(in)
+}
+
+// SyncGroupMemberCount 同步群成员数量
+func (s *GroupServiceServer) SyncGroupMemberCount(ctx context.Context, in *pb.SyncGroupMemberCountReq) (*pb.SyncGroupMemberCountResp, error) {
+	l := logic.NewSyncGroupMemberCountLogic(ctx, s.svcCtx)
+	return l.SyncGroupMemberCount(in)
 }
