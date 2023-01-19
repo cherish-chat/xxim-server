@@ -38,6 +38,10 @@ func ConvIdGroup(gid string) string {
 	return pb.NoticeConvId("group@" + gid)
 }
 
+func NoticeIdUpdateMemberInfo(memberId string) string {
+	return "UpdateMemberInfo@" + memberId
+}
+
 type (
 	ConvType   int32
 	JumpType   int32

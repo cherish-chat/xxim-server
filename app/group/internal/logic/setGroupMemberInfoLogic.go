@@ -136,7 +136,7 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 				ConvId:         noticemodel.ConvIdGroup(group.Id),
 				UnreadCount:    0,
 				UnreadAbsolute: false,
-				NoticeId:       "UpdateMemberInfo",
+				NoticeId:       noticemodel.NoticeIdUpdateMemberInfo(in.MemberId),
 				ContentType:    0,
 				Content:        []byte(in.Notice),
 				Options: &pb.NoticeData_Options{
