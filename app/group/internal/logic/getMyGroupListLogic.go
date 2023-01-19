@@ -64,9 +64,9 @@ func (l *GetMyGroupListLogic) getMyGroupListDefault(in *pb.GetMyGroupListReq) (*
 }
 
 func (l *GetMyGroupListLogic) getMyGroupListOnlyId(in *pb.GetMyGroupListReq) (*pb.GetMyGroupListResp, error) {
-	model := &groupmodel.GroupMember{}
 	var groupIds []string
-	err := l.svcCtx.Mysql().Model(model).Where("userId = ?", in.CommonReq.UserId).Pluck("groupId", &groupIds).Error
+	var err error
+	groupIds, err = groupmodel.ListGroupsByUserIdFromRedis(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.CommonReq.UserId)
 	if err != nil {
 		l.Errorf("get group list error: %v", err)
 		return &pb.GetMyGroupListResp{}, err

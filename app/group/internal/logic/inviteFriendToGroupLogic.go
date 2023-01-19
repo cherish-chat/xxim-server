@@ -86,5 +86,13 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroupWithoutVerify(in *pb.Invit
 			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
+	// 删除缓存
+	{
+		err = groupmodel.FlushGroupsByUserIdCache(l.ctx, l.svcCtx.Redis(), append(in.FriendIds, in.CommonReq.UserId)...)
+		if err != nil {
+			l.Errorf("InviteFriendToGroup FlushGroupsByUserIdCache error: %v", err)
+			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+	}
 	return &pb.InviteFriendToGroupResp{}, nil
 }

@@ -63,3 +63,29 @@ func MZRem(rc *zedis.Redis, ctx context.Context, keys []string, member string) e
 	_, err := rc.EvalShaCtx(ctx, mzRemSha, []string{member}, args...)
 	return err
 }
+
+// ZAddsEx script: ZAddsEx key expireSeconds score1 member1 score2 member2 ...
+const zAddsExScript = `
+local ttl = tonumber(KEYS[1])
+for i=1, #ARGV, 2 do
+	local score = tonumber(ARGV[i])
+	local member = ARGV[i+1]
+	redis.call('ZADD', KEYS[2], score, member)
+end
+redis.call('EXPIRE', KEYS[2], ttl)
+return 1
+`
+
+var zAddsExSha string
+
+func ZAddsEx(rc *zedis.Redis, ctx context.Context, key string, expireSeconds int, scoreMembers ...interface{}) error {
+	if zAddsExSha == "" {
+		var err error
+		zAddsExSha, err = rc.ScriptLoadCtx(ctx, zAddsExScript)
+		if err != nil {
+			return err
+		}
+	}
+	_, err := rc.EvalShaCtx(ctx, zAddsExSha, []string{strconv.Itoa(expireSeconds), key}, scoreMembers...)
+	return err
+}

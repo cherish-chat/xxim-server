@@ -11,6 +11,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 	"strconv"
 	"time"
@@ -94,6 +95,11 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		return &pb.CreateGroupResp{CommonResp: inviteFriendToGroupResp.CommonResp}, nil
 	}
 	// 插入群表
+	err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), group.Id)
+	if err != nil {
+		l.Errorf("CreateGroup CleanGroupCache error: %v", err)
+		return &pb.CreateGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 		err := xorm.InsertOne(l.svcCtx.Mysql(), group)
 		if err != nil {
@@ -102,12 +108,12 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = UpdateGroupInfo
+		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = CreateGroup
 		data := &pb.NoticeData{
 			ConvId:         noticemodel.ConvIdGroup(group.Id),
 			UnreadCount:    0,
 			UnreadAbsolute: false,
-			NoticeId:       "UpdateGroupInfo",
+			NoticeId:       "CreateGroup",
 			ContentType:    0,
 			Content:        []byte{},
 			Options: &pb.NoticeData_Options{
@@ -132,6 +138,20 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		// 预热缓存
 		// 刷新订阅
 		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), group.Id)
+			if err != nil {
+				l.Errorf("CreateGroup CleanGroupCache error: %v", err)
+				return err
+			}
+			// 预热缓存
+			go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarmUp", func(ctx context.Context) {
+				_, err := groupmodel.ListGroupByIdsFromMysql(ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), []string{group.Id})
+				if err != nil {
+					l.Errorf("CreateGroup ListGroupByIdsFromMysql error: %v", err)
+				}
+			}, propagation.MapCarrier{
+				"group_id": group.Id,
+			})
 			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: append(in.Members, in.CommonReq.UserId)})
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
@@ -147,7 +167,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeData: &pb.NoticeData{
-					NoticeId: "UpdateGroupInfo",
+					NoticeId: "CreateGroup",
 					ConvId:   noticemodel.ConvIdGroup(group.Id),
 				},
 				UserId:      nil,

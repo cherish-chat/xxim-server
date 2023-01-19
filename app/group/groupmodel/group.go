@@ -1,10 +1,16 @@
 package groupmodel
 
 import (
+	"context"
 	"database/sql/driver"
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xredis"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"gorm.io/gorm"
 )
 
 type (
@@ -86,4 +92,77 @@ func GroupFromBytes(data []byte) *Group {
 		return nil
 	}
 	return group
+}
+
+func ListGroupByIdsFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, ids []string) ([]*Group, error) {
+	var groups []*Group
+	err := tx.Where("id in (?)", ids).Find(&groups).Error
+	if err != nil {
+		return nil, err
+	}
+	// 缓存到redis
+	for _, group := range groups {
+		err := rc.SetexCtx(ctx, rediskey.GroupKey(group.Id), string(group.Bytes()), rediskey.GroupKeyExpire())
+		if err != nil {
+			logx.Errorf("redis setex error: %v", err)
+		}
+	}
+	return groups, nil
+}
+
+func ListGroupByIdsFromRedis(ctx context.Context, tx *gorm.DB, rc *redis.Redis, ids []string) ([]*Group, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	// mget
+	groups := make([]*Group, 0)
+	keys := make([]string, 0)
+	for _, id := range ids {
+		keys = append(keys, rediskey.GroupKey(id))
+	}
+	val, err := rc.MgetCtx(ctx, keys...)
+	if err != nil {
+		return nil, err
+	}
+	notFoundIds := make([]string, 0)
+	for _, v := range val {
+		// 是否为空
+		if v == "" {
+			// not found
+			notFoundIds = append(notFoundIds, v)
+			continue
+		}
+		// 是否为占位符
+		if v == xredis.NotFound {
+			// 真的不存在
+			continue
+		}
+		// 反序列化
+		group := GroupFromBytes([]byte(v))
+		groups = append(groups, group)
+	}
+	// 从mysql中查询
+	if len(notFoundIds) > 0 {
+		mysqlGroups, err := ListGroupByIdsFromMysql(ctx, tx, rc, notFoundIds)
+		if err != nil {
+			return nil, err
+		}
+		for _, group := range mysqlGroups {
+			groups = append(groups, group)
+		}
+	}
+	// 返回
+	return groups, nil
+}
+
+func CleanGroupCache(ctx context.Context, rc *redis.Redis, ids ...string) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	keys := make([]string, 0)
+	for _, id := range ids {
+		keys = append(keys, rediskey.GroupKey(id))
+	}
+	_, err := rc.DelCtx(ctx, keys...)
+	return err
 }
