@@ -204,9 +204,9 @@ message GroupMemberInfo {
   // 群成员id
   string memberId = 2;
   // 群内显示的昵称
-  string nickname = 3;
+  string remark = 3;
   // 群聊的备注
-  string remark = 4;
+  string groupRemark = 4;
   // 置顶选项
   bool top = 5;
   // 免打扰选项

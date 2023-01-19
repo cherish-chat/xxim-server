@@ -2588,9 +2588,9 @@ func (m *GroupMemberInfo) validate(all bool) error {
 
 	// no validation rules for MemberId
 
-	// no validation rules for Nickname
-
 	// no validation rules for Remark
+
+	// no validation rules for GroupRemark
 
 	// no validation rules for Top
 

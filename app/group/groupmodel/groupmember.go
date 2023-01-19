@@ -3,6 +3,7 @@ package groupmodel
 import (
 	"context"
 	"encoding/json"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -44,6 +45,16 @@ func (m *GroupMember) TableName() string {
 func (m *GroupMember) Bytes() []byte {
 	buf, _ := json.Marshal(m)
 	return buf
+}
+
+func (m *GroupMember) Pb() *pb.GroupMemberInfo {
+	return &pb.GroupMemberInfo{
+		GroupId:     m.GroupId,
+		MemberId:    m.UserId,
+		Remark:      m.Remark,
+		GroupRemark: m.GroupRemark,
+		Role:        pb.GroupRole(m.Role),
+	}
 }
 
 func GroupMemberFromBytes(bytes []byte) *GroupMember {
