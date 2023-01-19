@@ -178,10 +178,15 @@ func ListGroupMemberFromRedis(ctx context.Context, tx *gorm.DB, rc *redis.Redis,
 		return nil, err
 	}
 	foundMap := make(map[string]bool)
+	realNotFoundMap := make(map[string]bool)
 	for _, v := range val {
 		// 是否为占位符
 		if v == xredis.NotFound {
 			// 真的不存在
+			realNotFoundMap[v] = true
+			continue
+		}
+		if v == "" {
 			continue
 		}
 		// 反序列化
@@ -192,7 +197,9 @@ func ListGroupMemberFromRedis(ctx context.Context, tx *gorm.DB, rc *redis.Redis,
 	var notFoundIds []string
 	for _, id := range ids {
 		if _, found := foundMap[id]; !found {
-			notFoundIds = append(notFoundIds, id)
+			if _, realNotFound := realNotFoundMap[id]; !realNotFound {
+				notFoundIds = append(notFoundIds, id)
+			}
 		}
 	}
 	// 从mysql中查询
