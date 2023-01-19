@@ -28,7 +28,7 @@ func NewGetConvOnlineCountLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // GetConvOnlineCount 获取一个会话里所有的在线用户
 func (l *GetConvOnlineCountLogic) GetConvOnlineCount(in *pb.GetConvOnlineCountReq) (*pb.GetConvOnlineCountResp, error) {
-	if in.ConvId == "" {
+	if in.ConvId == "" || in.ConvId == "all" {
 		// 获取全服在线人数
 		userConnResp, err := l.svcCtx.ImService().GetUserConn(l.ctx, &pb.GetUserConnReq{
 			UserIds:   nil,
