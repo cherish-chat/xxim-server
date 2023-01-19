@@ -63,6 +63,7 @@ enum ContentType {
   TYPING = 1; // 正在输入
   READ = 2; // 已读
   REVOKE = 3; // 撤回
+  Tip = 4; // 提示 灰色小字 比如：xxx加入群聊、xxx撤回了一条消息
 
   TEXT = 11; // 文本
   IMAGE = 12; // 图片
