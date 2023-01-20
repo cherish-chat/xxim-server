@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	ApplyToBeGroupMemberReq                        = pb.ApplyToBeGroupMemberReq
+	ApplyToBeGroupMemberResp                       = pb.ApplyToBeGroupMemberResp
 	CreateGroupNoticeReq                           = pb.CreateGroupNoticeReq
 	CreateGroupNoticeResp                          = pb.CreateGroupNoticeResp
 	CreateGroupReq                                 = pb.CreateGroupReq
@@ -41,6 +43,8 @@ type (
 	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
 	GroupNotice                                    = pb.GroupNotice
+	HandleGroupApplyReq                            = pb.HandleGroupApplyReq
+	HandleGroupApplyResp                           = pb.HandleGroupApplyResp
 	InviteFriendToGroupReq                         = pb.InviteFriendToGroupReq
 	InviteFriendToGroupResp                        = pb.InviteFriendToGroupResp
 	KickGroupMemberReq                             = pb.KickGroupMemberReq
@@ -85,6 +89,10 @@ type (
 		MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error)
 		// SyncGroupMemberCount 同步群成员数量
 		SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error)
+		// ApplyToBeGroupMember 申请加入群聊
+		ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
+		// HandleGroupApply 处理群聊申请
+		HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
 	}
 
 	defaultGroupService struct {
@@ -186,4 +194,16 @@ func (m *defaultGroupService) MapGroupByIds(ctx context.Context, in *MapGroupByI
 func (m *defaultGroupService) SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.SyncGroupMemberCount(ctx, in, opts...)
+}
+
+// ApplyToBeGroupMember 申请加入群聊
+func (m *defaultGroupService) ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ApplyToBeGroupMember(ctx, in, opts...)
+}
+
+// HandleGroupApply 处理群聊申请
+func (m *defaultGroupService) HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.HandleGroupApply(ctx, in, opts...)
 }

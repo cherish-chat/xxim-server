@@ -52,6 +52,10 @@ type GroupServiceClient interface {
 	MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error)
 	//SyncGroupMemberCount 同步群成员数量
 	SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error)
+	//ApplyToBeGroupMember 申请加入群聊
+	ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
+	//HandleGroupApply 处理群聊申请
+	HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
 }
 
 type groupServiceClient struct {
@@ -197,6 +201,24 @@ func (c *groupServiceClient) SyncGroupMemberCount(ctx context.Context, in *SyncG
 	return out, nil
 }
 
+func (c *groupServiceClient) ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error) {
+	out := new(ApplyToBeGroupMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ApplyToBeGroupMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error) {
+	out := new(HandleGroupApplyResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/HandleGroupApply", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -231,6 +253,10 @@ type GroupServiceServer interface {
 	MapGroupByIds(context.Context, *MapGroupByIdsReq) (*MapGroupByIdsResp, error)
 	//SyncGroupMemberCount 同步群成员数量
 	SyncGroupMemberCount(context.Context, *SyncGroupMemberCountReq) (*SyncGroupMemberCountResp, error)
+	//ApplyToBeGroupMember 申请加入群聊
+	ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error)
+	//HandleGroupApply 处理群聊申请
+	HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -282,6 +308,12 @@ func (UnimplementedGroupServiceServer) MapGroupByIds(context.Context, *MapGroupB
 }
 func (UnimplementedGroupServiceServer) SyncGroupMemberCount(context.Context, *SyncGroupMemberCountReq) (*SyncGroupMemberCountResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncGroupMemberCount not implemented")
+}
+func (UnimplementedGroupServiceServer) ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyToBeGroupMember not implemented")
+}
+func (UnimplementedGroupServiceServer) HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleGroupApply not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -566,6 +598,42 @@ func _GroupService_SyncGroupMemberCount_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_ApplyToBeGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplyToBeGroupMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ApplyToBeGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ApplyToBeGroupMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ApplyToBeGroupMember(ctx, req.(*ApplyToBeGroupMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_HandleGroupApply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleGroupApplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).HandleGroupApply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/HandleGroupApply",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).HandleGroupApply(ctx, req.(*HandleGroupApplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -632,6 +700,14 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncGroupMemberCount",
 			Handler:    _GroupService_SyncGroupMemberCount_Handler,
+		},
+		{
+			MethodName: "ApplyToBeGroupMember",
+			Handler:    _GroupService_ApplyToBeGroupMember_Handler,
+		},
+		{
+			MethodName: "HandleGroupApply",
+			Handler:    _GroupService_HandleGroupApply_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -5031,6 +5031,538 @@ var _ interface {
 	ErrorName() string
 } = SyncGroupMemberCountRespValidationError{}
 
+// Validate checks the field values on ApplyToBeGroupMemberReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ApplyToBeGroupMemberReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApplyToBeGroupMemberReq with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApplyToBeGroupMemberReqMultiError, or nil if none found.
+func (m *ApplyToBeGroupMemberReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApplyToBeGroupMemberReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ApplyToBeGroupMemberReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ApplyToBeGroupMemberReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ApplyToBeGroupMemberReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for GroupId
+
+	// no validation rules for Reason
+
+	if len(errors) > 0 {
+		return ApplyToBeGroupMemberReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApplyToBeGroupMemberReqMultiError is an error wrapping multiple validation
+// errors returned by ApplyToBeGroupMemberReq.ValidateAll() if the designated
+// constraints aren't met.
+type ApplyToBeGroupMemberReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApplyToBeGroupMemberReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApplyToBeGroupMemberReqMultiError) AllErrors() []error { return m }
+
+// ApplyToBeGroupMemberReqValidationError is the validation error returned by
+// ApplyToBeGroupMemberReq.Validate if the designated constraints aren't met.
+type ApplyToBeGroupMemberReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApplyToBeGroupMemberReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApplyToBeGroupMemberReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApplyToBeGroupMemberReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApplyToBeGroupMemberReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApplyToBeGroupMemberReqValidationError) ErrorName() string {
+	return "ApplyToBeGroupMemberReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ApplyToBeGroupMemberReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApplyToBeGroupMemberReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApplyToBeGroupMemberReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApplyToBeGroupMemberReqValidationError{}
+
+// Validate checks the field values on ApplyToBeGroupMemberResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ApplyToBeGroupMemberResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApplyToBeGroupMemberResp with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApplyToBeGroupMemberRespMultiError, or nil if none found.
+func (m *ApplyToBeGroupMemberResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApplyToBeGroupMemberResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ApplyToBeGroupMemberRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ApplyToBeGroupMemberRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ApplyToBeGroupMemberRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return ApplyToBeGroupMemberRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApplyToBeGroupMemberRespMultiError is an error wrapping multiple validation
+// errors returned by ApplyToBeGroupMemberResp.ValidateAll() if the designated
+// constraints aren't met.
+type ApplyToBeGroupMemberRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApplyToBeGroupMemberRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApplyToBeGroupMemberRespMultiError) AllErrors() []error { return m }
+
+// ApplyToBeGroupMemberRespValidationError is the validation error returned by
+// ApplyToBeGroupMemberResp.Validate if the designated constraints aren't met.
+type ApplyToBeGroupMemberRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApplyToBeGroupMemberRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApplyToBeGroupMemberRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApplyToBeGroupMemberRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApplyToBeGroupMemberRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApplyToBeGroupMemberRespValidationError) ErrorName() string {
+	return "ApplyToBeGroupMemberRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ApplyToBeGroupMemberRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApplyToBeGroupMemberResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApplyToBeGroupMemberRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApplyToBeGroupMemberRespValidationError{}
+
+// Validate checks the field values on HandleGroupApplyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *HandleGroupApplyReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on HandleGroupApplyReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// HandleGroupApplyReqMultiError, or nil if none found.
+func (m *HandleGroupApplyReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *HandleGroupApplyReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, HandleGroupApplyReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, HandleGroupApplyReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return HandleGroupApplyReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for ApplyId
+
+	// no validation rules for Result
+
+	if len(errors) > 0 {
+		return HandleGroupApplyReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// HandleGroupApplyReqMultiError is an error wrapping multiple validation
+// errors returned by HandleGroupApplyReq.ValidateAll() if the designated
+// constraints aren't met.
+type HandleGroupApplyReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m HandleGroupApplyReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m HandleGroupApplyReqMultiError) AllErrors() []error { return m }
+
+// HandleGroupApplyReqValidationError is the validation error returned by
+// HandleGroupApplyReq.Validate if the designated constraints aren't met.
+type HandleGroupApplyReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e HandleGroupApplyReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e HandleGroupApplyReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e HandleGroupApplyReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e HandleGroupApplyReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e HandleGroupApplyReqValidationError) ErrorName() string {
+	return "HandleGroupApplyReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e HandleGroupApplyReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sHandleGroupApplyReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = HandleGroupApplyReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = HandleGroupApplyReqValidationError{}
+
+// Validate checks the field values on HandleGroupApplyResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *HandleGroupApplyResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on HandleGroupApplyResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// HandleGroupApplyRespMultiError, or nil if none found.
+func (m *HandleGroupApplyResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *HandleGroupApplyResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, HandleGroupApplyRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, HandleGroupApplyRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return HandleGroupApplyRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return HandleGroupApplyRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// HandleGroupApplyRespMultiError is an error wrapping multiple validation
+// errors returned by HandleGroupApplyResp.ValidateAll() if the designated
+// constraints aren't met.
+type HandleGroupApplyRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m HandleGroupApplyRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m HandleGroupApplyRespMultiError) AllErrors() []error { return m }
+
+// HandleGroupApplyRespValidationError is the validation error returned by
+// HandleGroupApplyResp.Validate if the designated constraints aren't met.
+type HandleGroupApplyRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e HandleGroupApplyRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e HandleGroupApplyRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e HandleGroupApplyRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e HandleGroupApplyRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e HandleGroupApplyRespValidationError) ErrorName() string {
+	return "HandleGroupApplyRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e HandleGroupApplyRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sHandleGroupApplyResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = HandleGroupApplyRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = HandleGroupApplyRespValidationError{}
+
 // Validate checks the field values on GetGroupHomeResp_MemberStatistics with
 // the rules defined in the proto definition for this message. If any rules
 // are violated, the first error encountered is returned, or nil if there are

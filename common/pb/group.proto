@@ -366,6 +366,41 @@ message SyncGroupMemberCountResp {
   CommonResp commonResp = 1;
 }
 
+//applyToBeGroupMember 申请加入群聊
+message ApplyToBeGroupMemberReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 申请理由
+  string reason = 3;
+}
+
+message ApplyToBeGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+enum GroupApplyHandleResult {
+  // 未处理
+  UNHANDLED = 0;
+  // 同意
+  AGREE = 1;
+  // 拒绝
+  REJECT = 2;
+}
+
+//handleGroupApply 处理群聊申请
+message HandleGroupApplyReq {
+  CommonReq commonReq = 1;
+  // 申请ID
+  string applyId = 2;
+  // 处理结果
+  GroupApplyHandleResult result = 3;
+}
+
+message HandleGroupApplyResp {
+  CommonResp commonResp = 1;
+}
+
 service groupService {
   //CreateGroup 创建群聊
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
@@ -397,4 +432,8 @@ service groupService {
   rpc MapGroupByIds(MapGroupByIdsReq) returns (MapGroupByIdsResp) {}
   //SyncGroupMemberCount 同步群成员数量
   rpc SyncGroupMemberCount(SyncGroupMemberCountReq) returns (SyncGroupMemberCountResp) {}
+  //ApplyToBeGroupMember 申请加入群聊
+  rpc ApplyToBeGroupMember(ApplyToBeGroupMemberReq) returns (ApplyToBeGroupMemberResp) {}
+  //HandleGroupApply 处理群聊申请
+  rpc HandleGroupApply(HandleGroupApplyReq) returns (HandleGroupApplyResp) {}
 }

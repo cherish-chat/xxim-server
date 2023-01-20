@@ -111,3 +111,15 @@ func (s *GroupServiceServer) SyncGroupMemberCount(ctx context.Context, in *pb.Sy
 	l := logic.NewSyncGroupMemberCountLogic(ctx, s.svcCtx)
 	return l.SyncGroupMemberCount(in)
 }
+
+// ApplyToBeGroupMember 申请加入群聊
+func (s *GroupServiceServer) ApplyToBeGroupMember(ctx context.Context, in *pb.ApplyToBeGroupMemberReq) (*pb.ApplyToBeGroupMemberResp, error) {
+	l := logic.NewApplyToBeGroupMemberLogic(ctx, s.svcCtx)
+	return l.ApplyToBeGroupMember(in)
+}
+
+// HandleGroupApply 处理群聊申请
+func (s *GroupServiceServer) HandleGroupApply(ctx context.Context, in *pb.HandleGroupApplyReq) (*pb.HandleGroupApplyResp, error) {
+	l := logic.NewHandleGroupApplyLogic(ctx, s.svcCtx)
+	return l.HandleGroupApply(in)
+}
