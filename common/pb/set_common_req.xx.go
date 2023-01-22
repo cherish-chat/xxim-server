@@ -107,3 +107,11 @@ func (x *SetGroupMemberInfoReq) SetCommonReq(r *CommonReq) {
 func (x *GetGroupMemberInfoReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *ApplyToBeGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *HandleGroupApplyReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

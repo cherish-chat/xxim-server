@@ -131,7 +131,7 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 			return nil
 		}, func(tx *gorm.DB) error {
 			// 通知member
-			// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = UpdateMemberInfo
+			// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = memberId
 			data := &pb.NoticeData{
 				ConvId:         noticemodel.ConvIdGroup(group.Id),
 				UnreadCount:    0,
@@ -183,7 +183,7 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeData: &pb.NoticeData{
-					NoticeId: "UpdateMemberInfo",
+					NoticeId: noticemodel.NoticeIdUpdateMemberInfo(in.MemberId),
 					ConvId:   noticemodel.ConvIdGroup(group.Id),
 				},
 				UserId:      nil,

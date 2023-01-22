@@ -41,6 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s.Mysql().AutoMigrate(
 		groupmodel.Group{},
 		groupmodel.GroupMember{},
+		groupmodel.GroupApply{},
 	)
 	return s
 }

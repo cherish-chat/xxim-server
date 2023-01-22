@@ -188,5 +188,25 @@ func (s *ConnServer) registerGateway() {
 			}
 			conngateway.AddRoute("/v1/group/getGroupMemberInfo", route)
 		}
+		// ApplyToBeGroupMemberReq ApplyToBeGroupMemberResp
+		{
+			route := conngateway.Route[*pb.ApplyToBeGroupMemberReq, *pb.ApplyToBeGroupMemberResp]{
+				NewRequest: func() *pb.ApplyToBeGroupMemberReq {
+					return &pb.ApplyToBeGroupMemberReq{}
+				},
+				Do: s.svcCtx.GroupService().ApplyToBeGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/applyToBeGroupMember", route)
+		}
+		// HandleGroupApplyReq HandleGroupApplyResp
+		{
+			route := conngateway.Route[*pb.HandleGroupApplyReq, *pb.HandleGroupApplyResp]{
+				NewRequest: func() *pb.HandleGroupApplyReq {
+					return &pb.HandleGroupApplyReq{}
+				},
+				Do: s.svcCtx.GroupService().HandleGroupApply,
+			}
+			conngateway.AddRoute("/v1/group/handleGroupApply", route)
+		}
 	}
 }

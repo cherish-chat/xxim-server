@@ -39,7 +39,7 @@ func ConvIdGroup(gid string) string {
 }
 
 func NoticeIdUpdateMemberInfo(memberId string) string {
-	return "UpdateMemberInfo@" + memberId
+	return memberId
 }
 
 type (
