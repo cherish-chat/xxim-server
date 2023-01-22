@@ -208,9 +208,9 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 	})
 	// 通知给群里所有的管理员
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendNotice", func(ctx context.Context) {
-		utils.RetryProxy(l.ctx, 12, time.Second, func() error {
+		utils.RetryProxy(ctx, 12, time.Second, func() error {
 			for _, manager := range groupManagers {
-				_, err := l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+				_, err := l.svcCtx.NoticeService().SendNoticeData(ctx, &pb.SendNoticeDataReq{
 					CommonReq: in.CommonReq,
 					NoticeData: &pb.NoticeData{
 						NoticeId: fmt.Sprintf("%s", apply.Id),
