@@ -106,7 +106,7 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 				CommonReq: in.CommonReq,
 				NoticeData: &pb.NoticeData{
 					NoticeId: fmt.Sprintf("%s", apply.Id),
-					ConvId:   noticemodel.ConvId_FriendNotice,
+					ConvId:   noticemodel.ConvId_GroupNotice,
 				},
 				UserId:      utils.AnyPtr(manager.UserId),
 				IsBroadcast: nil,
