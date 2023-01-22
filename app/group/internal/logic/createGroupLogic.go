@@ -133,14 +133,17 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = CreateGroup
+		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = JoinedGroup
 		data := &pb.NoticeData{
 			ConvId:         noticemodel.ConvIdGroup(group.Id),
 			UnreadCount:    0,
 			UnreadAbsolute: false,
-			NoticeId:       "CreateGroup",
+			NoticeId:       "JoinedGroup",
 			ContentType:    0,
-			Content:        []byte{},
+			Content: utils.AnyToBytes(xorm.M{
+				"groupId": group.Id,
+				"userIds": append(in.Members, in.CommonReq.UserId),
+			}),
 			Options: &pb.NoticeData_Options{
 				StorageForClient: false,
 				UpdateConvMsg:    false,
@@ -205,7 +208,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeData: &pb.NoticeData{
-					NoticeId: "CreateGroup",
+					NoticeId: "JoinedGroup",
 					ConvId:   noticemodel.ConvIdGroup(group.Id),
 				},
 				UserId:      nil,
