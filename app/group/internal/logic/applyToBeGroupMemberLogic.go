@@ -7,6 +7,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 	"time"
 
@@ -100,24 +102,30 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 通知给群里所有的管理员
-	go utils.RetryProxy(l.ctx, 12, time.Second, func() error {
-		for _, manager := range groupManagers {
-			_, err := l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: fmt.Sprintf("%s", apply.Id),
-					ConvId:   noticemodel.ConvId_GroupNotice,
-				},
-				UserId:      utils.AnyPtr(manager.UserId),
-				IsBroadcast: nil,
-				Inserted:    utils.AnyPtr(true),
-			})
-			if err != nil {
-				l.Errorf("ApplyToBeGroupMember SendNoticeData error: %v", err)
-				return err
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendNotice", func(ctx context.Context) {
+		utils.RetryProxy(ctx, 12, time.Second, func() error {
+			for _, manager := range groupManagers {
+				_, err := l.svcCtx.NoticeService().SendNoticeData(ctx, &pb.SendNoticeDataReq{
+					CommonReq: in.CommonReq,
+					NoticeData: &pb.NoticeData{
+						NoticeId: fmt.Sprintf("%s", apply.Id),
+						ConvId:   noticemodel.ConvId_GroupNotice,
+					},
+					UserId:      utils.AnyPtr(manager.UserId),
+					IsBroadcast: nil,
+					Inserted:    utils.AnyPtr(true),
+				})
+				if err != nil {
+					l.Errorf("ApplyToBeGroupMember SendNoticeData error: %v", err)
+					return err
+				}
 			}
-		}
-		return nil
+			return nil
+		})
+	}, propagation.MapCarrier{
+		"groupId":  in.GroupId,
+		"userId":   in.CommonReq.UserId,
+		"noticeId": apply.Id,
 	})
 	return &pb.ApplyToBeGroupMemberResp{}, nil
 }
