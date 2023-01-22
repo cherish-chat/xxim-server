@@ -89,14 +89,13 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 		if in.Result == pb.GroupApplyHandleResult_AGREE {
 			// 同意 加入群
 			// 群成员
-			members := make([]*groupmodel.GroupMember, 1)
-			members = append(members, &groupmodel.GroupMember{
+			member := &groupmodel.GroupMember{
 				GroupId:    apply.GroupId,
 				UserId:     apply.UserId,
 				CreateTime: time.Now().UnixMilli(),
 				Role:       groupmodel.RoleType_MEMBER,
-			})
-			err := xorm.InsertMany(tx, &groupmodel.GroupMember{}, members)
+			}
+			err := xorm.InsertOne(tx, member)
 			if err != nil {
 				// 判断是不是唯一索引冲突
 				if !xorm.DuplicateError(err) {
