@@ -18,7 +18,6 @@ import (
 type customBody struct {
 	Data  []byte
 	ReqId string
-	Event pb.ActiveEvent
 }
 
 func (c *customBody) GetData() []byte {
@@ -30,7 +29,7 @@ func (c *customBody) GetReqId() string {
 }
 
 func (c *customBody) GetEvent() pb.ActiveEvent {
-	return c.Event
+	return pb.ActiveEvent_CustomRequest
 }
 
 func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, msg []byte) {
@@ -49,7 +48,6 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 					respBody, err = conngateway.OnReceive(customRequestBody.Method, ctx, c, &customBody{
 						Data:  customRequestBody.Data,
 						ReqId: body.ReqId,
-						Event: body.Event,
 					})
 				}
 			} else {
@@ -91,3 +89,52 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 		l.Errorf("invalid message type: %d, msg: %s", typ, string(msg))
 	}
 }
+
+/*
+func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, msg []byte) {
+	switch websocket.MessageType(typ) {
+	case websocket.MessageBinary:
+		customRequestBody := &pb.CustomRequestBody{}
+		err := proto.Unmarshal(msg, customRequestBody)
+		var respBody *pb.ResponseBody
+		var bodyData []byte
+		if err == nil {
+			respBody, err = conngateway.OnReceive(customRequestBody.Method, ctx, c, &customBody{
+				Data:  customRequestBody.Data,
+				ReqId: customRequestBody.ReqId,
+			})
+			bodyData, _ = proto.Marshal(respBody)
+		}
+		if err != nil {
+			logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
+			code := pb.ResponseBody_InternalError
+			if errors.Is(err, xerr.InvalidParamError) {
+				code = pb.ResponseBody_RequestError
+			}
+			if respBody != nil {
+				code = respBody.Code
+			}
+			bodyData, _ = proto.Marshal(&pb.ResponseBody{
+				ReqId: customRequestBody.ReqId,
+				Code:  code,
+				Data:  nil,
+			})
+		}
+		data, _ := proto.Marshal(&pb.PushBody{
+			Event: pb.PushEvent_PushResponseBody,
+			Data:  bodyData,
+		})
+		xtrace.StartFuncSpan(ctx, "ReturnResponse", func(ctx context.Context) {
+			err = l.SendMsgToConn(c, data)
+		}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+			"dataLength": strconv.Itoa(len(data)),
+		}))
+		if err != nil {
+			logx.WithContext(ctx).Errorf("SendMsgToConn error: %s", err.Error())
+		}
+	default:
+		// 无效的消息类型
+		l.Errorf("invalid message type: %d, msg: %s", typ, string(msg))
+	}
+}
+*/

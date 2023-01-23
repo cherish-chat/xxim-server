@@ -27,6 +27,8 @@ type (
 	ResponseBody       = pb.ResponseBody
 	SendMsgReq         = pb.SendMsgReq
 	SendMsgResp        = pb.SendMsgResp
+	SetConnParamsReq   = pb.SetConnParamsReq
+	SetConnParamsResp  = pb.SetConnParamsResp
 
 	ConnService interface {
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)

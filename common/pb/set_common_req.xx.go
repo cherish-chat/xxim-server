@@ -115,3 +115,18 @@ func (x *ApplyToBeGroupMemberReq) SetCommonReq(r *CommonReq) {
 func (x *HandleGroupApplyReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *SetConnParamsReq) SetCommonReq(r *CommonReq) {
+}
+
+func (x *SetConnParamsReq) GetCommonReq() *CommonReq {
+	return &CommonReq{}
+}
+
+func (x *SetConnParamsReq) Validate() error {
+	return nil
+}
+
+func (x *SetConnParamsResp) GetCommonResp() *CommonResp {
+	return &CommonResp{}
+}

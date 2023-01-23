@@ -22,6 +22,10 @@ message ConnParam {
   string networkUsed = 6;
   map<string, string> headers = 7;
   string podIp = 8;
+  string deviceModel = 9;
+  string osVersion = 10;
+  string appVersion = 11;
+  string language = 12;
 }
 
 // 获取用户的连接 可以用userId、platforms、devices过滤
@@ -82,8 +86,9 @@ message RequestBody {
 }
 
 message CustomRequestBody {
-  string method = 1;
-  bytes data = 2;
+  string reqId = 1;
+  string method = 2;
+  bytes data = 3;
 }
 
 // 服务端返回响应的消息体
@@ -103,6 +108,14 @@ message ResponseBody {
   string reqId = 2;
   Code code = 3;
   bytes data = 4;
+}
+
+message SetConnParamsReq {
+  ConnParam connParam = 1;
+}
+
+message SetConnParamsResp {
+  ConnParam connParam = 1;
 }
 
 message SendMsgReq {

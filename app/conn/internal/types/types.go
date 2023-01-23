@@ -2,6 +2,7 @@ package types
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"time"
 )
 
@@ -42,6 +43,20 @@ type (
 		Headers     map[string]string // 其他参数
 	}
 )
+
+func (c *UserConn) SetConnParams(connParam *pb.ConnParam) {
+	c.ConnParam.UserId = connParam.UserId
+	c.ConnParam.Token = connParam.Token
+	c.ConnParam.DeviceId = connParam.DeviceId
+	c.ConnParam.DeviceModel = connParam.DeviceModel
+	c.ConnParam.OsVersion = connParam.OsVersion
+	c.ConnParam.AppVersion = connParam.AppVersion
+	c.ConnParam.Language = connParam.Language
+	c.ConnParam.Platform = connParam.Platform
+	c.ConnParam.Ips = connParam.Ips
+	c.ConnParam.NetworkUsed = connParam.NetworkUsed
+	c.ConnParam.Headers = connParam.Headers
+}
 
 func WebsocketStatusCodeAuthFailed(code int) int {
 	return 3000

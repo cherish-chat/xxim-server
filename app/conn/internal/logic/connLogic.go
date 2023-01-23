@@ -23,7 +23,9 @@ type DeviceMap map[string]*types.UserConn // key: deviceId, value: *types.UserCo
 type ConnLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	userConnMap sync.Map
+	userConnMap sync.Map // key: userId value: ConnMap
+	// 未认证的连接
+	unknownConnMap sync.Map // key: *types.UserConn
 }
 
 func (l *ConnLogic) LoadOk(userId string) (ConnMap, bool) {
@@ -128,6 +130,10 @@ func GetConnLogic() *ConnLogic {
 }
 
 func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (int, error) {
+	if param.UserId == "" || param.Token == "" {
+		// 通过
+		return 0, nil
+	}
 	resp, err := l.svcCtx.ImService().BeforeConnect(ctx, &pb.BeforeConnectReq{
 		ConnParam: &pb.ConnParam{
 			UserId:      param.UserId,
@@ -151,6 +157,13 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
 	l.Infof("user %s connected", utils.AnyToString(param))
+	// 是否未认证的连接
+	if param.UserId == "" || param.Token == "" {
+		l.unknownConnMap.Store(c, struct{}{})
+		return
+	}
+	// 删除未认证的连接
+	l.unknownConnMap.Delete(c)
 	// 加入用户连接
 	{
 		if userConn, ok := l.LoadDeviceOk(param.UserId, param.Platform, param.DeviceId); ok {
@@ -192,6 +205,11 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 
 func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	l.Infof("user %s disconnected", utils.AnyToString(c.ConnParam))
+	// 是否未认证的连接
+	if _, ok := l.unknownConnMap.Load(c); ok {
+		l.unknownConnMap.Delete(c)
+		return
+	}
 	// 删除用户连接
 	{
 		if _, ok := l.LoadOk(c.ConnParam.UserId); !ok {

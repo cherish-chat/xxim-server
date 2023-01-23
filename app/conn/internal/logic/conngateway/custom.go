@@ -24,6 +24,7 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	body IBody,
 	req REQ,
 	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
+	callback func(ctx context.Context, resp RESP, c *types.UserConn),
 ) (*pb.ResponseBody, error) {
 	err := proto.Unmarshal(body.GetData(), req)
 	if err != nil {
@@ -50,6 +51,10 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s error: %s", method, err.Error())
+	} else {
+		if callback != nil {
+			callback(ctx, resp, c)
+		}
 	}
 	respBuff, _ := proto.Marshal(resp)
 	// 请求日志

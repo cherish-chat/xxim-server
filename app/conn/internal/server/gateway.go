@@ -1,65 +1,13 @@
 package server
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conn/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"strconv"
 )
 
-func (s *ConnServer) registerGateway() {
-	// 自带的
-	{
-		// SendMsgListReq SendMsgListResp
-		{
-			route := conngateway.Route[*pb.SendMsgListReq, *pb.SendMsgListResp]{
-				NewRequest: func() *pb.SendMsgListReq {
-					return &pb.SendMsgListReq{}
-				},
-				Do: s.svcCtx.MsgService().SendMsgListAsync,
-			}
-			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SendMsgList.Number())), route)
-		}
-		// BatchGetConvSeqReq BatchGetConvSeqResp
-		{
-			route := conngateway.Route[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
-				NewRequest: func() *pb.BatchGetConvSeqReq {
-					return &pb.BatchGetConvSeqReq{}
-				},
-				Do: s.svcCtx.MsgService().BatchGetConvSeq,
-			}
-			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncConvSeq.Number())), route)
-		}
-		// BatchGetMsgListByConvIdReq GetMsgListResp
-		{
-			route := conngateway.Route[*pb.BatchGetMsgListByConvIdReq, *pb.GetMsgListResp]{
-				NewRequest: func() *pb.BatchGetMsgListByConvIdReq {
-					return &pb.BatchGetMsgListByConvIdReq{}
-				},
-				Do: s.svcCtx.MsgService().BatchGetMsgListByConvId,
-			}
-			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncMsgList.Number())), route)
-		}
-		// GetMsgByIdReq GetMsgByIdResp
-		{
-			route := conngateway.Route[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
-				NewRequest: func() *pb.GetMsgByIdReq {
-					return &pb.GetMsgByIdReq{}
-				},
-				Do: s.svcCtx.MsgService().GetMsgById,
-			}
-			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_GetMsgById.Number())), route)
-		}
-		// AckNoticeDataReq AckNoticeDataResp
-		{
-			route := conngateway.Route[*pb.AckNoticeDataReq, *pb.AckNoticeDataResp]{
-				NewRequest: func() *pb.AckNoticeDataReq {
-					return &pb.AckNoticeDataReq{}
-				},
-				Do: s.svcCtx.NoticeService().AckNoticeData,
-			}
-			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_AckNotice.Number())), route)
-		}
-	}
+func (s *ConnServer) registerRelation() {
 	// relation
 	{
 		// AcceptAddFriendReq AcceptAddFriendResp
@@ -103,6 +51,9 @@ func (s *ConnServer) registerGateway() {
 			conngateway.AddRoute("/v1/relation/getFriendList", route)
 		}
 	}
+}
+
+func (s *ConnServer) registerUser() {
 	// user
 	{
 		// SearchUsersByKeywordReq SearchUsersByKeywordResp
@@ -146,6 +97,34 @@ func (s *ConnServer) registerGateway() {
 			conngateway.AddRoute("/v1/user/updateUserInfo", route)
 		}
 	}
+	// 白名单
+	{
+		// 登录
+		{
+			route := conngateway.Route[*pb.LoginReq, *pb.LoginResp]{
+				NewRequest: func() *pb.LoginReq {
+					return &pb.LoginReq{}
+				},
+				Do:       s.svcCtx.UserService().Login,
+				Callback: logic.NewLoginLogic(s.svcCtx).Callback,
+			}
+			conngateway.AddRoute("/v1/user/white/login", route)
+		}
+		// 确认注册
+		{
+			route := conngateway.Route[*pb.ConfirmRegisterReq, *pb.ConfirmRegisterResp]{
+				NewRequest: func() *pb.ConfirmRegisterReq {
+					return &pb.ConfirmRegisterReq{}
+				},
+				Do:       s.svcCtx.UserService().ConfirmRegister,
+				Callback: logic.NewConfirmRegisterLogic(s.svcCtx).Callback,
+			}
+			conngateway.AddRoute("/v1/user/white/confirmRegister", route)
+		}
+	}
+}
+
+func (s *ConnServer) registerGroup() {
 	// group
 	{
 		// CreateGroupReq CreateGroupResp
@@ -209,4 +188,74 @@ func (s *ConnServer) registerGateway() {
 			conngateway.AddRoute("/v1/group/handleGroupApply", route)
 		}
 	}
+}
+
+func (s *ConnServer) registerGateway() {
+	// 自带的
+	{
+		// 设置连接参数
+		{
+			route := conngateway.Route[*pb.SetConnParamsReq, *pb.SetConnParamsResp]{
+				NewRequest: func() *pb.SetConnParamsReq {
+					return &pb.SetConnParamsReq{}
+				},
+				Do:       logic.NewSetConnParamsLogic(s.svcCtx).SetConnParams,
+				Callback: logic.NewSetConnParamsLogic(s.svcCtx).Callback,
+			}
+			conngateway.AddRoute("/v1/conn/white/setConnParams", route)
+		}
+		// SendMsgListReq SendMsgListResp
+		{
+			route := conngateway.Route[*pb.SendMsgListReq, *pb.SendMsgListResp]{
+				NewRequest: func() *pb.SendMsgListReq {
+					return &pb.SendMsgListReq{}
+				},
+				Do: s.svcCtx.MsgService().SendMsgListAsync,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SendMsgList.Number())), route)
+		}
+		// BatchGetConvSeqReq BatchGetConvSeqResp
+		{
+			route := conngateway.Route[*pb.BatchGetConvSeqReq, *pb.BatchGetConvSeqResp]{
+				NewRequest: func() *pb.BatchGetConvSeqReq {
+					return &pb.BatchGetConvSeqReq{}
+				},
+				Do: s.svcCtx.MsgService().BatchGetConvSeq,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncConvSeq.Number())), route)
+		}
+		// BatchGetMsgListByConvIdReq GetMsgListResp
+		{
+			route := conngateway.Route[*pb.BatchGetMsgListByConvIdReq, *pb.GetMsgListResp]{
+				NewRequest: func() *pb.BatchGetMsgListByConvIdReq {
+					return &pb.BatchGetMsgListByConvIdReq{}
+				},
+				Do: s.svcCtx.MsgService().BatchGetMsgListByConvId,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_SyncMsgList.Number())), route)
+		}
+		// GetMsgByIdReq GetMsgByIdResp
+		{
+			route := conngateway.Route[*pb.GetMsgByIdReq, *pb.GetMsgByIdResp]{
+				NewRequest: func() *pb.GetMsgByIdReq {
+					return &pb.GetMsgByIdReq{}
+				},
+				Do: s.svcCtx.MsgService().GetMsgById,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_GetMsgById.Number())), route)
+		}
+		// AckNoticeDataReq AckNoticeDataResp
+		{
+			route := conngateway.Route[*pb.AckNoticeDataReq, *pb.AckNoticeDataResp]{
+				NewRequest: func() *pb.AckNoticeDataReq {
+					return &pb.AckNoticeDataReq{}
+				},
+				Do: s.svcCtx.NoticeService().AckNoticeData,
+			}
+			conngateway.AddRoute(strconv.Itoa(int(pb.ActiveEvent_AckNotice.Number())), route)
+		}
+	}
+	s.registerRelation()
+	s.registerUser()
+	s.registerGroup()
 }
