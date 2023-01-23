@@ -37,6 +37,15 @@ func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 	}
 }
 
+func PrintRoutes() {
+	strBuilder := strings.Builder{}
+	for method := range routeMap {
+		strBuilder.WriteString(method)
+		strBuilder.WriteString("\n")
+	}
+	logx.Infof("路由列表:\n%s", strBuilder.String())
+}
+
 func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 	if c.ConnParam.UserId == "" || c.ConnParam.Token == "" {
 		// 未登录

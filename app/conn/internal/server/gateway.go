@@ -268,4 +268,5 @@ func (s *ConnServer) registerGateway() {
 	s.registerRelation()
 	s.registerUser()
 	s.registerGroup()
+	conngateway.PrintRoutes()
 }
