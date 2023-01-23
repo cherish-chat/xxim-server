@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"google.golang.org/grpc"
 )
 
@@ -34,5 +35,7 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetConnParam
 	param := resp.GetConnParam()
 	param.UserId = c.ConnParam.UserId
 	param.Token = c.ConnParam.Token
+	param.Ips = c.ConnParam.Ips
+	param.PodIp = utils.GetPodIp()
 	c.SetConnParams(param)
 }
