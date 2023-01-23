@@ -69,7 +69,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			l.Errorf("HandleGroupApply GetGroupMemberInfo error: %v", err)
 			return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if memberInfo.GetGroupMemberInfo().GetRole() == pb.GroupRole_OWNER {
+		if memberInfo.GetGroupMemberInfo().GetRole() == pb.GroupRole_OWNER && in.MemberId == in.CommonReq.UserId {
 			// 解散群
 			var commonResp *pb.CommonResp
 			var err error
