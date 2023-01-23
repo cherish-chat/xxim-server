@@ -71,7 +71,25 @@ func (l *GetMyGroupListLogic) getMyGroupListOnlyId(in *pb.GetMyGroupListReq) (*p
 		l.Errorf("get group list error: %v", err)
 		return &pb.GetMyGroupListResp{}, err
 	}
+	var mapGroupByIdsResp *pb.MapGroupByIdsResp
+	xtrace.StartFuncSpan(l.ctx, "MapGroupByIds", func(ctx context.Context) {
+		mapGroupByIdsResp, err = NewMapGroupByIdsLogic(ctx, l.svcCtx).MapGroupByIds(&pb.MapGroupByIdsReq{
+			Ids: groupIds,
+		})
+	})
+	if err != nil {
+		l.Errorf("get group list error: %v", err)
+		return &pb.GetMyGroupListResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	// 只获取有效的群聊
+	var validGroupIds []string
+	for _, id := range groupIds {
+		_, ok := mapGroupByIdsResp.GroupMap[id]
+		if ok {
+			validGroupIds = append(validGroupIds, id)
+		}
+	}
 	return &pb.GetMyGroupListResp{
-		Ids: groupIds,
+		Ids: validGroupIds,
 	}, nil
 }

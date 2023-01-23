@@ -191,7 +191,7 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
 				CommonReq: in.CommonReq,
 				NoticeData: &pb.NoticeData{
-					NoticeId: "JoinedGroup",
+					NoticeId: apply.Id,
 					ConvId:   noticemodel.ConvIdGroup(apply.GroupId),
 				},
 				UserId:      nil,
@@ -201,7 +201,14 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)
 			}
-			return err
+			_, err = NewSyncGroupMemberCountLogic(l.ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
+				CommonReq: in.GetCommonReq(),
+				GroupId:   apply.GroupId,
+			})
+			if err != nil {
+				l.Errorf("SyncGroupMemberCount failed, err: %v", err)
+				return err
+			}
 		}
 		return nil
 	})

@@ -3,6 +3,10 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"go.opentelemetry.io/otel/propagation"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -40,5 +44,21 @@ func (l *SyncGroupMemberCountLogic) SyncGroupMemberCount(in *pb.SyncGroupMemberC
 		l.Errorf("更新群成员数量失败, err: %v", err)
 		return &pb.SyncGroupMemberCountResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "FlushCache", func(ctx context.Context) {
+		utils.RetryProxy(ctx, 12, time.Second, func() error {
+			err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
+			if err != nil {
+				l.Errorf("CreateGroup CleanGroupCache error: %v", err)
+				return err
+			}
+			_, err = groupmodel.ListGroupByIdsFromMysql(ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), []string{in.GroupId})
+			if err != nil {
+				l.Errorf("CreateGroup ListGroupByIdsFromMysql error: %v", err)
+			}
+			return nil
+		})
+	}, propagation.MapCarrier{
+		"groupId": in.GroupId,
+	})
 	return &pb.SyncGroupMemberCountResp{}, nil
 }
