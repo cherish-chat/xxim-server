@@ -142,36 +142,35 @@ message NoticeDataList {
 }
 
 message SendMsgListReq {
-  repeated MsgData msgDataList = 2;
-  optional int32 deliverAfter = 11;
+  repeated MsgData msgDataList = 1;
+  optional int32 deliverAfter = 2;
 }
 
-message SendMsgListResp {
-}
+message SendMsgListResp {}
 
 message BatchGetMsgListByConvIdReq {
   message Item {
     string convId = 1;
     repeated string seqList = 2;
   }
-  repeated Item items = 2;
+  repeated Item items = 1;
 }
 
 message GetMsgListResp {
-  repeated MsgData msgDataList = 2;
+  repeated MsgData msgDataList = 1;
 }
 
 message GetMsgByIdReq {
-  optional string serverMsgId = 2;
-  optional string clientMsgId = 3;
+  optional string serverMsgId = 1;
+  optional string clientMsgId = 2;
 }
 
 message GetMsgByIdResp {
-  MsgData msgData = 2;
+  MsgData msgData = 1;
 }
 
 message BatchGetConvSeqReq {
-  repeated string convIdList = 2;
+  repeated string convIdList = 1;
 }
 
 message BatchGetConvSeqResp {
@@ -181,13 +180,13 @@ message BatchGetConvSeqResp {
     string maxSeq = 3;
     string updateTime = 4;
   }
-  map<string, ConvSeq> convSeqMap = 2;
+  map<string, ConvSeq> convSeqMap = 1;
 }
 
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {
+  string convId = 1;
   string noticeId = 2;
-  string convId = 3;
 }
 
 message AckNoticeDataResp {}

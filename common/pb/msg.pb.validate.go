@@ -471,35 +471,6 @@ func (m *SendMsgListReq) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetCommonReq()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SendMsgListReqValidationError{
-					field:  "CommonReq",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SendMsgListReqValidationError{
-					field:  "CommonReq",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SendMsgListReqValidationError{
-				field:  "CommonReq",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	for idx, item := range m.GetMsgDataList() {
 		_, _ = idx, item
 
@@ -532,6 +503,35 @@ func (m *SendMsgListReq) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SendMsgListReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SendMsgListReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SendMsgListReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if m.DeliverAfter != nil {
@@ -901,35 +901,6 @@ func (m *BatchGetMsgListByConvIdReq) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetCommonReq()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BatchGetMsgListByConvIdReqValidationError{
-					field:  "CommonReq",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, BatchGetMsgListByConvIdReqValidationError{
-					field:  "CommonReq",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return BatchGetMsgListByConvIdReqValidationError{
-				field:  "CommonReq",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	for idx, item := range m.GetItems() {
 		_, _ = idx, item
 
@@ -965,6 +936,35 @@ func (m *BatchGetMsgListByConvIdReq) validate(all bool) error {
 	}
 
 	// no validation rules for Push
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BatchGetMsgListByConvIdReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BatchGetMsgListByConvIdReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BatchGetMsgListByConvIdReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return BatchGetMsgListByConvIdReqMultiError(errors)
@@ -1068,35 +1068,6 @@ func (m *GetMsgListResp) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetCommonResp()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetMsgListRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetMsgListRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetMsgListRespValidationError{
-				field:  "CommonResp",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	for idx, item := range m.GetMsgDataList() {
 		_, _ = idx, item
 
@@ -1129,6 +1100,35 @@ func (m *GetMsgListResp) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetMsgListRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetMsgListRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetMsgListRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
@@ -1231,6 +1231,8 @@ func (m *GetMsgByIdReq) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Push
+
 	if all {
 		switch v := interface{}(m.GetCommonReq()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1259,8 +1261,6 @@ func (m *GetMsgByIdReq) validate(all bool) error {
 			}
 		}
 	}
-
-	// no validation rules for Push
 
 	if m.ServerMsgId != nil {
 		// no validation rules for ServerMsgId
@@ -1371,35 +1371,6 @@ func (m *GetMsgByIdResp) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetCommonResp()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetMsgByIdRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetMsgByIdRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetMsgByIdRespValidationError{
-				field:  "CommonResp",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetMsgData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -1422,6 +1393,35 @@ func (m *GetMsgByIdResp) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return GetMsgByIdRespValidationError{
 				field:  "MsgData",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetMsgByIdRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetMsgByIdRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetMsgByIdRespValidationError{
+				field:  "CommonResp",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1925,35 +1925,6 @@ func (m *BatchGetConvSeqResp) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetCommonResp()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BatchGetConvSeqRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, BatchGetConvSeqRespValidationError{
-					field:  "CommonResp",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return BatchGetConvSeqRespValidationError{
-				field:  "CommonResp",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	{
 		sorted_keys := make([]string, len(m.GetConvSeqMap()))
 		i := 0
@@ -1997,6 +1968,35 @@ func (m *BatchGetConvSeqResp) validate(all bool) error {
 				}
 			}
 
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BatchGetConvSeqRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BatchGetConvSeqRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BatchGetConvSeqRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
 	}
 

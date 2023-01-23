@@ -53,7 +53,7 @@ message MsgData {
   Options options = 41; // 消息选项
   OfflinePush offlinePush = 42; // 离线推送
 
-  bytes ext = 100;
+  bytes ext = 101;
 }
 
 message MsgDataList {
@@ -61,11 +61,11 @@ message MsgDataList {
 }
 
 message SendMsgListReq {
-  CommonReq commonReq = 1;
-  repeated MsgData msgDataList = 2;
+  repeated MsgData msgDataList = 1;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int32 deliverAfter = 11;
+  optional int32 deliverAfter = 2;
+  CommonReq commonReq = 11;
 }
 
 message SendMsgListResp {
@@ -81,26 +81,26 @@ message BatchGetMsgListByConvIdReq {
     string convId = 1;
     repeated string seqList = 2;
   }
-  CommonReq commonReq = 1;
-  repeated Item items = 2;
-  bool push = 3;
+  repeated Item items = 1;
+  bool push = 2;
+  CommonReq commonReq = 11;
 }
 
 message GetMsgListResp {
-  CommonResp commonResp = 1;
-  repeated MsgData msgDataList = 2;
+  repeated MsgData msgDataList = 1;
+  CommonResp commonResp = 11;
 }
 
 message GetMsgByIdReq {
-  CommonReq commonReq = 1;
-  optional string serverMsgId = 2;
-  optional string clientMsgId = 3;
-  bool push = 4;
+  optional string serverMsgId = 1;
+  optional string clientMsgId = 2;
+  bool push = 3;
+  CommonReq commonReq = 11;
 }
 
 message GetMsgByIdResp {
-  CommonResp commonResp = 1;
-  MsgData msgData = 2;
+  MsgData msgData = 1;
+  CommonResp commonResp = 11;
 }
 
 //批量设置用户某会话的minseq
@@ -117,19 +117,19 @@ message BatchSetMinSeqResp {
 
 //批量获取会话的seq
 message BatchGetConvSeqReq {
-  CommonReq commonReq = 1;
-  repeated string convIdList = 2;
+  repeated string convIdList = 1;
+  CommonReq commonReq = 11;
 }
 
 message BatchGetConvSeqResp {
-  CommonResp commonResp = 1;
   message ConvSeq {
     string convId = 1;
     string minSeq = 2;
     string maxSeq = 3;
     string updateTime = 4;
   }
-  map<string, ConvSeq> convSeqMap = 2;
+  map<string, ConvSeq> convSeqMap = 1;
+  CommonResp commonResp = 11;
 }
 
 //GetConvSubscribersReq 获取一个会话里所有的消息订阅者

@@ -1206,6 +1206,10 @@ func (m *AckNoticeDataReq) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for ConvId
+
+	// no validation rules for NoticeId
+
 	if all {
 		switch v := interface{}(m.GetCommonReq()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1234,10 +1238,6 @@ func (m *AckNoticeDataReq) validate(all bool) error {
 			}
 		}
 	}
-
-	// no validation rules for NoticeId
-
-	// no validation rules for ConvId
 
 	if len(errors) > 0 {
 		return AckNoticeDataReqMultiError(errors)
