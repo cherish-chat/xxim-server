@@ -29,7 +29,7 @@ func (l *SetUserParamsLogic) SetUserParams(ctx context.Context, req *pb.SetUserP
 	return &pb.SetUserParamsResp{
 		UserId: req.GetUserId(),
 		Token:  req.GetToken(),
-		Ex:     req.GetEx(),
+		Ext:    req.GetExt(),
 	}, nil
 }
 

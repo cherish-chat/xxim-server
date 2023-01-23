@@ -41,7 +41,7 @@ message ResponseBody {
   bytes data = 4;
 }
 
-message CxnParams {
+message SetCxnParamsReq {
   string platform = 1;
   string deviceId = 2;
   string deviceModel = 3;
@@ -49,10 +49,7 @@ message CxnParams {
   string appVersion = 5;
   string language = 6;
   string networkUsed = 7;
-  bytes ex = 11;
-}
-message SetCxnParamsReq {
-  CxnParams cxnParams = 1;
+  bytes ext = 11;
 }
 
 message SetCxnParamsResp {}
@@ -60,7 +57,7 @@ message SetCxnParamsResp {}
 message SetUserParamsReq {
   string userId = 1;
   string token = 2;
-  bytes ex = 11;
+  bytes ext = 11;
 }
 
 message SetUserParamsResp {}
@@ -103,7 +100,7 @@ message MsgData {
   Options options = 41;
   OfflinePush offlinePush = 42;
 
-  bytes ext = 100;
+  bytes ext = 101;
 }
 
 message MsgDataList {
@@ -137,7 +134,7 @@ message NoticeData {
   Options options = 21; // 通知选项
 
   // 扩展信息
-  bytes ext = 31; // 扩展字段
+  bytes ext = 101; // 扩展字段
 }
 
 message NoticeDataList {

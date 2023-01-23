@@ -88,7 +88,7 @@ message ResponseBody {
   bytes data = 4;
 }
 
-message CxnParams {
+message SetCxnParamsReq {
   string platform = 1;
   string deviceId = 2;
   string deviceModel = 3;
@@ -96,26 +96,30 @@ message CxnParams {
   string appVersion = 5;
   string language = 6;
   string networkUsed = 7;
-  bytes ex = 11;
-}
-message SetCxnParamsReq {
-  CxnParams cxnParams = 1;
+  bytes ext = 11;
 }
 
 message SetCxnParamsResp {
-  CxnParams cxnParams = 1;
+  string platform = 1;
+  string deviceId = 2;
+  string deviceModel = 3;
+  string osVersion = 4;
+  string appVersion = 5;
+  string language = 6;
+  string networkUsed = 7;
+  bytes ext = 11;
 }
 
 message SetUserParamsReq {
   string userId = 1;
   string token = 2;
-  bytes ex = 11;
+  bytes ext = 11;
 }
 
 message SetUserParamsResp {
   string userId = 1;
   string token = 2;
-  bytes ex = 11;
+  bytes ext = 11;
 }
 
 message SendMsgReq {
