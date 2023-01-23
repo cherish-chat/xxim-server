@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type LoginLogic struct {
@@ -38,6 +39,7 @@ func (l *LoginLogic) Callback(ctx context.Context, resp *pb.LoginResp, c *types.
 		AppVersion:  c.ConnParam.AppVersion,
 		Language:    c.ConnParam.Language,
 	})
+	logx.WithContext(ctx).Infof("SetConnParams: conn的内存地址: %p, userId: %s, token: %s", c, c.ConnParam.UserId, c.ConnParam.Token)
 	if resp.Token != "" {
 		// 登录成功
 		GetConnLogic().AddSubscriber(c)

@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"strings"
@@ -39,6 +40,7 @@ func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 	if c.ConnParam.UserId == "" || c.ConnParam.Token == "" {
 		// 未登录
+		logx.WithContext(ctx).Infof("OnReceive: %s, user not login, conn的内存地址: %p", method, c)
 		if !strings.Contains(method, "/white/") {
 			// 不能访问
 			return &pb.ResponseBody{
