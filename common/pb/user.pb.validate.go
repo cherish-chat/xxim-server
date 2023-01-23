@@ -601,6 +601,8 @@ func (m *LoginResp) validate(all bool) error {
 
 	// no validation rules for Token
 
+	// no validation rules for UserId
+
 	if len(errors) > 0 {
 		return LoginRespMultiError(errors)
 	}
@@ -865,6 +867,8 @@ func (m *ConfirmRegisterResp) validate(all bool) error {
 	}
 
 	// no validation rules for Token
+
+	// no validation rules for UserId
 
 	if len(errors) > 0 {
 		return ConfirmRegisterRespMultiError(errors)

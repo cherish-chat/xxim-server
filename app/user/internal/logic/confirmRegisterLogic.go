@@ -75,5 +75,5 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		l.Errorf("ConfirmRegisterLogic ConfirmRegister err: %v", err)
 		return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp}, err
 	}
-	return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp, Token: resp.Token}, nil
+	return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp, Token: resp.Token, UserId: in.Id}, nil
 }

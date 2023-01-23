@@ -67,6 +67,7 @@ message LoginResp {
   bool isNewUser = 2;
   // token
   string token = 3; // 如果是新用户，token为空
+  string userId = 4;
 }
 
 // 确认注册
@@ -79,6 +80,7 @@ message ConfirmRegisterReq {
 message ConfirmRegisterResp {
   CommonResp commonResp = 1;
   string token = 2;
+  string userId = 3;
 }
 
 //mapUserByIds 获取用户信息
