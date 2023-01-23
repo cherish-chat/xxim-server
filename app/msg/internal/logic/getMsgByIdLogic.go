@@ -70,7 +70,7 @@ func (l *GetMsgByIdLogic) getMsgByClientMsgId(clientMsgId string) (*pb.GetMsgByI
 }
 
 func (l *GetMsgByIdLogic) returnResp(resp *pb.GetMsgByIdResp, in *pb.GetMsgByIdReq) (*pb.GetMsgByIdResp, error) {
-	if in.Push {
+	if !in.Return {
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "PushMsg", func(ctx context.Context) {
 			msgDataListBytes, _ := proto.Marshal(&pb.MsgDataList{MsgDataList: []*pb.MsgData{resp.MsgData}})
 			_, _ = l.svcCtx.ImService().SendMsg(ctx, &pb.SendMsgReq{

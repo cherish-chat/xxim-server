@@ -935,7 +935,7 @@ func (m *BatchGetMsgListByConvIdReq) validate(all bool) error {
 
 	}
 
-	// no validation rules for Push
+	// no validation rules for Return
 
 	if all {
 		switch v := interface{}(m.GetCommonReq()).(type) {
@@ -1231,7 +1231,7 @@ func (m *GetMsgByIdReq) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Push
+	// no validation rules for Return
 
 	if all {
 		switch v := interface{}(m.GetCommonReq()).(type) {
