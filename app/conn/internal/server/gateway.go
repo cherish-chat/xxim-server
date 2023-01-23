@@ -187,6 +187,16 @@ func (s *ConnServer) registerGroup() {
 			}
 			conngateway.AddRoute("/v1/group/handleGroupApply", route)
 		}
+		// KickGroupMemberReq KickGroupMemberResp
+		{
+			route := conngateway.Route[*pb.KickGroupMemberReq, *pb.KickGroupMemberResp]{
+				NewRequest: func() *pb.KickGroupMemberReq {
+					return &pb.KickGroupMemberReq{}
+				},
+				Do: s.svcCtx.GroupService().KickGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/kickGroupMember", route)
+		}
 	}
 }
 

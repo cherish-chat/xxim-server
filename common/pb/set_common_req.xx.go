@@ -116,6 +116,10 @@ func (x *HandleGroupApplyReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *KickGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *SetConnParamsReq) SetCommonReq(r *CommonReq) {
 }
 
