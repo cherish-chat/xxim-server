@@ -17,7 +17,6 @@ type (
 	AfterDisconnectReq = pb.AfterDisconnectReq
 	ConnMQBody         = pb.ConnMQBody
 	ConnParam          = pb.ConnParam
-	CustomRequestBody  = pb.CustomRequestBody
 	GetUserConnReq     = pb.GetUserConnReq
 	GetUserConnResp    = pb.GetUserConnResp
 	KickUserConnReq    = pb.KickUserConnReq

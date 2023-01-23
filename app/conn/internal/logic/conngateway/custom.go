@@ -14,7 +14,6 @@ import (
 type IBody interface {
 	GetData() []byte
 	GetReqId() string
-	GetEvent() pb.ActiveEvent
 }
 
 func OnReceiveCustom[REQ IReq, RESP IResp](
@@ -47,7 +46,6 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		resp, err = do(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.GetReqId(),
-		"event":  body.GetEvent().String(),
 	}))
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s error: %s", method, err.Error())
@@ -59,12 +57,12 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	respBuff, _ := proto.Marshal(resp)
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(ctx context.Context) {
-		reqLog(c, body, req, resp, err)
+		reqLog(c, method, body, req, resp, err)
 	}, nil)
 	return &pb.ResponseBody{
-		Event: body.GetEvent(),
-		ReqId: body.GetReqId(),
-		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
-		Data:  respBuff,
+		Method: method,
+		ReqId:  body.GetReqId(),
+		Code:   pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
+		Data:   respBuff,
 	}, err
 }

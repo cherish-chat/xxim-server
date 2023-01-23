@@ -80,12 +80,6 @@ enum ActiveEvent {
 
 // 客户端发送的消息体
 message RequestBody {
-  ActiveEvent event = 1;
-  string reqId = 2;
-  bytes data = 3;
-}
-
-message CustomRequestBody {
   string reqId = 1;
   string method = 2;
   bytes data = 3;
@@ -104,8 +98,8 @@ message ResponseBody {
     AlertError = 7;
     RetryError = 8;
   }
-  ActiveEvent event = 1;
-  string reqId = 2;
+  string reqId = 1;
+  string method = 2;
   Code code = 3;
   bytes data = 4;
 }

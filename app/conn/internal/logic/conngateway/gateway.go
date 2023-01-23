@@ -2,6 +2,7 @@ package conngateway
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
@@ -43,7 +44,7 @@ func PrintRoutes() {
 		strBuilder.WriteString(method)
 		strBuilder.WriteString("\n")
 	}
-	logx.Infof("路由列表:\n%s", strBuilder.String())
+	fmt.Printf("路由列表:\n%s", strBuilder.String())
 }
 
 func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
@@ -53,10 +54,10 @@ func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody
 		if !strings.Contains(method, "/white/") {
 			// 不能访问
 			return &pb.ResponseBody{
-				Event: pb.ActiveEvent_CustomRequest,
-				ReqId: body.GetReqId(),
-				Code:  pb.ResponseBody_AuthError,
-				Data:  nil,
+				Method: method,
+				ReqId:  body.GetReqId(),
+				Code:   pb.ResponseBody_AuthError,
+				Data:   nil,
 			}, nil
 		}
 	}
