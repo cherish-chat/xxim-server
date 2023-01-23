@@ -62,22 +62,6 @@ message PushBody {
   bytes data = 2;
 }
 
-// 客户端发送事件
-enum ActiveEvent {
-  // 发送消息
-  SendMsgList = 0;
-  // 批量获取会话的消息seq
-  SyncConvSeq = 1;
-  // 批量同步消息列表
-  SyncMsgList = 2;
-  // 确认消费通知
-  AckNotice = 3;
-  // 获取一条消息
-  GetMsgById = 4;
-  // 自定义请求
-  CustomRequest = 100;
-}
-
 // 客户端发送的消息体
 message RequestBody {
   string reqId = 1;
@@ -104,12 +88,34 @@ message ResponseBody {
   bytes data = 4;
 }
 
-message SetConnParamsReq {
-  ConnParam connParam = 1;
+message CxnParams {
+  string platform = 1;
+  string deviceId = 2;
+  string deviceModel = 3;
+  string osVersion = 4;
+  string appVersion = 5;
+  string language = 6;
+  string networkUsed = 7;
+  bytes ex = 11;
+}
+message SetCxnParamsReq {
+  CxnParams cxnParams = 1;
 }
 
-message SetConnParamsResp {
-  ConnParam connParam = 1;
+message SetCxnParamsResp {
+  CxnParams cxnParams = 1;
+}
+
+message SetUserParamsReq {
+  string userId = 1;
+  string token = 2;
+  bytes ex = 11;
+}
+
+message SetUserParamsResp {
+  string userId = 1;
+  string token = 2;
+  bytes ex = 11;
 }
 
 message SendMsgReq {

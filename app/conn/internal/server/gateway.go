@@ -104,8 +104,7 @@ func (s *ConnServer) registerUser() {
 				NewRequest: func() *pb.LoginReq {
 					return &pb.LoginReq{}
 				},
-				Do:       s.svcCtx.UserService().Login,
-				Callback: logic.NewLoginLogic(s.svcCtx).Callback,
+				Do: s.svcCtx.UserService().Login,
 			}
 			conngateway.AddRoute("/v1/user/white/login", route)
 		}
@@ -115,8 +114,7 @@ func (s *ConnServer) registerUser() {
 				NewRequest: func() *pb.ConfirmRegisterReq {
 					return &pb.ConfirmRegisterReq{}
 				},
-				Do:       s.svcCtx.UserService().ConfirmRegister,
-				Callback: logic.NewConfirmRegisterLogic(s.svcCtx).Callback,
+				Do: s.svcCtx.UserService().ConfirmRegister,
 			}
 			conngateway.AddRoute("/v1/user/white/confirmRegister", route)
 		}
@@ -204,14 +202,25 @@ func (s *ConnServer) registerGateway() {
 	{
 		// 设置连接参数
 		{
-			route := conngateway.Route[*pb.SetConnParamsReq, *pb.SetConnParamsResp]{
-				NewRequest: func() *pb.SetConnParamsReq {
-					return &pb.SetConnParamsReq{}
+			route := conngateway.Route[*pb.SetCxnParamsReq, *pb.SetCxnParamsResp]{
+				NewRequest: func() *pb.SetCxnParamsReq {
+					return &pb.SetCxnParamsReq{}
 				},
 				Do:       logic.NewSetConnParamsLogic(s.svcCtx).SetConnParams,
 				Callback: logic.NewSetConnParamsLogic(s.svcCtx).Callback,
 			}
 			conngateway.AddRoute("/v1/conn/white/setConnParams", route)
+		}
+		// 设置userId和token
+		{
+			route := conngateway.Route[*pb.SetUserParamsReq, *pb.SetUserParamsResp]{
+				NewRequest: func() *pb.SetUserParamsReq {
+					return &pb.SetUserParamsReq{}
+				},
+				Do:       logic.NewSetUserParamsLogic(s.svcCtx).SetUserParams,
+				Callback: logic.NewSetUserParamsLogic(s.svcCtx).Callback,
+			}
+			conngateway.AddRoute("/v1/conn/white/setUserParams", route)
 		}
 	}
 	s.registerMsg()

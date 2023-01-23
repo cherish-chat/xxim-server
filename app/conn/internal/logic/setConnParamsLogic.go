@@ -24,18 +24,27 @@ func NewSetConnParamsLogic(svcCtx *svc.ServiceContext) *SetConnParamsLogic {
 	return singletonSetConnParamsLogic
 }
 
-func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetConnParamsReq, opts ...grpc.CallOption) (*pb.SetConnParamsResp, error) {
-	return &pb.SetConnParamsResp{ConnParam: req.GetConnParam()}, nil
+func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnParamsReq, opts ...grpc.CallOption) (*pb.SetCxnParamsResp, error) {
+	return &pb.SetCxnParamsResp{CxnParams: req.GetCxnParams()}, nil
 }
 
-func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetConnParamsResp, c *types.UserConn) {
-	if resp == nil || resp.ConnParam == nil {
+func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParamsResp, c *types.UserConn) {
+	if resp == nil || resp.CxnParams == nil {
 		return
 	}
-	param := resp.GetConnParam()
-	param.UserId = c.ConnParam.UserId
-	param.Token = c.ConnParam.Token
-	param.Ips = c.ConnParam.Ips
-	param.PodIp = utils.GetPodIp()
-	c.SetConnParams(param)
+	param := resp.GetCxnParams()
+	c.SetConnParams(&pb.ConnParam{
+		UserId:      c.ConnParam.UserId,
+		Token:       c.ConnParam.Token,
+		DeviceId:    param.DeviceId,
+		Platform:    param.Platform,
+		Ips:         c.ConnParam.Ips,
+		NetworkUsed: param.NetworkUsed,
+		Headers:     c.ConnParam.Headers,
+		PodIp:       utils.GetPodIp(),
+		DeviceModel: param.DeviceModel,
+		OsVersion:   param.OsVersion,
+		AppVersion:  param.AppVersion,
+		Language:    param.Language,
+	})
 }

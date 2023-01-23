@@ -17,6 +17,7 @@ type (
 	AfterDisconnectReq = pb.AfterDisconnectReq
 	ConnMQBody         = pb.ConnMQBody
 	ConnParam          = pb.ConnParam
+	CxnParams          = pb.CxnParams
 	GetUserConnReq     = pb.GetUserConnReq
 	GetUserConnResp    = pb.GetUserConnResp
 	KickUserConnReq    = pb.KickUserConnReq
@@ -26,8 +27,10 @@ type (
 	ResponseBody       = pb.ResponseBody
 	SendMsgReq         = pb.SendMsgReq
 	SendMsgResp        = pb.SendMsgResp
-	SetConnParamsReq   = pb.SetConnParamsReq
-	SetConnParamsResp  = pb.SetConnParamsResp
+	SetCxnParamsReq    = pb.SetCxnParamsReq
+	SetCxnParamsResp   = pb.SetCxnParamsResp
+	SetUserParamsReq   = pb.SetUserParamsReq
+	SetUserParamsResp  = pb.SetUserParamsResp
 
 	ConnService interface {
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)

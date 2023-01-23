@@ -120,17 +120,32 @@ func (x *KickGroupMemberReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *SetConnParamsReq) SetCommonReq(r *CommonReq) {
+func (x *SetCxnParamsReq) SetCommonReq(r *CommonReq) {
 }
 
-func (x *SetConnParamsReq) GetCommonReq() *CommonReq {
+func (x *SetCxnParamsReq) GetCommonReq() *CommonReq {
 	return &CommonReq{}
 }
 
-func (x *SetConnParamsReq) Validate() error {
+func (x *SetCxnParamsReq) Validate() error {
 	return nil
 }
 
-func (x *SetConnParamsResp) GetCommonResp() *CommonResp {
+func (x *SetCxnParamsResp) GetCommonResp() *CommonResp {
+	return &CommonResp{}
+}
+
+func (x *SetUserParamsReq) SetCommonReq(r *CommonReq) {
+}
+
+func (x *SetUserParamsReq) GetCommonReq() *CommonReq {
+	return &CommonReq{}
+}
+
+func (x *SetUserParamsReq) Validate() error {
+	return nil
+}
+
+func (x *SetUserParamsResp) GetCommonResp() *CommonResp {
 	return &CommonResp{}
 }
