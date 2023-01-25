@@ -43,6 +43,10 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 	var friendIds []string
 	var groupIds []string
 	var convIds []string
+	// 默认的
+	{
+		convIds = append(convIds, pb.HiddenConvIdCommand(), pb.HiddenConvIdFriendMember(), pb.HiddenConvIdGroupMember())
+	}
 	// 获取用户订阅的好友列表
 	{
 		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
@@ -62,6 +66,7 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 		friendIds = getFriendList.Ids
 		for _, id := range friendIds {
 			convIds = append(convIds, pb.SingleConvId(userId, id))
+			convIds = append(convIds, pb.HiddenConvIdFriend(id))
 		}
 	}
 	// 获取用户订阅的群组列表
@@ -84,6 +89,7 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 		groupIds = getMyGroupList.Ids
 		for _, id := range groupIds {
 			convIds = append(convIds, pb.GroupConvId(id))
+			convIds = append(convIds, pb.HiddenConvIdGroup(id))
 		}
 	}
 	// mzadd and setex

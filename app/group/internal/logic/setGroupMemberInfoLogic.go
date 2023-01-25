@@ -131,27 +131,27 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 			return nil
 		}, func(tx *gorm.DB) error {
 			// 通知member
-			// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = memberId
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvIdGroup(group.Id),
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       noticemodel.NoticeIdUpdateMemberInfo(in.MemberId),
-				ContentType:    0,
-				Content:        []byte(in.Notice),
-				Options: &pb.NoticeData_Options{
+			notice := &noticemodel.Notice{
+				ConvId: pb.HiddenConvIdGroup(in.GroupId),
+				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
 					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
 				},
-				Ext: nil,
+				ContentType: pb.NoticeContentType_SetGroupMemberInfo,
+				Content: utils.AnyToBytes(pb.NoticeContent_SetGroupMemberInfo{
+					GroupId:   in.GroupId,
+					MemberId:  in.MemberId,
+					UpdateMap: updateMap,
+				}),
+				Title: "",
+				Ext:   nil,
 			}
-			m := noticemodel.NoticeFromPB(data, true, "")
-			err := m.Upsert(tx)
+			err = notice.Insert(l.ctx, tx)
 			if err != nil {
-				l.Errorf("Upsert failed, err: %v", err)
+				l.Errorf("insert notice failed, err: %v", err)
+				return err
 			}
-			return err
+			return nil
 		})
 		if err != nil {
 			l.Errorf("Transaction err: %v", err)
@@ -180,15 +180,9 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 				"member_id": in.MemberId,
 			})
 			// 发送通知
-			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: noticemodel.NoticeIdUpdateMemberInfo(in.MemberId),
-					ConvId:   noticemodel.ConvIdGroup(group.Id),
-				},
-				UserId:      nil,
-				IsBroadcast: utils.AnyPtr(true),
-				Inserted:    utils.AnyPtr(true),
+				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)

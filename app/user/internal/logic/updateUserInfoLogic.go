@@ -57,41 +57,36 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *pb.UpdateUserInfoReq) (*pb.Upda
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:user@selfId  noticeId = UpdateUserInfo
-		data := &pb.NoticeData{
-			ConvId:         noticemodel.ConvIdUser(in.CommonReq.UserId),
-			UnreadCount:    0,
-			UnreadAbsolute: false,
-			NoticeId:       "UpdateUserInfo",
-			ContentType:    0,
-			Content:        []byte{},
-			Options: &pb.NoticeData_Options{
+		notice := &noticemodel.Notice{
+			ConvId: pb.HiddenConvIdFriend(in.CommonReq.UserId),
+			Options: noticemodel.NoticeOption{
 				StorageForClient: false,
 				UpdateConvMsg:    false,
-				OnlinePushOnce:   false,
 			},
-			Ext: nil,
+			ContentType: pb.NoticeContentType_UpdateUserInfo,
+			Content: utils.AnyToBytes(pb.NoticeContent_UpdateUserInfo{
+				UserId:    in.CommonReq.UserId,
+				UpdateMap: updateMap,
+			}),
+			Title: "",
+			Ext:   nil,
 		}
-		m := noticemodel.NoticeFromPB(data, true, "")
-		err := m.Upsert(tx)
+		err = notice.Insert(l.ctx, tx)
 		if err != nil {
-			l.Errorf("Upsert failed, err: %v", err)
+			l.Errorf("insert notice failed, err: %v", err)
+			return err
 		}
-		return err
+		return nil
 	})
 	if err != nil {
 		return &pb.UpdateUserInfoResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	utils.RetryProxy(l.ctx, 5, 1*time.Second, func() error {
-		_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-			CommonReq: in.CommonReq,
-			NoticeData: &pb.NoticeData{
-				NoticeId: "UpdateUserInfo",
-				ConvId:   noticemodel.ConvIdUser(in.CommonReq.UserId),
-			},
-			UserId:      nil,
-			IsBroadcast: utils.AnyPtr(true),
-			Inserted:    utils.AnyPtr(true),
+		_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+			CommonReq: in.GetCommonReq(),
+			UserId:    "",
+			ConvId:    pb.HiddenConvIdFriend(in.CommonReq.UserId),
+			DeviceId:  nil,
 		})
 		if err != nil {
 			l.Errorf("SendNoticeData failed, err: %v", err)

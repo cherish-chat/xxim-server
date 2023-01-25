@@ -13,42 +13,23 @@ import (
 )
 
 type (
-	AckNoticeDataReq                = pb.AckNoticeDataReq
-	AckNoticeDataResp               = pb.AckNoticeDataResp
-	GetNoticeConvAllSubscribersReq  = pb.GetNoticeConvAllSubscribersReq
-	GetNoticeConvAllSubscribersResp = pb.GetNoticeConvAllSubscribersResp
-	GetUserNoticeConvIdsReq         = pb.GetUserNoticeConvIdsReq
-	GetUserNoticeConvIdsResp        = pb.GetUserNoticeConvIdsResp
-	GetUserNoticeDataReq            = pb.GetUserNoticeDataReq
-	GetUserNoticeDataResp           = pb.GetUserNoticeDataResp
-	NoticeData                      = pb.NoticeData
-	NoticeDataList                  = pb.NoticeDataList
-	NoticeData_Options              = pb.NoticeData_Options
-	PushNoticeDataReq               = pb.PushNoticeDataReq
-	PushNoticeDataResp              = pb.PushNoticeDataResp
-	SendNoticeDataReq               = pb.SendNoticeDataReq
-	SendNoticeDataResp              = pb.SendNoticeDataResp
-	SetUserSubscriptionsReq         = pb.SetUserSubscriptionsReq
+	AckNoticeDataReq      = pb.AckNoticeDataReq
+	AckNoticeDataResp     = pb.AckNoticeDataResp
+	GetUserNoticeDataReq  = pb.GetUserNoticeDataReq
+	GetUserNoticeDataResp = pb.GetUserNoticeDataResp
+	NoticeData            = pb.NoticeData
+	NoticeDataList        = pb.NoticeDataList
+	NoticeData_Options    = pb.NoticeData_Options
 
 	NoticeService interface {
 		// AfterConnect conn hook
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// AfterDisconnect conn hook
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
-		// SendNoticeData 发送通知数据
-		SendNoticeData(ctx context.Context, in *SendNoticeDataReq, opts ...grpc.CallOption) (*SendNoticeDataResp, error)
-		// PushNoticeData 推送通知数据
-		PushNoticeData(ctx context.Context, in *PushNoticeDataReq, opts ...grpc.CallOption) (*PushNoticeDataResp, error)
 		// GetUserNoticeData 获取用户通知数据
 		GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error)
 		// AckNoticeData 确认通知数据
 		AckNoticeData(ctx context.Context, in *AckNoticeDataReq, opts ...grpc.CallOption) (*AckNoticeDataResp, error)
-		// GetUserNoticeConvIds 获取用户所有的通知号
-		GetUserNoticeConvIds(ctx context.Context, in *GetUserNoticeConvIdsReq, opts ...grpc.CallOption) (*GetUserNoticeConvIdsResp, error)
-		// GetNoticeConvAllSubscribers 获取通知号所有的订阅者
-		GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error)
-		// SetUserSubscriptions 设置用户订阅
-		SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultNoticeService struct {
@@ -74,18 +55,6 @@ func (m *defaultNoticeService) AfterDisconnect(ctx context.Context, in *AfterDis
 	return client.AfterDisconnect(ctx, in, opts...)
 }
 
-// SendNoticeData 发送通知数据
-func (m *defaultNoticeService) SendNoticeData(ctx context.Context, in *SendNoticeDataReq, opts ...grpc.CallOption) (*SendNoticeDataResp, error) {
-	client := pb.NewNoticeServiceClient(m.cli.Conn())
-	return client.SendNoticeData(ctx, in, opts...)
-}
-
-// PushNoticeData 推送通知数据
-func (m *defaultNoticeService) PushNoticeData(ctx context.Context, in *PushNoticeDataReq, opts ...grpc.CallOption) (*PushNoticeDataResp, error) {
-	client := pb.NewNoticeServiceClient(m.cli.Conn())
-	return client.PushNoticeData(ctx, in, opts...)
-}
-
 // GetUserNoticeData 获取用户通知数据
 func (m *defaultNoticeService) GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error) {
 	client := pb.NewNoticeServiceClient(m.cli.Conn())
@@ -96,22 +65,4 @@ func (m *defaultNoticeService) GetUserNoticeData(ctx context.Context, in *GetUse
 func (m *defaultNoticeService) AckNoticeData(ctx context.Context, in *AckNoticeDataReq, opts ...grpc.CallOption) (*AckNoticeDataResp, error) {
 	client := pb.NewNoticeServiceClient(m.cli.Conn())
 	return client.AckNoticeData(ctx, in, opts...)
-}
-
-// GetUserNoticeConvIds 获取用户所有的通知号
-func (m *defaultNoticeService) GetUserNoticeConvIds(ctx context.Context, in *GetUserNoticeConvIdsReq, opts ...grpc.CallOption) (*GetUserNoticeConvIdsResp, error) {
-	client := pb.NewNoticeServiceClient(m.cli.Conn())
-	return client.GetUserNoticeConvIds(ctx, in, opts...)
-}
-
-// GetNoticeConvAllSubscribers 获取通知号所有的订阅者
-func (m *defaultNoticeService) GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error) {
-	client := pb.NewNoticeServiceClient(m.cli.Conn())
-	return client.GetNoticeConvAllSubscribers(ctx, in, opts...)
-}
-
-// SetUserSubscriptions 设置用户订阅
-func (m *defaultNoticeService) SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	client := pb.NewNoticeServiceClient(m.cli.Conn())
-	return client.SetUserSubscriptions(ctx, in, opts...)
 }

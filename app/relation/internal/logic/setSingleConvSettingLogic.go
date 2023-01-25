@@ -2,8 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
-	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -113,28 +111,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			}
 			return err
 		}, func(tx *gorm.DB) error {
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvId_ConvSettingChanged,
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
-				CreateTime:     "",
-				Title:          "",
-				ContentType:    1,
-				Content:        []byte{},
-				Options: &pb.NoticeData_Options{
-					StorageForClient: false,
-					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
-				},
-				Ext: nil,
-			}
-			m := noticemodel.NoticeFromPB(data, false, in.Setting.UserId)
-			err := m.Upsert(tx)
-			if err != nil {
-				l.Errorf("upsert notice error: %v", err)
-			}
-			return err
+			return nil
 		})
 		if err != nil {
 			l.Errorf("Transaction error: %v", err)
@@ -152,16 +129,6 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			l.Errorf("CacheWarm: %v", err)
 			return
 		}
-		l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-			CommonReq: in.CommonReq,
-			NoticeData: &pb.NoticeData{
-				NoticeId: fmt.Sprintf("%s:%s", in.Setting.ConvId, in.Setting.UserId),
-				ConvId:   noticemodel.ConvId_ConvSettingChanged,
-			},
-			UserId:      utils.AnyPtr(in.Setting.UserId),
-			IsBroadcast: nil,
-			Inserted:    utils.AnyPtr(true),
-		})
 	}, propagation.MapCarrier{})
 	return &pb.SetSingleConvSettingResp{}, nil
 }

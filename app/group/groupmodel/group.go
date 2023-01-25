@@ -34,9 +34,6 @@ type (
 		// 群成员人数
 		MemberCount int `bson:"memberCount" json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;index"`
 	}
-	GroupTrash struct {
-		*Group
-	}
 	GroupSetting struct {
 		// 全体禁言开关
 		AllMute bool `bson:"allMute" json:"allMute"`
@@ -67,10 +64,6 @@ type (
 
 func (m *Group) TableName() string {
 	return "group"
-}
-
-func (m *GroupTrash) TableName() string {
-	return "group_trash"
 }
 
 func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {

@@ -1,9 +1,23 @@
 package rediskey
 
-func NoticeConvMembersSubscribed(convId string) string {
-	return "s:notice_conv_members_subscribed:" + convId
-}
+import "github.com/cherish-chat/xxim-server/common/xredis"
 
 func UserAckRecord(userId string, deviceId string) string {
 	return "h:user_ack_record:" + userId + ":" + deviceId
+}
+
+func NoticeSortSetKey(convId string, userId string) string {
+	return "z:notice:" + convId + ":" + userId
+}
+
+func NoticeSortSetExpire() int {
+	return xredis.ExpireMinutes(5)
+}
+
+func NoticeStringKey(id string) string {
+	return "s:model:notice:" + id
+}
+
+func NoticeStringExpire() int {
+	return xredis.ExpireMinutes(5)
 }

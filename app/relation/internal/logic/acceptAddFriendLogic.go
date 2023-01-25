@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
@@ -69,26 +68,28 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			}
 			return nil
 		}, func(tx *gorm.DB) error {
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvId_SyncFriendList,
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       fmt.Sprintf("%s", in.ApplyUserId),
-				ContentType:    0,
-				Content:        []byte{},
-				Options: &pb.NoticeData_Options{
-					StorageForClient: false,
-					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
-				},
-				Ext: nil,
+			for _, userId := range []string{in.CommonReq.UserId, in.ApplyUserId} {
+				notice := &noticemodel.Notice{
+					ConvId: pb.HiddenConvIdCommand(),
+					UserId: userId,
+					Options: noticemodel.NoticeOption{
+						StorageForClient: false,
+						UpdateConvMsg:    false,
+					},
+					ContentType: pb.NoticeContentType_SyncFriendList,
+					Content: utils.AnyToBytes(pb.NoticeContent_SyncFriendList{
+						Comment: "acceptAddFriend",
+					}),
+					Title: "",
+					Ext:   nil,
+				}
+				err := notice.Insert(l.ctx, tx)
+				if err != nil {
+					l.Errorf("insert notice failed, err: %v", err)
+					return err
+				}
 			}
-			m := noticemodel.NoticeFromPB(data, false, in.ApplyUserId)
-			err := m.Upsert(tx)
-			if err != nil {
-				l.Errorf("Upsert failed, err: %v", err)
-			}
-			return err
+			return nil
 		})
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
@@ -133,25 +134,15 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
-				UserIds: []string{friend1.UserId, friend1.FriendId},
-			})
-			if err != nil {
-				l.Errorf("SetUserSubscriptions failed, err: %v", err)
-				return err
-			}
-			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
-				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: fmt.Sprintf("%s", in.ApplyUserId),
-					ConvId:   noticemodel.ConvId_SyncFriendList,
-				},
-				UserId:      utils.AnyPtr(in.ApplyUserId),
-				IsBroadcast: nil,
-				Inserted:    utils.AnyPtr(true),
-			})
-			if err != nil {
-				l.Errorf("SendNoticeData failed, err: %v", err)
+			for _, userId := range []string{friend1.UserId, friend1.FriendId} {
+				_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+					UserId: userId,
+					ConvId: pb.HiddenConvIdCommand(),
+				})
+				if err != nil {
+					l.Errorf("SendNoticeData failed, err: %v", err)
+					return err
+				}
 			}
 			return err
 		})

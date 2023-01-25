@@ -40,7 +40,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s.InitGroupIdCache()
 	s.Mysql().AutoMigrate(
 		groupmodel.Group{},
-		groupmodel.GroupTrash{},
 		groupmodel.GroupMember{},
 		groupmodel.GroupApply{},
 	)

@@ -26,20 +26,10 @@ type NoticeServiceClient interface {
 	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//AfterDisconnect conn hook
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
-	//SendNoticeData 发送通知数据
-	SendNoticeData(ctx context.Context, in *SendNoticeDataReq, opts ...grpc.CallOption) (*SendNoticeDataResp, error)
-	//PushNoticeData 推送通知数据
-	PushNoticeData(ctx context.Context, in *PushNoticeDataReq, opts ...grpc.CallOption) (*PushNoticeDataResp, error)
 	//GetUserNoticeData 获取用户通知数据
 	GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error)
 	//AckNoticeData 确认通知数据
 	AckNoticeData(ctx context.Context, in *AckNoticeDataReq, opts ...grpc.CallOption) (*AckNoticeDataResp, error)
-	//GetUserNoticeConvIds 获取用户所有的通知号
-	GetUserNoticeConvIds(ctx context.Context, in *GetUserNoticeConvIdsReq, opts ...grpc.CallOption) (*GetUserNoticeConvIdsResp, error)
-	//GetNoticeConvAllSubscribers 获取通知号所有的订阅者
-	GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error)
-	//SetUserSubscriptions 设置用户订阅
-	SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type noticeServiceClient struct {
@@ -68,24 +58,6 @@ func (c *noticeServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisc
 	return out, nil
 }
 
-func (c *noticeServiceClient) SendNoticeData(ctx context.Context, in *SendNoticeDataReq, opts ...grpc.CallOption) (*SendNoticeDataResp, error) {
-	out := new(SendNoticeDataResp)
-	err := c.cc.Invoke(ctx, "/pb.noticeService/SendNoticeData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *noticeServiceClient) PushNoticeData(ctx context.Context, in *PushNoticeDataReq, opts ...grpc.CallOption) (*PushNoticeDataResp, error) {
-	out := new(PushNoticeDataResp)
-	err := c.cc.Invoke(ctx, "/pb.noticeService/PushNoticeData", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *noticeServiceClient) GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error) {
 	out := new(GetUserNoticeDataResp)
 	err := c.cc.Invoke(ctx, "/pb.noticeService/GetUserNoticeData", in, out, opts...)
@@ -104,33 +76,6 @@ func (c *noticeServiceClient) AckNoticeData(ctx context.Context, in *AckNoticeDa
 	return out, nil
 }
 
-func (c *noticeServiceClient) GetUserNoticeConvIds(ctx context.Context, in *GetUserNoticeConvIdsReq, opts ...grpc.CallOption) (*GetUserNoticeConvIdsResp, error) {
-	out := new(GetUserNoticeConvIdsResp)
-	err := c.cc.Invoke(ctx, "/pb.noticeService/GetUserNoticeConvIds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *noticeServiceClient) GetNoticeConvAllSubscribers(ctx context.Context, in *GetNoticeConvAllSubscribersReq, opts ...grpc.CallOption) (*GetNoticeConvAllSubscribersResp, error) {
-	out := new(GetNoticeConvAllSubscribersResp)
-	err := c.cc.Invoke(ctx, "/pb.noticeService/GetNoticeConvAllSubscribers", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *noticeServiceClient) SetUserSubscriptions(ctx context.Context, in *SetUserSubscriptionsReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, "/pb.noticeService/SetUserSubscriptions", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // NoticeServiceServer is the server API for NoticeService service.
 // All implementations must embed UnimplementedNoticeServiceServer
 // for forward compatibility
@@ -139,20 +84,10 @@ type NoticeServiceServer interface {
 	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
 	//AfterDisconnect conn hook
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
-	//SendNoticeData 发送通知数据
-	SendNoticeData(context.Context, *SendNoticeDataReq) (*SendNoticeDataResp, error)
-	//PushNoticeData 推送通知数据
-	PushNoticeData(context.Context, *PushNoticeDataReq) (*PushNoticeDataResp, error)
 	//GetUserNoticeData 获取用户通知数据
 	GetUserNoticeData(context.Context, *GetUserNoticeDataReq) (*GetUserNoticeDataResp, error)
 	//AckNoticeData 确认通知数据
 	AckNoticeData(context.Context, *AckNoticeDataReq) (*AckNoticeDataResp, error)
-	//GetUserNoticeConvIds 获取用户所有的通知号
-	GetUserNoticeConvIds(context.Context, *GetUserNoticeConvIdsReq) (*GetUserNoticeConvIdsResp, error)
-	//GetNoticeConvAllSubscribers 获取通知号所有的订阅者
-	GetNoticeConvAllSubscribers(context.Context, *GetNoticeConvAllSubscribersReq) (*GetNoticeConvAllSubscribersResp, error)
-	//SetUserSubscriptions 设置用户订阅
-	SetUserSubscriptions(context.Context, *SetUserSubscriptionsReq) (*CommonResp, error)
 	mustEmbedUnimplementedNoticeServiceServer()
 }
 
@@ -166,26 +101,11 @@ func (UnimplementedNoticeServiceServer) AfterConnect(context.Context, *AfterConn
 func (UnimplementedNoticeServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
 }
-func (UnimplementedNoticeServiceServer) SendNoticeData(context.Context, *SendNoticeDataReq) (*SendNoticeDataResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendNoticeData not implemented")
-}
-func (UnimplementedNoticeServiceServer) PushNoticeData(context.Context, *PushNoticeDataReq) (*PushNoticeDataResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushNoticeData not implemented")
-}
 func (UnimplementedNoticeServiceServer) GetUserNoticeData(context.Context, *GetUserNoticeDataReq) (*GetUserNoticeDataResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserNoticeData not implemented")
 }
 func (UnimplementedNoticeServiceServer) AckNoticeData(context.Context, *AckNoticeDataReq) (*AckNoticeDataResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AckNoticeData not implemented")
-}
-func (UnimplementedNoticeServiceServer) GetUserNoticeConvIds(context.Context, *GetUserNoticeConvIdsReq) (*GetUserNoticeConvIdsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserNoticeConvIds not implemented")
-}
-func (UnimplementedNoticeServiceServer) GetNoticeConvAllSubscribers(context.Context, *GetNoticeConvAllSubscribersReq) (*GetNoticeConvAllSubscribersResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetNoticeConvAllSubscribers not implemented")
-}
-func (UnimplementedNoticeServiceServer) SetUserSubscriptions(context.Context, *SetUserSubscriptionsReq) (*CommonResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserSubscriptions not implemented")
 }
 func (UnimplementedNoticeServiceServer) mustEmbedUnimplementedNoticeServiceServer() {}
 
@@ -236,42 +156,6 @@ func _NoticeService_AfterDisconnect_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoticeService_SendNoticeData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendNoticeDataReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).SendNoticeData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.noticeService/SendNoticeData",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).SendNoticeData(ctx, req.(*SendNoticeDataReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NoticeService_PushNoticeData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushNoticeDataReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).PushNoticeData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.noticeService/PushNoticeData",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).PushNoticeData(ctx, req.(*PushNoticeDataReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _NoticeService_GetUserNoticeData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserNoticeDataReq)
 	if err := dec(in); err != nil {
@@ -308,60 +192,6 @@ func _NoticeService_AckNoticeData_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoticeService_GetUserNoticeConvIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserNoticeConvIdsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).GetUserNoticeConvIds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.noticeService/GetUserNoticeConvIds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).GetUserNoticeConvIds(ctx, req.(*GetUserNoticeConvIdsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NoticeService_GetNoticeConvAllSubscribers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetNoticeConvAllSubscribersReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).GetNoticeConvAllSubscribers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.noticeService/GetNoticeConvAllSubscribers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).GetNoticeConvAllSubscribers(ctx, req.(*GetNoticeConvAllSubscribersReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _NoticeService_SetUserSubscriptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserSubscriptionsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(NoticeServiceServer).SetUserSubscriptions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.noticeService/SetUserSubscriptions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoticeServiceServer).SetUserSubscriptions(ctx, req.(*SetUserSubscriptionsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // NoticeService_ServiceDesc is the grpc.ServiceDesc for NoticeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -378,32 +208,12 @@ var NoticeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NoticeService_AfterDisconnect_Handler,
 		},
 		{
-			MethodName: "SendNoticeData",
-			Handler:    _NoticeService_SendNoticeData_Handler,
-		},
-		{
-			MethodName: "PushNoticeData",
-			Handler:    _NoticeService_PushNoticeData_Handler,
-		},
-		{
 			MethodName: "GetUserNoticeData",
 			Handler:    _NoticeService_GetUserNoticeData_Handler,
 		},
 		{
 			MethodName: "AckNoticeData",
 			Handler:    _NoticeService_AckNoticeData_Handler,
-		},
-		{
-			MethodName: "GetUserNoticeConvIds",
-			Handler:    _NoticeService_GetUserNoticeConvIds_Handler,
-		},
-		{
-			MethodName: "GetNoticeConvAllSubscribers",
-			Handler:    _NoticeService_GetNoticeConvAllSubscribers_Handler,
-		},
-		{
-			MethodName: "SetUserSubscriptions",
-			Handler:    _NoticeService_SetUserSubscriptions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

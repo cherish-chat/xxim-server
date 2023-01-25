@@ -133,30 +133,25 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = JoinedGroup
-		data := &pb.NoticeData{
-			ConvId:         noticemodel.ConvIdGroup(group.Id),
-			UnreadCount:    0,
-			UnreadAbsolute: false,
-			NoticeId:       "JoinedGroup",
-			ContentType:    0,
-			Content: utils.AnyToBytes(xorm.M{
-				"groupId": group.Id,
-				"userIds": append(in.Members, in.CommonReq.UserId),
-			}),
-			Options: &pb.NoticeData_Options{
+		notice := &noticemodel.Notice{
+			ConvId: pb.HiddenConvIdGroup(group.Id),
+			Options: noticemodel.NoticeOption{
 				StorageForClient: false,
 				UpdateConvMsg:    false,
-				OnlinePushOnce:   false,
 			},
-			Ext: nil,
+			ContentType: pb.NoticeContentType_CreateGroup,
+			Content: utils.AnyToBytes(pb.NoticeContent_CreateGroup{
+				GroupId: group.Id,
+			}),
+			Title: "",
+			Ext:   nil,
 		}
-		m := noticemodel.NoticeFromPB(data, true, "")
-		err := m.Upsert(tx)
+		err = notice.Insert(l.ctx, tx)
 		if err != nil {
-			l.Errorf("Upsert failed, err: %v", err)
+			l.Errorf("insert notice failed, err: %v", err)
+			return err
 		}
-		return err
+		return nil
 	})
 	if err != nil {
 		return &pb.CreateGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -198,22 +193,11 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
-				UserIds: append(in.Members, in.CommonReq.UserId),
-			})
-			if err != nil {
-				l.Errorf("SetUserSubscriptions failed, err: %v", err)
-				return err
-			}
-			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: "JoinedGroup",
-					ConvId:   noticemodel.ConvIdGroup(group.Id),
-				},
-				UserId:      nil,
-				IsBroadcast: utils.AnyPtr(true),
-				Inserted:    utils.AnyPtr(true),
+				UserId:    "",
+				ConvId:    pb.HiddenConvIdGroup(group.Id),
+				DeviceId:  nil,
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)

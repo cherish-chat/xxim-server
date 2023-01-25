@@ -85,6 +85,10 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 	}
 	// 踢出群成员
 	xtrace.StartFuncSpan(l.ctx, "KickGroupMember.Transaction", func(ctx context.Context) {
+		tip := ""
+		if in.CommonReq.UserId != in.MemberId {
+			tip = in.MemberId + l.svcCtx.T(in.CommonReq.Language, "被移出群聊")
+		}
 		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			// groupmember表
 			member := &groupmodel.GroupMember{}
@@ -95,30 +99,26 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			}
 			return nil
 		}, func(tx *gorm.DB) error {
-			// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = LeaveGroup
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvIdGroup(in.GroupId),
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       "LeaveGroup",
-				ContentType:    0,
-				Content: utils.AnyToBytes(xorm.M{
-					"groupId": in.GroupId,
-					"userIds": []string{in.MemberId},
-				}),
-				Options: &pb.NoticeData_Options{
+			notice := &noticemodel.Notice{
+				ConvId: pb.HiddenConvIdGroup(in.GroupId),
+				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
 					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
 				},
-				Ext: nil,
+				ContentType: pb.NoticeContentType_GroupMemberLeave,
+				Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
+					GroupId: in.GroupId,
+					Tip:     tip,
+				}),
+				Title: "",
+				Ext:   nil,
 			}
-			m := noticemodel.NoticeFromPB(data, true, "")
-			err := m.Upsert(tx)
+			err = notice.Insert(l.ctx, tx)
 			if err != nil {
-				l.Errorf("Upsert failed, err: %v", err)
+				l.Errorf("insert notice failed, err: %v", err)
+				return err
 			}
-			return err
+			return nil
 		})
 	})
 	if err != nil {
@@ -159,22 +159,9 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
-				UserIds: []string{in.MemberId},
-			})
-			if err != nil {
-				l.Errorf("SetUserSubscriptions failed, err: %v", err)
-				return err
-			}
-			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: "LeaveGroup",
-					ConvId:   noticemodel.ConvIdGroup(in.GroupId),
-				},
-				UserId:      nil,
-				IsBroadcast: utils.AnyPtr(true),
-				Inserted:    utils.AnyPtr(true),
+				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)
@@ -210,45 +197,31 @@ func (l *KickGroupMemberLogic) DismissGroup(in *pb.KickGroupMemberReq) (*pb.Comm
 		), nil
 	}
 	group := groupmodel.GroupFromBytes(groupBytes)
-	// 直接删除群组
 	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-		// 存到group_trash表
-		err := xorm.InsertOne(tx, &groupmodel.GroupTrash{Group: group})
-		if err != nil {
-			l.Errorf("InsertOne GroupTrash error: %v", err)
-			return err
+		// update dismissTime
+		return xorm.Update(tx, group, map[string]interface{}{
+			"dismissTime": time.Now().UnixMilli(),
+		})
+	}, func(tx *gorm.DB) error {
+		notice := &noticemodel.Notice{
+			ConvId: pb.HiddenConvIdGroup(group.Id),
+			Options: noticemodel.NoticeOption{
+				StorageForClient: false,
+				UpdateConvMsg:    false,
+			},
+			ContentType: pb.NoticeContentType_DismissGroup,
+			Content: utils.AnyToBytes(pb.NoticeContent_DismissGroup{
+				GroupId: group.Id,
+			}),
+			Title: "",
+			Ext:   nil,
 		}
-		// group表
-		err = tx.Model(group).Where("id = ?", in.GroupId).Delete(group).Error
+		err = notice.Insert(l.ctx, tx)
 		if err != nil {
-			l.Errorf("Delete Group error: %v", err)
+			l.Errorf("insert notice failed, err: %v", err)
 			return err
 		}
 		return nil
-	}, func(tx *gorm.DB) error {
-		// 发送一条订阅号消息 订阅号的convId = notice:group@groupId  noticeId = DismissGroup
-		data := &pb.NoticeData{
-			ConvId:         noticemodel.ConvIdGroup(in.GroupId),
-			UnreadCount:    0,
-			UnreadAbsolute: false,
-			NoticeId:       "DismissGroup",
-			ContentType:    0,
-			Content: utils.AnyToBytes(xorm.M{
-				"groupId": in.GroupId,
-			}),
-			Options: &pb.NoticeData_Options{
-				StorageForClient: false,
-				UpdateConvMsg:    false,
-				OnlinePushOnce:   false,
-			},
-			Ext: nil,
-		}
-		m := noticemodel.NoticeFromPB(data, true, "")
-		err := m.Upsert(tx)
-		if err != nil {
-			l.Errorf("Upsert failed, err: %v", err)
-		}
-		return err
 	}, func(tx *gorm.DB) error {
 		err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), group.Id)
 		if err != nil {
@@ -269,22 +242,9 @@ func (l *KickGroupMemberLogic) DismissGroup(in *pb.KickGroupMemberReq) (*pb.Comm
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().SetUserSubscriptions(l.ctx, &pb.SetUserSubscriptionsReq{
-				UserIds: []string{in.MemberId},
-			})
-			if err != nil {
-				l.Errorf("SetUserSubscriptions failed, err: %v", err)
-				return err
-			}
-			_, err = l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
-				NoticeData: &pb.NoticeData{
-					NoticeId: "DismissGroup",
-					ConvId:   noticemodel.ConvIdGroup(in.GroupId),
-				},
-				UserId:      nil,
-				IsBroadcast: utils.AnyPtr(true),
-				Inserted:    utils.AnyPtr(true),
+				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)

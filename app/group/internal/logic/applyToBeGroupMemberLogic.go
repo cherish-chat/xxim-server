@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -72,28 +71,33 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 		return nil
 	}, func(tx *gorm.DB) error {
 		for _, manager := range groupManagers {
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvId_GroupNotice,
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       apply.Id,
-				CreateTime:     "",
-				Title:          "",
-				ContentType:    1,
-				Content:        []byte(utils.AnyToString(apply)),
-				Options: &pb.NoticeData_Options{
+			notice := &noticemodel.Notice{
+				ConvId: pb.HiddenConvIdGroupMember(),
+				UserId: manager.UserId,
+				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
 					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
 				},
-				Ext: nil,
+				ContentType: pb.NoticeContentType_ApplyToBeGroupMember,
+				Content: utils.AnyToBytes(pb.NoticeContent_ApplyToBeGrouoMember{
+					ApplyId:      apply.Id,
+					GroupId:      apply.GroupId,
+					UserId:       apply.UserId,
+					Result:       apply.Result,
+					Reason:       apply.Reason,
+					ApplyTime:    apply.ApplyTime,
+					HandleTime:   apply.HandleTime,
+					HandleUserId: apply.HandleUserId,
+				}),
+				Title: "",
+				Ext:   nil,
 			}
-			m := noticemodel.NoticeFromPB(data, false, manager.UserId)
-			err := m.Upsert(tx)
+			err := notice.Insert(l.ctx, tx)
 			if err != nil {
-				l.Errorf("Upsert failed, err: %v", err)
+				l.Errorf("insert notice failed, err: %v", err)
 				return err
 			}
+			return nil
 		}
 		return nil
 	})
@@ -105,15 +109,10 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendNotice", func(ctx context.Context) {
 		utils.RetryProxy(ctx, 12, time.Second, func() error {
 			for _, manager := range groupManagers {
-				_, err := l.svcCtx.NoticeService().SendNoticeData(ctx, &pb.SendNoticeDataReq{
+				_, err := l.svcCtx.NoticeService().GetUserNoticeData(ctx, &pb.GetUserNoticeDataReq{
 					CommonReq: in.CommonReq,
-					NoticeData: &pb.NoticeData{
-						NoticeId: fmt.Sprintf("%s", apply.Id),
-						ConvId:   noticemodel.ConvId_GroupNotice,
-					},
-					UserId:      utils.AnyPtr(manager.UserId),
-					IsBroadcast: nil,
-					Inserted:    utils.AnyPtr(true),
+					UserId:    manager.UserId,
+					ConvId:    pb.HiddenConvIdGroupMember(),
 				})
 				if err != nil {
 					l.Errorf("ApplyToBeGroupMember SendNoticeData error: %v", err)
