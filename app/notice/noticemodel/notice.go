@@ -89,7 +89,7 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 	if m.CreateTime == 0 {
 		m.CreateTime = time.Now().UnixMilli()
 	}
-	return tx.WithContext(ctx).Create(m).Error
+	return tx.Create(m).Error
 }
 
 func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
@@ -97,7 +97,7 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 	// 获取 加行锁
 	var maxConvAutoId NoticeMaxConvAutoId
 	maxConvAutoId.ConvId = convId
-	err := tx.WithContext(ctx).Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Limit(1).Find(&maxConvAutoId).Error
+	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Limit(1).Find(&maxConvAutoId).Error
 	if err != nil {
 		logger.Errorf("get maxConvAutoId err: %v", err)
 		return 0, err
@@ -105,7 +105,7 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 	if maxConvAutoId.ConvAutoId == 0 {
 		// 不存在，初始化
 		maxConvAutoId.ConvAutoId = 1 + incr
-		err = tx.WithContext(ctx).Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
+		err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
 		if err != nil {
 			logger.Errorf("create maxConvAutoId err: %v", err)
 			return 0, err
@@ -114,7 +114,7 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 	} else {
 		if incr > 0 {
 			// 更新
-			err = tx.WithContext(ctx).Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
+			err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
 			if err != nil {
 				logger.Errorf("update maxConvAutoId err: %v", err)
 				return 0, err
@@ -127,7 +127,7 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId string, deviceId string) (int64, error) {
 	logger := logx.WithContext(ctx)
 	var ackRecord NoticeAckRecord
-	err := tx.WithContext(ctx).Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).First(&ackRecord).Error
+	err := tx.Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).First(&ackRecord).Error
 	if err != nil {
 		if xorm.RecordNotFound(err) {
 			// 设置为maxConvAutoId
@@ -139,7 +139,7 @@ func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId st
 			ackRecord.UserId = userId
 			ackRecord.DeviceId = deviceId
 			ackRecord.ConvAutoId = maxConvAutoId - 1
-			err = tx.WithContext(ctx).Model(&NoticeAckRecord{}).Create(&ackRecord).Error
+			err = tx.Model(&NoticeAckRecord{}).Create(&ackRecord).Error
 			if err != nil {
 				logger.Errorf("create minConvAutoId err: %v", err)
 				return 0, err
@@ -186,7 +186,7 @@ func popNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convI
 	err := flushNoticeZSet(ctx, rc, convId, userId)
 	// 直接查询mysql
 	var notices []*Notice
-	err = tx.WithContext(ctx).Model(&Notice{}).
+	err = tx.Model(&Notice{}).
 		Where(""+
 			"(noticeId = ? and userId = ?)"+
 			" and convAutoId > ? and convAutoId <= ?", convId, userId, convId,
@@ -263,7 +263,7 @@ func getNoticeByIdFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, i
 	err := FlushNoticeString(ctx, rc, id)
 	// 直接查询mysql
 	var notice Notice
-	err = tx.WithContext(ctx).Model(&Notice{}).
+	err = tx.Model(&Notice{}).
 		Where("noticeId = ?", id).Limit(1).
 		Find(&notice).Error
 	if err != nil {
