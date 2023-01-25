@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -126,26 +127,26 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId string, deviceId string) (int64, error) {
 	logger := logx.WithContext(ctx)
 	var ackRecord NoticeAckRecord
-	err := tx.WithContext(ctx).Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).Limit(1).Find(&ackRecord).Error
+	err := tx.WithContext(ctx).Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).First(&ackRecord).Error
 	if err != nil {
+		if xorm.RecordNotFound(err) {
+			// 设置为maxConvAutoId
+			maxConvAutoId, err := GetMaxConvAutoId(ctx, tx, convId, 0)
+			if err != nil {
+				return 0, err
+			}
+			ackRecord.ConvId = convId
+			ackRecord.UserId = userId
+			ackRecord.DeviceId = deviceId
+			ackRecord.ConvAutoId = maxConvAutoId - 1
+			err = tx.WithContext(ctx).Model(&NoticeAckRecord{}).Create(&ackRecord).Error
+			if err != nil {
+				logger.Errorf("create minConvAutoId err: %v", err)
+				return 0, err
+			}
+		}
 		logger.Errorf("get minConvAutoId err: %v", err)
 		return 0, err
-	}
-	if ackRecord.ConvAutoId == 0 {
-		// 设置为maxConvAutoId
-		maxConvAutoId, err := GetMaxConvAutoId(ctx, tx, convId, 0)
-		if err != nil {
-			return 0, err
-		}
-		ackRecord.ConvId = convId
-		ackRecord.UserId = userId
-		ackRecord.DeviceId = deviceId
-		ackRecord.ConvAutoId = maxConvAutoId - 1
-		err = tx.WithContext(ctx).Model(&NoticeAckRecord{}).Create(&ackRecord).Error
-		if err != nil {
-			logger.Errorf("create minConvAutoId err: %v", err)
-			return 0, err
-		}
 	}
 	return ackRecord.ConvAutoId, nil
 }
