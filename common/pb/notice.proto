@@ -26,7 +26,7 @@ message NoticeData {
   Options options = 21; // 通知选项
 
   // 扩展信息
-  bytes ext = 31; // 扩展字段
+  bytes ext = 101; // 扩展字段
 }
 
 message NoticeDataList {

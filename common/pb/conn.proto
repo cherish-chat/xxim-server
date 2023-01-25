@@ -52,7 +52,7 @@ enum PushEvent {
   // 消息推送
   PushMsgDataList = 0;
   // 通知推送
-  PushNoticeDataList = 1;
+  PushNoticeData = 1;
   // 响应返回
   PushResponseBody = 2;
 }

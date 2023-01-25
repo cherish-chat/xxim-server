@@ -153,7 +153,7 @@ func (l *GetUserNoticeDataLogic) pushNotice(in *pb.GetUserNoticeDataReq, notice 
 			UserIds: []string{in.UserId},
 			Devices: []string{deviceId},
 		},
-		Event: pb.PushEvent_PushNoticeDataList,
+		Event: pb.PushEvent_PushNoticeData,
 		Data:  data,
 	})
 	if err != nil {

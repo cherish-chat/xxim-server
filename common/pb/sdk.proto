@@ -5,7 +5,7 @@ enum PushEvent {
   // 消息推送
   PushMsgDataList = 0;
   // 通知推送
-  PushNoticeDataList = 1;
+  PushNoticeData = 1;
   // 响应返回
   PushResponseBody = 2;
 }
@@ -114,14 +114,9 @@ message NoticeData {
     bool storageForClient = 1;
     // 是否需要重新渲染会话
     bool updateConvMsg = 2;
-    // 只推送在线用户一次
-    bool onlinePushOnce = 3;
   }
   // 会话信息
-  string convId = 1; // 会话id (notice:$noticeId)
-  int32 unreadCount = 2; // 会话未读数
-  // 未读数量是绝对值还是增量
-  bool unreadAbsolute = 3;
+  string convId = 1; // 会话id
 
   // 消息信息
   string noticeId = 11;
@@ -135,10 +130,6 @@ message NoticeData {
 
   // 扩展信息
   bytes ext = 101; // 扩展字段
-}
-
-message NoticeDataList {
-  repeated NoticeData noticeDataList = 1;
 }
 
 message SendMsgListReq {
