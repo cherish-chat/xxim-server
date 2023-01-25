@@ -21,14 +21,21 @@ func HiddenConvIdGroup(userId string) string {
 }
 
 const (
-	NoticeContentType_SyncFriendList       = 101 // 同步好友列表
-	NoticeContentType_ApplyToBeGroupMember = 102 // 申请加入群
-	NoticeContentType_GroupMemberLeave     = 103 // 群成员离开
-	NoticeContentType_SetGroupMemberInfo   = 104 // 设置群成员信息
-	NoticeContentType_UpdateUserInfo       = 201 // 更新用户信息
-	NoticeContentType_CreateGroup          = 202 // 创建群
-	NoticeContentType_NewGroupMember       = 203 // 新群成员
-	NoticeContentType_DismissGroup         = 204 // 解散群
+	// command
+	NoticeContentType_SyncFriendList = 101 // 同步好友列表
+
+	// friend@
+	NoticeContentType_UpdateUserInfo = 201 // 更新用户信息
+
+	// group@
+	NoticeContentType_GroupMemberLeave   = 301 // 群成员离开
+	NoticeContentType_CreateGroup        = 302 // 创建群
+	NoticeContentType_NewGroupMember     = 303 // 新群成员
+	NoticeContentType_DismissGroup       = 304 // 解散群
+	NoticeContentType_SetGroupMemberInfo = 305 // 设置群成员信息
+
+	// groupMember
+	NoticeContentType_ApplyToBeGroupMember = 401 // 申请加入群
 )
 
 type (
