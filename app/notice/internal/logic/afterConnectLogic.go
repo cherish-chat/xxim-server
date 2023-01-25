@@ -78,6 +78,6 @@ func (l *AfterConnectLogic) getAllConv(in *pb.AfterConnectReq) ([]string, error)
 		l.Errorf("get all conv id of user error: %v", err)
 		return convIds, err
 	}
-	convIds = convIdOfUser.ConvIds
+	convIds = convIdOfUser.NoticeIds
 	return convIds, nil
 }
