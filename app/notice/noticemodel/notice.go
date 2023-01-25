@@ -188,8 +188,9 @@ func popNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convI
 	var notices []*Notice
 	err = tx.Model(&Notice{}).
 		Where(""+
-			"(noticeId = ? and userId = ?)"+
-			" and convAutoId > ? and convAutoId <= ?", convId, userId, convId,
+			"(convId = ? and userId = ?)"+
+			" and convAutoId > ? and convAutoId <= ?",
+			convId, userId,
 			minSeq, maxSeq).
 		Order("convAutoId asc").
 		Limit(1000).
