@@ -95,6 +95,7 @@ func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int6
 	logger := logx.WithContext(ctx)
 	// 获取 加行锁
 	var maxConvAutoId NoticeMaxConvAutoId
+	maxConvAutoId.ConvId = convId
 	err := tx.WithContext(ctx).Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Limit(1).Find(&maxConvAutoId).Error
 	if err != nil {
 		logger.Errorf("get maxConvAutoId err: %v", err)
