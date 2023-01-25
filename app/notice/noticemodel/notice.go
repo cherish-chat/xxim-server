@@ -48,7 +48,7 @@ type (
 	NoticeAckRecord struct {
 		ConvId     string `gorm:"column:convId;type:char(96);index:cud,unique;default:'';" json:"convId"`
 		UserId     string `gorm:"column:userId;type:char(32);index:cud,unique;default:'';" json:"userId"`
-		DeviceId   string `gorm:"column:deviceId;type:char(32);index:cud,unique;default:'';" json:"deviceId"`
+		DeviceId   string `gorm:"column:deviceId;type:char(96);index:cud,unique;default:'';" json:"deviceId"`
 		ConvAutoId int64  `gorm:"column:convAutoId;type:bigint(20);not null;" json:"convAutoId"`
 	}
 )
