@@ -17,7 +17,7 @@ import (
 type (
 	Notice struct {
 		// 通知id 由convId+会话自增id+userId组成 主键
-		NoticeId string `gorm:"column:noticeId;type:char(152);primary_key;" json:"noticeId"`
+		NoticeId string `gorm:"column:noticeId;type:char(152);primary_key;not null;" json:"noticeId"`
 		// 会话id
 		ConvId string `gorm:"column:convId;type:char(96);not null;index:cu;" json:"convId"`
 		// 自增id
@@ -38,7 +38,7 @@ type (
 		// 查询用户没有消费的通知时，先获取会话最大ConvAutoId，使用索引查询 where ((convId=? and userId=?) or (convId=? and userId="")) and convAutoId > ? order by convAutoId asc limit 1000
 	}
 	NoticeMaxConvAutoId struct {
-		ConvId     string `gorm:"column:convId;type:char(96);primary_key;" json:"convId"`
+		ConvId     string `gorm:"column:convId;type:char(96);not null;primary_key;" json:"convId"`
 		ConvAutoId int64  `gorm:"column:convAutoId;type:bigint(20);not null;" json:"convAutoId"`
 	}
 	NoticeOption struct {
@@ -46,9 +46,9 @@ type (
 		UpdateConvMsg    bool `gorm:"column:updateConvMsg;type:tinyint(1);not null" json:"updateConvMsg"`
 	}
 	NoticeAckRecord struct {
-		ConvId     string `gorm:"column:convId;type:char(96);index:cud,unique;" json:"convId"`
-		UserId     string `gorm:"column:userId;type:char(32);index:cud,unique;" json:"userId"`
-		DeviceId   string `gorm:"column:deviceId;type:char(32);index:cud,unique;" json:"deviceId"`
+		ConvId     string `gorm:"column:convId;type:char(96);index:cud,unique;default:'';" json:"convId"`
+		UserId     string `gorm:"column:userId;type:char(32);index:cud,unique;default:'';" json:"userId"`
+		DeviceId   string `gorm:"column:deviceId;type:char(32);index:cud,unique;default:'';" json:"deviceId"`
 		ConvAutoId int64  `gorm:"column:convAutoId;type:bigint(20);not null;" json:"convAutoId"`
 	}
 )
