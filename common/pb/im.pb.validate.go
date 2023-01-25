@@ -1259,3 +1259,267 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetAppSystemConfigRespValidationError{}
+
+// Validate checks the field values on GetAllConvIdOfUserReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAllConvIdOfUserReq) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAllConvIdOfUserReq with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAllConvIdOfUserReqMultiError, or nil if none found.
+func (m *GetAllConvIdOfUserReq) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAllConvIdOfUserReq) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonReq()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetAllConvIdOfUserReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetAllConvIdOfUserReqValidationError{
+					field:  "CommonReq",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonReq()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetAllConvIdOfUserReqValidationError{
+				field:  "CommonReq",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return GetAllConvIdOfUserReqMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAllConvIdOfUserReqMultiError is an error wrapping multiple validation
+// errors returned by GetAllConvIdOfUserReq.ValidateAll() if the designated
+// constraints aren't met.
+type GetAllConvIdOfUserReqMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAllConvIdOfUserReqMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAllConvIdOfUserReqMultiError) AllErrors() []error { return m }
+
+// GetAllConvIdOfUserReqValidationError is the validation error returned by
+// GetAllConvIdOfUserReq.Validate if the designated constraints aren't met.
+type GetAllConvIdOfUserReqValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAllConvIdOfUserReqValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAllConvIdOfUserReqValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAllConvIdOfUserReqValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAllConvIdOfUserReqValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAllConvIdOfUserReqValidationError) ErrorName() string {
+	return "GetAllConvIdOfUserReqValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAllConvIdOfUserReqValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAllConvIdOfUserReq.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAllConvIdOfUserReqValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAllConvIdOfUserReqValidationError{}
+
+// Validate checks the field values on GetAllConvIdOfUserResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAllConvIdOfUserResp) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAllConvIdOfUserResp with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAllConvIdOfUserRespMultiError, or nil if none found.
+func (m *GetAllConvIdOfUserResp) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAllConvIdOfUserResp) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCommonResp()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetAllConvIdOfUserRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetAllConvIdOfUserRespValidationError{
+					field:  "CommonResp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCommonResp()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetAllConvIdOfUserRespValidationError{
+				field:  "CommonResp",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetAllConvIdOfUserRespMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAllConvIdOfUserRespMultiError is an error wrapping multiple validation
+// errors returned by GetAllConvIdOfUserResp.ValidateAll() if the designated
+// constraints aren't met.
+type GetAllConvIdOfUserRespMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAllConvIdOfUserRespMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAllConvIdOfUserRespMultiError) AllErrors() []error { return m }
+
+// GetAllConvIdOfUserRespValidationError is the validation error returned by
+// GetAllConvIdOfUserResp.Validate if the designated constraints aren't met.
+type GetAllConvIdOfUserRespValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAllConvIdOfUserRespValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAllConvIdOfUserRespValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAllConvIdOfUserRespValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAllConvIdOfUserRespValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAllConvIdOfUserRespValidationError) ErrorName() string {
+	return "GetAllConvIdOfUserRespValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAllConvIdOfUserRespValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAllConvIdOfUserResp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAllConvIdOfUserRespValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAllConvIdOfUserRespValidationError{}

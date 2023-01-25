@@ -66,3 +66,8 @@ func (s *ImServiceServer) GetAppSystemConfig(ctx context.Context, in *pb.GetAppS
 	l := logic.NewGetAppSystemConfigLogic(ctx, s.svcCtx)
 	return l.GetAppSystemConfig(in)
 }
+
+func (s *ImServiceServer) GetAllConvIdOfUser(ctx context.Context, in *pb.GetAllConvIdOfUserReq) (*pb.GetAllConvIdOfUserResp, error) {
+	l := logic.NewGetAllConvIdOfUserLogic(ctx, s.svcCtx)
+	return l.GetAllConvIdOfUser(in)
+}

@@ -66,6 +66,22 @@ message GetAppSystemConfigResp {
   CommonResp commonResp = 1;
   map<string, string> configs = 2;
 }
+
+//GetAllConvIdOfUserReq 获取用户所有会话id
+message GetAllConvIdOfUserReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+}
+
+//GetAllConvIdOfUserResp 获取用户所有会话id
+message GetAllConvIdOfUserResp {
+  CommonResp commonResp = 1;
+  repeated string convIds = 2;
+  repeated string groupIds = 3;
+  repeated string friendIds = 4;
+  repeated string noticeIds = 5;
+}
+
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -76,4 +92,5 @@ service imService {
   rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
   rpc GetAppSystemConfig(GetAppSystemConfigReq) returns (GetAppSystemConfigResp);
+  rpc GetAllConvIdOfUser(GetAllConvIdOfUserReq) returns (GetAllConvIdOfUserResp);
 }

@@ -34,9 +34,7 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	// 查询用户所有订阅的会话 检测是否有未消费的消息 进行推送
 	var convIds []string
 	var err error
-	xtrace.StartFuncSpan(l.ctx, "getAllConv", func(ctx context.Context) {
-		convIds, err = l.getAllConv(in)
-	})
+	convIds, err = l.getAllConv(in)
 	if err != nil {
 		return pb.NewRetryErrorResp(), err
 	}
@@ -72,51 +70,14 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 
 func (l *AfterConnectLogic) getAllConv(in *pb.AfterConnectReq) ([]string, error) {
 	var userId = in.ConnParam.UserId
-	var friendIds []string
-	var groupIds []string
 	var convIds []string
-	// 获取用户订阅的好友列表
-	{
-		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
-			CommonReq: &pb.CommonReq{
-				UserId: userId,
-			},
-			Page: &pb.Page{
-				Page: 1,
-				Size: 0,
-			},
-			Opt: pb.GetFriendListReq_OnlyId,
-		})
-		if err != nil {
-			l.Errorf("get friend list error: %v", err)
-			return convIds, err
-		}
-		friendIds = getFriendList.Ids
-		for _, id := range friendIds {
-			convIds = append(convIds, pb.SingleConvId(userId, id))
-		}
+	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
+		UserId: userId,
+	})
+	if err != nil {
+		l.Errorf("get all conv id of user error: %v", err)
+		return convIds, err
 	}
-	// 获取用户订阅的群组列表
-	{
-		getMyGroupList, err := l.svcCtx.GroupService().GetMyGroupList(l.ctx, &pb.GetMyGroupListReq{
-			CommonReq: &pb.CommonReq{
-				UserId: userId,
-			},
-			Page: &pb.Page{Page: 1},
-			Filter: &pb.GetMyGroupListReq_Filter{
-				FilterFold:   true,
-				FilterShield: true,
-			},
-			Opt: pb.GetMyGroupListReq_ONLY_ID,
-		})
-		if err != nil {
-			l.Errorf("get group list error: %v", err)
-			return convIds, err
-		}
-		groupIds = getMyGroupList.Ids
-		for _, id := range groupIds {
-			convIds = append(convIds, pb.GroupConvId(id))
-		}
-	}
+	convIds = convIdOfUser.ConvIds
 	return convIds, nil
 }

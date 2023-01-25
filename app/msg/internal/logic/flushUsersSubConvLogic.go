@@ -40,58 +40,15 @@ func (l *FlushUsersSubConvLogic) FlushUsersSubConv(in *pb.FlushUsersSubConvReq) 
 }
 
 func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
-	var friendIds []string
-	var groupIds []string
 	var convIds []string
-	// 默认的
-	{
-		convIds = append(convIds, pb.HiddenConvIdCommand(), pb.HiddenConvIdFriendMember(), pb.HiddenConvIdGroupMember())
+	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
+		UserId: userId,
+	})
+	if err != nil {
+		l.Errorf("get all conv id of user error: %v", err)
+		return err
 	}
-	// 获取用户订阅的好友列表
-	{
-		getFriendList, err := l.svcCtx.RelationService().GetFriendList(l.ctx, &pb.GetFriendListReq{
-			CommonReq: &pb.CommonReq{
-				UserId: userId,
-			},
-			Page: &pb.Page{
-				Page: 1,
-				Size: 0,
-			},
-			Opt: pb.GetFriendListReq_OnlyId,
-		})
-		if err != nil {
-			l.Errorf("get friend list error: %v", err)
-			return err
-		}
-		friendIds = getFriendList.Ids
-		for _, id := range friendIds {
-			convIds = append(convIds, pb.SingleConvId(userId, id))
-			convIds = append(convIds, pb.HiddenConvIdFriend(id))
-		}
-	}
-	// 获取用户订阅的群组列表
-	{
-		getMyGroupList, err := l.svcCtx.GroupService().GetMyGroupList(l.ctx, &pb.GetMyGroupListReq{
-			CommonReq: &pb.CommonReq{
-				UserId: userId,
-			},
-			Page: &pb.Page{Page: 1},
-			Filter: &pb.GetMyGroupListReq_Filter{
-				FilterFold:   true,
-				FilterShield: true,
-			},
-			Opt: pb.GetMyGroupListReq_ONLY_ID,
-		})
-		if err != nil {
-			l.Errorf("get group list error: %v", err)
-			return err
-		}
-		groupIds = getMyGroupList.Ids
-		for _, id := range groupIds {
-			convIds = append(convIds, pb.GroupConvId(id))
-			convIds = append(convIds, pb.HiddenConvIdGroup(id))
-		}
-	}
+	convIds = convIdOfUser.ConvIds
 	// mzadd and setex
 	if len(convIds) > 0 {
 		var keys []string
