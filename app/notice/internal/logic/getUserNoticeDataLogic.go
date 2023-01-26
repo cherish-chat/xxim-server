@@ -109,14 +109,14 @@ func (l *GetUserNoticeDataLogic) getDeviceNoticeData(in *pb.GetUserNoticeDataReq
 	if minSeq >= maxSeq {
 		return nil
 	}
-	notice, err := noticemodel.PopNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, minSeq, maxSeq)
+	notice, err := noticemodel.PopNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, deviceId, minSeq, maxSeq)
 	if err != nil {
 		l.Errorf("GetUserNoticeData failed, err: %v", err)
 		return err
 	}
 	if notice == nil {
 		// 查询广播的通知
-		notice, err = noticemodel.PopNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, "", minSeq, maxSeq)
+		notice, err = noticemodel.PopNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, "", deviceId, minSeq, maxSeq)
 		if err != nil {
 			l.Errorf("GetUserNoticeData failed, err: %v", err)
 			return err

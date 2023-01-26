@@ -6,8 +6,8 @@ func UserAckRecord(userId string, deviceId string) string {
 	return "h:user_ack_record:" + userId + ":" + deviceId
 }
 
-func NoticeSortSetKey(convId string, userId string) string {
-	return "z:notice:" + convId + ":" + userId
+func NoticeSortSetKey(convId string, userId string, deviceId string) string {
+	return "z:notice:" + convId + ":" + userId + ":" + deviceId
 }
 
 func NoticeSortSetExpire() int {
