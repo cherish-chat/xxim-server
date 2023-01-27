@@ -209,7 +209,7 @@ func (s *ConnServer) registerGateway() {
 				Do:       logic.NewSetConnParamsLogic(s.svcCtx).SetConnParams,
 				Callback: logic.NewSetConnParamsLogic(s.svcCtx).Callback,
 			}
-			conngateway.AddRoute("/v1/conn/white/setConnParams", route)
+			conngateway.AddRoute("/v1/conn/white/setCxnParams", route)
 		}
 		// 设置userId和token
 		{
