@@ -157,6 +157,8 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
 	l.Infof("user %s connected", utils.AnyToString(param))
+	// 告知客户端连接成功
+	_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
 	// 是否未认证的连接
 	if param.UserId == "" || param.Token == "" {
 		l.unknownConnMap.Store(c, struct{}{})
@@ -171,8 +173,6 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 		}
 		l.UpdateDevice(param.UserId, param.Platform, param.DeviceId, c)
 	}
-	// 告知客户端连接成功
-	_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
 	go func() {
 		for {
 			_, err := l.svcCtx.ImService().AfterConnect(c.Ctx, &pb.AfterConnectReq{
