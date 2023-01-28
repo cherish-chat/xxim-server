@@ -95,33 +95,33 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
 	logger := logx.WithContext(ctx)
 	// 获取 加行锁
-	var maxConvAutoId NoticeMaxConvAutoId
+	var maxConvAutoId = &NoticeMaxConvAutoId{}
 	maxConvAutoId.ConvId = convId
-	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Limit(1).Find(&maxConvAutoId).Error
+	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).First(maxConvAutoId).Error
 	if err != nil {
-		logger.Errorf("get maxConvAutoId err: %v", err)
-		return 0, err
-	}
-	if maxConvAutoId.ConvAutoId == 0 {
-		// 不存在，初始化
-		maxConvAutoId.ConvAutoId = 1 + incr
-		err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
-		if err != nil {
-			logger.Errorf("create maxConvAutoId err: %v", err)
-			return 0, err
-		}
-		return maxConvAutoId.ConvAutoId, nil
-	} else {
-		if incr > 0 {
-			// 更新
-			err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
+		if xorm.RecordNotFound(err) {
+			// 不存在，初始化
+			maxConvAutoId.ConvAutoId = 1 + incr
+			err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
 			if err != nil {
-				logger.Errorf("update maxConvAutoId err: %v", err)
+				logger.Errorf("create maxConvAutoId err: %v", err)
 				return 0, err
 			}
+			return maxConvAutoId.ConvAutoId, nil
+		} else {
+			logger.Errorf("get maxConvAutoId err: %v", err)
+			return 0, err
 		}
-		return maxConvAutoId.ConvAutoId + incr, nil
 	}
+	if incr > 0 {
+		// 更新
+		err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
+		if err != nil {
+			logger.Errorf("update maxConvAutoId err: %v", err)
+			return 0, err
+		}
+	}
+	return maxConvAutoId.ConvAutoId + incr, nil
 }
 
 func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId string, deviceId string) (int64, error) {
