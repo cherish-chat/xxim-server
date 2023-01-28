@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"sync"
 	"time"
 )
 
@@ -18,4 +19,13 @@ func RetryProxy(ctx context.Context, maxTimes int, interval time.Duration, f fun
 			time.Sleep(interval)
 		}
 	}
+}
+
+func SyncMapLength(m *sync.Map) int {
+	length := 0
+	m.Range(func(key, value interface{}) bool {
+		length++
+		return true
+	})
+	return length
 }
