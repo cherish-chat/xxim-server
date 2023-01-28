@@ -5,6 +5,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -24,6 +26,19 @@ func NewAckNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ack
 
 // AckNoticeData 确认通知数据
 func (l *AckNoticeDataLogic) AckNoticeData(in *pb.AckNoticeDataReq) (*pb.AckNoticeDataResp, error) {
+	defer func() {
+		xtrace.StartFuncSpan(l.ctx, "GetUserNoticeData", func(ctx context.Context) {
+			_, err := NewGetUserNoticeDataLogic(ctx, l.svcCtx).GetUserNoticeData(&pb.GetUserNoticeDataReq{
+				CommonReq: in.GetCommonReq(),
+				UserId:    in.CommonReq.UserId,
+				ConvId:    in.ConvId,
+				DeviceId:  utils.AnyPtr(in.CommonReq.DeviceId),
+			})
+			if err != nil {
+				l.Errorf("GetUserNoticeData failed, err: %v", err)
+			}
+		})
+	}()
 	convId, seq, _ := pb.ParseServerNoticeId(in.NoticeId)
 	ackRecord := &noticemodel.NoticeAckRecord{
 		ConvId:     convId,
