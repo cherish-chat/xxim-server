@@ -89,6 +89,9 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 	if m.CreateTime == 0 {
 		m.CreateTime = time.Now().UnixMilli()
 	}
+	if m.Ext == nil {
+		m.Ext = make([]byte, 0)
+	}
 	return tx.Create(m).Error
 }
 
