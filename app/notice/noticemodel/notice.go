@@ -154,20 +154,25 @@ func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId st
 	return ackRecord.ConvAutoId, nil
 }
 
-func PopNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
+func GetNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
 	logger := logx.WithContext(ctx)
 	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
-	// pop最小的
-	noticeId, err := xredis.ZPopMin(ctx, rc, sortSetKey)
+	// get最小的 ZRANGEBYSCORE key -inf +inf LIMIT 0 1
+	pairs, err := rc.ZrangebyscoreWithScoresAndLimitCtx(ctx, sortSetKey, -405, 0, 0, 1)
 	if err != nil {
 		// 如果是 redis.Nil 则表示没有数据
 		if err == redis.Nil {
-			return popNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+			return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
 		} else {
 			logger.Errorf("zpopmin err: %v", err)
-			return popNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+			return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
 		}
 	}
+	if len(pairs) == 0 {
+		// 没有数据
+		return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+	}
+	noticeId := pairs[0].Key
 	// 如果 noticeId == xredis.NotFound 则表示真的没有数据 直接返回
 	if noticeId == xredis.NotFound {
 		return nil, nil
@@ -182,7 +187,7 @@ func PopNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string,
 	return notice, nil
 }
 
-func popNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
+func getNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
 	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
 	logger := logx.WithContext(ctx)
 	// 先删掉redis中的数据
@@ -229,6 +234,17 @@ func flushNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, userId
 	_, err := rc.DelCtx(ctx, sortSetKey)
 	if err != nil {
 		logger.Errorf("redis del err: %v", err)
+	}
+	return err
+}
+
+func DelNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string, seq int64) error {
+	logger := logx.WithContext(ctx)
+	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
+	// zrembyseq
+	_, err := rc.ZremrangebyscoreCtx(ctx, sortSetKey, seq, seq)
+	if err != nil {
+		logger.Errorf("redis zrembyseq err: %v", err)
 	}
 	return err
 }

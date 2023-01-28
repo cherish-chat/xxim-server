@@ -41,5 +41,10 @@ func (l *AckNoticeDataLogic) AckNoticeData(in *pb.AckNoticeDataReq) (*pb.AckNoti
 		l.Errorf("AckNoticeData failed, err: %v", err)
 		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
+	err = noticemodel.DelNoticeZSet(l.ctx, l.svcCtx.Redis(), convId, userId, in.CommonReq.DeviceId, seq)
+	if err != nil {
+		l.Errorf("AckNoticeData failed, err: %v", err)
+		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	return &pb.AckNoticeDataResp{}, nil
 }
