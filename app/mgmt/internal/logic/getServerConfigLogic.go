@@ -93,34 +93,6 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 				"Port":      serverConfig.ConnRpc.Port,
 			},
 		},
-		//"ImRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.ImRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"MsgRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.MsgRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"UserRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.UserRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"RelationRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.RelationRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"GroupRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.GroupRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"NoticeRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.NoticeRpc.Port)},
-		//	"NonBlock":  true,
-		//},
-		//"MgmtRpc": map[string]any{
-		//	"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.Mgmt.RpcPort)},
-		//	"NonBlock":  true,
-		//},
 	}
 	if serverConfig.ConnRpc.DiscovType == "endpoints" {
 		c["ImRpc"] = map[string]any{

@@ -7,7 +7,13 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	Gin GinConfig
+	Gin         GinConfig
+	ImRpc       zrpc.RpcClientConf
+	MsgRpc      zrpc.RpcClientConf
+	RelationRpc zrpc.RpcClientConf
+	UserRpc     zrpc.RpcClientConf
+	GroupRpc    zrpc.RpcClientConf
+	NoticeRpc   zrpc.RpcClientConf
 }
 type GinConfig struct {
 	Cors middleware.CorsConfig

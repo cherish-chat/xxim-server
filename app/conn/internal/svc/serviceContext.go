@@ -9,14 +9,12 @@ import (
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
 	Config          config.Config
-	Mgo             *xmgo.Client
 	imService       imservice.ImService
 	msgService      msgservice.MsgService
 	noticeService   noticeservice.NoticeService

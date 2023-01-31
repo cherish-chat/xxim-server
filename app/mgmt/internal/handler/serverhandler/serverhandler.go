@@ -19,4 +19,9 @@ func (r *ServerHandler) Register(engine *gin.Engine) {
 	{
 		group.GET("/config", r.config)
 	}
+	// 其他
+	{
+		// 全服在线人数
+		group.GET("/onlineshield", r.onlineShield)
+	}
 }
