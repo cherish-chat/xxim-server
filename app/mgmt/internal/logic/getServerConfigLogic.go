@@ -69,9 +69,9 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 		},
 		"Telemetry": map[string]any{
 			"Name":     name,
-			"Endpoint": "",
-			"Sampler":  1.0,
-			"Batcher":  "jaeger",
+			"Endpoint": serverConfig.Common.Telemetry.EndPoint,
+			"Sampler":  serverConfig.Common.Telemetry.Sampler,
+			"Batcher":  serverConfig.Common.Telemetry.Batcher,
 		},
 		"Redis": map[string]any{
 			"Host": serverConfig.Common.Redis.Host,
