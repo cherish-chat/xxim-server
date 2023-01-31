@@ -12,9 +12,7 @@ type Config struct {
 	TDMQ struct {
 		xtdmq.TDMQConfig
 		xtdmq.TDMQConsumerConfig
-		Producers struct {
-			Msg xtdmq.TDMQProducerConfig
-		}
+		Producer xtdmq.TDMQProducerConfig
 	}
 	Mysql            xorm.MysqlConfig
 	ImRpc            zrpc.RpcClientConf

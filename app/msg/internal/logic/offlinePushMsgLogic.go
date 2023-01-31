@@ -54,7 +54,7 @@ func (l *OfflinePushMsgLogic) OfflinePushMsg(in *pb.OfflinePushMsgReq) (*pb.Offl
 				l.Errorf("MobPush err: %v", err)
 				return &pb.OfflinePushMsgResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
-			l.Infof("MobPush resp: %v", resp)
+			l.Debugf("MobPush resp: %v", resp)
 		}
 	} else if l.svcCtx.Config.MobAlias == "userId" {
 		if len(in.UserIds) > 0 {
@@ -63,7 +63,7 @@ func (l *OfflinePushMsgLogic) OfflinePushMsg(in *pb.OfflinePushMsgReq) (*pb.Offl
 				l.Errorf("MobPush err: %v", err)
 				return &pb.OfflinePushMsgResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
-			l.Infof("MobPush resp: %v", resp)
+			l.Debugf("MobPush resp: %v", resp)
 		}
 	}
 	err = l.svcCtx.Redis().SetexCtx(l.ctx, rediskey.OfflinePushMsgListKey(in.UniqueId), in.Content, 10)

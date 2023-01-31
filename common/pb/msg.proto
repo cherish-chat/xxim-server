@@ -82,7 +82,7 @@ message BatchGetMsgListByConvIdReq {
     repeated string seqList = 2;
   }
   repeated Item items = 1;
-  bool return = 2;
+  bool push = 2;
   CommonReq commonReq = 11;
 }
 
@@ -94,7 +94,7 @@ message GetMsgListResp {
 message GetMsgByIdReq {
   optional string serverMsgId = 1;
   optional string clientMsgId = 2;
-  bool return = 3;
+  bool push = 3;
   CommonReq commonReq = 11;
 }
 

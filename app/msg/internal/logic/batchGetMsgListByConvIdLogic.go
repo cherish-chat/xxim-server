@@ -137,7 +137,7 @@ func (l *BatchGetMsgListByConvIdLogic) BatchGetMsgListByConvId(in *pb.BatchGetMs
 	for _, msg := range msgList {
 		resp = append(resp, msg.ToMsgData())
 	}
-	if in.Return {
+	if !in.Push {
 		return &pb.GetMsgListResp{MsgDataList: resp}, nil
 	} else {
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "PushMsgList", func(ctx context.Context) {

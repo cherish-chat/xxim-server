@@ -48,7 +48,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 func (s *ServiceContext) MsgProducer() *xtdmq.TDMQProducer {
 	if s.msgProducer == nil {
-		s.msgProducer = xtdmq.NewTDMQProducer(s.Config.TDMQ.TDMQConfig, s.Config.TDMQ.Producers.Msg)
+		s.msgProducer = xtdmq.NewTDMQProducer(s.Config.TDMQ.TDMQConfig, s.Config.TDMQ.Producer)
 	}
 	return s.msgProducer
 }
