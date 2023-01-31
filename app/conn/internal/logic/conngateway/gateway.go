@@ -49,7 +49,7 @@ func PrintRoutes() {
 func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 	if c.ConnParam.UserId == "" || c.ConnParam.Token == "" {
 		// 未登录
-		logx.WithContext(ctx).Infof("OnReceive: %s, user not login, conn的内存地址: %p", method, c)
+		logx.WithContext(ctx).Debugf("OnReceive: %s, user not login, conn的内存地址: %p", method, c)
 		if !strings.Contains(method, "/white/") {
 			// 不能访问
 			return &pb.ResponseBody{

@@ -1,0 +1,21 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+import "conn.proto";
+
+//GetServerConfigReq 获取服务器配置请求
+message GetServerConfigReq {
+  string serverName = 1;
+}
+
+//GetServerConfigResp 获取服务器配置响应
+message GetServerConfigResp {
+  bytes config = 1;
+}
+
+service mgmtService {
+  rpc AfterConnect(AfterConnectReq) returns (CommonResp);
+  rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
+}

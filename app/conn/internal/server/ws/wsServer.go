@@ -196,7 +196,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, conn *types.UserConn) {
 	defer cancelFunc()
 	for {
-		logx.WithContext(ctx).Infof("start read")
+		logx.WithContext(ctx).Debugf("start read")
 		typ, msg, err := conn.Conn.Read(ctx)
 		if err != nil {
 			if errors.Is(err, io.EOF) {
@@ -209,7 +209,7 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 			}
 			return
 		}
-		logx.WithContext(ctx).Infof("read message.length: %d", len(msg))
+		logx.WithContext(ctx).Debugf("read message.length: %d", len(msg))
 		go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
 			s.onReceive(ctx, conn, typ, msg)
 		}, propagation.MapCarrier{

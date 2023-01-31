@@ -40,8 +40,8 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 					l.Errorf("SendMsg error: %v", err)
 					return
 				}
-				l.Infof("resp.SuccessConnParams.length: %v", len(resp.SuccessConnParams))
-				l.Infof("resp.FailedConnParams.length: %v", len(resp.FailedConnParams))
+				l.Debugf("resp.SuccessConnParams.length: %v", len(resp.SuccessConnParams))
+				l.Debugf("resp.FailedConnParams.length: %v", len(resp.FailedConnParams))
 				failedConnParams = append(failedConnParams, resp.FailedConnParams...)
 				successConnParams = append(successConnParams, resp.SuccessConnParams...)
 			}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{

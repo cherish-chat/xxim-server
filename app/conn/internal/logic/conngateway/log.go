@@ -13,6 +13,6 @@ func reqLog[REQ IReq, RESP IResp](c *types.UserConn, method string, body IBody, 
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("reqId: %s, method: %s, req: %s, resp: %s, error: %v", reqId, method, reqStr, respStr, err)
 	} else {
-		logx.WithContext(c.Ctx).Infof("reqId: %s, method: %s, req: %s, resp: %s", reqId, method, reqStr, respStr)
+		logx.WithContext(c.Ctx).Debugf("reqId: %s, method: %s, req: %s, resp: %s", reqId, method, reqStr, respStr)
 	}
 }

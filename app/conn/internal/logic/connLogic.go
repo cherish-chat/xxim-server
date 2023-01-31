@@ -161,12 +161,12 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
-	l.Infof("user %s connected", utils.AnyToString(param))
-	// 告知客户端连接成功
-	_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
+	l.Debugf("user %s connected", utils.AnyToString(param))
 	// 是否未认证的连接
 	if param.UserId == "" || param.Token == "" {
 		l.unknownConnMap.Store(c, struct{}{})
+		// 告知客户端连接成功
+		_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
 		return
 	}
 	// 删除未认证的连接
@@ -209,7 +209,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 }
 
 func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
-	l.Infof("user %s disconnected", utils.AnyToString(c.ConnParam))
+	l.Debugf("user %s disconnected", utils.AnyToString(c.ConnParam))
 	// 是否未认证的连接
 	if _, ok := l.unknownConnMap.Load(c); ok {
 		l.unknownConnMap.Delete(c)
