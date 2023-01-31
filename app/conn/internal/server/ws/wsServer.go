@@ -142,6 +142,10 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		CompressionThreshold: 0,
 	})
 	if err != nil {
+		// 如果是 / 说明是健康检查
+		if r.URL.Path == "/" {
+			return
+		}
 		logger.Errorf("failed to accept websocket connection: %v", err)
 		return
 	}
