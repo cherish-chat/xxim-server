@@ -13,8 +13,8 @@ func NewServerHandler(svcCtx *svc.ServiceContext) *ServerHandler {
 	return &ServerHandler{svcCtx: svcCtx}
 }
 
-func (r *ServerHandler) Register(engine *gin.Engine) {
-	group := engine.Group("/server")
+func (r *ServerHandler) Register(g *gin.RouterGroup) {
+	group := g.Group("/server")
 	// server端配置中心
 	{
 		group.GET("/config", r.config)

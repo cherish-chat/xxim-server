@@ -26,7 +26,7 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.Use(middleware.Recovery())
 	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
 	// routes
-	serverhandler.NewServerHandler(s.svcCtx).Register(engine)
+	serverhandler.NewServerHandler(s.svcCtx).Register(engine.Group("/api"))
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}
 }
 
