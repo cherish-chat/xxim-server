@@ -174,6 +174,11 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	// 加入用户连接
 	{
 		if userConn, ok := l.LoadDeviceOk(param.UserId, param.Platform, param.DeviceId); ok {
+			// 是不是同一条连接
+			if userConn.Conn == c.Conn {
+				// 是同一条连接
+				return
+			}
 			userConn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
 		}
 		l.UpdateDevice(param.UserId, param.Platform, param.DeviceId, c)
