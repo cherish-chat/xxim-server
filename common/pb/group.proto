@@ -3,7 +3,6 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 import "im.proto";
-import "validate.proto";
 enum GroupDisturbOpt {
   // 接收消息但不提醒
   DisturbReceive = 0;
@@ -26,10 +25,7 @@ message CreateGroupReq {
   // 拉人进群
   repeated string members = 2;
   // 群名称(可选参数)
-  optional string name = 3[(rules).string = {
-    // 至少1个字符 最多16个字符
-    pattern: "^[\\s\\S]{1,16}$"
-  }];
+  optional string name = 3;
   // 群头像(可选参数)
   optional string avatar = 4;
 }
@@ -45,7 +41,7 @@ message CreateGroupResp {
 message GetGroupHomeReq {
   CommonReq commonReq = 1;
   // 群ID
-  string groupId = 2[(rules).string.min_len = 1];
+  string groupId = 2;
 }
 
 //GetGroupHomeResp 获取群聊首页
