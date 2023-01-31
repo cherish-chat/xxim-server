@@ -22,6 +22,6 @@ func (r *ServerHandler) Register(g *gin.RouterGroup) {
 	// 其他
 	{
 		// 全服在线人数
-		group.GET("/onlineshield", r.onlineShield)
+		group.GET("/onlineshield/:randString", r.onlineShield)
 	}
 }
