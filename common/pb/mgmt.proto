@@ -98,6 +98,8 @@ message GetServerAllConfigResp {
   message MgmtConfig {
     int64 rpcPort = 1;
     int64 httpPort = 2;
+    string superAdminId = 3;
+    string superAdminPass = 4;
   }
   CommonConfig common = 2;
   ConnRpcConfig connRpc = 3;

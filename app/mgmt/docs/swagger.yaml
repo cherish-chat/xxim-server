@@ -145,6 +145,10 @@ definitions:
         type: integer
       rpcPort:
         type: integer
+      superAdminId:
+        type: string
+      superAdminPass:
+        type: string
     type: object
   pb.GetServerAllConfigResp_MobPushConfig:
     properties:

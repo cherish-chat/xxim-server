@@ -328,6 +328,12 @@ const docTemplate = `{
                 },
                 "rpcPort": {
                     "type": "integer"
+                },
+                "superAdminId": {
+                    "type": "string"
+                },
+                "superAdminPass": {
+                    "type": "string"
                 }
             }
         },

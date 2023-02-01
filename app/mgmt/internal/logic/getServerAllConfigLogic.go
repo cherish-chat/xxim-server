@@ -84,8 +84,10 @@ func (l *GetServerAllConfigLogic) GetServerAllConfig(in *pb.GetServerAllConfigRe
 		GroupRpc:    &pb.GetServerAllConfigResp_GroupRpcConfig{Port: config.GroupRpc.Port},
 		NoticeRpc:   &pb.GetServerAllConfigResp_NoticeRpcConfig{Port: config.NoticeRpc.Port},
 		Mgmt: &pb.GetServerAllConfigResp_MgmtConfig{
-			RpcPort:  config.Mgmt.RpcPort,
-			HttpPort: config.Mgmt.HttpPort,
+			RpcPort:        config.Mgmt.RpcPort,
+			HttpPort:       config.Mgmt.HttpPort,
+			SuperAdminId:   config.Mgmt.SuperAdminId,
+			SuperAdminPass: config.Mgmt.SuperAdminPass,
 		},
 	}, nil
 }
