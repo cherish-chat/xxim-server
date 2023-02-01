@@ -1,5 +1,101 @@
 basePath: /api
 definitions:
+  pb.AddMSApiPathReq:
+    properties:
+      apiPath:
+        $ref: '#/definitions/pb.MSApiPath'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddMSApiPathResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddMSIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ipWhiteList:
+        $ref: '#/definitions/pb.MSIpWhiteList'
+    type: object
+  pb.AddMSIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddMSMenuReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      menu:
+        $ref: '#/definitions/pb.MSMenu'
+    type: object
+  pb.AddMSMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddMSUserReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      user:
+        $ref: '#/definitions/pb.MSUser'
+    type: object
+  pb.AddMSUserResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.BindMSRoleApiPathReq:
+    properties:
+      apiPathIds:
+        items:
+          type: string
+        type: array
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      roleId:
+        type: string
+    type: object
+  pb.BindMSRoleApiPathResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.BindMSRoleMenuReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      menuIds:
+        items:
+          type: string
+        type: array
+      roleId:
+        type: string
+    type: object
+  pb.BindMSRoleMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.BindMSUserRoleReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      roleIds:
+        items:
+          type: string
+        type: array
+      userId:
+        type: string
+    type: object
+  pb.BindMSUserRoleResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.CommonReq:
     properties:
       appVersion:
@@ -72,6 +168,234 @@ definitions:
     - CommonResp_RetryError
     - CommonResp_ForbiddenError
     - CommonResp_NeedSecondPasswordError
+  pb.DeleteMSApiPathReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSApiPathResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSMenuReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSUserReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSUserResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAllMSApiPathListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSApiPathListResp:
+    properties:
+      apiPaths:
+        items:
+          $ref: '#/definitions/pb.MSApiPath'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllMSIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      ipWhiteLists:
+        items:
+          $ref: '#/definitions/pb.MSIpWhiteList'
+        type: array
+      total:
+        type: integer
+    type: object
+  pb.GetAllMSMenuListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSMenuListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      menus:
+        items:
+          $ref: '#/definitions/pb.MSMenu'
+        type: array
+      total:
+        type: integer
+    type: object
+  pb.GetAllMSUserListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSUserListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/pb.MSUser'
+        type: array
+    type: object
+  pb.GetMSApiPathDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSApiPathDetailResp:
+    properties:
+      apiPath:
+        $ref: '#/definitions/pb.MSApiPath'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetMSIpWhiteListDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSIpWhiteListDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      ipWhiteList:
+        $ref: '#/definitions/pb.MSIpWhiteList'
+    type: object
+  pb.GetMSMenuDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSMenuDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      menu:
+        $ref: '#/definitions/pb.MSMenu'
+    type: object
+  pb.GetMSUserDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSUserDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      user:
+        $ref: '#/definitions/pb.MSUser'
+    type: object
+  pb.GetMyMSApiPathListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.GetMyMSApiPathListResp:
+    properties:
+      apiPaths:
+        items:
+          $ref: '#/definitions/pb.MSApiPath'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetMyMSMenuListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.GetMyMSMenuListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      menus:
+        items:
+          $ref: '#/definitions/pb.MSMenu'
+        type: array
+    type: object
   pb.GetServerAllConfigResp:
     properties:
       common:
@@ -244,7 +568,308 @@ definitions:
       serverName:
         type: string
     type: object
-host: api.cherish.chat
+  pb.HealthMSResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      msg:
+        type: string
+      success:
+        type: boolean
+    type: object
+  pb.LoginMSReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+      password:
+        type: string
+    type: object
+  pb.LoginMSResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      id:
+        type: string
+      token:
+        type: string
+    type: object
+  pb.MSApiPath:
+    properties:
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      createdBy:
+        type: string
+      id:
+        type: string
+      path:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: integer
+      updatedAtStr:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  pb.MSIpWhiteList:
+    properties:
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      createdBy:
+        type: string
+      endIp:
+        type: string
+      id:
+        type: string
+      isEnable:
+        type: boolean
+      remark:
+        type: string
+      startIp:
+        type: string
+      updatedAt:
+        type: integer
+      updatedAtStr:
+        type: string
+      updatedBy:
+        type: string
+      userId:
+        type: string
+    type: object
+  pb.MSMenu:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/pb.MSMenu'
+        type: array
+      component:
+        type: string
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      createdBy:
+        type: string
+      icon:
+        type: string
+      id:
+        type: string
+      parentId:
+        type: string
+      path:
+        type: string
+      redirect:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: integer
+      updatedAtStr:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  pb.MSRole:
+    properties:
+      apiPathIds:
+        items:
+          type: string
+        type: array
+      apiPaths:
+        additionalProperties:
+          $ref: '#/definitions/pb.MSApiPath'
+        type: object
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      createdBy:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      menuIds:
+        items:
+          type: string
+        type: array
+      menus:
+        additionalProperties:
+          $ref: '#/definitions/pb.MSMenu'
+        type: object
+      title:
+        type: string
+      updatedAt:
+        type: integer
+      updatedAtStr:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  pb.MSUser:
+    properties:
+      apiPathIds:
+        items:
+          type: string
+        type: array
+      apiPaths:
+        additionalProperties:
+          $ref: '#/definitions/pb.MSApiPath'
+        type: object
+      avatar:
+        type: string
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      createdBy:
+        type: string
+      id:
+        type: string
+      menuIds:
+        items:
+          type: string
+        type: array
+      menus:
+        additionalProperties:
+          $ref: '#/definitions/pb.MSMenu'
+        type: object
+      nickname:
+        type: string
+      password:
+        type: string
+      roleIds:
+        items:
+          type: string
+        type: array
+      roles:
+        additionalProperties:
+          $ref: '#/definitions/pb.MSRole'
+        type: object
+      unbanTime:
+        type: integer
+      unbanTimeStr:
+        type: string
+      updatedAt:
+        type: integer
+      updatedAtStr:
+        type: string
+      updatedBy:
+        type: string
+      username:
+        type: string
+    type: object
+  pb.Page:
+    properties:
+      page:
+        type: integer
+      size:
+        type: integer
+    type: object
+  pb.UnbindMSRoleApiPathReq:
+    properties:
+      apiPathIds:
+        items:
+          type: string
+        type: array
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      roleId:
+        type: string
+    type: object
+  pb.UnbindMSRoleApiPathResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UnbindMSRoleMenuReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      menuIds:
+        items:
+          type: string
+        type: array
+      roleId:
+        type: string
+    type: object
+  pb.UnbindMSRoleMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UnbindMSUserRoleReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      roleIds:
+        items:
+          type: string
+        type: array
+      userId:
+        type: string
+    type: object
+  pb.UnbindMSUserRoleResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSApiPathReq:
+    properties:
+      apiPath:
+        $ref: '#/definitions/pb.MSApiPath'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateMSApiPathResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ipWhiteList:
+        $ref: '#/definitions/pb.MSIpWhiteList'
+    type: object
+  pb.UpdateMSIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSMenuReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      menu:
+        $ref: '#/definitions/pb.MSMenu'
+    type: object
+  pb.UpdateMSMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSUserReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      user:
+        $ref: '#/definitions/pb.MSUser'
+    type: object
+  pb.UpdateMSUserResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+host: 127.0.0.1:6799
 info:
   contact:
     name: showurl
@@ -252,6 +877,805 @@ info:
   title: xxim-server HTTP API 文档
   version: "1.0"
 paths:
+  /ms/add/admin:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口添加管理员
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSUserResp'
+      summary: 添加管理员
+      tags:
+      - 管理员相关接口
+  /ms/add/apipath:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增服务端ApiPath
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSApiPathReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSApiPathResp'
+      summary: 新增服务端ApiPath
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/add/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口添加ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSIpWhiteListResp'
+      summary: 添加ip白名单
+      tags:
+      - 管理系统ip白名单相关接口
+  /ms/add/menu:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增菜单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSMenuReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSMenuResp'
+      summary: 新增菜单
+      tags:
+      - 管理系统菜单相关接口
+  /ms/bind/admin/role/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口绑定管理员角色
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.BindMSUserRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.BindMSUserRoleResp'
+      summary: 绑定管理员角色
+      tags:
+      - 管理员角色相关接口
+  /ms/bind/role/apipath/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口绑定角色ApiPath
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.BindMSRoleApiPathReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.BindMSRoleApiPathResp'
+      summary: 绑定角色ApiPath
+      tags:
+      - 角色ApiPath绑定相关接口
+  /ms/bind/role/menu/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口绑定角色菜单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.BindMSRoleMenuReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.BindMSRoleMenuResp'
+      summary: 绑定角色菜单
+      tags:
+      - 角色菜单绑定相关接口
+  /ms/delete/admin:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除管理员
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSUserResp'
+      summary: 删除管理员
+      tags:
+      - 管理员相关接口
+  /ms/delete/apipath:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除服务端ApiPath
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSApiPathReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSApiPathResp'
+      summary: 删除服务端ApiPath
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/delete/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSIpWhiteListResp'
+      summary: 删除ip白名单
+      tags:
+      - 管理系统ip白名单相关接口
+  /ms/delete/menu:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除菜单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSMenuReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSMenuResp'
+      summary: 删除菜单
+      tags:
+      - 管理系统菜单相关接口
+  /ms/get/admin/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取管理员详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSUserDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSUserDetailResp'
+      summary: 获取管理员详情
+      tags:
+      - 管理员相关接口
+  /ms/get/admin/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取所有管理员列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSUserListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSUserListResp'
+      summary: 获取所有管理员列表
+      tags:
+      - 管理员相关接口
+  /ms/get/apipath/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取服务端ApiPath详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSApiPathDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSApiPathDetailResp'
+      summary: 获取服务端ApiPath详情
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/get/apipath/list:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取我的服务端ApiPath列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMyMSApiPathListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMyMSApiPathListResp'
+      summary: 获取我的服务端ApiPath列表
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/get/apipath/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取所有服务端ApiPath列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSApiPathListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSApiPathListResp'
+      summary: 获取所有服务端ApiPath列表
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/get/ipwhitelist/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取ip白名单详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSIpWhiteListDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSIpWhiteListDetailResp'
+      summary: 获取ip白名单详情
+      tags:
+      - 管理系统ip白名单相关接口
+  /ms/get/ipwhitelist/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部ip白名单列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSIpWhiteListResp'
+      summary: 获取全部ip白名单列表
+      tags:
+      - 管理系统ip白名单相关接口
+  /ms/get/menu/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取菜单详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSMenuDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSMenuDetailResp'
+      summary: 获取菜单详情
+      tags:
+      - 管理系统菜单相关接口
+  /ms/get/menu/list:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取我的菜单列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMyMSMenuListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMyMSMenuListResp'
+      summary: 获取我的菜单列表
+      tags:
+      - 管理系统菜单相关接口
+  /ms/get/menu/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取所有菜单列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSMenuListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSMenuListResp'
+      summary: 获取所有菜单列表
+      tags:
+      - 管理系统菜单相关接口
+  /ms/health:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口检查服务是否健康
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.HealthMSResp'
+      summary: 检查服务是否健康
+      tags:
+      - 账号相关接口
+  /ms/login:
+    post:
+      consumes:
+      - application/json
+      description: 必须是管理员才能登录
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.LoginMSReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.LoginMSResp'
+      summary: 登录managersystem管理系统
+      tags:
+      - 账号相关接口
+  /ms/unbind/admin/role/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口解绑管理员角色
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UnbindMSUserRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UnbindMSUserRoleResp'
+      summary: 解绑管理员角色
+      tags:
+      - 管理员角色相关接口
+  /ms/unbind/role/apipath/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口解绑角色ApiPath
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UnbindMSRoleApiPathReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UnbindMSRoleApiPathResp'
+      summary: 解绑角色ApiPath
+      tags:
+      - 角色ApiPath绑定相关接口
+  /ms/unbind/role/menu/batch:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口解绑角色菜单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UnbindMSRoleMenuReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UnbindMSRoleMenuResp'
+      summary: 解绑角色菜单
+      tags:
+      - 角色菜单绑定相关接口
+  /ms/update/admin:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新管理员
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateMSUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSUserResp'
+      summary: 更新管理员
+      tags:
+      - 管理员相关接口
+  /ms/update/apipath:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新服务端ApiPath
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateMSApiPathReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSApiPathResp'
+      summary: 更新服务端ApiPath
+      tags:
+      - 管理系统服务端ApiPath相关接口
+  /ms/update/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateMSIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSIpWhiteListResp'
+      summary: 更新ip白名单
+      tags:
+      - 管理系统ip白名单相关接口
+  /ms/update/menu:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新菜单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateMSMenuReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSMenuResp'
+      summary: 更新菜单
+      tags:
+      - 管理系统菜单相关接口
   /server/get/config:
     post:
       consumes:
@@ -320,5 +1744,5 @@ paths:
       tags:
       - 服务端相关接口
 schemes:
-- https
+- http
 swagger: "2.0"

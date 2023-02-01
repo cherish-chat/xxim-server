@@ -112,9 +112,556 @@ message GetServerAllConfigResp {
   MgmtConfig mgmt = 10;
 }
 
+//LoginMSReq 登录管理系统请求
+message LoginMSReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+  string password = 3;
+}
+
+//LoginMSResp 登录管理系统响应
+message LoginMSResp {
+  CommonResp commonResp = 1;
+  string id = 2;
+  string token = 3;
+}
+
+//HealthMSResp 健康检查响应
+message HealthMSResp {
+  CommonResp commonResp = 1;
+  bool success = 2;
+  string msg = 3;
+}
+
+//MSMenu 菜单
+message MSMenu {
+  string id = 1;
+  int64 createdAt = 2;
+  string createdAtStr = 3;
+  string createdBy = 4;
+  int64 updatedAt = 5;
+  string updatedAtStr = 6;
+  string updatedBy = 7;
+
+  string title = 11;
+  string icon = 12;
+  string path = 13;
+  string component = 14;
+  string redirect = 15;
+  string parentId = 16;
+  repeated MSMenu children = 17;
+}
+
+//GetAllMSMenuListReq 获取所有菜单列表请求
+message GetAllMSMenuListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSMenuListResp 获取所有菜单列表响应
+message GetAllMSMenuListResp {
+  CommonResp commonResp = 1;
+  repeated MSMenu menus = 2;
+  int64 total = 3;
+}
+
+//GetMyMSMenuListReq 获取我的菜单列表请求
+message GetMyMSMenuListReq {
+  CommonReq commonReq = 1;
+}
+
+//GetMyMSMenuListResp 获取我的菜单列表响应
+message GetMyMSMenuListResp {
+  CommonResp commonResp = 1;
+  repeated MSMenu menus = 2;
+}
+
+//GetMSMenuDetailReq 获取菜单详情请求
+message GetMSMenuDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSMenuDetailResp 获取菜单详情响应
+message GetMSMenuDetailResp {
+  CommonResp commonResp = 1;
+  MSMenu menu = 2;
+}
+
+//AddMSMenuReq 添加菜单请求
+message AddMSMenuReq {
+  CommonReq commonReq = 1;
+  MSMenu menu = 2;
+}
+
+//AddMSMenuResp 添加菜单响应
+message AddMSMenuResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSMenuReq 更新菜单请求
+message UpdateMSMenuReq {
+  CommonReq commonReq = 1;
+  MSMenu menu = 2;
+}
+
+//UpdateMSMenuResp 更新菜单响应
+message UpdateMSMenuResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSMenuReq 删除菜单请求
+message DeleteMSMenuReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSMenuResp 删除菜单响应
+message DeleteMSMenuResp {
+  CommonResp commonResp = 1;
+}
+
+//MSApiPath 接口路径
+message MSApiPath {
+  string id = 1;
+  int64 createdAt = 2;
+  string createdAtStr = 3;
+  string createdBy = 4;
+  int64 updatedAt = 5;
+  string updatedAtStr = 6;
+  string updatedBy = 7;
+
+  string title = 11;
+  string path = 12;
+}
+
+//GetAllMSApiPathListReq 获取所有接口路径列表请求
+message GetAllMSApiPathListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSApiPathListResp 获取所有接口路径列表响应
+message GetAllMSApiPathListResp {
+  CommonResp commonResp = 1;
+  repeated MSApiPath apiPaths = 2;
+  int64 total = 3;
+}
+
+//GetMyMSApiPathListReq 获取我的接口路径列表请求
+message GetMyMSApiPathListReq {
+  CommonReq commonReq = 1;
+}
+
+//GetMyMSApiPathListResp 获取我的接口路径列表响应
+message GetMyMSApiPathListResp {
+  CommonResp commonResp = 1;
+  repeated MSApiPath apiPaths = 2;
+}
+
+//GetMSApiPathDetailReq 获取接口路径详情请求
+message GetMSApiPathDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSApiPathDetailResp 获取接口路径详情响应
+message GetMSApiPathDetailResp {
+  CommonResp commonResp = 1;
+  MSApiPath apiPath = 2;
+}
+
+//AddMSApiPathReq 添加接口路径请求
+message AddMSApiPathReq {
+  CommonReq commonReq = 1;
+  MSApiPath apiPath = 2;
+}
+
+//AddMSApiPathResp 添加接口路径响应
+message AddMSApiPathResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSApiPathReq 更新接口路径请求
+message UpdateMSApiPathReq {
+  CommonReq commonReq = 1;
+  MSApiPath apiPath = 2;
+}
+
+//UpdateMSApiPathResp 更新接口路径响应
+message UpdateMSApiPathResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSApiPathReq 删除接口路径请求
+message DeleteMSApiPathReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSApiPathResp 删除接口路径响应
+message DeleteMSApiPathResp {
+  CommonResp commonResp = 1;
+}
+
+//MSRole 角色
+message MSRole {
+  string id = 1;
+  int64 createdAt = 2;
+  string createdAtStr = 3;
+  string createdBy = 4;
+  int64 updatedAt = 5;
+  string updatedAtStr = 6;
+  string updatedBy = 7;
+
+  string title = 11;
+  string description = 12;
+  repeated string menuIds = 13;
+  map<string, MSMenu> menus = 14;
+  repeated string apiPathIds = 15;
+  map<string, MSApiPath> apiPaths = 16;
+}
+
+//GetAllMSRoleListReq 获取所有角色列表请求
+message GetAllMSRoleListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSRoleListResp 获取所有角色列表响应
+message GetAllMSRoleListResp {
+  CommonResp commonResp = 1;
+  repeated MSRole roles = 2;
+  int64 total = 3;
+}
+
+//GetMSRoleDetailReq 获取角色详情请求
+message GetMSRoleDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSRoleDetailResp 获取角色详情响应
+message GetMSRoleDetailResp {
+  CommonResp commonResp = 1;
+  MSRole role = 2;
+}
+
+//AddMSRoleReq 添加角色请求
+message AddMSRoleReq {
+  CommonReq commonReq = 1;
+  MSRole role = 2;
+}
+
+//AddMSRoleResp 添加角色响应
+message AddMSRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSRoleReq 更新角色请求
+message UpdateMSRoleReq {
+  CommonReq commonReq = 1;
+  MSRole role = 2;
+}
+
+//UpdateMSRoleResp 更新角色响应
+message UpdateMSRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSRoleReq 删除角色请求
+message DeleteMSRoleReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSRoleResp 删除角色响应
+message DeleteMSRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//BindMSRoleMenuReq 绑定角色菜单请求
+message BindMSRoleMenuReq {
+  CommonReq commonReq = 1;
+  string roleId = 2;
+  repeated string menuIds = 3;
+}
+
+//BindMSRoleMenuResp 绑定角色菜单响应
+message BindMSRoleMenuResp {
+  CommonResp commonResp = 1;
+}
+
+//UnbindMSRoleMenuReq 解绑角色菜单请求
+message UnbindMSRoleMenuReq {
+  CommonReq commonReq = 1;
+  string roleId = 2;
+  repeated string menuIds = 3;
+}
+
+//UnbindMSRoleMenuResp 解绑角色菜单响应
+message UnbindMSRoleMenuResp {
+  CommonResp commonResp = 1;
+}
+
+//BindMSRoleApiPathReq 绑定角色接口路径请求
+message BindMSRoleApiPathReq {
+  CommonReq commonReq = 1;
+  string roleId = 2;
+  repeated string apiPathIds = 3;
+}
+
+//BindMSRoleApiPathResp 绑定角色接口路径响应
+message BindMSRoleApiPathResp {
+  CommonResp commonResp = 1;
+}
+
+//UnbindMSRoleApiPathReq 解绑角色接口路径请求
+message UnbindMSRoleApiPathReq {
+  CommonReq commonReq = 1;
+  string roleId = 2;
+  repeated string apiPathIds = 3;
+}
+
+//UnbindMSRoleApiPathResp 解绑角色接口路径响应
+message UnbindMSRoleApiPathResp {
+  CommonResp commonResp = 1;
+}
+
+//MSUser 后台管理用户
+message MSUser {
+  string id = 1;
+  int64 createdAt = 2;
+  string createdAtStr = 3;
+  string createdBy = 4;
+  int64 updatedAt = 5;
+  string updatedAtStr = 6;
+  string updatedBy = 7;
+
+  string username = 11;
+  string password = 12;
+  string nickname = 13;
+  string avatar = 14;
+  repeated string roleIds = 15;
+  map<string, MSRole> roles = 16;
+  repeated string menuIds = 17;
+  map<string, MSMenu> menus = 18;
+  repeated string apiPathIds = 19;
+  map<string, MSApiPath> apiPaths = 20;
+  optional int64 unbanTime = 21;
+  optional string unbanTimeStr = 22;
+}
+
+//GetAllMSUserListReq 获取所有用户列表请求
+message GetAllMSUserListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSUserListResp 获取所有用户列表响应
+message GetAllMSUserListResp {
+  CommonResp commonResp = 1;
+  repeated MSUser users = 2;
+  int64 total = 3;
+}
+
+//GetMSUserDetailReq 获取用户详情请求
+message GetMSUserDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSUserDetailResp 获取用户详情响应
+message GetMSUserDetailResp {
+  CommonResp commonResp = 1;
+  MSUser user = 2;
+}
+
+//AddMSUserReq 添加用户请求
+message AddMSUserReq {
+  CommonReq commonReq = 1;
+  MSUser user = 2;
+}
+
+//AddMSUserResp 添加用户响应
+message AddMSUserResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSUserReq 更新用户请求
+message UpdateMSUserReq {
+  CommonReq commonReq = 1;
+  MSUser user = 2;
+}
+
+//UpdateMSUserResp 更新用户响应
+message UpdateMSUserResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSUserReq 删除用户请求
+message DeleteMSUserReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSUserResp 删除用户响应
+message DeleteMSUserResp {
+  CommonResp commonResp = 1;
+}
+
+//BindMSUserRoleReq 绑定用户角色请求
+message BindMSUserRoleReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+  repeated string roleIds = 3;
+}
+
+//BindMSUserRoleResp 绑定用户角色响应
+message BindMSUserRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//UnbindMSUserRoleReq 解绑用户角色请求
+message UnbindMSUserRoleReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+  repeated string roleIds = 3;
+}
+
+//UnbindMSUserRoleResp 解绑用户角色响应
+message UnbindMSUserRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//MSIpWhiteList 后台管理IP白名单
+message MSIpWhiteList {
+  string id = 1;
+  int64 createdAt = 2;
+  string createdAtStr = 3;
+  string createdBy = 4;
+  int64 updatedAt = 5;
+  string updatedAtStr = 6;
+  string updatedBy = 7;
+
+  string startIp = 11;
+  string endIp = 12;
+  bool isEnable = 13;
+  string remark = 14;
+  string userId = 15;
+}
+
+//GetAllMSIpWhiteListReq 获取所有IP白名单列表请求
+message GetAllMSIpWhiteListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSIpWhiteListResp 获取所有IP白名单列表响应
+message GetAllMSIpWhiteListResp {
+  CommonResp commonResp = 1;
+  repeated MSIpWhiteList ipWhiteLists = 2;
+  int64 total = 3;
+}
+
+//GetMSIpWhiteListDetailReq 获取IP白名单详情请求
+message GetMSIpWhiteListDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSIpWhiteListDetailResp 获取IP白名单详情响应
+message GetMSIpWhiteListDetailResp {
+  CommonResp commonResp = 1;
+  MSIpWhiteList ipWhiteList = 2;
+}
+
+//AddMSIpWhiteListReq 添加IP白名单请求
+message AddMSIpWhiteListReq {
+  CommonReq commonReq = 1;
+  MSIpWhiteList ipWhiteList = 2;
+}
+
+//AddMSIpWhiteListResp 添加IP白名单响应
+message AddMSIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSIpWhiteListReq 更新IP白名单请求
+message UpdateMSIpWhiteListReq {
+  CommonReq commonReq = 1;
+  MSIpWhiteList ipWhiteList = 2;
+}
+
+//UpdateMSIpWhiteListResp 更新IP白名单响应
+message UpdateMSIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSIpWhiteListReq 删除IP白名单请求
+message DeleteMSIpWhiteListReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSIpWhiteListResp 删除IP白名单响应
+message DeleteMSIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+
   rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
   rpc GetServerAllConfig(GetServerAllConfigReq) returns (GetServerAllConfigResp);
+
+  rpc LoginMS(LoginMSReq) returns (LoginMSResp);
+  rpc HealthMS(CommonReq) returns (HealthMSResp);
+
+  rpc GetAllMSMenuList(GetAllMSMenuListReq) returns (GetAllMSMenuListResp);
+  rpc GetMyMSMenuList(GetMyMSMenuListReq) returns (GetMyMSMenuListResp);
+  rpc GetMSMenuDetail(GetMSMenuDetailReq) returns (GetMSMenuDetailResp);
+  rpc AddMSMenu(AddMSMenuReq) returns (AddMSMenuResp);
+  rpc UpdateMSMenu(UpdateMSMenuReq) returns (UpdateMSMenuResp);
+  rpc DeleteMSMenu(DeleteMSMenuReq) returns (DeleteMSMenuResp);
+
+  rpc GetAllMSApiPathList(GetAllMSApiPathListReq) returns (GetAllMSApiPathListResp);
+  rpc GetMyMSApiPathList(GetMyMSApiPathListReq) returns (GetMyMSApiPathListResp);
+  rpc GetMSApiPathDetail(GetMSApiPathDetailReq) returns (GetMSApiPathDetailResp);
+  rpc AddMSApiPath(AddMSApiPathReq) returns (AddMSApiPathResp);
+  rpc UpdateMSApiPath(UpdateMSApiPathReq) returns (UpdateMSApiPathResp);
+  rpc DeleteMSApiPath(DeleteMSApiPathReq) returns (DeleteMSApiPathResp);
+
+  rpc GetAllMSRoleList(GetAllMSRoleListReq) returns (GetAllMSRoleListResp);
+  rpc GetMSRoleDetail(GetMSRoleDetailReq) returns (GetMSRoleDetailResp);
+  rpc AddMSRole(AddMSRoleReq) returns (AddMSRoleResp);
+  rpc UpdateMSRole(UpdateMSRoleReq) returns (UpdateMSRoleResp);
+  rpc DeleteMSRole(DeleteMSRoleReq) returns (DeleteMSRoleResp);
+
+  rpc BindMSRoleMenu(BindMSRoleMenuReq) returns (BindMSRoleMenuResp);
+  rpc UnbindMSRoleMenu(UnbindMSRoleMenuReq) returns (UnbindMSRoleMenuResp);
+
+  rpc BindMSRoleApiPath(BindMSRoleApiPathReq) returns (BindMSRoleApiPathResp);
+  rpc UnbindMSRoleApiPath(UnbindMSRoleApiPathReq) returns (UnbindMSRoleApiPathResp);
+
+  rpc GetAllMSUserList(GetAllMSUserListReq) returns (GetAllMSUserListResp);
+  rpc GetMSUserDetail(GetMSUserDetailReq) returns (GetMSUserDetailResp);
+  rpc AddMSUser(AddMSUserReq) returns (AddMSUserResp);
+  rpc UpdateMSUser(UpdateMSUserReq) returns (UpdateMSUserResp);
+  rpc DeleteMSUser(DeleteMSUserReq) returns (DeleteMSUserResp);
+
+  rpc BindMSUserRole(BindMSUserRoleReq) returns (BindMSUserRoleResp);
+  rpc UnbindMSUserRole(UnbindMSUserRoleReq) returns (UnbindMSUserRoleResp);
+
+  rpc GetAllMSIpWhiteList(GetAllMSIpWhiteListReq) returns (GetAllMSIpWhiteListResp);
+  rpc GetMSIpWhiteListDetail(GetMSIpWhiteListDetailReq) returns (GetMSIpWhiteListDetailResp);
+  rpc AddMSIpWhiteList(AddMSIpWhiteListReq) returns (AddMSIpWhiteListResp);
+  rpc UpdateMSIpWhiteList(UpdateMSIpWhiteListReq) returns (UpdateMSIpWhiteListResp);
+  rpc DeleteMSIpWhiteList(DeleteMSIpWhiteListReq) returns (DeleteMSIpWhiteListResp);
 }

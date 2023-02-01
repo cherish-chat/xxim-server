@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/cherish-chat/xxim-server/app/mgmt/docs"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/middleware"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/mshandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/serverhandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
@@ -29,9 +30,11 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.Use(gin.Logger())
 	engine.Use(middleware.Recovery())
 	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
-	engine.GET("/api/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	// routes
-	serverhandler.NewServerHandler(s.svcCtx).Register(engine.Group("/api"))
+	apiGroup := engine.Group("/api")
+	apiGroup.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
+	serverhandler.NewServerHandler(s.svcCtx).Register(apiGroup)
+	mshandler.NewMSHandler(s.svcCtx).Register(apiGroup)
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}
 }
 

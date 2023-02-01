@@ -33,9 +33,9 @@ var redisType = flag.String("type", "node", "options: node, cluster")
 
 // @contact.name showurl
 
-// @host api.cherish.chat
+// @host 127.0.0.1:6799
 // @BasePath /api
-// @schemes https
+// @schemes http
 func main() {
 	flag.Parse()
 

@@ -26,6 +26,41 @@ type MgmtServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 	GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
+	LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
+	HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
+	GetAllMSMenuList(ctx context.Context, in *GetAllMSMenuListReq, opts ...grpc.CallOption) (*GetAllMSMenuListResp, error)
+	GetMyMSMenuList(ctx context.Context, in *GetMyMSMenuListReq, opts ...grpc.CallOption) (*GetMyMSMenuListResp, error)
+	GetMSMenuDetail(ctx context.Context, in *GetMSMenuDetailReq, opts ...grpc.CallOption) (*GetMSMenuDetailResp, error)
+	AddMSMenu(ctx context.Context, in *AddMSMenuReq, opts ...grpc.CallOption) (*AddMSMenuResp, error)
+	UpdateMSMenu(ctx context.Context, in *UpdateMSMenuReq, opts ...grpc.CallOption) (*UpdateMSMenuResp, error)
+	DeleteMSMenu(ctx context.Context, in *DeleteMSMenuReq, opts ...grpc.CallOption) (*DeleteMSMenuResp, error)
+	GetAllMSApiPathList(ctx context.Context, in *GetAllMSApiPathListReq, opts ...grpc.CallOption) (*GetAllMSApiPathListResp, error)
+	GetMyMSApiPathList(ctx context.Context, in *GetMyMSApiPathListReq, opts ...grpc.CallOption) (*GetMyMSApiPathListResp, error)
+	GetMSApiPathDetail(ctx context.Context, in *GetMSApiPathDetailReq, opts ...grpc.CallOption) (*GetMSApiPathDetailResp, error)
+	AddMSApiPath(ctx context.Context, in *AddMSApiPathReq, opts ...grpc.CallOption) (*AddMSApiPathResp, error)
+	UpdateMSApiPath(ctx context.Context, in *UpdateMSApiPathReq, opts ...grpc.CallOption) (*UpdateMSApiPathResp, error)
+	DeleteMSApiPath(ctx context.Context, in *DeleteMSApiPathReq, opts ...grpc.CallOption) (*DeleteMSApiPathResp, error)
+	GetAllMSRoleList(ctx context.Context, in *GetAllMSRoleListReq, opts ...grpc.CallOption) (*GetAllMSRoleListResp, error)
+	GetMSRoleDetail(ctx context.Context, in *GetMSRoleDetailReq, opts ...grpc.CallOption) (*GetMSRoleDetailResp, error)
+	AddMSRole(ctx context.Context, in *AddMSRoleReq, opts ...grpc.CallOption) (*AddMSRoleResp, error)
+	UpdateMSRole(ctx context.Context, in *UpdateMSRoleReq, opts ...grpc.CallOption) (*UpdateMSRoleResp, error)
+	DeleteMSRole(ctx context.Context, in *DeleteMSRoleReq, opts ...grpc.CallOption) (*DeleteMSRoleResp, error)
+	BindMSRoleMenu(ctx context.Context, in *BindMSRoleMenuReq, opts ...grpc.CallOption) (*BindMSRoleMenuResp, error)
+	UnbindMSRoleMenu(ctx context.Context, in *UnbindMSRoleMenuReq, opts ...grpc.CallOption) (*UnbindMSRoleMenuResp, error)
+	BindMSRoleApiPath(ctx context.Context, in *BindMSRoleApiPathReq, opts ...grpc.CallOption) (*BindMSRoleApiPathResp, error)
+	UnbindMSRoleApiPath(ctx context.Context, in *UnbindMSRoleApiPathReq, opts ...grpc.CallOption) (*UnbindMSRoleApiPathResp, error)
+	GetAllMSUserList(ctx context.Context, in *GetAllMSUserListReq, opts ...grpc.CallOption) (*GetAllMSUserListResp, error)
+	GetMSUserDetail(ctx context.Context, in *GetMSUserDetailReq, opts ...grpc.CallOption) (*GetMSUserDetailResp, error)
+	AddMSUser(ctx context.Context, in *AddMSUserReq, opts ...grpc.CallOption) (*AddMSUserResp, error)
+	UpdateMSUser(ctx context.Context, in *UpdateMSUserReq, opts ...grpc.CallOption) (*UpdateMSUserResp, error)
+	DeleteMSUser(ctx context.Context, in *DeleteMSUserReq, opts ...grpc.CallOption) (*DeleteMSUserResp, error)
+	BindMSUserRole(ctx context.Context, in *BindMSUserRoleReq, opts ...grpc.CallOption) (*BindMSUserRoleResp, error)
+	UnbindMSUserRole(ctx context.Context, in *UnbindMSUserRoleReq, opts ...grpc.CallOption) (*UnbindMSUserRoleResp, error)
+	GetAllMSIpWhiteList(ctx context.Context, in *GetAllMSIpWhiteListReq, opts ...grpc.CallOption) (*GetAllMSIpWhiteListResp, error)
+	GetMSIpWhiteListDetail(ctx context.Context, in *GetMSIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetMSIpWhiteListDetailResp, error)
+	AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
+	UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error)
+	DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -72,6 +107,321 @@ func (c *mgmtServiceClient) GetServerAllConfig(ctx context.Context, in *GetServe
 	return out, nil
 }
 
+func (c *mgmtServiceClient) LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error) {
+	out := new(LoginMSResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/LoginMS", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error) {
+	out := new(HealthMSResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/HealthMS", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSMenuList(ctx context.Context, in *GetAllMSMenuListReq, opts ...grpc.CallOption) (*GetAllMSMenuListResp, error) {
+	out := new(GetAllMSMenuListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSMenuList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMyMSMenuList(ctx context.Context, in *GetMyMSMenuListReq, opts ...grpc.CallOption) (*GetMyMSMenuListResp, error) {
+	out := new(GetMyMSMenuListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMyMSMenuList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSMenuDetail(ctx context.Context, in *GetMSMenuDetailReq, opts ...grpc.CallOption) (*GetMSMenuDetailResp, error) {
+	out := new(GetMSMenuDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSMenuDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSMenu(ctx context.Context, in *AddMSMenuReq, opts ...grpc.CallOption) (*AddMSMenuResp, error) {
+	out := new(AddMSMenuResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSMenu(ctx context.Context, in *UpdateMSMenuReq, opts ...grpc.CallOption) (*UpdateMSMenuResp, error) {
+	out := new(UpdateMSMenuResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSMenu(ctx context.Context, in *DeleteMSMenuReq, opts ...grpc.CallOption) (*DeleteMSMenuResp, error) {
+	out := new(DeleteMSMenuResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSApiPathList(ctx context.Context, in *GetAllMSApiPathListReq, opts ...grpc.CallOption) (*GetAllMSApiPathListResp, error) {
+	out := new(GetAllMSApiPathListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSApiPathList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMyMSApiPathList(ctx context.Context, in *GetMyMSApiPathListReq, opts ...grpc.CallOption) (*GetMyMSApiPathListResp, error) {
+	out := new(GetMyMSApiPathListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMyMSApiPathList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSApiPathDetail(ctx context.Context, in *GetMSApiPathDetailReq, opts ...grpc.CallOption) (*GetMSApiPathDetailResp, error) {
+	out := new(GetMSApiPathDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSApiPathDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSApiPath(ctx context.Context, in *AddMSApiPathReq, opts ...grpc.CallOption) (*AddMSApiPathResp, error) {
+	out := new(AddMSApiPathResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSApiPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSApiPath(ctx context.Context, in *UpdateMSApiPathReq, opts ...grpc.CallOption) (*UpdateMSApiPathResp, error) {
+	out := new(UpdateMSApiPathResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSApiPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSApiPath(ctx context.Context, in *DeleteMSApiPathReq, opts ...grpc.CallOption) (*DeleteMSApiPathResp, error) {
+	out := new(DeleteMSApiPathResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSApiPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSRoleList(ctx context.Context, in *GetAllMSRoleListReq, opts ...grpc.CallOption) (*GetAllMSRoleListResp, error) {
+	out := new(GetAllMSRoleListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSRoleList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSRoleDetail(ctx context.Context, in *GetMSRoleDetailReq, opts ...grpc.CallOption) (*GetMSRoleDetailResp, error) {
+	out := new(GetMSRoleDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSRoleDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSRole(ctx context.Context, in *AddMSRoleReq, opts ...grpc.CallOption) (*AddMSRoleResp, error) {
+	out := new(AddMSRoleResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSRole(ctx context.Context, in *UpdateMSRoleReq, opts ...grpc.CallOption) (*UpdateMSRoleResp, error) {
+	out := new(UpdateMSRoleResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSRole(ctx context.Context, in *DeleteMSRoleReq, opts ...grpc.CallOption) (*DeleteMSRoleResp, error) {
+	out := new(DeleteMSRoleResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) BindMSRoleMenu(ctx context.Context, in *BindMSRoleMenuReq, opts ...grpc.CallOption) (*BindMSRoleMenuResp, error) {
+	out := new(BindMSRoleMenuResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/BindMSRoleMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UnbindMSRoleMenu(ctx context.Context, in *UnbindMSRoleMenuReq, opts ...grpc.CallOption) (*UnbindMSRoleMenuResp, error) {
+	out := new(UnbindMSRoleMenuResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UnbindMSRoleMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) BindMSRoleApiPath(ctx context.Context, in *BindMSRoleApiPathReq, opts ...grpc.CallOption) (*BindMSRoleApiPathResp, error) {
+	out := new(BindMSRoleApiPathResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/BindMSRoleApiPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UnbindMSRoleApiPath(ctx context.Context, in *UnbindMSRoleApiPathReq, opts ...grpc.CallOption) (*UnbindMSRoleApiPathResp, error) {
+	out := new(UnbindMSRoleApiPathResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UnbindMSRoleApiPath", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSUserList(ctx context.Context, in *GetAllMSUserListReq, opts ...grpc.CallOption) (*GetAllMSUserListResp, error) {
+	out := new(GetAllMSUserListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSUserList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSUserDetail(ctx context.Context, in *GetMSUserDetailReq, opts ...grpc.CallOption) (*GetMSUserDetailResp, error) {
+	out := new(GetMSUserDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSUserDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSUser(ctx context.Context, in *AddMSUserReq, opts ...grpc.CallOption) (*AddMSUserResp, error) {
+	out := new(AddMSUserResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSUser(ctx context.Context, in *UpdateMSUserReq, opts ...grpc.CallOption) (*UpdateMSUserResp, error) {
+	out := new(UpdateMSUserResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSUser(ctx context.Context, in *DeleteMSUserReq, opts ...grpc.CallOption) (*DeleteMSUserResp, error) {
+	out := new(DeleteMSUserResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) BindMSUserRole(ctx context.Context, in *BindMSUserRoleReq, opts ...grpc.CallOption) (*BindMSUserRoleResp, error) {
+	out := new(BindMSUserRoleResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/BindMSUserRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UnbindMSUserRole(ctx context.Context, in *UnbindMSUserRoleReq, opts ...grpc.CallOption) (*UnbindMSUserRoleResp, error) {
+	out := new(UnbindMSUserRoleResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UnbindMSUserRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSIpWhiteList(ctx context.Context, in *GetAllMSIpWhiteListReq, opts ...grpc.CallOption) (*GetAllMSIpWhiteListResp, error) {
+	out := new(GetAllMSIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSIpWhiteListDetail(ctx context.Context, in *GetMSIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetMSIpWhiteListDetailResp, error) {
+	out := new(GetMSIpWhiteListDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSIpWhiteListDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error) {
+	out := new(AddMSIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error) {
+	out := new(UpdateMSIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error) {
+	out := new(DeleteMSIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -80,6 +430,41 @@ type MgmtServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	GetServerConfig(context.Context, *GetServerConfigReq) (*GetServerConfigResp, error)
 	GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error)
+	LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error)
+	HealthMS(context.Context, *CommonReq) (*HealthMSResp, error)
+	GetAllMSMenuList(context.Context, *GetAllMSMenuListReq) (*GetAllMSMenuListResp, error)
+	GetMyMSMenuList(context.Context, *GetMyMSMenuListReq) (*GetMyMSMenuListResp, error)
+	GetMSMenuDetail(context.Context, *GetMSMenuDetailReq) (*GetMSMenuDetailResp, error)
+	AddMSMenu(context.Context, *AddMSMenuReq) (*AddMSMenuResp, error)
+	UpdateMSMenu(context.Context, *UpdateMSMenuReq) (*UpdateMSMenuResp, error)
+	DeleteMSMenu(context.Context, *DeleteMSMenuReq) (*DeleteMSMenuResp, error)
+	GetAllMSApiPathList(context.Context, *GetAllMSApiPathListReq) (*GetAllMSApiPathListResp, error)
+	GetMyMSApiPathList(context.Context, *GetMyMSApiPathListReq) (*GetMyMSApiPathListResp, error)
+	GetMSApiPathDetail(context.Context, *GetMSApiPathDetailReq) (*GetMSApiPathDetailResp, error)
+	AddMSApiPath(context.Context, *AddMSApiPathReq) (*AddMSApiPathResp, error)
+	UpdateMSApiPath(context.Context, *UpdateMSApiPathReq) (*UpdateMSApiPathResp, error)
+	DeleteMSApiPath(context.Context, *DeleteMSApiPathReq) (*DeleteMSApiPathResp, error)
+	GetAllMSRoleList(context.Context, *GetAllMSRoleListReq) (*GetAllMSRoleListResp, error)
+	GetMSRoleDetail(context.Context, *GetMSRoleDetailReq) (*GetMSRoleDetailResp, error)
+	AddMSRole(context.Context, *AddMSRoleReq) (*AddMSRoleResp, error)
+	UpdateMSRole(context.Context, *UpdateMSRoleReq) (*UpdateMSRoleResp, error)
+	DeleteMSRole(context.Context, *DeleteMSRoleReq) (*DeleteMSRoleResp, error)
+	BindMSRoleMenu(context.Context, *BindMSRoleMenuReq) (*BindMSRoleMenuResp, error)
+	UnbindMSRoleMenu(context.Context, *UnbindMSRoleMenuReq) (*UnbindMSRoleMenuResp, error)
+	BindMSRoleApiPath(context.Context, *BindMSRoleApiPathReq) (*BindMSRoleApiPathResp, error)
+	UnbindMSRoleApiPath(context.Context, *UnbindMSRoleApiPathReq) (*UnbindMSRoleApiPathResp, error)
+	GetAllMSUserList(context.Context, *GetAllMSUserListReq) (*GetAllMSUserListResp, error)
+	GetMSUserDetail(context.Context, *GetMSUserDetailReq) (*GetMSUserDetailResp, error)
+	AddMSUser(context.Context, *AddMSUserReq) (*AddMSUserResp, error)
+	UpdateMSUser(context.Context, *UpdateMSUserReq) (*UpdateMSUserResp, error)
+	DeleteMSUser(context.Context, *DeleteMSUserReq) (*DeleteMSUserResp, error)
+	BindMSUserRole(context.Context, *BindMSUserRoleReq) (*BindMSUserRoleResp, error)
+	UnbindMSUserRole(context.Context, *UnbindMSUserRoleReq) (*UnbindMSUserRoleResp, error)
+	GetAllMSIpWhiteList(context.Context, *GetAllMSIpWhiteListReq) (*GetAllMSIpWhiteListResp, error)
+	GetMSIpWhiteListDetail(context.Context, *GetMSIpWhiteListDetailReq) (*GetMSIpWhiteListDetailResp, error)
+	AddMSIpWhiteList(context.Context, *AddMSIpWhiteListReq) (*AddMSIpWhiteListResp, error)
+	UpdateMSIpWhiteList(context.Context, *UpdateMSIpWhiteListReq) (*UpdateMSIpWhiteListResp, error)
+	DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -98,6 +483,111 @@ func (UnimplementedMgmtServiceServer) GetServerConfig(context.Context, *GetServe
 }
 func (UnimplementedMgmtServiceServer) GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerAllConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginMS not implemented")
+}
+func (UnimplementedMgmtServiceServer) HealthMS(context.Context, *CommonReq) (*HealthMSResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HealthMS not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSMenuList(context.Context, *GetAllMSMenuListReq) (*GetAllMSMenuListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSMenuList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMyMSMenuList(context.Context, *GetMyMSMenuListReq) (*GetMyMSMenuListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyMSMenuList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSMenuDetail(context.Context, *GetMSMenuDetailReq) (*GetMSMenuDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSMenuDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSMenu(context.Context, *AddMSMenuReq) (*AddMSMenuResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSMenu not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSMenu(context.Context, *UpdateMSMenuReq) (*UpdateMSMenuResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSMenu not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSMenu(context.Context, *DeleteMSMenuReq) (*DeleteMSMenuResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSMenu not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSApiPathList(context.Context, *GetAllMSApiPathListReq) (*GetAllMSApiPathListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSApiPathList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMyMSApiPathList(context.Context, *GetMyMSApiPathListReq) (*GetMyMSApiPathListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyMSApiPathList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSApiPathDetail(context.Context, *GetMSApiPathDetailReq) (*GetMSApiPathDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSApiPathDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSApiPath(context.Context, *AddMSApiPathReq) (*AddMSApiPathResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSApiPath not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSApiPath(context.Context, *UpdateMSApiPathReq) (*UpdateMSApiPathResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSApiPath not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSApiPath(context.Context, *DeleteMSApiPathReq) (*DeleteMSApiPathResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSApiPath not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSRoleList(context.Context, *GetAllMSRoleListReq) (*GetAllMSRoleListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSRoleList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSRoleDetail(context.Context, *GetMSRoleDetailReq) (*GetMSRoleDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSRoleDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSRole(context.Context, *AddMSRoleReq) (*AddMSRoleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSRole not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSRole(context.Context, *UpdateMSRoleReq) (*UpdateMSRoleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSRole not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSRole(context.Context, *DeleteMSRoleReq) (*DeleteMSRoleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSRole not implemented")
+}
+func (UnimplementedMgmtServiceServer) BindMSRoleMenu(context.Context, *BindMSRoleMenuReq) (*BindMSRoleMenuResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BindMSRoleMenu not implemented")
+}
+func (UnimplementedMgmtServiceServer) UnbindMSRoleMenu(context.Context, *UnbindMSRoleMenuReq) (*UnbindMSRoleMenuResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnbindMSRoleMenu not implemented")
+}
+func (UnimplementedMgmtServiceServer) BindMSRoleApiPath(context.Context, *BindMSRoleApiPathReq) (*BindMSRoleApiPathResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BindMSRoleApiPath not implemented")
+}
+func (UnimplementedMgmtServiceServer) UnbindMSRoleApiPath(context.Context, *UnbindMSRoleApiPathReq) (*UnbindMSRoleApiPathResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnbindMSRoleApiPath not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSUserList(context.Context, *GetAllMSUserListReq) (*GetAllMSUserListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSUserList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSUserDetail(context.Context, *GetMSUserDetailReq) (*GetMSUserDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSUserDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSUser(context.Context, *AddMSUserReq) (*AddMSUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSUser not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSUser(context.Context, *UpdateMSUserReq) (*UpdateMSUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSUser not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSUser(context.Context, *DeleteMSUserReq) (*DeleteMSUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSUser not implemented")
+}
+func (UnimplementedMgmtServiceServer) BindMSUserRole(context.Context, *BindMSUserRoleReq) (*BindMSUserRoleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BindMSUserRole not implemented")
+}
+func (UnimplementedMgmtServiceServer) UnbindMSUserRole(context.Context, *UnbindMSUserRoleReq) (*UnbindMSUserRoleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnbindMSUserRole not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSIpWhiteList(context.Context, *GetAllMSIpWhiteListReq) (*GetAllMSIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSIpWhiteList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSIpWhiteListDetail(context.Context, *GetMSIpWhiteListDetailReq) (*GetMSIpWhiteListDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSIpWhiteListDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSIpWhiteList(context.Context, *AddMSIpWhiteListReq) (*AddMSIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSIpWhiteList not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSIpWhiteList(context.Context, *UpdateMSIpWhiteListReq) (*UpdateMSIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSIpWhiteList not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSIpWhiteList not implemented")
 }
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
@@ -184,6 +674,636 @@ func _MgmtService_GetServerAllConfig_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_LoginMS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginMSReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).LoginMS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/LoginMS",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).LoginMS(ctx, req.(*LoginMSReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_HealthMS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommonReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).HealthMS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/HealthMS",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).HealthMS(ctx, req.(*CommonReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSMenuListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSMenuList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSMenuList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSMenuList(ctx, req.(*GetAllMSMenuListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMyMSMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyMSMenuListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMyMSMenuList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMyMSMenuList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMyMSMenuList(ctx, req.(*GetMyMSMenuListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSMenuDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSMenuDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSMenuDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSMenuDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSMenuDetail(ctx, req.(*GetMSMenuDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSMenu(ctx, req.(*AddMSMenuReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSMenu(ctx, req.(*UpdateMSMenuReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSMenu(ctx, req.(*DeleteMSMenuReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSApiPathList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSApiPathListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSApiPathList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSApiPathList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSApiPathList(ctx, req.(*GetAllMSApiPathListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMyMSApiPathList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyMSApiPathListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMyMSApiPathList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMyMSApiPathList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMyMSApiPathList(ctx, req.(*GetMyMSApiPathListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSApiPathDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSApiPathDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSApiPathDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSApiPathDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSApiPathDetail(ctx, req.(*GetMSApiPathDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSApiPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSApiPathReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSApiPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSApiPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSApiPath(ctx, req.(*AddMSApiPathReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSApiPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSApiPathReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSApiPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSApiPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSApiPath(ctx, req.(*UpdateMSApiPathReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSApiPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSApiPathReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSApiPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSApiPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSApiPath(ctx, req.(*DeleteMSApiPathReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSRoleList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSRoleListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSRoleList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSRoleList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSRoleList(ctx, req.(*GetAllMSRoleListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSRoleDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSRoleDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSRoleDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSRoleDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSRoleDetail(ctx, req.(*GetMSRoleDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSRole(ctx, req.(*AddMSRoleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSRole(ctx, req.(*UpdateMSRoleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSRole(ctx, req.(*DeleteMSRoleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_BindMSRoleMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindMSRoleMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).BindMSRoleMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/BindMSRoleMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).BindMSRoleMenu(ctx, req.(*BindMSRoleMenuReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UnbindMSRoleMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnbindMSRoleMenuReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UnbindMSRoleMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UnbindMSRoleMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UnbindMSRoleMenu(ctx, req.(*UnbindMSRoleMenuReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_BindMSRoleApiPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindMSRoleApiPathReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).BindMSRoleApiPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/BindMSRoleApiPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).BindMSRoleApiPath(ctx, req.(*BindMSRoleApiPathReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UnbindMSRoleApiPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnbindMSRoleApiPathReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UnbindMSRoleApiPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UnbindMSRoleApiPath",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UnbindMSRoleApiPath(ctx, req.(*UnbindMSRoleApiPathReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSUserList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSUserListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSUserList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSUserList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSUserList(ctx, req.(*GetAllMSUserListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSUserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSUserDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSUserDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSUserDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSUserDetail(ctx, req.(*GetMSUserDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSUser(ctx, req.(*AddMSUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSUser(ctx, req.(*UpdateMSUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSUser(ctx, req.(*DeleteMSUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_BindMSUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BindMSUserRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).BindMSUserRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/BindMSUserRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).BindMSUserRole(ctx, req.(*BindMSUserRoleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UnbindMSUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnbindMSUserRoleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UnbindMSUserRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UnbindMSUserRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UnbindMSUserRole(ctx, req.(*UnbindMSUserRoleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSIpWhiteList(ctx, req.(*GetAllMSIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSIpWhiteListDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSIpWhiteListDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSIpWhiteListDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSIpWhiteListDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSIpWhiteListDetail(ctx, req.(*GetMSIpWhiteListDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSIpWhiteList(ctx, req.(*AddMSIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSIpWhiteList(ctx, req.(*UpdateMSIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSIpWhiteList(ctx, req.(*DeleteMSIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +1326,146 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetServerAllConfig",
 			Handler:    _MgmtService_GetServerAllConfig_Handler,
+		},
+		{
+			MethodName: "LoginMS",
+			Handler:    _MgmtService_LoginMS_Handler,
+		},
+		{
+			MethodName: "HealthMS",
+			Handler:    _MgmtService_HealthMS_Handler,
+		},
+		{
+			MethodName: "GetAllMSMenuList",
+			Handler:    _MgmtService_GetAllMSMenuList_Handler,
+		},
+		{
+			MethodName: "GetMyMSMenuList",
+			Handler:    _MgmtService_GetMyMSMenuList_Handler,
+		},
+		{
+			MethodName: "GetMSMenuDetail",
+			Handler:    _MgmtService_GetMSMenuDetail_Handler,
+		},
+		{
+			MethodName: "AddMSMenu",
+			Handler:    _MgmtService_AddMSMenu_Handler,
+		},
+		{
+			MethodName: "UpdateMSMenu",
+			Handler:    _MgmtService_UpdateMSMenu_Handler,
+		},
+		{
+			MethodName: "DeleteMSMenu",
+			Handler:    _MgmtService_DeleteMSMenu_Handler,
+		},
+		{
+			MethodName: "GetAllMSApiPathList",
+			Handler:    _MgmtService_GetAllMSApiPathList_Handler,
+		},
+		{
+			MethodName: "GetMyMSApiPathList",
+			Handler:    _MgmtService_GetMyMSApiPathList_Handler,
+		},
+		{
+			MethodName: "GetMSApiPathDetail",
+			Handler:    _MgmtService_GetMSApiPathDetail_Handler,
+		},
+		{
+			MethodName: "AddMSApiPath",
+			Handler:    _MgmtService_AddMSApiPath_Handler,
+		},
+		{
+			MethodName: "UpdateMSApiPath",
+			Handler:    _MgmtService_UpdateMSApiPath_Handler,
+		},
+		{
+			MethodName: "DeleteMSApiPath",
+			Handler:    _MgmtService_DeleteMSApiPath_Handler,
+		},
+		{
+			MethodName: "GetAllMSRoleList",
+			Handler:    _MgmtService_GetAllMSRoleList_Handler,
+		},
+		{
+			MethodName: "GetMSRoleDetail",
+			Handler:    _MgmtService_GetMSRoleDetail_Handler,
+		},
+		{
+			MethodName: "AddMSRole",
+			Handler:    _MgmtService_AddMSRole_Handler,
+		},
+		{
+			MethodName: "UpdateMSRole",
+			Handler:    _MgmtService_UpdateMSRole_Handler,
+		},
+		{
+			MethodName: "DeleteMSRole",
+			Handler:    _MgmtService_DeleteMSRole_Handler,
+		},
+		{
+			MethodName: "BindMSRoleMenu",
+			Handler:    _MgmtService_BindMSRoleMenu_Handler,
+		},
+		{
+			MethodName: "UnbindMSRoleMenu",
+			Handler:    _MgmtService_UnbindMSRoleMenu_Handler,
+		},
+		{
+			MethodName: "BindMSRoleApiPath",
+			Handler:    _MgmtService_BindMSRoleApiPath_Handler,
+		},
+		{
+			MethodName: "UnbindMSRoleApiPath",
+			Handler:    _MgmtService_UnbindMSRoleApiPath_Handler,
+		},
+		{
+			MethodName: "GetAllMSUserList",
+			Handler:    _MgmtService_GetAllMSUserList_Handler,
+		},
+		{
+			MethodName: "GetMSUserDetail",
+			Handler:    _MgmtService_GetMSUserDetail_Handler,
+		},
+		{
+			MethodName: "AddMSUser",
+			Handler:    _MgmtService_AddMSUser_Handler,
+		},
+		{
+			MethodName: "UpdateMSUser",
+			Handler:    _MgmtService_UpdateMSUser_Handler,
+		},
+		{
+			MethodName: "DeleteMSUser",
+			Handler:    _MgmtService_DeleteMSUser_Handler,
+		},
+		{
+			MethodName: "BindMSUserRole",
+			Handler:    _MgmtService_BindMSUserRole_Handler,
+		},
+		{
+			MethodName: "UnbindMSUserRole",
+			Handler:    _MgmtService_UnbindMSUserRole_Handler,
+		},
+		{
+			MethodName: "GetAllMSIpWhiteList",
+			Handler:    _MgmtService_GetAllMSIpWhiteList_Handler,
+		},
+		{
+			MethodName: "GetMSIpWhiteListDetail",
+			Handler:    _MgmtService_GetMSIpWhiteListDetail_Handler,
+		},
+		{
+			MethodName: "AddMSIpWhiteList",
+			Handler:    _MgmtService_AddMSIpWhiteList_Handler,
+		},
+		{
+			MethodName: "UpdateMSIpWhiteList",
+			Handler:    _MgmtService_UpdateMSIpWhiteList_Handler,
+		},
+		{
+			MethodName: "DeleteMSIpWhiteList",
+			Handler:    _MgmtService_DeleteMSIpWhiteList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -41,3 +41,178 @@ func (s *MgmtServiceServer) GetServerAllConfig(ctx context.Context, in *pb.GetSe
 	l := logic.NewGetServerAllConfigLogic(ctx, s.svcCtx)
 	return l.GetServerAllConfig(in)
 }
+
+func (s *MgmtServiceServer) LoginMS(ctx context.Context, in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
+	l := logic.NewLoginMSLogic(ctx, s.svcCtx)
+	return l.LoginMS(in)
+}
+
+func (s *MgmtServiceServer) HealthMS(ctx context.Context, in *pb.CommonReq) (*pb.HealthMSResp, error) {
+	l := logic.NewHealthMSLogic(ctx, s.svcCtx)
+	return l.HealthMS(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSMenuList(ctx context.Context, in *pb.GetAllMSMenuListReq) (*pb.GetAllMSMenuListResp, error) {
+	l := logic.NewGetAllMSMenuListLogic(ctx, s.svcCtx)
+	return l.GetAllMSMenuList(in)
+}
+
+func (s *MgmtServiceServer) GetMyMSMenuList(ctx context.Context, in *pb.GetMyMSMenuListReq) (*pb.GetMyMSMenuListResp, error) {
+	l := logic.NewGetMyMSMenuListLogic(ctx, s.svcCtx)
+	return l.GetMyMSMenuList(in)
+}
+
+func (s *MgmtServiceServer) GetMSMenuDetail(ctx context.Context, in *pb.GetMSMenuDetailReq) (*pb.GetMSMenuDetailResp, error) {
+	l := logic.NewGetMSMenuDetailLogic(ctx, s.svcCtx)
+	return l.GetMSMenuDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSMenu(ctx context.Context, in *pb.AddMSMenuReq) (*pb.AddMSMenuResp, error) {
+	l := logic.NewAddMSMenuLogic(ctx, s.svcCtx)
+	return l.AddMSMenu(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSMenu(ctx context.Context, in *pb.UpdateMSMenuReq) (*pb.UpdateMSMenuResp, error) {
+	l := logic.NewUpdateMSMenuLogic(ctx, s.svcCtx)
+	return l.UpdateMSMenu(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSMenu(ctx context.Context, in *pb.DeleteMSMenuReq) (*pb.DeleteMSMenuResp, error) {
+	l := logic.NewDeleteMSMenuLogic(ctx, s.svcCtx)
+	return l.DeleteMSMenu(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSApiPathList(ctx context.Context, in *pb.GetAllMSApiPathListReq) (*pb.GetAllMSApiPathListResp, error) {
+	l := logic.NewGetAllMSApiPathListLogic(ctx, s.svcCtx)
+	return l.GetAllMSApiPathList(in)
+}
+
+func (s *MgmtServiceServer) GetMyMSApiPathList(ctx context.Context, in *pb.GetMyMSApiPathListReq) (*pb.GetMyMSApiPathListResp, error) {
+	l := logic.NewGetMyMSApiPathListLogic(ctx, s.svcCtx)
+	return l.GetMyMSApiPathList(in)
+}
+
+func (s *MgmtServiceServer) GetMSApiPathDetail(ctx context.Context, in *pb.GetMSApiPathDetailReq) (*pb.GetMSApiPathDetailResp, error) {
+	l := logic.NewGetMSApiPathDetailLogic(ctx, s.svcCtx)
+	return l.GetMSApiPathDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSApiPath(ctx context.Context, in *pb.AddMSApiPathReq) (*pb.AddMSApiPathResp, error) {
+	l := logic.NewAddMSApiPathLogic(ctx, s.svcCtx)
+	return l.AddMSApiPath(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSApiPath(ctx context.Context, in *pb.UpdateMSApiPathReq) (*pb.UpdateMSApiPathResp, error) {
+	l := logic.NewUpdateMSApiPathLogic(ctx, s.svcCtx)
+	return l.UpdateMSApiPath(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSApiPath(ctx context.Context, in *pb.DeleteMSApiPathReq) (*pb.DeleteMSApiPathResp, error) {
+	l := logic.NewDeleteMSApiPathLogic(ctx, s.svcCtx)
+	return l.DeleteMSApiPath(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSRoleList(ctx context.Context, in *pb.GetAllMSRoleListReq) (*pb.GetAllMSRoleListResp, error) {
+	l := logic.NewGetAllMSRoleListLogic(ctx, s.svcCtx)
+	return l.GetAllMSRoleList(in)
+}
+
+func (s *MgmtServiceServer) GetMSRoleDetail(ctx context.Context, in *pb.GetMSRoleDetailReq) (*pb.GetMSRoleDetailResp, error) {
+	l := logic.NewGetMSRoleDetailLogic(ctx, s.svcCtx)
+	return l.GetMSRoleDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSRole(ctx context.Context, in *pb.AddMSRoleReq) (*pb.AddMSRoleResp, error) {
+	l := logic.NewAddMSRoleLogic(ctx, s.svcCtx)
+	return l.AddMSRole(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSRole(ctx context.Context, in *pb.UpdateMSRoleReq) (*pb.UpdateMSRoleResp, error) {
+	l := logic.NewUpdateMSRoleLogic(ctx, s.svcCtx)
+	return l.UpdateMSRole(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSRole(ctx context.Context, in *pb.DeleteMSRoleReq) (*pb.DeleteMSRoleResp, error) {
+	l := logic.NewDeleteMSRoleLogic(ctx, s.svcCtx)
+	return l.DeleteMSRole(in)
+}
+
+func (s *MgmtServiceServer) BindMSRoleMenu(ctx context.Context, in *pb.BindMSRoleMenuReq) (*pb.BindMSRoleMenuResp, error) {
+	l := logic.NewBindMSRoleMenuLogic(ctx, s.svcCtx)
+	return l.BindMSRoleMenu(in)
+}
+
+func (s *MgmtServiceServer) UnbindMSRoleMenu(ctx context.Context, in *pb.UnbindMSRoleMenuReq) (*pb.UnbindMSRoleMenuResp, error) {
+	l := logic.NewUnbindMSRoleMenuLogic(ctx, s.svcCtx)
+	return l.UnbindMSRoleMenu(in)
+}
+
+func (s *MgmtServiceServer) BindMSRoleApiPath(ctx context.Context, in *pb.BindMSRoleApiPathReq) (*pb.BindMSRoleApiPathResp, error) {
+	l := logic.NewBindMSRoleApiPathLogic(ctx, s.svcCtx)
+	return l.BindMSRoleApiPath(in)
+}
+
+func (s *MgmtServiceServer) UnbindMSRoleApiPath(ctx context.Context, in *pb.UnbindMSRoleApiPathReq) (*pb.UnbindMSRoleApiPathResp, error) {
+	l := logic.NewUnbindMSRoleApiPathLogic(ctx, s.svcCtx)
+	return l.UnbindMSRoleApiPath(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSUserList(ctx context.Context, in *pb.GetAllMSUserListReq) (*pb.GetAllMSUserListResp, error) {
+	l := logic.NewGetAllMSUserListLogic(ctx, s.svcCtx)
+	return l.GetAllMSUserList(in)
+}
+
+func (s *MgmtServiceServer) GetMSUserDetail(ctx context.Context, in *pb.GetMSUserDetailReq) (*pb.GetMSUserDetailResp, error) {
+	l := logic.NewGetMSUserDetailLogic(ctx, s.svcCtx)
+	return l.GetMSUserDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSUser(ctx context.Context, in *pb.AddMSUserReq) (*pb.AddMSUserResp, error) {
+	l := logic.NewAddMSUserLogic(ctx, s.svcCtx)
+	return l.AddMSUser(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSUser(ctx context.Context, in *pb.UpdateMSUserReq) (*pb.UpdateMSUserResp, error) {
+	l := logic.NewUpdateMSUserLogic(ctx, s.svcCtx)
+	return l.UpdateMSUser(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSUser(ctx context.Context, in *pb.DeleteMSUserReq) (*pb.DeleteMSUserResp, error) {
+	l := logic.NewDeleteMSUserLogic(ctx, s.svcCtx)
+	return l.DeleteMSUser(in)
+}
+
+func (s *MgmtServiceServer) BindMSUserRole(ctx context.Context, in *pb.BindMSUserRoleReq) (*pb.BindMSUserRoleResp, error) {
+	l := logic.NewBindMSUserRoleLogic(ctx, s.svcCtx)
+	return l.BindMSUserRole(in)
+}
+
+func (s *MgmtServiceServer) UnbindMSUserRole(ctx context.Context, in *pb.UnbindMSUserRoleReq) (*pb.UnbindMSUserRoleResp, error) {
+	l := logic.NewUnbindMSUserRoleLogic(ctx, s.svcCtx)
+	return l.UnbindMSUserRole(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSIpWhiteList(ctx context.Context, in *pb.GetAllMSIpWhiteListReq) (*pb.GetAllMSIpWhiteListResp, error) {
+	l := logic.NewGetAllMSIpWhiteListLogic(ctx, s.svcCtx)
+	return l.GetAllMSIpWhiteList(in)
+}
+
+func (s *MgmtServiceServer) GetMSIpWhiteListDetail(ctx context.Context, in *pb.GetMSIpWhiteListDetailReq) (*pb.GetMSIpWhiteListDetailResp, error) {
+	l := logic.NewGetMSIpWhiteListDetailLogic(ctx, s.svcCtx)
+	return l.GetMSIpWhiteListDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSIpWhiteList(ctx context.Context, in *pb.AddMSIpWhiteListReq) (*pb.AddMSIpWhiteListResp, error) {
+	l := logic.NewAddMSIpWhiteListLogic(ctx, s.svcCtx)
+	return l.AddMSIpWhiteList(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSIpWhiteList(ctx context.Context, in *pb.UpdateMSIpWhiteListReq) (*pb.UpdateMSIpWhiteListResp, error) {
+	l := logic.NewUpdateMSIpWhiteListLogic(ctx, s.svcCtx)
+	return l.UpdateMSIpWhiteList(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSIpWhiteList(ctx context.Context, in *pb.DeleteMSIpWhiteListReq) (*pb.DeleteMSIpWhiteListResp, error) {
+	l := logic.NewDeleteMSIpWhiteListLogic(ctx, s.svcCtx)
+	return l.DeleteMSIpWhiteList(in)
+}

@@ -1,0 +1,30 @@
+package logic
+
+import (
+	"context"
+
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
+	"github.com/cherish-chat/xxim-server/common/pb"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdateMSRoleLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewUpdateMSRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateMSRoleLogic {
+	return &UpdateMSRoleLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+func (l *UpdateMSRoleLogic) UpdateMSRole(in *pb.UpdateMSRoleReq) (*pb.UpdateMSRoleResp, error) {
+	// todo: add your logic here and delete this line
+
+	return &pb.UpdateMSRoleResp{}, nil
+}

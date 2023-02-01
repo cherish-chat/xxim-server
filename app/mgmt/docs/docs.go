@@ -17,6 +17,1220 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ms/add/admin": {
+            "post": {
+                "description": "使用此接口添加管理员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "添加管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSUserResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/apipath": {
+            "post": {
+                "description": "使用此接口新增服务端ApiPath",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "新增服务端ApiPath",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSApiPathReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/ipwhitelist": {
+            "post": {
+                "description": "使用此接口添加ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统ip白名单相关接口"
+                ],
+                "summary": "添加ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSIpWhiteListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/menu": {
+            "post": {
+                "description": "使用此接口新增菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "新增菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/bind/admin/role/batch": {
+            "post": {
+                "description": "使用此接口绑定管理员角色",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员角色相关接口"
+                ],
+                "summary": "绑定管理员角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSUserRoleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSUserRoleResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/bind/role/apipath/batch": {
+            "post": {
+                "description": "使用此接口绑定角色ApiPath",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色ApiPath绑定相关接口"
+                ],
+                "summary": "绑定角色ApiPath",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSRoleApiPathReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSRoleApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/bind/role/menu/batch": {
+            "post": {
+                "description": "使用此接口绑定角色菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单绑定相关接口"
+                ],
+                "summary": "绑定角色菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSRoleMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.BindMSRoleMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/admin": {
+            "post": {
+                "description": "使用此接口删除管理员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "删除管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSUserResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/apipath": {
+            "post": {
+                "description": "使用此接口删除服务端ApiPath",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "删除服务端ApiPath",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSApiPathReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/ipwhitelist": {
+            "post": {
+                "description": "使用此接口删除ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统ip白名单相关接口"
+                ],
+                "summary": "删除ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSIpWhiteListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/menu": {
+            "post": {
+                "description": "使用此接口删除菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "删除菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/admin/detail": {
+            "post": {
+                "description": "使用此接口获取管理员详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "获取管理员详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSUserDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSUserDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/admin/list/all": {
+            "post": {
+                "description": "使用此接口获取所有管理员列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "获取所有管理员列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSUserListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSUserListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/apipath/detail": {
+            "post": {
+                "description": "使用此接口获取服务端ApiPath详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "获取服务端ApiPath详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSApiPathDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSApiPathDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/apipath/list": {
+            "post": {
+                "description": "使用此接口获取我的服务端ApiPath列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "获取我的服务端ApiPath列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMyMSApiPathListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMyMSApiPathListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/apipath/list/all": {
+            "post": {
+                "description": "使用此接口获取所有服务端ApiPath列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "获取所有服务端ApiPath列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSApiPathListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSApiPathListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/ipwhitelist/detail": {
+            "post": {
+                "description": "使用此接口获取ip白名单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统ip白名单相关接口"
+                ],
+                "summary": "获取ip白名单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSIpWhiteListDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSIpWhiteListDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/ipwhitelist/list/all": {
+            "post": {
+                "description": "使用此接口获取全部ip白名单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统ip白名单相关接口"
+                ],
+                "summary": "获取全部ip白名单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSIpWhiteListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/menu/detail": {
+            "post": {
+                "description": "使用此接口获取菜单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "获取菜单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSMenuDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSMenuDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/menu/list": {
+            "post": {
+                "description": "使用此接口获取我的菜单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "获取我的菜单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMyMSMenuListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMyMSMenuListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/menu/list/all": {
+            "post": {
+                "description": "使用此接口获取所有菜单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "获取所有菜单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSMenuListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSMenuListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/health": {
+            "post": {
+                "description": "使用此接口检查服务是否健康",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账号相关接口"
+                ],
+                "summary": "检查服务是否健康",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.HealthMSResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/login": {
+            "post": {
+                "description": "必须是管理员才能登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "账号相关接口"
+                ],
+                "summary": "登录managersystem管理系统",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.LoginMSReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.LoginMSResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/unbind/admin/role/batch": {
+            "post": {
+                "description": "使用此接口解绑管理员角色",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员角色相关接口"
+                ],
+                "summary": "解绑管理员角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSUserRoleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSUserRoleResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/unbind/role/apipath/batch": {
+            "post": {
+                "description": "使用此接口解绑角色ApiPath",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色ApiPath绑定相关接口"
+                ],
+                "summary": "解绑角色ApiPath",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSRoleApiPathReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSRoleApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/unbind/role/menu/batch": {
+            "post": {
+                "description": "使用此接口解绑角色菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "角色菜单绑定相关接口"
+                ],
+                "summary": "解绑角色菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSRoleMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UnbindMSRoleMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/admin": {
+            "post": {
+                "description": "使用此接口更新管理员",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "更新管理员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSUserResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/apipath": {
+            "post": {
+                "description": "使用此接口更新服务端ApiPath",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统服务端ApiPath相关接口"
+                ],
+                "summary": "更新服务端ApiPath",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSApiPathReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/ipwhitelist": {
+            "post": {
+                "description": "使用此接口更新ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统ip白名单相关接口"
+                ],
+                "summary": "更新ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSIpWhiteListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/menu": {
+            "post": {
+                "description": "使用此接口更新菜单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统菜单相关接口"
+                ],
+                "summary": "更新菜单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSMenuReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
         "/server/get/config": {
             "post": {
                 "description": "使用此接口获取服务端的配置信息, 比如redis的配置信息",
@@ -121,6 +1335,157 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "pb.AddMSApiPathReq": {
+            "type": "object",
+            "properties": {
+                "apiPath": {
+                    "$ref": "#/definitions/pb.MSApiPath"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddMSApiPathResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddMSIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ipWhiteList": {
+                    "$ref": "#/definitions/pb.MSIpWhiteList"
+                }
+            }
+        },
+        "pb.AddMSIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddMSMenuReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "menu": {
+                    "$ref": "#/definitions/pb.MSMenu"
+                }
+            }
+        },
+        "pb.AddMSMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddMSUserReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "user": {
+                    "$ref": "#/definitions/pb.MSUser"
+                }
+            }
+        },
+        "pb.AddMSUserResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.BindMSRoleApiPathReq": {
+            "type": "object",
+            "properties": {
+                "apiPathIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "roleId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.BindMSRoleApiPathResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.BindMSRoleMenuReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "menuIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roleId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.BindMSRoleMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.BindMSUserRoleReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.BindMSUserRoleResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.CommonReq": {
             "type": "object",
             "properties": {
@@ -216,6 +1581,362 @@ const docTemplate = `{
                 "CommonResp_ForbiddenError",
                 "CommonResp_NeedSecondPasswordError"
             ]
+        },
+        "pb.DeleteMSApiPathReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSApiPathResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSMenuReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSUserReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSUserResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAllMSApiPathListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSApiPathListResp": {
+            "type": "object",
+            "properties": {
+                "apiPaths": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSApiPath"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllMSIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "ipWhiteLists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSIpWhiteList"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllMSMenuListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSMenuListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "menus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSMenu"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllMSUserListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSUserListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSUser"
+                    }
+                }
+            }
+        },
+        "pb.GetMSApiPathDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSApiPathDetailResp": {
+            "type": "object",
+            "properties": {
+                "apiPath": {
+                    "$ref": "#/definitions/pb.MSApiPath"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetMSIpWhiteListDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSIpWhiteListDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "ipWhiteList": {
+                    "$ref": "#/definitions/pb.MSIpWhiteList"
+                }
+            }
+        },
+        "pb.GetMSMenuDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSMenuDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "menu": {
+                    "$ref": "#/definitions/pb.MSMenu"
+                }
+            }
+        },
+        "pb.GetMSUserDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSUserDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "user": {
+                    "$ref": "#/definitions/pb.MSUser"
+                }
+            }
+        },
+        "pb.GetMyMSApiPathListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.GetMyMSApiPathListResp": {
+            "type": "object",
+            "properties": {
+                "apiPaths": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSApiPath"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetMyMSMenuListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.GetMyMSMenuListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "menus": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSMenu"
+                    }
+                }
+            }
         },
         "pb.GetServerAllConfigResp": {
             "type": "object",
@@ -482,6 +2203,469 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "pb.HealthMSResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "msg": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pb.LoginMSReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.LoginMSResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSApiPath": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "updatedAtStr": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSIpWhiteList": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "endIp": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "startIp": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "updatedAtStr": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSMenu": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSMenu"
+                    }
+                },
+                "component": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "redirect": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "updatedAtStr": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSRole": {
+            "type": "object",
+            "properties": {
+                "apiPathIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "apiPaths": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pb.MSApiPath"
+                    }
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "menuIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "menus": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pb.MSMenu"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "updatedAtStr": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSUser": {
+            "type": "object",
+            "properties": {
+                "apiPathIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "apiPaths": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pb.MSApiPath"
+                    }
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "menuIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "menus": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pb.MSMenu"
+                    }
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roles": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/pb.MSRole"
+                    }
+                },
+                "unbanTime": {
+                    "type": "integer"
+                },
+                "unbanTimeStr": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "updatedAtStr": {
+                    "type": "string"
+                },
+                "updatedBy": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.Page": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.UnbindMSRoleApiPathReq": {
+            "type": "object",
+            "properties": {
+                "apiPathIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "roleId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UnbindMSRoleApiPathResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UnbindMSRoleMenuReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "menuIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roleId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UnbindMSRoleMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UnbindMSUserRoleReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "roleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UnbindMSUserRoleResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSApiPathReq": {
+            "type": "object",
+            "properties": {
+                "apiPath": {
+                    "$ref": "#/definitions/pb.MSApiPath"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateMSApiPathResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ipWhiteList": {
+                    "$ref": "#/definitions/pb.MSIpWhiteList"
+                }
+            }
+        },
+        "pb.UpdateMSIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSMenuReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "menu": {
+                    "$ref": "#/definitions/pb.MSMenu"
+                }
+            }
+        },
+        "pb.UpdateMSMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSUserReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "user": {
+                    "$ref": "#/definitions/pb.MSUser"
+                }
+            }
+        },
+        "pb.UpdateMSUserResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
         }
     }
 }`
@@ -489,9 +2673,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "api.cherish.chat",
+	Host:             "127.0.0.1:6799",
 	BasePath:         "/api",
-	Schemes:          []string{"https"},
+	Schemes:          []string{"http"},
 	Title:            "xxim-server HTTP API 文档",
 	Description:      "此文档由gin-swagger自动生成",
 	InfoInstanceName: "swagger",
