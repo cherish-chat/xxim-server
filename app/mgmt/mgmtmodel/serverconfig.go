@@ -131,8 +131,10 @@ type (
 		Port int64 // default: 6707
 	}
 	MgmtConfig struct {
-		RpcPort  int64 // default: 6708
-		HttpPort int64 // default: 6799
+		RpcPort        int64  // default: 6708
+		HttpPort       int64  // default: 6799
+		SuperAdminId   string // default: superadmin
+		SuperAdminPass string // default: superadmin
 	}
 )
 
@@ -198,8 +200,10 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			Port: 6707,
 		},
 		Mgmt: MgmtConfig{
-			RpcPort:  6708,
-			HttpPort: 6799,
+			RpcPort:        6708,
+			HttpPort:       6799,
+			SuperAdminId:   "superadmin",
+			SuperAdminPass: "superadmin",
 		},
 	}
 }

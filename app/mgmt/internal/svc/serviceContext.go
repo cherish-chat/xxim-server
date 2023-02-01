@@ -7,31 +7,47 @@ import (
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
+	"github.com/cherish-chat/xxim-server/common/xconf"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
+	"gorm.io/gorm"
 )
 
 type ServiceContext struct {
 	Config          config.Config
 	redis           *redis.Redis
+	mysql           *gorm.DB
 	imService       imservice.ImService
 	msgService      msgservice.MsgService
 	noticeService   noticeservice.NoticeService
 	relationService relationservice.RelationService
 	userService     userservice.UserService
 	groupService    groupservice.GroupService
+	SystemConfigMgr *xconf.SystemConfigMgr
 }
 
 func NewServiceContext(c config.Config, rc *redis.Redis) *ServiceContext {
-	return &ServiceContext{
+	s := &ServiceContext{
 		Config: c,
 		redis:  rc,
 	}
+	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	return s
 }
 
 func (s *ServiceContext) Redis() *redis.Redis {
 	return s.redis
+}
+
+func (s *ServiceContext) Mysql() *gorm.DB {
+	if s.mysql == nil {
+		s.mysql = xorm.NewClient(s.Config.Mysql)
+		s.mysql.AutoMigrate(&usermodel.User{})
+	}
+	return s.mysql
 }
 
 func (s *ServiceContext) ImService() imservice.ImService {

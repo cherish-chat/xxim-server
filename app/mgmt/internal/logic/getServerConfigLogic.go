@@ -166,6 +166,10 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 			"Addr": fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Mgmt.HttpPort),
 		}
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Mgmt.RpcPort)
+		c["SuperAdmin"] = map[string]any{
+			"Id":       serverConfig.Mgmt.SuperAdminId,
+			"Password": serverConfig.Mgmt.SuperAdminPass,
+		}
 	case "conn":
 		c["Websocket"] = map[string]any{
 			"Port": serverConfig.ConnRpc.WebsocketPort,

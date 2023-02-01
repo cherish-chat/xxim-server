@@ -5,6 +5,7 @@ import (
 	_ "github.com/cherish-chat/xxim-server/app/mgmt/docs"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/middleware"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/serverhandler"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -42,4 +43,5 @@ func (s *HttpServer) Start() {
 			log.Fatalf("failed to start http server: %v", err)
 		}
 	}()
+	logic.NewInitLogic(s.svcCtx).Init()
 }
