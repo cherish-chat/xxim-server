@@ -27,6 +27,15 @@ var redisType = flag.String("type", "node", "options: node, cluster")
 
 // go run . -host 127.0.0.1:6803 -pass 123456 -type node
 
+// @title xxim-server HTTP API 文档
+// @version 1.0
+// @description 此文档由gin-swagger自动生成
+
+// @contact.name showurl
+
+// @host api.cherish.chat
+// @BasePath /api
+// @schemes https
 func main() {
 	flag.Parse()
 

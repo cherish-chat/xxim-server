@@ -1,0 +1,320 @@
+basePath: /api
+definitions:
+  pb.CommonReq:
+    properties:
+      appVersion:
+        type: string
+      data:
+        items:
+          type: integer
+        type: array
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      ip:
+        type: string
+      language:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      token:
+        type: string
+      userAgent:
+        type: string
+      userId:
+        type: string
+    type: object
+  pb.CommonResp:
+    properties:
+      code:
+        $ref: '#/definitions/pb.CommonResp_Code'
+      data:
+        items:
+          type: integer
+        type: array
+      msg:
+        type: string
+    type: object
+  pb.CommonResp_Code:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 7
+    - 8
+    - 9
+    - 10
+    type: integer
+    x-enum-comments:
+      CommonResp_AlertError: alert 错误 只有一个确定按钮
+      CommonResp_AuthError: 鉴权错误 // 应该退出登录
+      CommonResp_ForbiddenError: 无权限
+      CommonResp_InternalError: 内部错误
+      CommonResp_NeedSecondPasswordError: 需要输入二级密码/设置二级密码
+      CommonResp_RequestError: 请求错误
+      CommonResp_RetryError: alert 错误 有一个取消按钮 和一个重试按钮
+      CommonResp_ToastError: toast 错误 只有 message
+      CommonResp_UnknownError: 未知 error
+    x-enum-varnames:
+    - CommonResp_Success
+    - CommonResp_UnknownError
+    - CommonResp_InternalError
+    - CommonResp_RequestError
+    - CommonResp_AuthError
+    - CommonResp_ToastError
+    - CommonResp_AlertError
+    - CommonResp_RetryError
+    - CommonResp_ForbiddenError
+    - CommonResp_NeedSecondPasswordError
+  pb.GetServerAllConfigResp:
+    properties:
+      common:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_CommonConfig'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      connRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_ConnRpcConfig'
+      groupRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_GroupRpcConfig'
+      imRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_ImRpcConfig'
+      mgmt:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_MgmtConfig'
+      msgRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_MsgRpcConfig'
+      noticeRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_NoticeRpcConfig'
+      relationRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_RelationRpcConfig'
+      userRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_UserRpcConfig'
+    type: object
+  pb.GetServerAllConfigResp_CommonConfig:
+    properties:
+      host:
+        type: string
+      ip2RegionUrl:
+        type: string
+      logLevel:
+        type: string
+      mode:
+        type: string
+      mysql:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_MysqlConfig'
+      redis:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_RedisConfig'
+      rpcTimeOut:
+        type: integer
+      telemetry:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_TelemetryConfig'
+    type: object
+  pb.GetServerAllConfigResp_ConnRpcConfig:
+    properties:
+      discovType:
+        type: string
+      endpoints:
+        items:
+          type: string
+        type: array
+      k8sNamespace:
+        type: string
+      port:
+        type: integer
+      websocketPort:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_GroupRpcConfig:
+    properties:
+      port:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_ImRpcConfig:
+    properties:
+      port:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_MgmtConfig:
+    properties:
+      httpPort:
+        type: integer
+      rpcPort:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_MobPushConfig:
+    properties:
+      androidSound:
+        type: string
+      apnsCateGory:
+        type: string
+      apnsProduction:
+        type: boolean
+      apnsSound:
+        type: string
+      appKey:
+        type: string
+      appSecret:
+        type: string
+      enabled:
+        type: boolean
+    type: object
+  pb.GetServerAllConfigResp_MsgPulsarConfig:
+    properties:
+      enabled:
+        type: boolean
+      producerTimeout:
+        type: integer
+      receiverQueueSize:
+        type: integer
+      token:
+        type: string
+      topicName:
+        type: string
+      vpcUrl:
+        type: string
+    type: object
+  pb.GetServerAllConfigResp_MsgRpcConfig:
+    properties:
+      mobPush:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_MobPushConfig'
+      port:
+        type: integer
+      pulsar:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_MsgPulsarConfig'
+    type: object
+  pb.GetServerAllConfigResp_MysqlConfig:
+    properties:
+      addr:
+        type: string
+      logLevel:
+        type: string
+      maxIdleConns:
+        type: integer
+      maxOpenConns:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_NoticeRpcConfig:
+    properties:
+      port:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_RedisConfig:
+    properties:
+      host:
+        type: string
+      pass:
+        type: string
+      tls:
+        type: boolean
+      type:
+        type: string
+    type: object
+  pb.GetServerAllConfigResp_RelationRpcConfig:
+    properties:
+      port:
+        type: integer
+    type: object
+  pb.GetServerAllConfigResp_TelemetryConfig:
+    properties:
+      batcher:
+        type: string
+      endPoint:
+        type: string
+      sampler:
+        type: number
+    type: object
+  pb.GetServerAllConfigResp_UserRpcConfig:
+    properties:
+      port:
+        type: integer
+    type: object
+  pb.GetServerConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      serverName:
+        type: string
+    type: object
+host: api.cherish.chat
+info:
+  contact:
+    name: showurl
+  description: 此文档由gin-swagger自动生成
+  title: xxim-server HTTP API 文档
+  version: "1.0"
+paths:
+  /server/get/config:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取服务端的配置信息, 比如redis的配置信息
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetServerConfigReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: 配置信息
+          schema:
+            type: string
+      summary: 获取服务端的配置信息
+      tags:
+      - 服务端相关接口
+  /server/get/config/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取服务端的所有配置信息, 比如redis的配置信息
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 所有配置信息
+          schema:
+            $ref: '#/definitions/pb.GetServerAllConfigResp'
+      summary: 获取服务端的所有配置信息
+      tags:
+      - 服务端相关接口
+  /server/onlineshield/:randString:
+    get:
+      description: 使用此接口获取服务器在线设备数量, 以svg格式返回
+      parameters:
+      - description: 随机字符串
+        in: path
+        name: randString
+        required: true
+        type: string
+      produces:
+      - xml/svg
+      responses:
+        "200":
+          description: 在线人数
+          schema:
+            type: string
+      summary: 获取服务器在线人数
+      tags:
+      - 服务端相关接口
+schemes:
+- https
+swagger: "2.0"

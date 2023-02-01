@@ -1,0 +1,478 @@
+{
+    "schemes": [
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "此文档由gin-swagger自动生成",
+        "title": "xxim-server HTTP API 文档",
+        "contact": {
+            "name": "showurl"
+        },
+        "version": "1.0"
+    },
+    "host": "api.cherish.chat",
+    "basePath": "/api",
+    "paths": {
+        "/server/get/config": {
+            "post": {
+                "description": "使用此接口获取服务端的配置信息, 比如redis的配置信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "获取服务端的配置信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetServerConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "配置信息",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/get/config/all": {
+            "post": {
+                "description": "使用此接口获取服务端的所有配置信息, 比如redis的配置信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "获取服务端的所有配置信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "所有配置信息",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetServerAllConfigResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/onlineshield/:randString": {
+            "get": {
+                "description": "使用此接口获取服务器在线设备数量, 以svg格式返回",
+                "produces": [
+                    "xml/svg"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "获取服务器在线人数",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "随机字符串",
+                        "name": "randString",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "在线人数",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "pb.CommonReq": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceModel": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "osVersion": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "userAgent": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.CommonResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/pb.CommonResp_Code"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.CommonResp_Code": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9,
+                10
+            ],
+            "x-enum-comments": {
+                "CommonResp_AlertError": "alert 错误 只有一个确定按钮",
+                "CommonResp_AuthError": "鉴权错误 // 应该退出登录",
+                "CommonResp_ForbiddenError": "无权限",
+                "CommonResp_InternalError": "内部错误",
+                "CommonResp_NeedSecondPasswordError": "需要输入二级密码/设置二级密码",
+                "CommonResp_RequestError": "请求错误",
+                "CommonResp_RetryError": "alert 错误 有一个取消按钮 和一个重试按钮",
+                "CommonResp_ToastError": "toast 错误 只有 message",
+                "CommonResp_UnknownError": "未知 error"
+            },
+            "x-enum-varnames": [
+                "CommonResp_Success",
+                "CommonResp_UnknownError",
+                "CommonResp_InternalError",
+                "CommonResp_RequestError",
+                "CommonResp_AuthError",
+                "CommonResp_ToastError",
+                "CommonResp_AlertError",
+                "CommonResp_RetryError",
+                "CommonResp_ForbiddenError",
+                "CommonResp_NeedSecondPasswordError"
+            ]
+        },
+        "pb.GetServerAllConfigResp": {
+            "type": "object",
+            "properties": {
+                "common": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_CommonConfig"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "connRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_ConnRpcConfig"
+                },
+                "groupRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_GroupRpcConfig"
+                },
+                "imRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_ImRpcConfig"
+                },
+                "mgmt": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_MgmtConfig"
+                },
+                "msgRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_MsgRpcConfig"
+                },
+                "noticeRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_NoticeRpcConfig"
+                },
+                "relationRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_RelationRpcConfig"
+                },
+                "userRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_UserRpcConfig"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_CommonConfig": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string"
+                },
+                "ip2RegionUrl": {
+                    "type": "string"
+                },
+                "logLevel": {
+                    "type": "string"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "mysql": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_MysqlConfig"
+                },
+                "redis": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_RedisConfig"
+                },
+                "rpcTimeOut": {
+                    "type": "integer"
+                },
+                "telemetry": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_TelemetryConfig"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_ConnRpcConfig": {
+            "type": "object",
+            "properties": {
+                "discovType": {
+                    "type": "string"
+                },
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "k8sNamespace": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "websocketPort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_GroupRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_ImRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_MgmtConfig": {
+            "type": "object",
+            "properties": {
+                "httpPort": {
+                    "type": "integer"
+                },
+                "rpcPort": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_MobPushConfig": {
+            "type": "object",
+            "properties": {
+                "androidSound": {
+                    "type": "string"
+                },
+                "apnsCateGory": {
+                    "type": "string"
+                },
+                "apnsProduction": {
+                    "type": "boolean"
+                },
+                "apnsSound": {
+                    "type": "string"
+                },
+                "appKey": {
+                    "type": "string"
+                },
+                "appSecret": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_MsgPulsarConfig": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "producerTimeout": {
+                    "type": "integer"
+                },
+                "receiverQueueSize": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "topicName": {
+                    "type": "string"
+                },
+                "vpcUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_MsgRpcConfig": {
+            "type": "object",
+            "properties": {
+                "mobPush": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_MobPushConfig"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "pulsar": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_MsgPulsarConfig"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_MysqlConfig": {
+            "type": "object",
+            "properties": {
+                "addr": {
+                    "type": "string"
+                },
+                "logLevel": {
+                    "type": "string"
+                },
+                "maxIdleConns": {
+                    "type": "integer"
+                },
+                "maxOpenConns": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_NoticeRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_RedisConfig": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string"
+                },
+                "pass": {
+                    "type": "string"
+                },
+                "tls": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_RelationRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_TelemetryConfig": {
+            "type": "object",
+            "properties": {
+                "batcher": {
+                    "type": "string"
+                },
+                "endPoint": {
+                    "type": "string"
+                },
+                "sampler": {
+                    "type": "number"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_UserRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetServerConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "serverName": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -2,10 +2,13 @@ package server
 
 import (
 	"fmt"
+	_ "github.com/cherish-chat/xxim-server/app/mgmt/docs"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/middleware"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/serverhandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	gs "github.com/swaggo/gin-swagger"
 	"github.com/zeromicro/go-zero/core/service"
 	"log"
 )
@@ -25,6 +28,7 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.Use(gin.Logger())
 	engine.Use(middleware.Recovery())
 	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
+	engine.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	// routes
 	serverhandler.NewServerHandler(s.svcCtx).Register(engine.Group("/api"))
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}

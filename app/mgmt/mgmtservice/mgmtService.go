@@ -13,13 +13,30 @@ import (
 )
 
 type (
-	GetServerConfigReq  = pb.GetServerConfigReq
-	GetServerConfigResp = pb.GetServerConfigResp
+	GetServerAllConfigReq                    = pb.GetServerAllConfigReq
+	GetServerAllConfigResp                   = pb.GetServerAllConfigResp
+	GetServerAllConfigResp_CommonConfig      = pb.GetServerAllConfigResp_CommonConfig
+	GetServerAllConfigResp_ConnRpcConfig     = pb.GetServerAllConfigResp_ConnRpcConfig
+	GetServerAllConfigResp_GroupRpcConfig    = pb.GetServerAllConfigResp_GroupRpcConfig
+	GetServerAllConfigResp_ImRpcConfig       = pb.GetServerAllConfigResp_ImRpcConfig
+	GetServerAllConfigResp_MgmtConfig        = pb.GetServerAllConfigResp_MgmtConfig
+	GetServerAllConfigResp_MobPushConfig     = pb.GetServerAllConfigResp_MobPushConfig
+	GetServerAllConfigResp_MsgPulsarConfig   = pb.GetServerAllConfigResp_MsgPulsarConfig
+	GetServerAllConfigResp_MsgRpcConfig      = pb.GetServerAllConfigResp_MsgRpcConfig
+	GetServerAllConfigResp_MysqlConfig       = pb.GetServerAllConfigResp_MysqlConfig
+	GetServerAllConfigResp_NoticeRpcConfig   = pb.GetServerAllConfigResp_NoticeRpcConfig
+	GetServerAllConfigResp_RedisConfig       = pb.GetServerAllConfigResp_RedisConfig
+	GetServerAllConfigResp_RelationRpcConfig = pb.GetServerAllConfigResp_RelationRpcConfig
+	GetServerAllConfigResp_TelemetryConfig   = pb.GetServerAllConfigResp_TelemetryConfig
+	GetServerAllConfigResp_UserRpcConfig     = pb.GetServerAllConfigResp_UserRpcConfig
+	GetServerConfigReq                       = pb.GetServerConfigReq
+	GetServerConfigResp                      = pb.GetServerConfigResp
 
 	MgmtService interface {
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
+		GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -46,4 +63,9 @@ func (m *defaultMgmtService) AfterDisconnect(ctx context.Context, in *AfterDisco
 func (m *defaultMgmtService) GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.GetServerConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetServerAllConfig(ctx, in, opts...)
 }

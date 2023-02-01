@@ -36,3 +36,8 @@ func (s *MgmtServiceServer) GetServerConfig(ctx context.Context, in *pb.GetServe
 	l := logic.NewGetServerConfigLogic(ctx, s.svcCtx)
 	return l.GetServerConfig(in)
 }
+
+func (s *MgmtServiceServer) GetServerAllConfig(ctx context.Context, in *pb.GetServerAllConfigReq) (*pb.GetServerAllConfigResp, error) {
+	l := logic.NewGetServerAllConfigLogic(ctx, s.svcCtx)
+	return l.GetServerAllConfig(in)
+}

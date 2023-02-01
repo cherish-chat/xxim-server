@@ -25,6 +25,7 @@ type MgmtServiceClient interface {
 	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
+	GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -62,6 +63,15 @@ func (c *mgmtServiceClient) GetServerConfig(ctx context.Context, in *GetServerCo
 	return out, nil
 }
 
+func (c *mgmtServiceClient) GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error) {
+	out := new(GetServerAllConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetServerAllConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type MgmtServiceServer interface {
 	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	GetServerConfig(context.Context, *GetServerConfigReq) (*GetServerConfigResp, error)
+	GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedMgmtServiceServer) AfterDisconnect(context.Context, *AfterDis
 }
 func (UnimplementedMgmtServiceServer) GetServerConfig(context.Context, *GetServerConfigReq) (*GetServerConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServerAllConfig not implemented")
 }
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
@@ -152,6 +166,24 @@ func _MgmtService_GetServerConfig_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_GetServerAllConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServerAllConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetServerAllConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetServerAllConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetServerAllConfig(ctx, req.(*GetServerAllConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetServerConfig",
 			Handler:    _MgmtService_GetServerConfig_Handler,
+		},
+		{
+			MethodName: "GetServerAllConfig",
+			Handler:    _MgmtService_GetServerAllConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

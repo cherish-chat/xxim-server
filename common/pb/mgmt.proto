@@ -6,16 +6,113 @@ import "conn.proto";
 
 //GetServerConfigReq 获取服务器配置请求
 message GetServerConfigReq {
-  string serverName = 1;
+  CommonReq commonReq = 1;
+  string serverName = 2;
 }
 
 //GetServerConfigResp 获取服务器配置响应
 message GetServerConfigResp {
-  bytes config = 1;
+  CommonResp commonResp = 1;
+  bytes config = 2;
+}
+
+//GetServerAllConfigReq 获取所有服务器配置请求
+message GetServerAllConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//GetServerAllConfigResp 获取所有服务器配置响应
+message GetServerAllConfigResp {
+  CommonResp commonResp = 1;
+  message TelemetryConfig {
+    string endPoint = 1;
+    float sampler = 2;
+    string batcher = 3;
+  }
+  message RedisConfig {
+    string host = 1;
+    string type = 2;
+    string pass = 3;
+    bool tls = 4;
+  }
+  message MysqlConfig {
+    string addr = 1;
+    int32 maxIdleConns = 2;
+    int32 maxOpenConns = 3;
+    string logLevel = 4;
+  }
+  message CommonConfig {
+    string host = 1;
+    int64 rpcTimeOut = 2;
+    string logLevel = 3;
+    TelemetryConfig telemetry = 4;
+    RedisConfig redis = 5;
+    MysqlConfig mysql = 6;
+    string ip2RegionUrl = 7;
+    string mode = 8;
+  }
+  message ConnRpcConfig {
+    string discovType = 1;
+    string k8sNamespace = 2;
+    repeated string endpoints = 3;
+    int64 port = 4;
+    int64 websocketPort = 5;
+  }
+  message ImRpcConfig {
+    int64 port = 1;
+  }
+  message MobPushConfig {
+    bool enabled = 1;
+    string appKey = 2;
+    string appSecret = 3;
+    bool apnsProduction = 4;
+    string apnsCateGory = 5;
+    string apnsSound = 6;
+    string androidSound = 7;
+  }
+  message MsgPulsarConfig {
+    bool enabled = 1;
+    string token = 2;
+    string vpcUrl = 3;
+    string topicName = 4;
+    int64 receiverQueueSize = 5;
+    int64 producerTimeout = 6;
+  }
+  message MsgRpcConfig {
+    int64 port = 1;
+    MobPushConfig mobPush = 2;
+    MsgPulsarConfig pulsar = 3;
+  }
+  message UserRpcConfig {
+    int64 port = 1;
+  }
+  message RelationRpcConfig {
+    int64 port = 1;
+  }
+  message GroupRpcConfig {
+    int64 port = 1;
+  }
+  message NoticeRpcConfig {
+    int64 port = 1;
+  }
+  message MgmtConfig {
+    int64 rpcPort = 1;
+    int64 httpPort = 2;
+  }
+  CommonConfig common = 2;
+  ConnRpcConfig connRpc = 3;
+  ImRpcConfig imRpc = 4;
+  MsgRpcConfig msgRpc = 5;
+  UserRpcConfig userRpc = 6;
+  RelationRpcConfig relationRpc = 7;
+  GroupRpcConfig groupRpc = 8;
+  NoticeRpcConfig noticeRpc = 9;
+  MgmtConfig mgmt = 10;
 }
 
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
+  rpc GetServerAllConfig(GetServerAllConfigReq) returns (GetServerAllConfigResp);
 }

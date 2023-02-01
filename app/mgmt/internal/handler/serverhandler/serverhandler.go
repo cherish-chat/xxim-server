@@ -17,7 +17,8 @@ func (r *ServerHandler) Register(g *gin.RouterGroup) {
 	group := g.Group("/server")
 	// server端配置中心
 	{
-		group.GET("/config", r.config)
+		group.POST("/get/config", r.config)
+		group.POST("/get/config/all", r.configAll)
 	}
 	// 其他
 	{
