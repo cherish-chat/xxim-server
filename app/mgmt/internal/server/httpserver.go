@@ -28,7 +28,7 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.Use(gin.Logger())
 	engine.Use(middleware.Recovery())
 	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
-	engine.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
+	engine.GET("/api/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	// routes
 	serverhandler.NewServerHandler(s.svcCtx).Register(engine.Group("/api"))
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}
