@@ -202,7 +202,7 @@ func (r *MSHandler) updateRole(ctx *gin.Context) {
 // @Param Token header string true "用户令牌"
 // @Param object body pb.DeleteMSRoleReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSRoleResp "响应数据"
-// @Router /ms/delete/role/batch [post]
+// @Router /ms/delete/role [post]
 func (r *MSHandler) deleteRoleBatch(ctx *gin.Context) {
 	in := &pb.DeleteMSRoleReq{}
 	if err := ctx.ShouldBind(in); err != nil {
