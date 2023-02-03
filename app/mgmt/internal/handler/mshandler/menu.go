@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 // getAllMenuList 获取所有菜单列表
@@ -92,6 +93,7 @@ func (r *MSHandler) getMenuDetail(ctx *gin.Context) {
 func (r *MSHandler) addMenu(ctx *gin.Context) {
 	in := &pb.AddMSMenuReq{}
 	if err := ctx.ShouldBind(in); err != nil {
+		logx.Errorf("addMenu err: %v", err)
 		ctx.AbortWithStatus(400)
 		return
 	}

@@ -19,6 +19,11 @@ var dontCheckTokenMap = map[string]bool{
 
 func Auth(rc *redis.Redis) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 只有POST请求才需要验证
+		if c.Request.Method != "POST" {
+			dontCheckToken(c)
+			return
+		}
 		if _, ok := dontCheckTokenMap[c.Request.URL.Path]; ok {
 			dontCheckToken(c)
 			return

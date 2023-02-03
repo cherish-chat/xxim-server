@@ -27,6 +27,11 @@ func Perms(tx *gorm.DB) gin.HandlerFunc {
 		allApiPathsInited = true
 	}
 	return func(c *gin.Context) {
+		// 只有POST请求才需要验证
+		if c.Request.Method != "POST" {
+			dontCheckToken(c)
+			return
+		}
 		if _, ok := dontCheckTokenMap[c.Request.URL.Path]; ok {
 			c.Next()
 			return
