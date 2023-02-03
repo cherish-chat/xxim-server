@@ -9,6 +9,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -30,6 +31,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config, rc *redis.Redis) *ServiceContext {
+	ip2region.Init(c.Ip2RegionUrl)
 	s := &ServiceContext{
 		Config: c,
 		redis:  rc,
