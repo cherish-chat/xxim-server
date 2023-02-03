@@ -39,6 +39,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -76,6 +83,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -121,6 +135,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -162,6 +183,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -199,6 +227,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -267,6 +302,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -304,6 +346,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -349,6 +398,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -386,6 +442,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -431,6 +494,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -468,6 +538,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -511,13 +588,20 @@ const docTemplate = `{
                         "name": "Token",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.GetSelfMSUserDetailReq"
+                            "$ref": "#/definitions/pb.GetSelfMSUserDetailResp"
                         }
                     }
                 }
@@ -541,6 +625,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -586,6 +677,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -623,6 +721,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -668,6 +773,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -705,6 +817,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -750,6 +869,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -787,6 +913,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -832,6 +965,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -869,6 +1009,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -914,6 +1061,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -955,6 +1109,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -992,6 +1153,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     }
@@ -1062,6 +1230,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -1099,6 +1274,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -1144,6 +1326,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -1181,6 +1370,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -1226,6 +1422,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "object",
                         "in": "body",
@@ -1263,6 +1466,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户令牌",
                         "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
                         "in": "header",
                         "required": true
                     },
@@ -2191,11 +2401,21 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetSelfMSUserDetailReq": {
+        "pb.GetSelfMSUserDetailResp": {
             "type": "object",
             "properties": {
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "permissions": {
+                    "description": "权限集合: [[*]=\u003e所有权限, ['article:add']=\u003e部分权限]",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "user": {
+                    "$ref": "#/definitions/pb.MSUser"
                 }
             }
         },

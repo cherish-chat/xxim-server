@@ -14,6 +14,7 @@ import (
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetAllMSIpWhiteListReq true "请求参数"
 // @Success 200 {object} pb.GetAllMSIpWhiteListResp "响应数据"
 // @Router /ms/get/ipwhitelist/list/all [post]
@@ -38,6 +39,7 @@ func (r *MSHandler) getAllIpWhiteList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMSIpWhiteListDetailReq true "请求参数"
 // @Success 200 {object} pb.GetMSIpWhiteListDetailResp "响应数据"
 // @Router /ms/get/ipwhitelist/detail [post]
@@ -62,6 +64,7 @@ func (r *MSHandler) getIpWhiteListDetail(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.AddMSIpWhiteListReq true "请求参数"
 // @Success 200 {object} pb.AddMSIpWhiteListResp "响应数据"
 // @Router /ms/add/ipwhitelist [post]
@@ -86,6 +89,7 @@ func (r *MSHandler) addIpWhiteList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.UpdateMSIpWhiteListReq true "请求参数"
 // @Success 200 {object} pb.UpdateMSIpWhiteListResp "响应数据"
 // @Router /ms/update/ipwhitelist [post]
@@ -110,6 +114,7 @@ func (r *MSHandler) updateIpWhiteList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.DeleteMSIpWhiteListReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSIpWhiteListResp "响应数据"
 // @Router /ms/delete/ipwhitelist [post]

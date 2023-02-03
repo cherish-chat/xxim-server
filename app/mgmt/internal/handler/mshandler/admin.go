@@ -35,6 +35,7 @@ type getAllMSUserListRespUser struct {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetAllMSUserListReq true "请求参数"
 // @Success 200 {object} getAllMSUserListResp "响应数据"
 // @Router /ms/get/admin/list/all [post]
@@ -78,6 +79,7 @@ func (r *MSHandler) getAllAdminList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMSUserDetailReq true "请求参数"
 // @Success 200 {object} getAllMSUserListRespUser "响应数据"
 // @Router /ms/get/admin/detail [post]
@@ -115,7 +117,8 @@ func (r *MSHandler) getAdminDetail(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
-// @Success 200 {object} pb.GetSelfMSUserDetailReq "响应数据"
+// @Param UserId header string true "用户ID"
+// @Success 200 {object} pb.GetSelfMSUserDetailResp "响应数据"
 // @Router /ms/get/admin/detail/self [post]
 func (r *MSHandler) getAdminDetailSelf(ctx *gin.Context) {
 	in := &pb.GetSelfMSUserDetailReq{}
@@ -138,6 +141,7 @@ func (r *MSHandler) getAdminDetailSelf(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.AddMSUserReq true "请求参数"
 // @Success 200 {object} pb.AddMSUserResp "响应数据"
 // @Router /ms/add/admin [post]
@@ -163,6 +167,7 @@ func (r *MSHandler) addAdmin(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.UpdateMSUserReq true "请求参数"
 // @Success 200 {object} pb.UpdateMSUserResp "响应数据"
 // @Router /ms/update/admin [post]
@@ -187,6 +192,7 @@ func (r *MSHandler) updateAdmin(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.DeleteMSUserReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSUserResp "响应数据"
 // @Router /ms/delete/admin [post]
@@ -211,6 +217,7 @@ func (r *MSHandler) deleteAdminBatch(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.SwitchMSUserStatusReq true "请求参数"
 // @Success 200 {object} pb.SwitchMSUserStatusResp "响应数据"
 // @Router /ms/switch/admin/status [post]

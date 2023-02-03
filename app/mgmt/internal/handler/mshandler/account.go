@@ -37,6 +37,7 @@ func (r *MSHandler) login(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Success 200 {object} pb.HealthMSResp "响应数据"
 // @Router /ms/health [post]
 func (r *MSHandler) health(ctx *gin.Context) {

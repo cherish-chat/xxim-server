@@ -15,6 +15,7 @@ import (
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetAllMSMenuListReq true "请求参数"
 // @Success 200 {object} pb.GetAllMSMenuListResp "响应数据"
 // @Router /ms/get/menu/list/all [post]
@@ -39,6 +40,7 @@ func (r *MSHandler) getAllMenuList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMyMSMenuListReq true "请求参数"
 // @Success 200 {object} pb.GetMyMSMenuListResp "响应数据"
 // @Router /ms/get/menu/list [post]
@@ -63,6 +65,7 @@ func (r *MSHandler) getMenuList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMSMenuDetailReq true "请求参数"
 // @Success 200 {object} pb.GetMSMenuDetailResp "响应数据"
 // @Router /ms/get/menu/detail [post]
@@ -87,6 +90,7 @@ func (r *MSHandler) getMenuDetail(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.AddMSMenuReq true "请求参数"
 // @Success 200 {object} pb.AddMSMenuResp "响应数据"
 // @Router /ms/add/menu [post]
@@ -112,6 +116,7 @@ func (r *MSHandler) addMenu(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.UpdateMSMenuReq true "请求参数"
 // @Success 200 {object} pb.UpdateMSMenuResp "响应数据"
 // @Router /ms/update/menu [post]
@@ -136,6 +141,7 @@ func (r *MSHandler) updateMenu(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.DeleteMSMenuReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSMenuResp "响应数据"
 // @Router /ms/delete/menu [post]

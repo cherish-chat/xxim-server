@@ -35,6 +35,7 @@ type getAllMSRoleListRespRole struct {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetAllMSRoleListReq true "请求参数"
 // @Success 200 {object} getAllMSRoleListResp "响应数据"
 // @Router /ms/get/role/list/all [post]
@@ -77,6 +78,7 @@ func (r *MSHandler) getAllRoleList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMSRoleDetailReq true "请求参数"
 // @Success 200 {object} getAllMSRoleListRespRole "响应数据"
 // @Router /ms/get/role/detail [post]
@@ -113,6 +115,7 @@ func (r *MSHandler) getRoleDetail(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body updateMSRoleReq true "请求参数"
 // @Success 200 {object} pb.AddMSRoleResp "响应数据"
 // @Router /ms/add/role [post]
@@ -164,6 +167,7 @@ type updateMSRoleReqRole struct {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body updateMSRoleReq true "请求参数"
 // @Success 200 {object} pb.UpdateMSRoleResp "响应数据"
 // @Router /ms/update/role [post]
@@ -200,6 +204,7 @@ func (r *MSHandler) updateRole(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.DeleteMSRoleReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSRoleResp "响应数据"
 // @Router /ms/delete/role [post]

@@ -14,6 +14,7 @@ import (
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetAllMSApiPathListReq true "请求参数"
 // @Success 200 {object} pb.GetAllMSApiPathListResp "响应数据"
 // @Router /ms/get/apipath/list/all [post]
@@ -38,6 +39,7 @@ func (r *MSHandler) getAllApiPathList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMyMSApiPathListReq true "请求参数"
 // @Success 200 {object} pb.GetMyMSApiPathListResp "响应数据"
 // @Router /ms/get/apipath/list [post]
@@ -62,6 +64,7 @@ func (r *MSHandler) getApiPathList(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.GetMSApiPathDetailReq true "请求参数"
 // @Success 200 {object} pb.GetMSApiPathDetailResp "响应数据"
 // @Router /ms/get/apipath/detail [post]
@@ -86,6 +89,7 @@ func (r *MSHandler) getApiPathDetail(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.AddMSApiPathReq true "请求参数"
 // @Success 200 {object} pb.AddMSApiPathResp "响应数据"
 // @Router /ms/add/apipath [post]
@@ -110,6 +114,7 @@ func (r *MSHandler) addApiPath(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.UpdateMSApiPathReq true "请求参数"
 // @Success 200 {object} pb.UpdateMSApiPathResp "响应数据"
 // @Router /ms/update/apipath [post]
@@ -134,6 +139,7 @@ func (r *MSHandler) updateApiPath(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
 // @Param object body pb.DeleteMSApiPathReq true "请求参数"
 // @Success 200 {object} pb.DeleteMSApiPathResp "响应数据"
 // @Router /ms/delete/apipath [post]
