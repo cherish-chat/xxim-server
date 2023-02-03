@@ -1,5 +1,149 @@
 basePath: /api
 definitions:
+  mshandler.getAllMSRoleListResp:
+    properties:
+      count:
+        type: integer
+      pageNo:
+        type: integer
+      pageSize:
+        type: integer
+      roles:
+        items:
+          $ref: '#/definitions/mshandler.getAllMSRoleListRespRole'
+        type: array
+    type: object
+  mshandler.getAllMSRoleListRespRole:
+    properties:
+      apiPaths:
+        description: 关联接口
+        items:
+          type: string
+        type: array
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: boolean
+      member:
+        description: 成员数量
+        type: integer
+      menus:
+        description: 关联菜单
+        items:
+          type: string
+        type: array
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 角色备注
+        type: string
+      sort:
+        description: 角色排序
+        type: integer
+      updateTime:
+        description: 更新时间
+        type: string
+    type: object
+  mshandler.getAllMSUserListResp:
+    properties:
+      count:
+        type: integer
+      pageNo:
+        type: integer
+      pageSize:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/mshandler.getAllMSUserListRespUser'
+        type: array
+    type: object
+  mshandler.getAllMSUserListRespUser:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      createTime:
+        description: 创建时间
+        type: string
+      id:
+        description: 主键
+        type: string
+      isDisable:
+        description: '是否禁用: [0=否, 1=是]'
+        type: boolean
+      isMultipoint:
+        description: '多端登录: [0=否, 1=是]'
+        type: boolean
+      lastLoginIp:
+        description: 最后登录IP
+        type: string
+      lastLoginTime:
+        description: 最后登录时间
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      role:
+        description: 角色
+        type: string
+      updateTime:
+        description: 更新时间
+        type: string
+      username:
+        description: 账号
+        type: string
+    type: object
+  mshandler.updateMSRoleReq:
+    properties:
+      commonReq:
+        allOf:
+        - $ref: '#/definitions/pb.CommonReq'
+        description: 公共请求参数
+      role:
+        allOf:
+        - $ref: '#/definitions/mshandler.updateMSRoleReqRole'
+        description: 角色信息
+    type: object
+  mshandler.updateMSRoleReqRole:
+    properties:
+      apiPathIds:
+        description: 接口ID列表
+        type: string
+      apiPaths:
+        description: 接口列表
+        items:
+          type: string
+        type: array
+      id:
+        description: 角色ID
+        type: string
+      isDisable:
+        description: 是否禁用
+        type: boolean
+      menuIds:
+        description: 菜单ID列表
+        type: string
+      menus:
+        description: 菜单列表
+        items:
+          type: string
+        type: array
+      name:
+        description: 角色名称
+        type: string
+      remark:
+        description: 角色备注
+        type: string
+      sort:
+        description: 排序
+        type: integer
+    type: object
   pb.AddMSApiPathReq:
     properties:
       apiPath:
@@ -36,6 +180,11 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.AddMSRoleResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.AddMSUserReq:
     properties:
       commonReq:
@@ -44,54 +193,6 @@ definitions:
         $ref: '#/definitions/pb.MSUser'
     type: object
   pb.AddMSUserResp:
-    properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-    type: object
-  pb.BindMSRoleApiPathReq:
-    properties:
-      apiPathIds:
-        items:
-          type: string
-        type: array
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      roleId:
-        type: string
-    type: object
-  pb.BindMSRoleApiPathResp:
-    properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-    type: object
-  pb.BindMSRoleMenuReq:
-    properties:
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      menuIds:
-        items:
-          type: string
-        type: array
-      roleId:
-        type: string
-    type: object
-  pb.BindMSRoleMenuResp:
-    properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-    type: object
-  pb.BindMSUserRoleReq:
-    properties:
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      roleIds:
-        items:
-          type: string
-        type: array
-      userId:
-        type: string
-    type: object
-  pb.BindMSUserRoleResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -168,6 +269,31 @@ definitions:
     - CommonResp_RetryError
     - CommonResp_ForbiddenError
     - CommonResp_NeedSecondPasswordError
+  pb.ConfigMSResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      copyright:
+        description: 版权信息
+        items:
+          $ref: '#/definitions/pb.MStr'
+        type: array
+      pubDomain:
+        description: 公网域名
+        type: string
+      webBackdrop:
+        description: 网站背景
+        type: string
+      webFavicon:
+        description: 网站favicon
+        type: string
+      webLogo:
+        description: 网站logo
+        type: string
+      webName:
+        description: 网站名称
+        type: string
+    type: object
   pb.DeleteMSApiPathReq:
     properties:
       commonReq:
@@ -206,6 +332,20 @@ definitions:
         type: array
     type: object
   pb.DeleteMSMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSRoleReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSRoleResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -290,7 +430,7 @@ definitions:
       total:
         type: integer
     type: object
-  pb.GetAllMSUserListReq:
+  pb.GetAllMSRoleListReq:
     properties:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
@@ -301,16 +441,16 @@ definitions:
       page:
         $ref: '#/definitions/pb.Page'
     type: object
-  pb.GetAllMSUserListResp:
+  pb.GetAllMSUserListReq:
     properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-      total:
-        type: integer
-      users:
-        items:
-          $ref: '#/definitions/pb.MSUser'
-        type: array
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
     type: object
   pb.GetMSApiPathDetailReq:
     properties:
@@ -354,19 +494,19 @@ definitions:
       menu:
         $ref: '#/definitions/pb.MSMenu'
     type: object
-  pb.GetMSUserDetailReq:
+  pb.GetMSRoleDetailReq:
     properties:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
       id:
         type: string
     type: object
-  pb.GetMSUserDetailResp:
+  pb.GetMSUserDetailReq:
     properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-      user:
-        $ref: '#/definitions/pb.MSUser'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
     type: object
   pb.GetMyMSApiPathListReq:
     properties:
@@ -395,6 +535,11 @@ definitions:
         items:
           $ref: '#/definitions/pb.MSMenu'
         type: array
+    type: object
+  pb.GetSelfMSUserDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.GetServerAllConfigResp:
     properties:
@@ -646,10 +791,12 @@ definitions:
   pb.MSMenu:
     properties:
       children:
+        description: 子菜单
         items:
           $ref: '#/definitions/pb.MSMenu'
         type: array
       component:
+        description: 组件
         type: string
       createdAt:
         type: integer
@@ -657,54 +804,42 @@ definitions:
         type: string
       createdBy:
         type: string
-      icon:
-        type: string
       id:
         type: string
-      parentId:
+      isCache:
+        description: 是否缓存
+        type: boolean
+      isDisable:
+        description: 是否禁用
+        type: boolean
+      isShow:
+        description: 是否显示
+        type: boolean
+      menuIcon:
+        description: 菜单图标
         type: string
-      path:
+      menuName:
+        description: 菜单名称
         type: string
-      redirect:
-        type: string
-      title:
-        type: string
-      updatedAt:
+      menuSort:
+        description: 菜单排序
         type: integer
-      updatedAtStr:
+      menuType:
+        description: 菜单类型 M=目录 C=菜单 A=按钮
         type: string
-      updatedBy:
+      params:
+        description: 路径参数
         type: string
-    type: object
-  pb.MSRole:
-    properties:
-      apiPathIds:
-        items:
-          type: string
-        type: array
-      apiPaths:
-        additionalProperties:
-          $ref: '#/definitions/pb.MSApiPath'
-        type: object
-      createdAt:
-        type: integer
-      createdAtStr:
+      paths:
+        description: 路径
         type: string
-      createdBy:
+      perms:
+        description: 权限标识
         type: string
-      description:
+      pid:
         type: string
-      id:
-        type: string
-      menuIds:
-        items:
-          type: string
-        type: array
-      menus:
-        additionalProperties:
-          $ref: '#/definitions/pb.MSMenu'
-        type: object
-      title:
+      selected:
+        description: 选中路径
         type: string
       updatedAt:
         type: integer
@@ -715,14 +850,6 @@ definitions:
     type: object
   pb.MSUser:
     properties:
-      apiPathIds:
-        items:
-          type: string
-        type: array
-      apiPaths:
-        additionalProperties:
-          $ref: '#/definitions/pb.MSApiPath'
-        type: object
       avatar:
         type: string
       createdAt:
@@ -733,29 +860,17 @@ definitions:
         type: string
       id:
         type: string
-      menuIds:
-        items:
-          type: string
-        type: array
-      menus:
-        additionalProperties:
-          $ref: '#/definitions/pb.MSMenu'
-        type: object
+      isDisable:
+        type: boolean
+      lastLoginIp:
+        type: string
+      lastLoginTime:
+        type: string
       nickname:
         type: string
       password:
         type: string
-      roleIds:
-        items:
-          type: string
-        type: array
-      roles:
-        additionalProperties:
-          $ref: '#/definitions/pb.MSRole'
-        type: object
-      unbanTime:
-        type: integer
-      unbanTimeStr:
+      role:
         type: string
       updatedAt:
         type: integer
@@ -766,6 +881,13 @@ definitions:
       username:
         type: string
     type: object
+  pb.MStr:
+    properties:
+      m:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
   pb.Page:
     properties:
       page:
@@ -773,50 +895,14 @@ definitions:
       size:
         type: integer
     type: object
-  pb.UnbindMSRoleApiPathReq:
-    properties:
-      apiPathIds:
-        items:
-          type: string
-        type: array
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      roleId:
-        type: string
-    type: object
-  pb.UnbindMSRoleApiPathResp:
-    properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-    type: object
-  pb.UnbindMSRoleMenuReq:
+  pb.SwitchMSUserStatusReq:
     properties:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
-      menuIds:
-        items:
-          type: string
-        type: array
-      roleId:
+      id:
         type: string
     type: object
-  pb.UnbindMSRoleMenuResp:
-    properties:
-      commonResp:
-        $ref: '#/definitions/pb.CommonResp'
-    type: object
-  pb.UnbindMSUserRoleReq:
-    properties:
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      roleIds:
-        items:
-          type: string
-        type: array
-      userId:
-        type: string
-    type: object
-  pb.UnbindMSUserRoleResp:
+  pb.SwitchMSUserStatusResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -853,6 +939,11 @@ definitions:
         $ref: '#/definitions/pb.MSMenu'
     type: object
   pb.UpdateMSMenuResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSRoleResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -985,11 +1076,11 @@ paths:
       summary: 新增菜单
       tags:
       - 管理系统菜单相关接口
-  /ms/bind/admin/role/batch:
+  /ms/add/role:
     post:
       consumes:
       - application/json
-      description: 使用此接口绑定管理员角色
+      description: 使用此接口新增角色
       parameters:
       - description: 用户令牌
         in: header
@@ -1001,71 +1092,32 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.BindMSUserRoleReq'
+          $ref: '#/definitions/mshandler.updateMSRoleReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.BindMSUserRoleResp'
-      summary: 绑定管理员角色
+            $ref: '#/definitions/pb.AddMSRoleResp'
+      summary: 新增角色
       tags:
-      - 管理员角色相关接口
-  /ms/bind/role/apipath/batch:
+      - 管理系统角色相关接口
+  /ms/config:
     post:
       consumes:
       - application/json
-      description: 使用此接口绑定角色ApiPath
-      parameters:
-      - description: 用户令牌
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 请求参数
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/pb.BindMSRoleApiPathReq'
+      description: 获取配置信息
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.BindMSRoleApiPathResp'
-      summary: 绑定角色ApiPath
+            $ref: '#/definitions/pb.ConfigMSResp'
+      summary: 获取配置信息
       tags:
-      - 角色ApiPath绑定相关接口
-  /ms/bind/role/menu/batch:
-    post:
-      consumes:
-      - application/json
-      description: 使用此接口绑定角色菜单
-      parameters:
-      - description: 用户令牌
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 请求参数
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/pb.BindMSRoleMenuReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 响应数据
-          schema:
-            $ref: '#/definitions/pb.BindMSRoleMenuResp'
-      summary: 绑定角色菜单
-      tags:
-      - 角色菜单绑定相关接口
+      - 管理系统相关接口
   /ms/delete/admin:
     post:
       consumes:
@@ -1174,6 +1226,33 @@ paths:
       summary: 删除菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/delete/role:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除角色
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSRoleResp'
+      summary: 删除角色
+      tags:
+      - 管理系统角色相关接口
   /ms/get/admin/detail:
     post:
       consumes:
@@ -1197,8 +1276,29 @@ paths:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.GetMSUserDetailResp'
+            $ref: '#/definitions/mshandler.getAllMSUserListRespUser'
       summary: 获取管理员详情
+      tags:
+      - 管理员相关接口
+  /ms/get/admin/detail/self:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取自己的管理员详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetSelfMSUserDetailReq'
+      summary: 获取自己的管理员详情
       tags:
       - 管理员相关接口
   /ms/get/admin/list/all:
@@ -1224,7 +1324,7 @@ paths:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.GetAllMSUserListResp'
+            $ref: '#/definitions/mshandler.getAllMSUserListResp'
       summary: 获取所有管理员列表
       tags:
       - 管理员相关接口
@@ -1444,6 +1544,60 @@ paths:
       summary: 获取所有菜单列表
       tags:
       - 管理系统菜单相关接口
+  /ms/get/role/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取角色详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSRoleDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/mshandler.getAllMSRoleListRespRole'
+      summary: 获取角色详情
+      tags:
+      - 管理系统角色相关接口
+  /ms/get/role/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取所有角色列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSRoleListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/mshandler.getAllMSRoleListResp'
+      summary: 获取所有角色列表
+      tags:
+      - 管理系统角色相关接口
   /ms/health:
     post:
       consumes:
@@ -1464,7 +1618,7 @@ paths:
             $ref: '#/definitions/pb.HealthMSResp'
       summary: 检查服务是否健康
       tags:
-      - 账号相关接口
+      - 管理系统相关接口
   /ms/login:
     post:
       consumes:
@@ -1486,12 +1640,12 @@ paths:
             $ref: '#/definitions/pb.LoginMSResp'
       summary: 登录managersystem管理系统
       tags:
-      - 账号相关接口
-  /ms/unbind/admin/role/batch:
+      - 管理系统相关接口
+  /ms/switch/admin/status:
     post:
       consumes:
       - application/json
-      description: 使用此接口解绑管理员角色
+      description: 使用此接口切换管理员状态
       parameters:
       - description: 用户令牌
         in: header
@@ -1503,71 +1657,17 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.UnbindMSUserRoleReq'
+          $ref: '#/definitions/pb.SwitchMSUserStatusReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.UnbindMSUserRoleResp'
-      summary: 解绑管理员角色
+            $ref: '#/definitions/pb.SwitchMSUserStatusResp'
+      summary: 切换管理员状态
       tags:
-      - 管理员角色相关接口
-  /ms/unbind/role/apipath/batch:
-    post:
-      consumes:
-      - application/json
-      description: 使用此接口解绑角色ApiPath
-      parameters:
-      - description: 用户令牌
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 请求参数
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/pb.UnbindMSRoleApiPathReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 响应数据
-          schema:
-            $ref: '#/definitions/pb.UnbindMSRoleApiPathResp'
-      summary: 解绑角色ApiPath
-      tags:
-      - 角色ApiPath绑定相关接口
-  /ms/unbind/role/menu/batch:
-    post:
-      consumes:
-      - application/json
-      description: 使用此接口解绑角色菜单
-      parameters:
-      - description: 用户令牌
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 请求参数
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/pb.UnbindMSRoleMenuReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 响应数据
-          schema:
-            $ref: '#/definitions/pb.UnbindMSRoleMenuResp'
-      summary: 解绑角色菜单
-      tags:
-      - 角色菜单绑定相关接口
+      - 管理员相关接口
   /ms/update/admin:
     post:
       consumes:
@@ -1676,6 +1776,33 @@ paths:
       summary: 更新菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/update/role:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新角色
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/mshandler.updateMSRoleReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSRoleResp'
+      summary: 更新角色
+      tags:
+      - 管理系统角色相关接口
   /server/get/config:
     post:
       consumes:

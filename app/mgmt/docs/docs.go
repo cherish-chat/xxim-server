@@ -181,9 +181,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/bind/admin/role/batch": {
+        "/ms/add/role": {
             "post": {
-                "description": "使用此接口绑定管理员角色",
+                "description": "使用此接口新增角色",
                 "consumes": [
                     "application/json"
                 ],
@@ -191,9 +191,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理员角色相关接口"
+                    "管理系统角色相关接口"
                 ],
-                "summary": "绑定管理员角色",
+                "summary": "新增角色",
                 "parameters": [
                     {
                         "type": "string",
@@ -208,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.BindMSUserRoleReq"
+                            "$ref": "#/definitions/mshandler.updateMSRoleReq"
                         }
                     }
                 ],
@@ -216,15 +216,15 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.BindMSUserRoleResp"
+                            "$ref": "#/definitions/pb.AddMSRoleResp"
                         }
                     }
                 }
             }
         },
-        "/ms/bind/role/apipath/batch": {
+        "/ms/config": {
             "post": {
-                "description": "使用此接口绑定角色ApiPath",
+                "description": "获取配置信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -232,73 +232,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "角色ApiPath绑定相关接口"
+                    "管理系统相关接口"
                 ],
-                "summary": "绑定角色ApiPath",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户令牌",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pb.BindMSRoleApiPathReq"
-                        }
-                    }
-                ],
+                "summary": "获取配置信息",
                 "responses": {
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.BindMSRoleApiPathResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/ms/bind/role/menu/batch": {
-            "post": {
-                "description": "使用此接口绑定角色菜单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "角色菜单绑定相关接口"
-                ],
-                "summary": "绑定角色菜单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户令牌",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pb.BindMSRoleMenuReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "响应数据",
-                        "schema": {
-                            "$ref": "#/definitions/pb.BindMSRoleMenuResp"
+                            "$ref": "#/definitions/pb.ConfigMSResp"
                         }
                     }
                 }
@@ -468,6 +409,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/delete/role": {
+            "post": {
+                "description": "使用此接口删除角色",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统角色相关接口"
+                ],
+                "summary": "删除角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSRoleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSRoleResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/admin/detail": {
             "post": {
                 "description": "使用此接口获取管理员详情",
@@ -503,7 +485,39 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.GetMSUserDetailResp"
+                            "$ref": "#/definitions/mshandler.getAllMSUserListRespUser"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/admin/detail/self": {
+            "post": {
+                "description": "使用此接口获取自己的管理员详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员相关接口"
+                ],
+                "summary": "获取自己的管理员详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetSelfMSUserDetailReq"
                         }
                     }
                 }
@@ -544,7 +558,7 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.GetAllMSUserListResp"
+                            "$ref": "#/definitions/mshandler.getAllMSUserListResp"
                         }
                     }
                 }
@@ -878,6 +892,88 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/get/role/detail": {
+            "post": {
+                "description": "使用此接口获取角色详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统角色相关接口"
+                ],
+                "summary": "获取角色详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSRoleDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.getAllMSRoleListRespRole"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/role/list/all": {
+            "post": {
+                "description": "使用此接口获取所有角色列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统角色相关接口"
+                ],
+                "summary": "获取所有角色列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSRoleListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.getAllMSRoleListResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/health": {
             "post": {
                 "description": "使用此接口检查服务是否健康",
@@ -888,7 +984,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "账号相关接口"
+                    "管理系统相关接口"
                 ],
                 "summary": "检查服务是否健康",
                 "parameters": [
@@ -920,7 +1016,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "账号相关接口"
+                    "管理系统相关接口"
                 ],
                 "summary": "登录managersystem管理系统",
                 "parameters": [
@@ -944,9 +1040,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/unbind/admin/role/batch": {
+        "/ms/switch/admin/status": {
             "post": {
-                "description": "使用此接口解绑管理员角色",
+                "description": "使用此接口切换管理员状态",
                 "consumes": [
                     "application/json"
                 ],
@@ -954,9 +1050,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理员角色相关接口"
+                    "管理员相关接口"
                 ],
-                "summary": "解绑管理员角色",
+                "summary": "切换管理员状态",
                 "parameters": [
                     {
                         "type": "string",
@@ -971,7 +1067,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSUserRoleReq"
+                            "$ref": "#/definitions/pb.SwitchMSUserStatusReq"
                         }
                     }
                 ],
@@ -979,89 +1075,7 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSUserRoleResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/ms/unbind/role/apipath/batch": {
-            "post": {
-                "description": "使用此接口解绑角色ApiPath",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "角色ApiPath绑定相关接口"
-                ],
-                "summary": "解绑角色ApiPath",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户令牌",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSRoleApiPathReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "响应数据",
-                        "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSRoleApiPathResp"
-                        }
-                    }
-                }
-            }
-        },
-        "/ms/unbind/role/menu/batch": {
-            "post": {
-                "description": "使用此接口解绑角色菜单",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "角色菜单绑定相关接口"
-                ],
-                "summary": "解绑角色菜单",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户令牌",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSRoleMenuReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "响应数据",
-                        "schema": {
-                            "$ref": "#/definitions/pb.UnbindMSRoleMenuResp"
+                            "$ref": "#/definitions/pb.SwitchMSUserStatusResp"
                         }
                     }
                 }
@@ -1231,6 +1245,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/update/role": {
+            "post": {
+                "description": "使用此接口更新角色",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统角色相关接口"
+                ],
+                "summary": "更新角色",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.updateMSRoleReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSRoleResp"
+                        }
+                    }
+                }
+            }
+        },
         "/server/get/config": {
             "post": {
                 "description": "使用此接口获取服务端的配置信息, 比如redis的配置信息",
@@ -1335,6 +1390,214 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "mshandler.getAllMSRoleListResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "pageNo": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mshandler.getAllMSRoleListRespRole"
+                    }
+                }
+            }
+        },
+        "mshandler.getAllMSRoleListRespRole": {
+            "type": "object",
+            "properties": {
+                "apiPaths": {
+                    "description": "关联接口",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "isDisable": {
+                    "description": "是否禁用: [0=否, 1=是]",
+                    "type": "boolean"
+                },
+                "member": {
+                    "description": "成员数量",
+                    "type": "integer"
+                },
+                "menus": {
+                    "description": "关联菜单",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "角色备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "角色排序",
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "mshandler.getAllMSUserListResp": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "pageNo": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/mshandler.getAllMSUserListRespUser"
+                    }
+                }
+            }
+        },
+        "mshandler.getAllMSUserListRespUser": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "string"
+                },
+                "isDisable": {
+                    "description": "是否禁用: [0=否, 1=是]",
+                    "type": "boolean"
+                },
+                "isMultipoint": {
+                    "description": "多端登录: [0=否, 1=是]",
+                    "type": "boolean"
+                },
+                "lastLoginIp": {
+                    "description": "最后登录IP",
+                    "type": "string"
+                },
+                "lastLoginTime": {
+                    "description": "最后登录时间",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "角色",
+                    "type": "string"
+                },
+                "updateTime": {
+                    "description": "更新时间",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "mshandler.updateMSRoleReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "description": "公共请求参数",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/pb.CommonReq"
+                        }
+                    ]
+                },
+                "role": {
+                    "description": "角色信息",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/mshandler.updateMSRoleReqRole"
+                        }
+                    ]
+                }
+            }
+        },
+        "mshandler.updateMSRoleReqRole": {
+            "type": "object",
+            "properties": {
+                "apiPathIds": {
+                    "description": "接口ID列表",
+                    "type": "string"
+                },
+                "apiPaths": {
+                    "description": "接口列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "description": "角色ID",
+                    "type": "string"
+                },
+                "isDisable": {
+                    "description": "是否禁用",
+                    "type": "boolean"
+                },
+                "menuIds": {
+                    "description": "菜单ID列表",
+                    "type": "string"
+                },
+                "menus": {
+                    "description": "菜单列表",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "角色备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                }
+            }
+        },
         "pb.AddMSApiPathReq": {
             "type": "object",
             "properties": {
@@ -1392,6 +1655,14 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AddMSRoleResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.AddMSUserReq": {
             "type": "object",
             "properties": {
@@ -1404,81 +1675,6 @@ const docTemplate = `{
             }
         },
         "pb.AddMSUserResp": {
-            "type": "object",
-            "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
-                }
-            }
-        },
-        "pb.BindMSRoleApiPathReq": {
-            "type": "object",
-            "properties": {
-                "apiPathIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "roleId": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.BindMSRoleApiPathResp": {
-            "type": "object",
-            "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
-                }
-            }
-        },
-        "pb.BindMSRoleMenuReq": {
-            "type": "object",
-            "properties": {
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "menuIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "roleId": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.BindMSRoleMenuResp": {
-            "type": "object",
-            "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
-                }
-            }
-        },
-        "pb.BindMSUserRoleReq": {
-            "type": "object",
-            "properties": {
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "roleIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.BindMSUserRoleResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -1582,6 +1778,41 @@ const docTemplate = `{
                 "CommonResp_NeedSecondPasswordError"
             ]
         },
+        "pb.ConfigMSResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "copyright": {
+                    "description": "版权信息",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MStr"
+                    }
+                },
+                "pubDomain": {
+                    "description": "公网域名",
+                    "type": "string"
+                },
+                "webBackdrop": {
+                    "description": "网站背景",
+                    "type": "string"
+                },
+                "webFavicon": {
+                    "description": "网站favicon",
+                    "type": "string"
+                },
+                "webLogo": {
+                    "description": "网站logo",
+                    "type": "string"
+                },
+                "webName": {
+                    "description": "网站名称",
+                    "type": "string"
+                }
+            }
+        },
         "pb.DeleteMSApiPathReq": {
             "type": "object",
             "properties": {
@@ -1641,6 +1872,28 @@ const docTemplate = `{
             }
         },
         "pb.DeleteMSMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSRoleReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSRoleResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -1772,7 +2025,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetAllMSUserListReq": {
+        "pb.GetAllMSRoleListReq": {
             "type": "object",
             "properties": {
                 "commonReq": {
@@ -1789,20 +2042,20 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetAllMSUserListResp": {
+        "pb.GetAllMSUserListReq": {
             "type": "object",
             "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
                 },
-                "total": {
-                    "type": "integer"
-                },
-                "users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pb.MSUser"
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
                     }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
                 }
             }
         },
@@ -1872,7 +2125,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetMSUserDetailReq": {
+        "pb.GetMSRoleDetailReq": {
             "type": "object",
             "properties": {
                 "commonReq": {
@@ -1883,14 +2136,14 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetMSUserDetailResp": {
+        "pb.GetMSUserDetailReq": {
             "type": "object",
             "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
                 },
-                "user": {
-                    "$ref": "#/definitions/pb.MSUser"
+                "id": {
+                    "type": "string"
                 }
             }
         },
@@ -1935,6 +2188,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/pb.MSMenu"
                     }
+                }
+            }
+        },
+        "pb.GetSelfMSUserDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
                 }
             }
         },
@@ -2323,12 +2584,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "children": {
+                    "description": "子菜单",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/pb.MSMenu"
                     }
                 },
                 "component": {
+                    "description": "组件",
                     "type": "string"
                 },
                 "createdAt": {
@@ -2340,78 +2603,54 @@ const docTemplate = `{
                 "createdBy": {
                     "type": "string"
                 },
-                "icon": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
-                "parentId": {
+                "isCache": {
+                    "description": "是否缓存",
+                    "type": "boolean"
+                },
+                "isDisable": {
+                    "description": "是否禁用",
+                    "type": "boolean"
+                },
+                "isShow": {
+                    "description": "是否显示",
+                    "type": "boolean"
+                },
+                "menuIcon": {
+                    "description": "菜单图标",
                     "type": "string"
                 },
-                "path": {
+                "menuName": {
+                    "description": "菜单名称",
                     "type": "string"
                 },
-                "redirect": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updatedAt": {
+                "menuSort": {
+                    "description": "菜单排序",
                     "type": "integer"
                 },
-                "updatedAtStr": {
+                "menuType": {
+                    "description": "菜单类型 M=目录 C=菜单 A=按钮",
                     "type": "string"
                 },
-                "updatedBy": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.MSRole": {
-            "type": "object",
-            "properties": {
-                "apiPathIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "apiPaths": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pb.MSApiPath"
-                    }
-                },
-                "createdAt": {
-                    "type": "integer"
-                },
-                "createdAtStr": {
+                "params": {
+                    "description": "路径参数",
                     "type": "string"
                 },
-                "createdBy": {
+                "paths": {
+                    "description": "路径",
                     "type": "string"
                 },
-                "description": {
+                "perms": {
+                    "description": "权限标识",
                     "type": "string"
                 },
-                "id": {
+                "pid": {
                     "type": "string"
                 },
-                "menuIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "menus": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pb.MSMenu"
-                    }
-                },
-                "title": {
+                "selected": {
+                    "description": "选中路径",
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2428,18 +2667,6 @@ const docTemplate = `{
         "pb.MSUser": {
             "type": "object",
             "properties": {
-                "apiPathIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "apiPaths": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pb.MSApiPath"
-                    }
-                },
                 "avatar": {
                     "type": "string"
                 },
@@ -2455,17 +2682,14 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "menuIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "isDisable": {
+                    "type": "boolean"
                 },
-                "menus": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pb.MSMenu"
-                    }
+                "lastLoginIp": {
+                    "type": "string"
+                },
+                "lastLoginTime": {
+                    "type": "string"
                 },
                 "nickname": {
                     "type": "string"
@@ -2473,22 +2697,7 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
-                "roleIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "roles": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/pb.MSRole"
-                    }
-                },
-                "unbanTime": {
-                    "type": "integer"
-                },
-                "unbanTimeStr": {
+                "role": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2505,6 +2714,17 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.MStr": {
+            "type": "object",
+            "properties": {
+                "m": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "pb.Page": {
             "type": "object",
             "properties": {
@@ -2516,74 +2736,18 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.UnbindMSRoleApiPathReq": {
-            "type": "object",
-            "properties": {
-                "apiPathIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "roleId": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.UnbindMSRoleApiPathResp": {
-            "type": "object",
-            "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
-                }
-            }
-        },
-        "pb.UnbindMSRoleMenuReq": {
+        "pb.SwitchMSUserStatusReq": {
             "type": "object",
             "properties": {
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
                 },
-                "menuIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "roleId": {
+                "id": {
                     "type": "string"
                 }
             }
         },
-        "pb.UnbindMSRoleMenuResp": {
-            "type": "object",
-            "properties": {
-                "commonResp": {
-                    "$ref": "#/definitions/pb.CommonResp"
-                }
-            }
-        },
-        "pb.UnbindMSUserRoleReq": {
-            "type": "object",
-            "properties": {
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "roleIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "userId": {
-                    "type": "string"
-                }
-            }
-        },
-        "pb.UnbindMSUserRoleResp": {
+        "pb.SwitchMSUserStatusResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -2641,6 +2805,14 @@ const docTemplate = `{
             }
         },
         "pb.UpdateMSMenuResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSRoleResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
