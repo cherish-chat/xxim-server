@@ -13,24 +13,18 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
+	"time"
 )
 
 const (
-	RoleUser           Role     = 0 // 普通用户
-	RoleTypeUserNormal RoleType = 0 // 普通用户
-
-	RoleAdmin           Role     = 1 //管理员
-	RoleTypeAdminNormal RoleType = 0 //管理员
-	RoleTypeAdminSuper  RoleType = 1 //超级管理员
-
-	RoleService           Role     = 2 // 客服
-	RoleTypeServiceNormal RoleType = 0 // 客服
+	RoleUser    Role = 0 // 普通用户
+	RoleService Role = 1 //客服
+	RoleGuest   Role = 3 // 游客
 )
 
 type (
-	Role     int32 // 角色
-	RoleType int32 // 角色类型
-	User     struct {
+	Role int32 // 角色
+	User struct {
 		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
 		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
 		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64);"`
@@ -43,10 +37,16 @@ type (
 		// 其他信息
 		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:infoMap;type:json;"`
 		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:levelInfo;type:json;"`
-		// 角色 角色有: 0.用户 1.管理员 2.客服
+
+		// 角色 角色有: 0.用户 1.客服 2.游客
 		Role Role `bson:"role" json:"role" gorm:"column:role;type:tinyint(1);index;"`
-		// 角色类型 如果角色是管理员, 则角色类型有: 0.超级管理员 1.普通管理员 如果角色是普通用户, 则角色类型有: 0.普通用户 1.认证用户 如果角色是客服, 则角色类型有: 0.普通客服 1.认证客服
-		RoleType RoleType `bson:"roleType" json:"roleType" gorm:"column:roleType;type:tinyint(1);index;"`
+
+		// 解封时间
+		UnblockTime int64 `bson:"unblockTime" json:"unblockTime" gorm:"column:unblockTime;type:bigint(20);index;default:0;"`
+		// 封禁记录id
+		BlockRecordId string `bson:"blockRecordId" json:"blockRecordId" gorm:"column:blockRecordId;type:char(32);index;default:'';"`
+
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
 	}
 	LoginInfo struct {
 		// 13位时间戳
@@ -121,6 +121,10 @@ func (m *User) BaseInfo() *pb.UserBaseInfo {
 		Birthday: m.Birthday,
 		IpRegion: nil,
 	}
+}
+
+func (m *User) IsDisable() bool {
+	return m.UnblockTime > time.Now().UnixMilli()
 }
 
 func UserFromBytes(bytes []byte) *User {

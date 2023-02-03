@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -49,6 +50,7 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		Nickname:     l.svcCtx.SystemConfigMgr.Get("nickname_default"),
 		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
 		RegInfo:      userTmp.RegInfo,
+		CreateTime:   time.Now().UnixMilli(),
 	}
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)
 	if err != nil {
