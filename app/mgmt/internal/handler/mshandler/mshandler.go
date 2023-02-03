@@ -19,6 +19,8 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 	group.POST("/login", r.login)
 	// 定期检查健康
 	group.POST("/health", r.health)
+	// 管理系统的配置
+	group.POST("/config", r.config)
 	// 管理菜单
 	{
 		// 获取全部菜单列表
@@ -32,7 +34,7 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 修改菜单
 		group.POST("/update/menu", r.updateMenu)
 		// 批量删除菜单
-		group.POST("/delete/menu/batch", r.deleteMenuBatch)
+		group.POST("/delete/menu", r.deleteMenuBatch)
 	}
 	// 管理后端api path
 	{
@@ -47,7 +49,7 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 修改api path
 		group.POST("/update/apipath", r.updateApiPath)
 		// 批量删除api path
-		group.POST("/delete/apipath/batch", r.deleteApiPathBatch)
+		group.POST("/delete/apipath", r.deleteApiPathBatch)
 	}
 	// 管理角色
 	{
@@ -60,21 +62,7 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 修改角色
 		group.POST("/update/role", r.updateRole)
 		// 批量删除角色
-		group.POST("/delete/role/batch", r.deleteRoleBatch)
-	}
-	// 角色绑定菜单
-	{
-		// 绑定角色菜单
-		group.POST("/bind/role/menu/batch", r.bindRoleMenuBatch)
-		// 解绑角色菜单
-		group.POST("/unbind/role/menu/batch", r.unbindRoleMenuBatch)
-	}
-	// 角色绑定api path
-	{
-		// 绑定角色api path
-		group.POST("/bind/role/apipath/batch", r.bindRoleApiPathBatch)
-		// 解绑角色api path
-		group.POST("/unbind/role/apipath/batch", r.unbindRoleApiPathBatch)
+		group.POST("/delete/role", r.deleteRoleBatch)
 	}
 	// 管理管理员
 	{
@@ -82,19 +70,16 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		group.POST("/get/admin/list/all", r.getAllAdminList)
 		// 获取详情
 		group.POST("/get/admin/detail", r.getAdminDetail)
+		// 获取自己的详情
+		group.POST("/get/admin/detail/self", r.getAdminDetailSelf)
 		// 增加管理员
 		group.POST("/add/admin", r.addAdmin)
 		// 修改管理员
 		group.POST("/update/admin", r.updateAdmin)
 		// 批量删除管理员
-		group.POST("/delete/admin/batch", r.deleteAdminBatch)
-	}
-	// 管理员绑定角色
-	{
-		// 绑定管理员角色
-		group.POST("/bind/admin/role/batch", r.bindAdminRoleBatch)
-		// 解绑管理员角色
-		group.POST("/unbind/admin/role/batch", r.unbindAdminRoleBatch)
+		group.POST("/delete/admin", r.deleteAdminBatch)
+		// 管理员禁用状态切换
+		group.POST("/switch/admin/status", r.switchAdminStatus)
 	}
 	// ip白名单
 	{
@@ -107,6 +92,6 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 修改ip白名单
 		group.POST("/update/ipwhitelist", r.updateIpWhiteList)
 		// 批量删除ip白名单
-		group.POST("/delete/ipwhitelist/batch", r.deleteIpWhiteListBatch)
+		group.POST("/delete/ipwhitelist", r.deleteIpWhiteListBatch)
 	}
 }

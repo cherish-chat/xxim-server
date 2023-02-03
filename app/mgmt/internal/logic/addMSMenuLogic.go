@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +27,28 @@ func NewAddMSMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMSMe
 }
 
 func (l *AddMSMenuLogic) AddMSMenu(in *pb.AddMSMenuReq) (*pb.AddMSMenuResp, error) {
-	// todo: add your logic here and delete this line
-
+	model := &mgmtmodel.Menu{
+		Id:         mgmtmodel.GetId(l.svcCtx.Mysql(), &mgmtmodel.Menu{}, 10000),
+		Pid:        in.Menu.Pid,
+		MenuType:   in.Menu.MenuType,
+		MenuName:   in.Menu.MenuName,
+		MenuIcon:   in.Menu.MenuIcon,
+		MenuSort:   in.Menu.MenuSort,
+		Perms:      in.Menu.Perms,
+		Paths:      in.Menu.Paths,
+		Component:  in.Menu.Component,
+		Selected:   in.Menu.Selected,
+		Params:     in.Menu.Params,
+		IsCache:    in.Menu.IsCache,
+		IsShow:     in.Menu.IsShow,
+		IsDisable:  in.Menu.IsDisable,
+		CreateTime: time.Now().UnixMilli(),
+		UpdateTime: time.Now().UnixMilli(),
+	}
+	err := xorm.InsertOne(l.svcCtx.Mysql(), model)
+	if err != nil {
+		l.Errorf("AddMSMenu error: %v", err)
+		return &pb.AddMSMenuResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	return &pb.AddMSMenuResp{}, nil
 }

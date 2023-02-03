@@ -52,6 +52,11 @@ func (s *MgmtServiceServer) HealthMS(ctx context.Context, in *pb.CommonReq) (*pb
 	return l.HealthMS(in)
 }
 
+func (s *MgmtServiceServer) ConfigMS(ctx context.Context, in *pb.CommonReq) (*pb.ConfigMSResp, error) {
+	l := logic.NewConfigMSLogic(ctx, s.svcCtx)
+	return l.ConfigMS(in)
+}
+
 func (s *MgmtServiceServer) GetAllMSMenuList(ctx context.Context, in *pb.GetAllMSMenuListReq) (*pb.GetAllMSMenuListResp, error) {
 	l := logic.NewGetAllMSMenuListLogic(ctx, s.svcCtx)
 	return l.GetAllMSMenuList(in)
@@ -137,26 +142,6 @@ func (s *MgmtServiceServer) DeleteMSRole(ctx context.Context, in *pb.DeleteMSRol
 	return l.DeleteMSRole(in)
 }
 
-func (s *MgmtServiceServer) BindMSRoleMenu(ctx context.Context, in *pb.BindMSRoleMenuReq) (*pb.BindMSRoleMenuResp, error) {
-	l := logic.NewBindMSRoleMenuLogic(ctx, s.svcCtx)
-	return l.BindMSRoleMenu(in)
-}
-
-func (s *MgmtServiceServer) UnbindMSRoleMenu(ctx context.Context, in *pb.UnbindMSRoleMenuReq) (*pb.UnbindMSRoleMenuResp, error) {
-	l := logic.NewUnbindMSRoleMenuLogic(ctx, s.svcCtx)
-	return l.UnbindMSRoleMenu(in)
-}
-
-func (s *MgmtServiceServer) BindMSRoleApiPath(ctx context.Context, in *pb.BindMSRoleApiPathReq) (*pb.BindMSRoleApiPathResp, error) {
-	l := logic.NewBindMSRoleApiPathLogic(ctx, s.svcCtx)
-	return l.BindMSRoleApiPath(in)
-}
-
-func (s *MgmtServiceServer) UnbindMSRoleApiPath(ctx context.Context, in *pb.UnbindMSRoleApiPathReq) (*pb.UnbindMSRoleApiPathResp, error) {
-	l := logic.NewUnbindMSRoleApiPathLogic(ctx, s.svcCtx)
-	return l.UnbindMSRoleApiPath(in)
-}
-
 func (s *MgmtServiceServer) GetAllMSUserList(ctx context.Context, in *pb.GetAllMSUserListReq) (*pb.GetAllMSUserListResp, error) {
 	l := logic.NewGetAllMSUserListLogic(ctx, s.svcCtx)
 	return l.GetAllMSUserList(in)
@@ -165,6 +150,11 @@ func (s *MgmtServiceServer) GetAllMSUserList(ctx context.Context, in *pb.GetAllM
 func (s *MgmtServiceServer) GetMSUserDetail(ctx context.Context, in *pb.GetMSUserDetailReq) (*pb.GetMSUserDetailResp, error) {
 	l := logic.NewGetMSUserDetailLogic(ctx, s.svcCtx)
 	return l.GetMSUserDetail(in)
+}
+
+func (s *MgmtServiceServer) GetSelfMSUserDetail(ctx context.Context, in *pb.GetSelfMSUserDetailReq) (*pb.GetSelfMSUserDetailResp, error) {
+	l := logic.NewGetSelfMSUserDetailLogic(ctx, s.svcCtx)
+	return l.GetSelfMSUserDetail(in)
 }
 
 func (s *MgmtServiceServer) AddMSUser(ctx context.Context, in *pb.AddMSUserReq) (*pb.AddMSUserResp, error) {
@@ -182,14 +172,9 @@ func (s *MgmtServiceServer) DeleteMSUser(ctx context.Context, in *pb.DeleteMSUse
 	return l.DeleteMSUser(in)
 }
 
-func (s *MgmtServiceServer) BindMSUserRole(ctx context.Context, in *pb.BindMSUserRoleReq) (*pb.BindMSUserRoleResp, error) {
-	l := logic.NewBindMSUserRoleLogic(ctx, s.svcCtx)
-	return l.BindMSUserRole(in)
-}
-
-func (s *MgmtServiceServer) UnbindMSUserRole(ctx context.Context, in *pb.UnbindMSUserRoleReq) (*pb.UnbindMSUserRoleResp, error) {
-	l := logic.NewUnbindMSUserRoleLogic(ctx, s.svcCtx)
-	return l.UnbindMSUserRole(in)
+func (s *MgmtServiceServer) SwitchMSUserStatus(ctx context.Context, in *pb.SwitchMSUserStatusReq) (*pb.SwitchMSUserStatusResp, error) {
+	l := logic.NewSwitchMSUserStatusLogic(ctx, s.svcCtx)
+	return l.SwitchMSUserStatus(in)
 }
 
 func (s *MgmtServiceServer) GetAllMSIpWhiteList(ctx context.Context, in *pb.GetAllMSIpWhiteListReq) (*pb.GetAllMSIpWhiteListResp, error) {

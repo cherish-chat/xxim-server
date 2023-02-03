@@ -4,10 +4,10 @@ import (
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/config"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
-	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -45,7 +45,13 @@ func (s *ServiceContext) Redis() *redis.Redis {
 func (s *ServiceContext) Mysql() *gorm.DB {
 	if s.mysql == nil {
 		s.mysql = xorm.NewClient(s.Config.Mysql)
-		s.mysql.AutoMigrate(&usermodel.User{})
+		s.mysql.AutoMigrate(&mgmtmodel.AutoIncrement{})
+		s.mysql.AutoMigrate(&mgmtmodel.User{})
+		s.mysql.AutoMigrate(&mgmtmodel.LoginRecord{})
+		s.mysql.AutoMigrate(&mgmtmodel.Menu{})
+		s.mysql.AutoMigrate(&mgmtmodel.Role{})
+		s.mysql.AutoMigrate(&mgmtmodel.ApiPath{})
+		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql
 }

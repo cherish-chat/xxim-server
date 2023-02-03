@@ -2,6 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xpwd"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +30,33 @@ func NewAddMSUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMSUs
 }
 
 func (l *AddMSUserLogic) AddMSUser(in *pb.AddMSUserReq) (*pb.AddMSUserResp, error) {
-	// todo: add your logic here and delete this line
-
+	salt := utils.GenId()
+	password := xpwd.GeneratePwd(in.User.Password, salt)
+	// 插入用户表
+	region := ip2region.Ip2Region(in.CommonReq.Ip)
+	user := &mgmtmodel.User{
+		Id:           in.User.Username,
+		Password:     password,
+		PasswordSalt: salt,
+		Nickname:     in.User.Nickname,
+		Avatar:       in.User.Avatar,
+		RegInfo: &mgmtmodel.LoginInfo{
+			Time:       time.Now().UnixMilli(),
+			Ip:         in.CommonReq.Ip,
+			IpCountry:  region.Country,
+			IpProvince: region.Province,
+			IpCity:     region.City,
+			IpISP:      region.ISP,
+			UserAgent:  in.CommonReq.UserAgent,
+		},
+		RoleId:     in.User.Role,
+		CreateTime: time.Now().UnixMilli(),
+		IsDisable:  in.User.IsDisable,
+	}
+	err := xorm.InsertOne(l.svcCtx.Mysql(), user)
+	if err != nil {
+		l.Errorf("AddMSUser err: %v", err)
+		return &pb.AddMSUserResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	return &pb.AddMSUserResp{}, nil
 }

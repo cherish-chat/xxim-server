@@ -163,7 +163,7 @@ func ListWithPaging(
 	tx *gorm.DB,
 	models interface{},
 	model interface{},
-	no int, size int,
+	no int32, size int32,
 	where string, args ...interface{}) (int64, error) {
 	tableName := model.(schema.Tabler).TableName()
 	var count int64
@@ -177,20 +177,23 @@ func ListWithPagingOrder(
 	tx *gorm.DB,
 	models interface{},
 	model interface{},
-	no int, size int,
+	no int32, size int32,
 	order string,
-	where string, args ...interface{}) (int64, error) {
+	where ...GormWhere) (int64, error) {
 	tableName := model.(schema.Tabler).TableName()
+	db := tx.Table(tableName)
 	var count int64
-	db := tx.Table(tableName).Where(where, args...)
+	for _, gormWhere := range where {
+		db = db.Where(gormWhere.Where, gormWhere.args...)
+	}
 	db.Count(&count)
 	return count, Paging(db.Order(order), no, size).Find(models).Error
 }
 
 // Paging 分页
-func Paging(tx *gorm.DB, no int, size int) *gorm.DB {
+func Paging(tx *gorm.DB, no int32, size int32) *gorm.DB {
 	if size != 0 {
-		return tx.Offset((no - 1) * size).Limit(size)
+		return tx.Offset(int((no - 1) * size)).Limit(int(size))
 	}
 	return tx
 }

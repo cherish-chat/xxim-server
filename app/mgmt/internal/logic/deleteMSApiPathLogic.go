@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,9 @@ func NewDeleteMSApiPathLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 func (l *DeleteMSApiPathLogic) DeleteMSApiPath(in *pb.DeleteMSApiPathReq) (*pb.DeleteMSApiPathResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.DeleteMSApiPathResp{}, nil
+	err := l.svcCtx.Mysql().Model(&mgmtmodel.ApiPath{}).Where("id in (?)", in.Ids).Delete(&mgmtmodel.ApiPath{}).Error
+	if err != nil {
+		l.Errorf("delete error: %v", err)
+	}
+	return &pb.DeleteMSApiPathResp{}, err
 }

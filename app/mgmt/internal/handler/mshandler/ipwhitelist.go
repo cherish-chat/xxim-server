@@ -1,6 +1,7 @@
 package mshandler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,7 @@ func (r *MSHandler) getAllIpWhiteList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // getIpWhiteListDetail 获取ip白名单详情
@@ -51,7 +52,7 @@ func (r *MSHandler) getIpWhiteListDetail(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // addIpWhiteList 添加ip白名单
@@ -75,7 +76,7 @@ func (r *MSHandler) addIpWhiteList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // updateIpWhiteList 更新ip白名单
@@ -99,7 +100,7 @@ func (r *MSHandler) updateIpWhiteList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // deleteIpWhiteListBatch 删除ip白名单
@@ -123,5 +124,5 @@ func (r *MSHandler) deleteIpWhiteListBatch(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }

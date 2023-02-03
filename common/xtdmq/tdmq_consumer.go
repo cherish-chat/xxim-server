@@ -56,7 +56,7 @@ func (p *TDMQConsumer) init() {
 	p.client = client
 	// 使用客户端创建生产者
 	consumer, err := client.Subscribe(pulsar.ConsumerOptions{
-		// topic完整路径，格式为persistent://集群（租户）ID/命名空间/Topic名称
+		// topic完整路径，格式为persistent://集群（租户）Id/命名空间/Topic名称
 		Topic:                       p.ConsumerConfig.TopicName,
 		SubscriptionName:            p.ConsumerConfig.GetSubName(),
 		Type:                        pulsar.SubscriptionType(p.ConsumerConfig.SubType),

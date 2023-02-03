@@ -1,6 +1,7 @@
 package mshandler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,7 @@ func (r *MSHandler) getAllMenuList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // getMenuList 获取我的菜单列表
@@ -51,7 +52,7 @@ func (r *MSHandler) getMenuList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // getMenuDetail 获取菜单详情
@@ -75,7 +76,7 @@ func (r *MSHandler) getMenuDetail(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // addMenu 新增菜单
@@ -99,7 +100,7 @@ func (r *MSHandler) addMenu(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // updateMenu 更新菜单
@@ -123,7 +124,7 @@ func (r *MSHandler) updateMenu(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // deleteMenuBatch 删除菜单
@@ -147,5 +148,5 @@ func (r *MSHandler) deleteMenuBatch(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }

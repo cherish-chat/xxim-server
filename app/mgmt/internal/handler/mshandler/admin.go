@@ -1,10 +1,32 @@
 package mshandler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
+type getAllMSUserListResp struct {
+	PageNo   int32                       `json:"pageNo"`
+	PageSize int32                       `json:"pageSize"`
+	Count    int64                       `json:"count"`
+	Users    []*getAllMSUserListRespUser `json:"users"`
+}
+type getAllMSUserListRespUser struct {
+	ID            string `json:"id" structs:"id"`                       // 主键
+	Username      string `json:"username" structs:"username"`           // 账号
+	Nickname      string `json:"nickname" structs:"nickname"`           // 昵称
+	Avatar        string `json:"avatar" structs:"avatar"`               // 头像
+	Role          string `json:"role" structs:"role"`                   // 角色
+	IsMultipoint  bool   `json:"isMultipoint" structs:"isMultipoint"`   // 多端登录: [0=否, 1=是]
+	IsDisable     bool   `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
+	LastLoginIp   string `json:"lastLoginIp" structs:"lastLoginIp"`     // 最后登录IP
+	LastLoginTime string `json:"lastLoginTime" structs:"lastLoginTime"` // 最后登录时间
+	CreateTime    string `json:"createTime" structs:"createTime"`       // 创建时间
+	UpdateTime    string `json:"updateTime" structs:"updateTime"`       // 更新时间
+}
 
 // getAllAdminList 获取所有管理员列表
 // @Summary 获取所有管理员列表
@@ -14,7 +36,7 @@ import (
 // @Produce application/json
 // @Param Token header string true "用户令牌"
 // @Param object body pb.GetAllMSUserListReq true "请求参数"
-// @Success 200 {object} pb.GetAllMSUserListResp "响应数据"
+// @Success 200 {object} getAllMSUserListResp "响应数据"
 // @Router /ms/get/admin/list/all [post]
 func (r *MSHandler) getAllAdminList(ctx *gin.Context) {
 	in := &pb.GetAllMSUserListReq{}
@@ -27,7 +49,26 @@ func (r *MSHandler) getAllAdminList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	var resp getAllMSUserListResp
+	resp.PageNo = in.Page.Page
+	resp.PageSize = in.Page.Size
+	resp.Count = out.Total
+	for _, user := range out.Users {
+		resp.Users = append(resp.Users, &getAllMSUserListRespUser{
+			ID:            user.Id,
+			Username:      user.Username,
+			Nickname:      user.Nickname,
+			Avatar:        user.Avatar,
+			Role:          user.Role,
+			IsMultipoint:  false,
+			IsDisable:     user.IsDisable,
+			LastLoginIp:   user.LastLoginIp,
+			LastLoginTime: user.LastLoginTime,
+			CreateTime:    user.CreatedAtStr,
+			UpdateTime:    user.UpdatedAtStr,
+		})
+	}
+	handler.ReturnOk(ctx, resp)
 }
 
 // getAdminDetail 获取管理员详情
@@ -38,7 +79,7 @@ func (r *MSHandler) getAllAdminList(ctx *gin.Context) {
 // @Produce application/json
 // @Param Token header string true "用户令牌"
 // @Param object body pb.GetMSUserDetailReq true "请求参数"
-// @Success 200 {object} pb.GetMSUserDetailResp "响应数据"
+// @Success 200 {object} getAllMSUserListRespUser "响应数据"
 // @Router /ms/get/admin/detail [post]
 func (r *MSHandler) getAdminDetail(ctx *gin.Context) {
 	in := &pb.GetMSUserDetailReq{}
@@ -51,7 +92,43 @@ func (r *MSHandler) getAdminDetail(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	var resp = getAllMSUserListRespUser{
+		ID:            out.User.Id,
+		Username:      out.User.Username,
+		Nickname:      out.User.Nickname,
+		Avatar:        out.User.Avatar,
+		Role:          out.User.Role,
+		IsMultipoint:  false,
+		IsDisable:     out.User.IsDisable,
+		LastLoginIp:   out.User.LastLoginIp,
+		LastLoginTime: out.User.LastLoginTime,
+		CreateTime:    out.User.CreatedAtStr,
+		UpdateTime:    out.User.UpdatedAtStr,
+	}
+	handler.ReturnOk(ctx, resp)
+}
+
+// getAdminDetailSelf 获取自己的管理员详情
+// @Summary 获取自己的管理员详情
+// @Description 使用此接口获取自己的管理员详情
+// @Tags 管理员相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Success 200 {object} pb.GetSelfMSUserDetailReq "响应数据"
+// @Router /ms/get/admin/detail/self [post]
+func (r *MSHandler) getAdminDetailSelf(ctx *gin.Context) {
+	in := &pb.GetSelfMSUserDetailReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewGetSelfMSUserDetailLogic(ctx, r.svcCtx).GetSelfMSUserDetail(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
 }
 
 // addAdmin 添加管理员
@@ -67,6 +144,7 @@ func (r *MSHandler) getAdminDetail(ctx *gin.Context) {
 func (r *MSHandler) addAdmin(ctx *gin.Context) {
 	in := &pb.AddMSUserReq{}
 	if err := ctx.ShouldBind(in); err != nil {
+		logx.Errorf("addAdmin bind err: %v", err)
 		ctx.AbortWithStatus(400)
 		return
 	}
@@ -75,7 +153,7 @@ func (r *MSHandler) addAdmin(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // updateAdmin 更新管理员
@@ -99,7 +177,7 @@ func (r *MSHandler) updateAdmin(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // deleteAdminBatch 删除管理员
@@ -123,5 +201,29 @@ func (r *MSHandler) deleteAdminBatch(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
+}
+
+// switchAdminStatus 切换管理员状态
+// @Summary 切换管理员状态
+// @Description 使用此接口切换管理员状态
+// @Tags 管理员相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Param object body pb.SwitchMSUserStatusReq true "请求参数"
+// @Success 200 {object} pb.SwitchMSUserStatusResp "响应数据"
+// @Router /ms/switch/admin/status [post]
+func (r *MSHandler) switchAdminStatus(ctx *gin.Context) {
+	in := &pb.SwitchMSUserStatusReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewSwitchMSUserStatusLogic(ctx, r.svcCtx).SwitchMSUserStatus(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
 }

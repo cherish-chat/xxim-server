@@ -30,6 +30,8 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.Use(gin.Logger())
 	engine.Use(middleware.Recovery())
 	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
+	engine.Use(middleware.Auth(s.svcCtx.Redis()))
+	engine.Use(middleware.Perms(s.svcCtx.Mysql()))
 	// routes
 	apiGroup := engine.Group("/api")
 	apiGroup.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))

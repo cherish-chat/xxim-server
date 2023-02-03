@@ -1,6 +1,7 @@
 package serverhandler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
@@ -50,5 +51,5 @@ func (r *ServerHandler) configAll(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, config)
+	handler.ReturnOk(ctx, config)
 }

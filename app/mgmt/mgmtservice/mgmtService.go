@@ -23,12 +23,7 @@ type (
 	AddMSRoleResp                            = pb.AddMSRoleResp
 	AddMSUserReq                             = pb.AddMSUserReq
 	AddMSUserResp                            = pb.AddMSUserResp
-	BindMSRoleApiPathReq                     = pb.BindMSRoleApiPathReq
-	BindMSRoleApiPathResp                    = pb.BindMSRoleApiPathResp
-	BindMSRoleMenuReq                        = pb.BindMSRoleMenuReq
-	BindMSRoleMenuResp                       = pb.BindMSRoleMenuResp
-	BindMSUserRoleReq                        = pb.BindMSUserRoleReq
-	BindMSUserRoleResp                       = pb.BindMSUserRoleResp
+	ConfigMSResp                             = pb.ConfigMSResp
 	DeleteMSApiPathReq                       = pb.DeleteMSApiPathReq
 	DeleteMSApiPathResp                      = pb.DeleteMSApiPathResp
 	DeleteMSIpWhiteListReq                   = pb.DeleteMSIpWhiteListReq
@@ -63,6 +58,8 @@ type (
 	GetMyMSApiPathListResp                   = pb.GetMyMSApiPathListResp
 	GetMyMSMenuListReq                       = pb.GetMyMSMenuListReq
 	GetMyMSMenuListResp                      = pb.GetMyMSMenuListResp
+	GetSelfMSUserDetailReq                   = pb.GetSelfMSUserDetailReq
+	GetSelfMSUserDetailResp                  = pb.GetSelfMSUserDetailResp
 	GetServerAllConfigReq                    = pb.GetServerAllConfigReq
 	GetServerAllConfigResp                   = pb.GetServerAllConfigResp
 	GetServerAllConfigResp_CommonConfig      = pb.GetServerAllConfigResp_CommonConfig
@@ -89,12 +86,8 @@ type (
 	MSMenu                                   = pb.MSMenu
 	MSRole                                   = pb.MSRole
 	MSUser                                   = pb.MSUser
-	UnbindMSRoleApiPathReq                   = pb.UnbindMSRoleApiPathReq
-	UnbindMSRoleApiPathResp                  = pb.UnbindMSRoleApiPathResp
-	UnbindMSRoleMenuReq                      = pb.UnbindMSRoleMenuReq
-	UnbindMSRoleMenuResp                     = pb.UnbindMSRoleMenuResp
-	UnbindMSUserRoleReq                      = pb.UnbindMSUserRoleReq
-	UnbindMSUserRoleResp                     = pb.UnbindMSUserRoleResp
+	SwitchMSUserStatusReq                    = pb.SwitchMSUserStatusReq
+	SwitchMSUserStatusResp                   = pb.SwitchMSUserStatusResp
 	UpdateMSApiPathReq                       = pb.UpdateMSApiPathReq
 	UpdateMSApiPathResp                      = pb.UpdateMSApiPathResp
 	UpdateMSIpWhiteListReq                   = pb.UpdateMSIpWhiteListReq
@@ -113,6 +106,7 @@ type (
 		GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 		LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 		HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
+		ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
 		GetAllMSMenuList(ctx context.Context, in *GetAllMSMenuListReq, opts ...grpc.CallOption) (*GetAllMSMenuListResp, error)
 		GetMyMSMenuList(ctx context.Context, in *GetMyMSMenuListReq, opts ...grpc.CallOption) (*GetMyMSMenuListResp, error)
 		GetMSMenuDetail(ctx context.Context, in *GetMSMenuDetailReq, opts ...grpc.CallOption) (*GetMSMenuDetailResp, error)
@@ -130,17 +124,13 @@ type (
 		AddMSRole(ctx context.Context, in *AddMSRoleReq, opts ...grpc.CallOption) (*AddMSRoleResp, error)
 		UpdateMSRole(ctx context.Context, in *UpdateMSRoleReq, opts ...grpc.CallOption) (*UpdateMSRoleResp, error)
 		DeleteMSRole(ctx context.Context, in *DeleteMSRoleReq, opts ...grpc.CallOption) (*DeleteMSRoleResp, error)
-		BindMSRoleMenu(ctx context.Context, in *BindMSRoleMenuReq, opts ...grpc.CallOption) (*BindMSRoleMenuResp, error)
-		UnbindMSRoleMenu(ctx context.Context, in *UnbindMSRoleMenuReq, opts ...grpc.CallOption) (*UnbindMSRoleMenuResp, error)
-		BindMSRoleApiPath(ctx context.Context, in *BindMSRoleApiPathReq, opts ...grpc.CallOption) (*BindMSRoleApiPathResp, error)
-		UnbindMSRoleApiPath(ctx context.Context, in *UnbindMSRoleApiPathReq, opts ...grpc.CallOption) (*UnbindMSRoleApiPathResp, error)
 		GetAllMSUserList(ctx context.Context, in *GetAllMSUserListReq, opts ...grpc.CallOption) (*GetAllMSUserListResp, error)
 		GetMSUserDetail(ctx context.Context, in *GetMSUserDetailReq, opts ...grpc.CallOption) (*GetMSUserDetailResp, error)
+		GetSelfMSUserDetail(ctx context.Context, in *GetSelfMSUserDetailReq, opts ...grpc.CallOption) (*GetSelfMSUserDetailResp, error)
 		AddMSUser(ctx context.Context, in *AddMSUserReq, opts ...grpc.CallOption) (*AddMSUserResp, error)
 		UpdateMSUser(ctx context.Context, in *UpdateMSUserReq, opts ...grpc.CallOption) (*UpdateMSUserResp, error)
 		DeleteMSUser(ctx context.Context, in *DeleteMSUserReq, opts ...grpc.CallOption) (*DeleteMSUserResp, error)
-		BindMSUserRole(ctx context.Context, in *BindMSUserRoleReq, opts ...grpc.CallOption) (*BindMSUserRoleResp, error)
-		UnbindMSUserRole(ctx context.Context, in *UnbindMSUserRoleReq, opts ...grpc.CallOption) (*UnbindMSUserRoleResp, error)
+		SwitchMSUserStatus(ctx context.Context, in *SwitchMSUserStatusReq, opts ...grpc.CallOption) (*SwitchMSUserStatusResp, error)
 		GetAllMSIpWhiteList(ctx context.Context, in *GetAllMSIpWhiteListReq, opts ...grpc.CallOption) (*GetAllMSIpWhiteListResp, error)
 		GetMSIpWhiteListDetail(ctx context.Context, in *GetMSIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetMSIpWhiteListDetailResp, error)
 		AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
@@ -187,6 +177,11 @@ func (m *defaultMgmtService) LoginMS(ctx context.Context, in *LoginMSReq, opts .
 func (m *defaultMgmtService) HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.HealthMS(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.ConfigMS(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) GetAllMSMenuList(ctx context.Context, in *GetAllMSMenuListReq, opts ...grpc.CallOption) (*GetAllMSMenuListResp, error) {
@@ -274,26 +269,6 @@ func (m *defaultMgmtService) DeleteMSRole(ctx context.Context, in *DeleteMSRoleR
 	return client.DeleteMSRole(ctx, in, opts...)
 }
 
-func (m *defaultMgmtService) BindMSRoleMenu(ctx context.Context, in *BindMSRoleMenuReq, opts ...grpc.CallOption) (*BindMSRoleMenuResp, error) {
-	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.BindMSRoleMenu(ctx, in, opts...)
-}
-
-func (m *defaultMgmtService) UnbindMSRoleMenu(ctx context.Context, in *UnbindMSRoleMenuReq, opts ...grpc.CallOption) (*UnbindMSRoleMenuResp, error) {
-	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.UnbindMSRoleMenu(ctx, in, opts...)
-}
-
-func (m *defaultMgmtService) BindMSRoleApiPath(ctx context.Context, in *BindMSRoleApiPathReq, opts ...grpc.CallOption) (*BindMSRoleApiPathResp, error) {
-	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.BindMSRoleApiPath(ctx, in, opts...)
-}
-
-func (m *defaultMgmtService) UnbindMSRoleApiPath(ctx context.Context, in *UnbindMSRoleApiPathReq, opts ...grpc.CallOption) (*UnbindMSRoleApiPathResp, error) {
-	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.UnbindMSRoleApiPath(ctx, in, opts...)
-}
-
 func (m *defaultMgmtService) GetAllMSUserList(ctx context.Context, in *GetAllMSUserListReq, opts ...grpc.CallOption) (*GetAllMSUserListResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.GetAllMSUserList(ctx, in, opts...)
@@ -302,6 +277,11 @@ func (m *defaultMgmtService) GetAllMSUserList(ctx context.Context, in *GetAllMSU
 func (m *defaultMgmtService) GetMSUserDetail(ctx context.Context, in *GetMSUserDetailReq, opts ...grpc.CallOption) (*GetMSUserDetailResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.GetMSUserDetail(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetSelfMSUserDetail(ctx context.Context, in *GetSelfMSUserDetailReq, opts ...grpc.CallOption) (*GetSelfMSUserDetailResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetSelfMSUserDetail(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) AddMSUser(ctx context.Context, in *AddMSUserReq, opts ...grpc.CallOption) (*AddMSUserResp, error) {
@@ -319,14 +299,9 @@ func (m *defaultMgmtService) DeleteMSUser(ctx context.Context, in *DeleteMSUserR
 	return client.DeleteMSUser(ctx, in, opts...)
 }
 
-func (m *defaultMgmtService) BindMSUserRole(ctx context.Context, in *BindMSUserRoleReq, opts ...grpc.CallOption) (*BindMSUserRoleResp, error) {
+func (m *defaultMgmtService) SwitchMSUserStatus(ctx context.Context, in *SwitchMSUserStatusReq, opts ...grpc.CallOption) (*SwitchMSUserStatusResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.BindMSUserRole(ctx, in, opts...)
-}
-
-func (m *defaultMgmtService) UnbindMSUserRole(ctx context.Context, in *UnbindMSUserRoleReq, opts ...grpc.CallOption) (*UnbindMSUserRoleResp, error) {
-	client := pb.NewMgmtServiceClient(m.cli.Conn())
-	return client.UnbindMSUserRole(ctx, in, opts...)
+	return client.SwitchMSUserStatus(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) GetAllMSIpWhiteList(ctx context.Context, in *GetAllMSIpWhiteListReq, opts ...grpc.CallOption) (*GetAllMSIpWhiteListResp, error) {

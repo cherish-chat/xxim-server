@@ -71,7 +71,7 @@ func (p *TDMQProducer) init() {
 	p.client = client
 	// 使用客户端创建生产者
 	producer, err := client.CreateProducer(pulsar.ProducerOptions{
-		// topic完整路径，格式为persistent://集群（租户）ID/命名空间/Topic名称
+		// topic完整路径，格式为persistent://集群（租户）Id/命名空间/Topic名称
 		Topic:       p.ProducerConfig.TopicName,
 		Name:        p.ProducerConfig.GetProducerName(),
 		SendTimeout: time.Duration(p.ProducerConfig.SendTimeout) * time.Millisecond,

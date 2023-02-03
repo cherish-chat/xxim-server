@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,12 @@ func NewGetMSRoleDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetMSRoleDetailLogic) GetMSRoleDetail(in *pb.GetMSRoleDetailReq) (*pb.GetMSRoleDetailResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetMSRoleDetailResp{}, nil
+	// 查询原模型
+	model := &mgmtmodel.Role{}
+	err := l.svcCtx.Mysql().Model(model).Where("id = ?", in.Id).First(model).Error
+	if err != nil {
+		l.Errorf("查询失败: %v", err)
+		return &pb.GetMSRoleDetailResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	return &pb.GetMSRoleDetailResp{Role: model.ToPB()}, nil
 }

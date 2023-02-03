@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +26,25 @@ func NewGetAllMSApiPathListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetAllMSApiPathListLogic) GetAllMSApiPathList(in *pb.GetAllMSApiPathListReq) (*pb.GetAllMSApiPathListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetAllMSApiPathListResp{}, nil
+	if in.Page == nil {
+		in.Page = &pb.Page{Page: 1, Size: 0}
+	}
+	var models []*mgmtmodel.ApiPath
+	wheres := xorm.NewGormWhere()
+	if in.Filter != nil {
+	}
+	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &mgmtmodel.ApiPath{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
+	if err != nil {
+		l.Errorf("GetAllMSApiPathList err: %v", err)
+		return &pb.GetAllMSApiPathListResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	var resp []*pb.MSApiPath
+	for _, model := range models {
+		role := model.ToPB()
+		resp = append(resp, role)
+	}
+	return &pb.GetAllMSApiPathListResp{
+		ApiPaths: resp,
+		Total:    count,
+	}, nil
 }

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,9 @@ func NewDeleteMSUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 func (l *DeleteMSUserLogic) DeleteMSUser(in *pb.DeleteMSUserReq) (*pb.DeleteMSUserResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.DeleteMSUserResp{}, nil
+	err := l.svcCtx.Mysql().Model(&mgmtmodel.User{}).Where("id in (?)", in.Ids).Delete(&mgmtmodel.User{}).Error
+	if err != nil {
+		l.Errorf("delete user error: %v", err)
+	}
+	return &pb.DeleteMSUserResp{}, err
 }

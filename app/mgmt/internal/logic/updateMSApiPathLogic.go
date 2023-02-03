@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,26 @@ func NewUpdateMSApiPathLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 func (l *UpdateMSApiPathLogic) UpdateMSApiPath(in *pb.UpdateMSApiPathReq) (*pb.UpdateMSApiPathResp, error) {
-	// todo: add your logic here and delete this line
-
+	// 查询原模型
+	model := &mgmtmodel.ApiPath{}
+	err := l.svcCtx.Mysql().Model(model).Where("id = ?", in.ApiPath.Id).First(model).Error
+	if err != nil {
+		l.Errorf("查询失败: %v", err)
+		return &pb.UpdateMSApiPathResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	updateMap := make(map[string]interface{})
+	if in.ApiPath.Title != "" {
+		updateMap["title"] = in.ApiPath.Title
+	}
+	if in.ApiPath.Path != "" {
+		updateMap["path"] = in.ApiPath.Path
+	}
+	if len(updateMap) > 0 {
+		err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.ApiPath.Id).Updates(updateMap).Error
+		if err != nil {
+			l.Errorf("更新失败: %v", err)
+			return &pb.UpdateMSApiPathResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+	}
 	return &pb.UpdateMSApiPathResp{}, nil
 }

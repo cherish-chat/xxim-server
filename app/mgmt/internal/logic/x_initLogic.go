@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
-	"github.com/cherish-chat/xxim-server/app/user/usermodel"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -33,16 +33,8 @@ func (l *InitLogic) Init() {
 		return
 	}
 	// 查询超级管理员是否存在
-	userByIds, err := l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
-		CommonReq: &pb.CommonReq{},
-		Ids:       []string{superAdmin.Id},
-	})
-	if err != nil {
-		l.Errorf("MapUserByIds error: %v", err)
-		return
-	}
-	_, ok := userByIds.Users[superAdmin.Id]
-	if ok {
+	_, err := NewGetMSUserDetailLogic(context.Background(), l.svcCtx).GetMSUserDetail(&pb.GetMSUserDetailReq{Id: superAdmin.Id})
+	if err == nil {
 		// 说明超级管理员已经存在
 		l.Infof("超级管理员已经存在")
 		return
@@ -53,17 +45,18 @@ func (l *InitLogic) Init() {
 	salt := utils.GenId()
 	password := xpwd.GeneratePwd(superAdmin.Password, salt)
 	// 插入用户表
-	user := &usermodel.User{
+	user := &mgmtmodel.User{
 		Id:           superAdmin.Id,
 		Password:     password,
 		PasswordSalt: salt,
-		Nickname:     "超级管理员",
+		Nickname:     "内置超级管理员",
 		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
-		RegInfo: &usermodel.LoginInfo{
+		RoleId:       "1",
+		IsDisable:    false,
+		CreateTime:   time.Now().UnixMilli(),
+		RegInfo: &mgmtmodel.LoginInfo{
 			Time: time.Now().UnixMilli(),
 		},
-		Role:     usermodel.RoleAdmin,
-		RoleType: usermodel.RoleTypeAdminSuper,
 	}
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)
 	if err != nil {

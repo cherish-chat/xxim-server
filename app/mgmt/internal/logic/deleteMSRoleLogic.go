@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,9 @@ func NewDeleteMSRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dele
 }
 
 func (l *DeleteMSRoleLogic) DeleteMSRole(in *pb.DeleteMSRoleReq) (*pb.DeleteMSRoleResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.DeleteMSRoleResp{}, nil
+	err := l.svcCtx.Mysql().Model(&mgmtmodel.Role{}).Where("id in (?)", in.Ids).Delete(&mgmtmodel.Role{}).Error
+	if err != nil {
+		l.Errorf("delete error: %v", err)
+	}
+	return &pb.DeleteMSRoleResp{}, err
 }

@@ -1,6 +1,7 @@
 package mshandler
 
 import (
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,7 @@ func (r *MSHandler) getAllApiPathList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // getApiPathList 获取我的服务端ApiPath列表
@@ -51,7 +52,7 @@ func (r *MSHandler) getApiPathList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // getApiPathDetail 获取服务端ApiPath详情
@@ -75,7 +76,7 @@ func (r *MSHandler) getApiPathDetail(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // addApiPath 新增服务端ApiPath
@@ -99,7 +100,7 @@ func (r *MSHandler) addApiPath(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // updateApiPath 更新服务端ApiPath
@@ -123,7 +124,7 @@ func (r *MSHandler) updateApiPath(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
 
 // deleteApiPathBatch 删除服务端ApiPath
@@ -147,5 +148,5 @@ func (r *MSHandler) deleteApiPathBatch(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	ctx.JSON(200, out)
+	handler.ReturnOk(ctx, out)
 }
