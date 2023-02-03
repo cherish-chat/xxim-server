@@ -27,12 +27,12 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	engine := gin.New()
+	engine.Use(middleware.Recovery())
+	engine.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
 	// routes
 	engine.GET("/api/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	apiGroup := engine.Group("/api")
 	apiGroup.Use(gin.Logger())
-	apiGroup.Use(middleware.Recovery())
-	apiGroup.Use(middleware.Cors(s.svcCtx.Config.Gin.Cors))
 	apiGroup.Use(middleware.Auth(s.svcCtx.Redis()))
 	apiGroup.Use(middleware.Perms(s.svcCtx.Mysql()))
 	serverhandler.NewServerHandler(s.svcCtx).Register(apiGroup)
