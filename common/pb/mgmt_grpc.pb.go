@@ -62,6 +62,7 @@ type MgmtServiceClient interface {
 	GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
 	GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
+	GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -432,6 +433,15 @@ func (c *mgmtServiceClient) DeleteMSOperationLog(ctx context.Context, in *Delete
 	return out, nil
 }
 
+func (c *mgmtServiceClient) GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error) {
+	out := new(GetAllMSLoginRecordResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSLoginRecord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -476,6 +486,7 @@ type MgmtServiceServer interface {
 	GetAllMSOperationLog(context.Context, *GetAllMSOperationLogReq) (*GetAllMSOperationLogResp, error)
 	GetMSOperationLogDetail(context.Context, *GetMSOperationLogDetailReq) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error)
+	GetAllMSLoginRecord(context.Context, *GetAllMSLoginRecordReq) (*GetAllMSLoginRecordResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -602,6 +613,9 @@ func (UnimplementedMgmtServiceServer) GetMSOperationLogDetail(context.Context, *
 }
 func (UnimplementedMgmtServiceServer) DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSOperationLog not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSLoginRecord(context.Context, *GetAllMSLoginRecordReq) (*GetAllMSLoginRecordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSLoginRecord not implemented")
 }
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
@@ -1336,6 +1350,24 @@ func _MgmtService_DeleteMSOperationLog_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_GetAllMSLoginRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSLoginRecordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSLoginRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSLoginRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSLoginRecord(ctx, req.(*GetAllMSLoginRecordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1502,6 +1534,10 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMSOperationLog",
 			Handler:    _MgmtService_DeleteMSOperationLog_Handler,
+		},
+		{
+			MethodName: "GetAllMSLoginRecord",
+			Handler:    _MgmtService_GetAllMSLoginRecord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

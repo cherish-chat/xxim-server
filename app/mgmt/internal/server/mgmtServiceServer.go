@@ -221,3 +221,8 @@ func (s *MgmtServiceServer) DeleteMSOperationLog(ctx context.Context, in *pb.Del
 	l := logic.NewDeleteMSOperationLogLogic(ctx, s.svcCtx)
 	return l.DeleteMSOperationLog(in)
 }
+
+func (s *MgmtServiceServer) GetAllMSLoginRecord(ctx context.Context, in *pb.GetAllMSLoginRecordReq) (*pb.GetAllMSLoginRecordResp, error) {
+	l := logic.NewGetAllMSLoginRecordLogic(ctx, s.svcCtx)
+	return l.GetAllMSLoginRecord(in)
+}

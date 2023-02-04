@@ -103,4 +103,9 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 批量删除操作日志
 		group.POST("/delete/operationlog", r.deleteOperationLogBatch)
 	}
+	// 管理员登录日志管理
+	{
+		// 获取全部管理员登录日志列表
+		group.POST("/get/loginlog/list/all", r.getAllLoginLogList)
+	}
 }

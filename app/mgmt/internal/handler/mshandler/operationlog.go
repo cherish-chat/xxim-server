@@ -81,3 +81,28 @@ func (r *MSHandler) deleteOperationLogBatch(ctx *gin.Context) {
 	}
 	handler.ReturnOk(ctx, out)
 }
+
+// getAllLoginLogList 获取全部登录日志列表
+// @Summary 获取全部登录日志列表
+// @Description 使用此接口获取全部登录日志列表
+// @Tags 管理系统登录日志相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
+// @Param object body pb.GetAllMSLoginRecordReq true "请求参数"
+// @Success 200 {object} pb.GetAllMSLoginRecordResp "响应数据"
+// @Router /ms/get/loginlog/list/all [post]
+func (r *MSHandler) getAllLoginLogList(ctx *gin.Context) {
+	in := &pb.GetAllMSLoginRecordReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewGetAllMSLoginRecordLogic(ctx, r.svcCtx).GetAllMSLoginRecord(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
+}

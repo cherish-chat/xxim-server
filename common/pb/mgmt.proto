@@ -655,6 +655,34 @@ message DeleteMSOperationLogResp {
   CommonResp commonResp = 1;
 }
 
+//MSLoginRecord 后台管理登录记录
+message MSLoginRecord {
+  string id = 1;
+  string userId = 2;
+  int64 time = 3;
+  string timeStr = 4;
+  string ip = 5;
+  string ipCountry = 6;
+  string ipProvince = 7;
+  string ipCity = 8;
+  string ipISP = 9;
+  string userAgent = 10;
+}
+
+//GetAllMSLoginRecordReq 获取所有登录记录列表请求
+message GetAllMSLoginRecordReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSLoginRecordResp 获取所有登录记录列表响应
+message GetAllMSLoginRecordResp {
+  CommonResp commonResp = 1;
+  repeated MSLoginRecord loginRecords = 2;
+  int64 total = 3;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
@@ -704,4 +732,6 @@ service mgmtService {
   rpc GetAllMSOperationLog(GetAllMSOperationLogReq) returns (GetAllMSOperationLogResp);
   rpc GetMSOperationLogDetail(GetMSOperationLogDetailReq) returns (GetMSOperationLogDetailResp);
   rpc DeleteMSOperationLog(DeleteMSOperationLogReq) returns (DeleteMSOperationLogResp);
+
+  rpc GetAllMSLoginRecord(GetAllMSLoginRecordReq) returns (GetAllMSLoginRecordResp);
 }

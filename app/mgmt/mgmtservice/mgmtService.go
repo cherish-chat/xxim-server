@@ -40,6 +40,8 @@ type (
 	GetAllMSApiPathListResp                  = pb.GetAllMSApiPathListResp
 	GetAllMSIpWhiteListReq                   = pb.GetAllMSIpWhiteListReq
 	GetAllMSIpWhiteListResp                  = pb.GetAllMSIpWhiteListResp
+	GetAllMSLoginRecordReq                   = pb.GetAllMSLoginRecordReq
+	GetAllMSLoginRecordResp                  = pb.GetAllMSLoginRecordResp
 	GetAllMSMenuListReq                      = pb.GetAllMSMenuListReq
 	GetAllMSMenuListResp                     = pb.GetAllMSMenuListResp
 	GetAllMSOperationLogReq                  = pb.GetAllMSOperationLogReq
@@ -90,6 +92,7 @@ type (
 	LoginMSResp                              = pb.LoginMSResp
 	MSApiPath                                = pb.MSApiPath
 	MSIpWhiteList                            = pb.MSIpWhiteList
+	MSLoginRecord                            = pb.MSLoginRecord
 	MSMenu                                   = pb.MSMenu
 	MSOperationLog                           = pb.MSOperationLog
 	MSRole                                   = pb.MSRole
@@ -150,6 +153,7 @@ type (
 		GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
 		GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 		DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
+		GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -361,4 +365,9 @@ func (m *defaultMgmtService) GetMSOperationLogDetail(ctx context.Context, in *Ge
 func (m *defaultMgmtService) DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.DeleteMSOperationLog(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAllMSLoginRecord(ctx, in, opts...)
 }
