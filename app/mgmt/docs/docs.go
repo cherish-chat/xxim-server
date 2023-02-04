@@ -472,6 +472,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/delete/operationlog": {
+            "post": {
+                "description": "使用此接口删除操作日志",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统操作日志相关接口"
+                ],
+                "summary": "删除操作日志",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSOperationLogReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSOperationLogResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/delete/role": {
             "post": {
                 "description": "使用此接口删除角色",
@@ -1039,6 +1087,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/get/operationlog/detail": {
+            "post": {
+                "description": "使用此接口获取操作日志详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统操作日志相关接口"
+                ],
+                "summary": "获取操作日志详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSOperationLogDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSOperationLogDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/operationlog/list/all": {
+            "post": {
+                "description": "使用此接口获取全部操作日志列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统操作日志相关接口"
+                ],
+                "summary": "获取全部操作日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSOperationLogReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSOperationLogResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/role/detail": {
             "post": {
                 "description": "使用此接口获取角色详情",
@@ -1496,47 +1640,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/server/get/config": {
-            "post": {
-                "description": "使用此接口获取服务端的配置信息, 比如redis的配置信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "服务端相关接口"
-                ],
-                "summary": "获取服务端的配置信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户令牌",
-                        "name": "Token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "object",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pb.GetServerConfigReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "配置信息",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/server/get/config/all": {
             "post": {
                 "description": "使用此接口获取服务端的所有配置信息, 比如redis的配置信息",
@@ -1593,6 +1696,47 @@ const docTemplate = `{
                         "description": "在线人数",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/update/config": {
+            "post": {
+                "description": "使用此接口更新服务端的配置信息, 比如redis的配置信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "更新服务端的配置信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "配置信息",
+                        "name": "config",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateServerConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新结果",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateServerConfigResp"
                         }
                     }
                 }
@@ -2089,6 +2233,28 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.DeleteMSOperationLogReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSOperationLogResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.DeleteMSRoleReq": {
             "type": "object",
             "properties": {
@@ -2235,6 +2401,40 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetAllMSOperationLogReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSOperationLogResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "operationLogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSOperationLog"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.GetAllMSRoleListReq": {
             "type": "object",
             "properties": {
@@ -2335,6 +2535,28 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetMSOperationLogDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSOperationLogDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "operationLog": {
+                    "$ref": "#/definitions/pb.MSOperationLog"
+                }
+            }
+        },
         "pb.GetMSRoleDetailReq": {
             "type": "object",
             "properties": {
@@ -2422,6 +2644,9 @@ const docTemplate = `{
         "pb.GetServerAllConfigResp": {
             "type": "object",
             "properties": {
+                "appMgmtRpc": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_AppMgmtRpcConfig"
+                },
                 "common": {
                     "$ref": "#/definitions/pb.GetServerAllConfigResp_CommonConfig"
                 },
@@ -2451,6 +2676,14 @@ const docTemplate = `{
                 },
                 "userRpc": {
                     "$ref": "#/definitions/pb.GetServerAllConfigResp_UserRpcConfig"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_AppMgmtRpcConfig": {
+            "type": "object",
+            "properties": {
+                "port": {
+                    "type": "integer"
                 }
             }
         },
@@ -2674,17 +2907,6 @@ const docTemplate = `{
                 }
             }
         },
-        "pb.GetServerConfigReq": {
-            "type": "object",
-            "properties": {
-                "commonReq": {
-                    "$ref": "#/definitions/pb.CommonReq"
-                },
-                "serverName": {
-                    "type": "string"
-                }
-            }
-        },
         "pb.HealthMSResp": {
             "type": "object",
             "properties": {
@@ -2741,6 +2963,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "logEnable": {
+                    "type": "boolean"
                 },
                 "path": {
                     "type": "string"
@@ -2881,6 +3106,59 @@ const docTemplate = `{
                 },
                 "updatedBy": {
                     "type": "string"
+                }
+            }
+        },
+        "pb.MSOperationLog": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "ipSource": {
+                    "type": "string"
+                },
+                "operationTitle": {
+                    "type": "string"
+                },
+                "operationType": {
+                    "type": "string"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "reqCost": {
+                    "type": "integer"
+                },
+                "reqIp": {
+                    "type": "string"
+                },
+                "reqParams": {
+                    "type": "string"
+                },
+                "reqPath": {
+                    "type": "string"
+                },
+                "reqResultMsg": {
+                    "type": "string"
+                },
+                "reqTime": {
+                    "type": "integer"
+                },
+                "reqTimeStr": {
+                    "type": "string"
+                },
+                "resp": {
+                    "type": "string"
+                },
+                "respTime": {
+                    "type": "integer"
+                },
+                "respTimeStr": {
+                    "type": "string"
+                },
+                "resultSuccess": {
+                    "type": "boolean"
                 }
             }
         },
@@ -3052,6 +3330,25 @@ const docTemplate = `{
             }
         },
         "pb.UpdateMSUserResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateServerConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "config": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp"
+                }
+            }
+        },
+        "pb.UpdateServerConfigResp": {
             "type": "object",
             "properties": {
                 "commonResp": {

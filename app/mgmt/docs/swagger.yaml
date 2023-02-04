@@ -336,6 +336,20 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DeleteMSOperationLogReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSOperationLogResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.DeleteMSRoleReq:
     properties:
       commonReq:
@@ -430,6 +444,28 @@ definitions:
       total:
         type: integer
     type: object
+  pb.GetAllMSOperationLogReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSOperationLogResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      operationLogs:
+        items:
+          $ref: '#/definitions/pb.MSOperationLog'
+        type: array
+      total:
+        type: integer
+    type: object
   pb.GetAllMSRoleListReq:
     properties:
       commonReq:
@@ -494,6 +530,20 @@ definitions:
       menu:
         $ref: '#/definitions/pb.MSMenu'
     type: object
+  pb.GetMSOperationLogDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSOperationLogDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      operationLog:
+        $ref: '#/definitions/pb.MSOperationLog'
+    type: object
   pb.GetMSRoleDetailReq:
     properties:
       commonReq:
@@ -550,6 +600,8 @@ definitions:
     type: object
   pb.GetServerAllConfigResp:
     properties:
+      appMgmtRpc:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_AppMgmtRpcConfig'
       common:
         $ref: '#/definitions/pb.GetServerAllConfigResp_CommonConfig'
       commonResp:
@@ -570,6 +622,11 @@ definitions:
         $ref: '#/definitions/pb.GetServerAllConfigResp_RelationRpcConfig'
       userRpc:
         $ref: '#/definitions/pb.GetServerAllConfigResp_UserRpcConfig'
+    type: object
+  pb.GetServerAllConfigResp_AppMgmtRpcConfig:
+    properties:
+      port:
+        type: integer
     type: object
   pb.GetServerAllConfigResp_CommonConfig:
     properties:
@@ -713,13 +770,6 @@ definitions:
       port:
         type: integer
     type: object
-  pb.GetServerConfigReq:
-    properties:
-      commonReq:
-        $ref: '#/definitions/pb.CommonReq'
-      serverName:
-        type: string
-    type: object
   pb.HealthMSResp:
     properties:
       commonResp:
@@ -757,6 +807,8 @@ definitions:
         type: string
       id:
         type: string
+      logEnable:
+        type: boolean
       path:
         type: string
       title:
@@ -854,6 +906,41 @@ definitions:
         type: string
       updatedBy:
         type: string
+    type: object
+  pb.MSOperationLog:
+    properties:
+      id:
+        type: string
+      ipSource:
+        type: string
+      operationTitle:
+        type: string
+      operationType:
+        type: string
+      operator:
+        type: string
+      reqCost:
+        type: integer
+      reqIp:
+        type: string
+      reqParams:
+        type: string
+      reqPath:
+        type: string
+      reqResultMsg:
+        type: string
+      reqTime:
+        type: integer
+      reqTimeStr:
+        type: string
+      resp:
+        type: string
+      respTime:
+        type: integer
+      respTimeStr:
+        type: string
+      resultSuccess:
+        type: boolean
     type: object
   pb.MSUser:
     properties:
@@ -963,6 +1050,18 @@ definitions:
         $ref: '#/definitions/pb.MSUser'
     type: object
   pb.UpdateMSUserResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateServerConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      config:
+        $ref: '#/definitions/pb.GetServerAllConfigResp'
+    type: object
+  pb.UpdateServerConfigResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -1278,6 +1377,38 @@ paths:
       summary: 删除菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/delete/operationlog:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除操作日志
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSOperationLogReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSOperationLogResp'
+      summary: 删除操作日志
+      tags:
+      - 管理系统操作日志相关接口
   /ms/delete/role:
     post:
       consumes:
@@ -1656,6 +1787,70 @@ paths:
       summary: 获取所有菜单列表
       tags:
       - 管理系统菜单相关接口
+  /ms/get/operationlog/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取操作日志详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSOperationLogDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSOperationLogDetailResp'
+      summary: 获取操作日志详情
+      tags:
+      - 管理系统操作日志相关接口
+  /ms/get/operationlog/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部操作日志列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSOperationLogReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSOperationLogResp'
+      summary: 获取全部操作日志列表
+      tags:
+      - 管理系统操作日志相关接口
   /ms/get/role/detail:
     post:
       consumes:
@@ -1960,33 +2155,6 @@ paths:
       summary: 更新角色
       tags:
       - 管理系统角色相关接口
-  /server/get/config:
-    post:
-      consumes:
-      - application/json
-      description: 使用此接口获取服务端的配置信息, 比如redis的配置信息
-      parameters:
-      - description: 用户令牌
-        in: header
-        name: Token
-        required: true
-        type: string
-      - description: 请求参数
-        in: body
-        name: object
-        required: true
-        schema:
-          $ref: '#/definitions/pb.GetServerConfigReq'
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: 配置信息
-          schema:
-            type: string
-      summary: 获取服务端的配置信息
-      tags:
-      - 服务端相关接口
   /server/get/config/all:
     post:
       consumes:
@@ -2025,6 +2193,33 @@ paths:
           schema:
             type: string
       summary: 获取服务器在线人数
+      tags:
+      - 服务端相关接口
+  /server/update/config:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新服务端的配置信息, 比如redis的配置信息
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 配置信息
+        in: body
+        name: config
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateServerConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新结果
+          schema:
+            $ref: '#/definitions/pb.UpdateServerConfigResp'
+      summary: 更新服务端的配置信息
       tags:
       - 服务端相关接口
 schemes:
