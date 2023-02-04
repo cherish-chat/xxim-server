@@ -17,6 +17,102 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/appmgmt/get/config/list/all": {
+            "post": {
+                "description": "使用此接口获取全部配置列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app管理配置管理相关接口"
+                ],
+                "summary": "获取全部配置列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtConfigResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/appmgmt/update/config": {
+            "post": {
+                "description": "使用此接口更新全部配置列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app管理配置管理相关接口"
+                ],
+                "summary": "更新全部配置列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtConfigResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/admin": {
             "post": {
                 "description": "使用此接口添加管理员",
@@ -2084,6 +2180,29 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AppMgmtConfig": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "k": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scopePlatforms": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "v": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.CommonReq": {
             "type": "object",
             "properties": {
@@ -2342,6 +2461,31 @@ const docTemplate = `{
         "pb.DeleteMSUserResp": {
             "type": "object",
             "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "scopePlatform": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtConfigResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtConfigs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtConfig"
+                    }
+                },
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
                 }
@@ -3363,6 +3507,28 @@ const docTemplate = `{
             }
         },
         "pb.SwitchMSUserStatusResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtConfigReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtConfigs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtConfig"
+                    }
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtConfigResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
