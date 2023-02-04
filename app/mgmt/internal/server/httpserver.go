@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	_ "github.com/cherish-chat/xxim-server/app/mgmt/docs"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/appmgrhandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/middleware"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/mshandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/serverhandler"
@@ -33,10 +34,14 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	engine.GET("/api/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 	apiGroup := engine.Group("/api")
 	apiGroup.Use(gin.Logger())
+	apiGroup.Use(middleware.Log(s.svcCtx.Mysql()))
 	apiGroup.Use(middleware.Auth(s.svcCtx.Redis()))
 	apiGroup.Use(middleware.Perms(s.svcCtx.Mysql()))
 	serverhandler.NewServerHandler(s.svcCtx).Register(apiGroup)
 	mshandler.NewMSHandler(s.svcCtx).Register(apiGroup)
+	appmgrhandler.NewAppMgrHandler(s.svcCtx).Register(apiGroup)
+	// 表情管理 表情组and表情
+	// 配置发现导航中的外链 组and外链
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}
 }
 

@@ -1,0 +1,43 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+import "conn.proto";
+
+//AppMgmtConfig app管理系统 配置
+message AppMgmtConfig {
+  string group = 1;
+  string k = 2;
+  string v = 3;
+  string type = 4;
+  string name = 5;
+  string scopePlatforms = 6;
+}
+
+//GetAllAppMgmtConfigReq 获取所有配置
+message GetAllAppMgmtConfigReq {
+  CommonReq commonReq = 1;
+  string scopePlatform = 2;
+}
+
+//GetAllAppMgmtConfigResp 获取所有配置
+message GetAllAppMgmtConfigResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtConfig appMgmtConfigs = 2;
+}
+
+//UpdateAppMgmtConfigReq 更新配置
+message UpdateAppMgmtConfigReq {
+  CommonReq commonReq = 1;
+  repeated AppMgmtConfig appMgmtConfigs = 2;
+}
+
+//UpdateAppMgmtConfigResp 更新配置
+message UpdateAppMgmtConfigResp {
+  CommonResp commonResp = 1;
+}
+
+service appMgmtService {
+  rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
+  rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
+}

@@ -42,6 +42,11 @@ func (s *MgmtServiceServer) GetServerAllConfig(ctx context.Context, in *pb.GetSe
 	return l.GetServerAllConfig(in)
 }
 
+func (s *MgmtServiceServer) UpdateServerConfig(ctx context.Context, in *pb.UpdateServerConfigReq) (*pb.UpdateServerConfigResp, error) {
+	l := logic.NewUpdateServerConfigLogic(ctx, s.svcCtx)
+	return l.UpdateServerConfig(in)
+}
+
 func (s *MgmtServiceServer) LoginMS(ctx context.Context, in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	l := logic.NewLoginMSLogic(ctx, s.svcCtx)
 	return l.LoginMS(in)
@@ -200,4 +205,19 @@ func (s *MgmtServiceServer) UpdateMSIpWhiteList(ctx context.Context, in *pb.Upda
 func (s *MgmtServiceServer) DeleteMSIpWhiteList(ctx context.Context, in *pb.DeleteMSIpWhiteListReq) (*pb.DeleteMSIpWhiteListResp, error) {
 	l := logic.NewDeleteMSIpWhiteListLogic(ctx, s.svcCtx)
 	return l.DeleteMSIpWhiteList(in)
+}
+
+func (s *MgmtServiceServer) GetAllMSOperationLog(ctx context.Context, in *pb.GetAllMSOperationLogReq) (*pb.GetAllMSOperationLogResp, error) {
+	l := logic.NewGetAllMSOperationLogLogic(ctx, s.svcCtx)
+	return l.GetAllMSOperationLog(in)
+}
+
+func (s *MgmtServiceServer) GetMSOperationLogDetail(ctx context.Context, in *pb.GetMSOperationLogDetailReq) (*pb.GetMSOperationLogDetailResp, error) {
+	l := logic.NewGetMSOperationLogDetailLogic(ctx, s.svcCtx)
+	return l.GetMSOperationLogDetail(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSOperationLog(ctx context.Context, in *pb.DeleteMSOperationLogReq) (*pb.DeleteMSOperationLogResp, error) {
+	l := logic.NewDeleteMSOperationLogLogic(ctx, s.svcCtx)
+	return l.DeleteMSOperationLog(in)
 }

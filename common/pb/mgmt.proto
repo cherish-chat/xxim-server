@@ -95,6 +95,9 @@ message GetServerAllConfigResp {
   message NoticeRpcConfig {
     int64 port = 1;
   }
+  message AppMgmtRpcConfig {
+    int64 port = 1;
+  }
   message MgmtConfig {
     int64 rpcPort = 1;
     int64 httpPort = 2;
@@ -109,7 +112,19 @@ message GetServerAllConfigResp {
   RelationRpcConfig relationRpc = 7;
   GroupRpcConfig groupRpc = 8;
   NoticeRpcConfig noticeRpc = 9;
-  MgmtConfig mgmt = 10;
+  AppMgmtRpcConfig appMgmtRpc = 10;
+  MgmtConfig mgmt = 11;
+}
+
+//UpdateServerConfigReq 更新服务器配置请求
+message UpdateServerConfigReq {
+  CommonReq commonReq = 1;
+  GetServerAllConfigResp config = 2;
+}
+
+//UpdateServerConfigResp 更新服务器配置响应
+message UpdateServerConfigResp {
+  CommonResp commonResp = 1;
 }
 
 //LoginMSReq 登录管理系统请求
@@ -252,6 +267,7 @@ message MSApiPath {
 
   string title = 11;
   string path = 12;
+  bool logEnable = 13;
 }
 
 //GetAllMSApiPathListReq 获取所有接口路径列表请求
@@ -582,12 +598,70 @@ message DeleteMSIpWhiteListResp {
   CommonResp commonResp = 1;
 }
 
+//MSOperationLog 后台管理操作日志
+message MSOperationLog {
+  string id = 1;
+  int64 reqTime = 2;
+  string reqTimeStr = 3;
+  int64 respTime = 4;
+  string respTimeStr = 5;
+  string operationType = 6;
+  string operationTitle = 7;
+  string reqPath = 8;
+  string reqParams = 9;
+  bool resultSuccess = 10;
+  string reqResultMsg = 11;
+  string resp = 12;
+  string reqIp = 13;
+  string ipSource = 14;
+  int64 reqCost = 15;
+  string operator = 16;
+}
+
+//GetAllMSOperationLogReq 获取所有操作日志列表请求
+message GetAllMSOperationLogReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSOperationLogResp 获取所有操作日志列表响应
+message GetAllMSOperationLogResp {
+  CommonResp commonResp = 1;
+  repeated MSOperationLog operationLogs = 2;
+  int64 total = 3;
+}
+
+//GetMSOperationLogDetailReq 获取操作日志详情请求
+message GetMSOperationLogDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSOperationLogDetailResp 获取操作日志详情响应
+message GetMSOperationLogDetailResp {
+  CommonResp commonResp = 1;
+  MSOperationLog operationLog = 2;
+}
+
+//DeleteMSOperationLogReq 删除操作日志请求
+message DeleteMSOperationLogReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSOperationLogResp 删除操作日志响应
+message DeleteMSOperationLogResp {
+  CommonResp commonResp = 1;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
 
   rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
   rpc GetServerAllConfig(GetServerAllConfigReq) returns (GetServerAllConfigResp);
+  rpc UpdateServerConfig(UpdateServerConfigReq) returns (UpdateServerConfigResp);
 
   rpc LoginMS(LoginMSReq) returns (LoginMSResp);
   rpc HealthMS(CommonReq) returns (HealthMSResp);
@@ -626,4 +700,8 @@ service mgmtService {
   rpc AddMSIpWhiteList(AddMSIpWhiteListReq) returns (AddMSIpWhiteListResp);
   rpc UpdateMSIpWhiteList(UpdateMSIpWhiteListReq) returns (UpdateMSIpWhiteListResp);
   rpc DeleteMSIpWhiteList(DeleteMSIpWhiteListReq) returns (DeleteMSIpWhiteListResp);
+
+  rpc GetAllMSOperationLog(GetAllMSOperationLogReq) returns (GetAllMSOperationLogResp);
+  rpc GetMSOperationLogDetail(GetMSOperationLogDetailReq) returns (GetMSOperationLogDetailResp);
+  rpc DeleteMSOperationLog(DeleteMSOperationLogReq) returns (DeleteMSOperationLogResp);
 }

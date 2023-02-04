@@ -30,6 +30,7 @@ func (l *AddMSApiPathLogic) AddMSApiPath(in *pb.AddMSApiPathReq) (*pb.AddMSApiPa
 		Id:         mgmtmodel.GetId(l.svcCtx.Mysql(), &mgmtmodel.ApiPath{}, 10000),
 		Title:      in.ApiPath.Title,
 		Path:       in.ApiPath.Path,
+		LogEnable:  in.ApiPath.LogEnable,
 		CreateTime: time.Now().UnixMilli(),
 		UpdateTime: time.Now().UnixMilli(),
 	}

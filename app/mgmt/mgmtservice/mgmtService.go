@@ -30,6 +30,8 @@ type (
 	DeleteMSIpWhiteListResp                  = pb.DeleteMSIpWhiteListResp
 	DeleteMSMenuReq                          = pb.DeleteMSMenuReq
 	DeleteMSMenuResp                         = pb.DeleteMSMenuResp
+	DeleteMSOperationLogReq                  = pb.DeleteMSOperationLogReq
+	DeleteMSOperationLogResp                 = pb.DeleteMSOperationLogResp
 	DeleteMSRoleReq                          = pb.DeleteMSRoleReq
 	DeleteMSRoleResp                         = pb.DeleteMSRoleResp
 	DeleteMSUserReq                          = pb.DeleteMSUserReq
@@ -40,6 +42,8 @@ type (
 	GetAllMSIpWhiteListResp                  = pb.GetAllMSIpWhiteListResp
 	GetAllMSMenuListReq                      = pb.GetAllMSMenuListReq
 	GetAllMSMenuListResp                     = pb.GetAllMSMenuListResp
+	GetAllMSOperationLogReq                  = pb.GetAllMSOperationLogReq
+	GetAllMSOperationLogResp                 = pb.GetAllMSOperationLogResp
 	GetAllMSRoleListReq                      = pb.GetAllMSRoleListReq
 	GetAllMSRoleListResp                     = pb.GetAllMSRoleListResp
 	GetAllMSUserListReq                      = pb.GetAllMSUserListReq
@@ -50,6 +54,8 @@ type (
 	GetMSIpWhiteListDetailResp               = pb.GetMSIpWhiteListDetailResp
 	GetMSMenuDetailReq                       = pb.GetMSMenuDetailReq
 	GetMSMenuDetailResp                      = pb.GetMSMenuDetailResp
+	GetMSOperationLogDetailReq               = pb.GetMSOperationLogDetailReq
+	GetMSOperationLogDetailResp              = pb.GetMSOperationLogDetailResp
 	GetMSRoleDetailReq                       = pb.GetMSRoleDetailReq
 	GetMSRoleDetailResp                      = pb.GetMSRoleDetailResp
 	GetMSUserDetailReq                       = pb.GetMSUserDetailReq
@@ -62,6 +68,7 @@ type (
 	GetSelfMSUserDetailResp                  = pb.GetSelfMSUserDetailResp
 	GetServerAllConfigReq                    = pb.GetServerAllConfigReq
 	GetServerAllConfigResp                   = pb.GetServerAllConfigResp
+	GetServerAllConfigResp_AppMgmtRpcConfig  = pb.GetServerAllConfigResp_AppMgmtRpcConfig
 	GetServerAllConfigResp_CommonConfig      = pb.GetServerAllConfigResp_CommonConfig
 	GetServerAllConfigResp_ConnRpcConfig     = pb.GetServerAllConfigResp_ConnRpcConfig
 	GetServerAllConfigResp_GroupRpcConfig    = pb.GetServerAllConfigResp_GroupRpcConfig
@@ -84,6 +91,7 @@ type (
 	MSApiPath                                = pb.MSApiPath
 	MSIpWhiteList                            = pb.MSIpWhiteList
 	MSMenu                                   = pb.MSMenu
+	MSOperationLog                           = pb.MSOperationLog
 	MSRole                                   = pb.MSRole
 	MSUser                                   = pb.MSUser
 	SwitchMSUserStatusReq                    = pb.SwitchMSUserStatusReq
@@ -98,12 +106,15 @@ type (
 	UpdateMSRoleResp                         = pb.UpdateMSRoleResp
 	UpdateMSUserReq                          = pb.UpdateMSUserReq
 	UpdateMSUserResp                         = pb.UpdateMSUserResp
+	UpdateServerConfigReq                    = pb.UpdateServerConfigReq
+	UpdateServerConfigResp                   = pb.UpdateServerConfigResp
 
 	MgmtService interface {
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 		GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
+		UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
 		LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 		HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 		ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -136,6 +147,9 @@ type (
 		AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
 		UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error)
 		DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error)
+		GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
+		GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
+		DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -167,6 +181,11 @@ func (m *defaultMgmtService) GetServerConfig(ctx context.Context, in *GetServerC
 func (m *defaultMgmtService) GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.GetServerAllConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateServerConfig(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error) {
@@ -327,4 +346,19 @@ func (m *defaultMgmtService) UpdateMSIpWhiteList(ctx context.Context, in *Update
 func (m *defaultMgmtService) DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.DeleteMSIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAllMSOperationLog(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetMSOperationLogDetail(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.DeleteMSOperationLog(ctx, in, opts...)
 }

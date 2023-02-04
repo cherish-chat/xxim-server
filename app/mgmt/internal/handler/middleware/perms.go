@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-var allApiPaths []*mgmtmodel.ApiPath
 var allApiPathsInited bool
 var pathIdMap = make(map[string]string)
 
@@ -23,13 +22,13 @@ func getAllApiPaths(tx *gorm.DB) []*mgmtmodel.ApiPath {
 
 func Perms(tx *gorm.DB) gin.HandlerFunc {
 	if !allApiPathsInited {
-		allApiPaths = getAllApiPaths(tx)
+		getAllApiPaths(tx)
 		allApiPathsInited = true
 	}
 	return func(c *gin.Context) {
 		// 只有POST请求才需要验证
 		if c.Request.Method != "POST" {
-			dontCheckToken(c)
+			c.Next()
 			return
 		}
 		if _, ok := dontCheckTokenMap[c.Request.URL.Path]; ok {

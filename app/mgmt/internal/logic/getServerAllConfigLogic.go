@@ -83,6 +83,7 @@ func (l *GetServerAllConfigLogic) GetServerAllConfig(in *pb.GetServerAllConfigRe
 		RelationRpc: &pb.GetServerAllConfigResp_RelationRpcConfig{Port: config.RelationRpc.Port},
 		GroupRpc:    &pb.GetServerAllConfigResp_GroupRpcConfig{Port: config.GroupRpc.Port},
 		NoticeRpc:   &pb.GetServerAllConfigResp_NoticeRpcConfig{Port: config.NoticeRpc.Port},
+		AppMgmtRpc:  &pb.GetServerAllConfigResp_AppMgmtRpcConfig{Port: config.AppMgmtRpc.Port},
 		Mgmt: &pb.GetServerAllConfigResp_MgmtConfig{
 			RpcPort:        config.Mgmt.RpcPort,
 			HttpPort:       config.Mgmt.HttpPort,

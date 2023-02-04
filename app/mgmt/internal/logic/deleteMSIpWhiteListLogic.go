@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -24,7 +25,9 @@ func NewDeleteMSIpWhiteListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *DeleteMSIpWhiteListLogic) DeleteMSIpWhiteList(in *pb.DeleteMSIpWhiteListReq) (*pb.DeleteMSIpWhiteListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.DeleteMSIpWhiteListResp{}, nil
+	err := l.svcCtx.Mysql().Model(&mgmtmodel.MSIPWhitelist{}).Where("id in (?)", in.Ids).Delete(&mgmtmodel.MSIPWhitelist{}).Error
+	if err != nil {
+		l.Errorf("delete error: %v", err)
+	}
+	return &pb.DeleteMSIpWhiteListResp{}, err
 }

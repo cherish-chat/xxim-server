@@ -53,6 +53,8 @@ func (s *ServiceContext) Mysql() *gorm.DB {
 		s.mysql.AutoMigrate(&mgmtmodel.Menu{})
 		s.mysql.AutoMigrate(&mgmtmodel.Role{})
 		s.mysql.AutoMigrate(&mgmtmodel.ApiPath{})
+		s.mysql.AutoMigrate(&mgmtmodel.OperationLog{})
+		s.mysql.AutoMigrate(&mgmtmodel.MSIPWhitelist{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

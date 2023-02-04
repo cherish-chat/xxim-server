@@ -11,22 +11,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetAllMSIpWhiteListLogic struct {
+type GetAllMSOperationLogLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetAllMSIpWhiteListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAllMSIpWhiteListLogic {
-	return &GetAllMSIpWhiteListLogic{
+func NewGetAllMSOperationLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAllMSOperationLogLogic {
+	return &GetAllMSOperationLogLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetAllMSIpWhiteListLogic) GetAllMSIpWhiteList(in *pb.GetAllMSIpWhiteListReq) (*pb.GetAllMSIpWhiteListResp, error) {
-	var models []*mgmtmodel.MSIPWhitelist
+func (l *GetAllMSOperationLogLogic) GetAllMSOperationLog(in *pb.GetAllMSOperationLogReq) (*pb.GetAllMSOperationLogResp, error) {
+	var models []*mgmtmodel.OperationLog
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
 		for k, v := range in.Filter {
@@ -36,17 +36,17 @@ func (l *GetAllMSIpWhiteListLogic) GetAllMSIpWhiteList(in *pb.GetAllMSIpWhiteLis
 			}
 		}
 	}
-	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &mgmtmodel.MSIPWhitelist{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
+	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &mgmtmodel.OperationLog{}, in.Page.Page, in.Page.Size, "reqTime DESC", wheres...)
 	if err != nil {
 		l.Errorf("ListWithPagingOrder err: %v", err)
-		return &pb.GetAllMSIpWhiteListResp{CommonResp: pb.NewRetryErrorResp()}, err
+		return &pb.GetAllMSOperationLogResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	var resp []*pb.MSIpWhiteList
+	var resp []*pb.MSOperationLog
 	for _, model := range models {
 		resp = append(resp, model.ToPB())
 	}
-	return &pb.GetAllMSIpWhiteListResp{
-		IpWhiteLists: resp,
-		Total:        count,
+	return &pb.GetAllMSOperationLogResp{
+		OperationLogs: resp,
+		Total:         count,
 	}, nil
 }

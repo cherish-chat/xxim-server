@@ -39,6 +39,7 @@ func (l *UpdateMSApiPathLogic) UpdateMSApiPath(in *pb.UpdateMSApiPathReq) (*pb.U
 	if in.ApiPath.Path != "" {
 		updateMap["path"] = in.ApiPath.Path
 	}
+	updateMap["logEnable"] = in.ApiPath.LogEnable
 	if len(updateMap) > 0 {
 		err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.ApiPath.Id).Updates(updateMap).Error
 		if err != nil {

@@ -94,4 +94,13 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 批量删除ip白名单
 		group.POST("/delete/ipwhitelist", r.deleteIpWhiteListBatch)
 	}
+	// 操作日志管理
+	{
+		// 获取全部操作日志列表
+		group.POST("/get/operationlog/list/all", r.getAllOperationLogList)
+		// 获取详情
+		group.POST("/get/operationlog/detail", r.getOperationLogDetail)
+		// 批量删除操作日志
+		group.POST("/delete/operationlog", r.deleteOperationLogBatch)
+	}
 }

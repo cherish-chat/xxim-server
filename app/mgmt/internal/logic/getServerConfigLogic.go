@@ -119,6 +119,10 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.NoticeRpc.Port)},
 			"NonBlock":  true,
 		}
+		c["AppMgmtRpc"] = map[string]any{
+			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.AppMgmtRpc.Port)},
+			"NonBlock":  true,
+		}
 		c["MgmtRpc"] = map[string]any{
 			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.Mgmt.RpcPort)},
 			"NonBlock":  true,
@@ -146,6 +150,10 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 		}
 		c["NoticeRpc"] = map[string]any{
 			"Target":   fmt.Sprintf("k8s://%s/notice-rpc-svc:%d", serverConfig.ConnRpc.K8sNamespace, serverConfig.NoticeRpc.Port),
+			"NonBlock": true,
+		}
+		c["AppMgmtRpc"] = map[string]any{
+			"Target":   fmt.Sprintf("k8s://%s/appmgmt-rpc-svc:%d", serverConfig.ConnRpc.K8sNamespace, serverConfig.AppMgmtRpc.Port),
 			"NonBlock": true,
 		}
 		c["MgmtRpc"] = map[string]any{
@@ -178,6 +186,8 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ConnRpc.Port)
 	case "im":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ImRpc.Port)
+	case "appmgmt":
+		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.AppMgmtRpc.Port)
 	case "group":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.GroupRpc.Port)
 	case "notice":

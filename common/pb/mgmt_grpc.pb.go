@@ -26,6 +26,7 @@ type MgmtServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 	GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
+	UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
 	LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 	HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 	ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -58,6 +59,9 @@ type MgmtServiceClient interface {
 	AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
 	UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error)
 	DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error)
+	GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
+	GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
+	DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -98,6 +102,15 @@ func (c *mgmtServiceClient) GetServerConfig(ctx context.Context, in *GetServerCo
 func (c *mgmtServiceClient) GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error) {
 	out := new(GetServerAllConfigResp)
 	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetServerAllConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error) {
+	out := new(UpdateServerConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateServerConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -392,6 +405,33 @@ func (c *mgmtServiceClient) DeleteMSIpWhiteList(ctx context.Context, in *DeleteM
 	return out, nil
 }
 
+func (c *mgmtServiceClient) GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error) {
+	out := new(GetAllMSOperationLogResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSOperationLog", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error) {
+	out := new(GetMSOperationLogDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSOperationLogDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error) {
+	out := new(DeleteMSOperationLogResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSOperationLog", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -400,6 +440,7 @@ type MgmtServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	GetServerConfig(context.Context, *GetServerConfigReq) (*GetServerConfigResp, error)
 	GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error)
+	UpdateServerConfig(context.Context, *UpdateServerConfigReq) (*UpdateServerConfigResp, error)
 	LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error)
 	HealthMS(context.Context, *CommonReq) (*HealthMSResp, error)
 	ConfigMS(context.Context, *CommonReq) (*ConfigMSResp, error)
@@ -432,6 +473,9 @@ type MgmtServiceServer interface {
 	AddMSIpWhiteList(context.Context, *AddMSIpWhiteListReq) (*AddMSIpWhiteListResp, error)
 	UpdateMSIpWhiteList(context.Context, *UpdateMSIpWhiteListReq) (*UpdateMSIpWhiteListResp, error)
 	DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error)
+	GetAllMSOperationLog(context.Context, *GetAllMSOperationLogReq) (*GetAllMSOperationLogResp, error)
+	GetMSOperationLogDetail(context.Context, *GetMSOperationLogDetailReq) (*GetMSOperationLogDetailResp, error)
+	DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -450,6 +494,9 @@ func (UnimplementedMgmtServiceServer) GetServerConfig(context.Context, *GetServe
 }
 func (UnimplementedMgmtServiceServer) GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetServerAllConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateServerConfig(context.Context, *UpdateServerConfigReq) (*UpdateServerConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateServerConfig not implemented")
 }
 func (UnimplementedMgmtServiceServer) LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginMS not implemented")
@@ -547,6 +594,15 @@ func (UnimplementedMgmtServiceServer) UpdateMSIpWhiteList(context.Context, *Upda
 func (UnimplementedMgmtServiceServer) DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSIpWhiteList not implemented")
 }
+func (UnimplementedMgmtServiceServer) GetAllMSOperationLog(context.Context, *GetAllMSOperationLogReq) (*GetAllMSOperationLogResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSOperationLog not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSOperationLogDetail(context.Context, *GetMSOperationLogDetailReq) (*GetMSOperationLogDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSOperationLogDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSOperationLog not implemented")
+}
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
 // UnsafeMgmtServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -628,6 +684,24 @@ func _MgmtService_GetServerAllConfig_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MgmtServiceServer).GetServerAllConfig(ctx, req.(*GetServerAllConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateServerConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateServerConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateServerConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateServerConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateServerConfig(ctx, req.(*UpdateServerConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1208,6 +1282,60 @@ func _MgmtService_DeleteMSIpWhiteList_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_GetAllMSOperationLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSOperationLogReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSOperationLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSOperationLog",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSOperationLog(ctx, req.(*GetAllMSOperationLogReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSOperationLogDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSOperationLogDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSOperationLogDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSOperationLogDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSOperationLogDetail(ctx, req.(*GetMSOperationLogDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSOperationLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSOperationLogReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSOperationLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSOperationLog",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSOperationLog(ctx, req.(*DeleteMSOperationLogReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1230,6 +1358,10 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetServerAllConfig",
 			Handler:    _MgmtService_GetServerAllConfig_Handler,
+		},
+		{
+			MethodName: "UpdateServerConfig",
+			Handler:    _MgmtService_UpdateServerConfig_Handler,
 		},
 		{
 			MethodName: "LoginMS",
@@ -1358,6 +1490,18 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMSIpWhiteList",
 			Handler:    _MgmtService_DeleteMSIpWhiteList_Handler,
+		},
+		{
+			MethodName: "GetAllMSOperationLog",
+			Handler:    _MgmtService_GetAllMSOperationLog_Handler,
+		},
+		{
+			MethodName: "GetMSOperationLogDetail",
+			Handler:    _MgmtService_GetMSOperationLogDetail_Handler,
+		},
+		{
+			MethodName: "DeleteMSOperationLog",
+			Handler:    _MgmtService_DeleteMSOperationLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

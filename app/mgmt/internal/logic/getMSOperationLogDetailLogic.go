@@ -10,29 +10,29 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetMSIpWhiteListDetailLogic struct {
+type GetMSOperationLogDetailLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetMSIpWhiteListDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMSIpWhiteListDetailLogic {
-	return &GetMSIpWhiteListDetailLogic{
+func NewGetMSOperationLogDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMSOperationLogDetailLogic {
+	return &GetMSOperationLogDetailLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetMSIpWhiteListDetailLogic) GetMSIpWhiteListDetail(in *pb.GetMSIpWhiteListDetailReq) (*pb.GetMSIpWhiteListDetailResp, error) {
+func (l *GetMSOperationLogDetailLogic) GetMSOperationLogDetail(in *pb.GetMSOperationLogDetailReq) (*pb.GetMSOperationLogDetailResp, error) {
 	// 查询原模型
-	model := &mgmtmodel.MSIPWhitelist{}
+	model := &mgmtmodel.OperationLog{}
 	err := l.svcCtx.Mysql().Model(model).Where("id = ?", in.Id).First(model).Error
 	if err != nil {
 		l.Errorf("查询失败: %v", err)
-		return &pb.GetMSIpWhiteListDetailResp{CommonResp: pb.NewRetryErrorResp()}, err
+		return &pb.GetMSOperationLogDetailResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	return &pb.GetMSIpWhiteListDetailResp{
-		IpWhiteList: model.ToPB(),
+	return &pb.GetMSOperationLogDetailResp{
+		OperationLog: model.ToPB(),
 	}, nil
 }

@@ -19,10 +19,18 @@ func insertIfNotFound(
 	}
 }
 
+func upsert(tx *gorm.DB, id string, model interface{}) {
+	// delete
+	tx.Where("id = ?", id).Delete(model)
+	// insert
+	tx.Create(model)
+}
+
 func InitData(tx *gorm.DB) {
 	initMenu(tx)
 	initRole(tx)
 	initApiPath(tx)
+	initMSIPWhitelist(tx)
 	// 设置角色菜单关联
 	initRoleMenu(tx)
 	// 设置角色接口关联

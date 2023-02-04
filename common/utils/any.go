@@ -148,3 +148,18 @@ func SliceRemove[T any](slice []T, value T) []T {
 	}
 	return newSlice
 }
+
+type ListToMapper interface {
+	GetKey() string
+}
+
+func ListToMap[T ListToMapper](list []T, filterFunc func(m T) bool) map[string]T {
+	m := make(map[string]T)
+	for _, v := range list {
+		if filterFunc != nil && !filterFunc(v) {
+			continue
+		}
+		m[v.GetKey()] = v
+	}
+	return m
+}

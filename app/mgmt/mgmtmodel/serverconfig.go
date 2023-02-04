@@ -63,6 +63,7 @@ type (
 		RelationRpc RelationRpcConfig
 		GroupRpc    GroupRpcConfig
 		NoticeRpc   NoticeRpcConfig
+		AppMgmtRpc  AppMgmtRpcConfig
 		Mgmt        MgmtConfig
 	}
 	ServerCommonConfig struct {
@@ -129,6 +130,9 @@ type (
 	}
 	NoticeRpcConfig struct {
 		Port int64 // default: 6707
+	}
+	AppMgmtRpcConfig struct {
+		Port int64 // default: 6709
 	}
 	MgmtConfig struct {
 		RpcPort        int64  // default: 6708
@@ -198,6 +202,9 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 		},
 		NoticeRpc: NoticeRpcConfig{
 			Port: 6707,
+		},
+		AppMgmtRpc: AppMgmtRpcConfig{
+			Port: 6709,
 		},
 		Mgmt: MgmtConfig{
 			RpcPort:        6708,
