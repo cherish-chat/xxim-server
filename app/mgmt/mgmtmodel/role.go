@@ -14,8 +14,8 @@ type Role struct {
 	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注信息'"`
 	IsDisable  bool   `gorm:"column:isDisable;not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
 	Sort       int32  `gorm:"column:sort;not null;default:0;comment:'角色排序'"`
-	MenuIds    string `gorm:"column:menuIds;not null;default:'';comment:'菜单ID集合逗号分隔'"`
-	ApiPathIds string `gorm:"column:apiPathIds;not null;default:'';comment:'接口ID集合逗号分隔'"`
+	MenuIds    string `gorm:"column:menuIds;type:text;comment:'菜单ID集合逗号分隔'"`
+	ApiPathIds string `gorm:"column:apiPathIds;type:text;comment:'接口ID集合逗号分隔'"`
 	CreateTime int64  `gorm:"column:createTime;not null;comment:'创建时间'"`
 	UpdateTime int64  `gorm:"column:updateTime;not null;comment:'更新时间'"`
 }
