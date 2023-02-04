@@ -940,6 +940,54 @@
                 }
             }
         },
+        "/ms/get/loginlog/list/all": {
+            "post": {
+                "description": "使用此接口获取全部登录日志列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统登录日志相关接口"
+                ],
+                "summary": "获取全部登录日志列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSLoginRecordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSLoginRecordResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/menu/detail": {
             "post": {
                 "description": "使用此接口获取菜单详情",
@@ -2364,6 +2412,40 @@
                 }
             }
         },
+        "pb.GetAllMSLoginRecordReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSLoginRecordResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "loginRecords": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSLoginRecord"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.GetAllMSMenuListReq": {
             "type": "object",
             "properties": {
@@ -3015,6 +3097,41 @@
                     "type": "string"
                 },
                 "updatedBy": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSLoginRecord": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ipCity": {
+                    "type": "string"
+                },
+                "ipCountry": {
+                    "type": "string"
+                },
+                "ipISP": {
+                    "type": "string"
+                },
+                "ipProvince": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "integer"
+                },
+                "timeStr": {
+                    "type": "string"
+                },
+                "userAgent": {
                     "type": "string"
                 },
                 "userId": {

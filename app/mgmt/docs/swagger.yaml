@@ -422,6 +422,28 @@ definitions:
       total:
         type: integer
     type: object
+  pb.GetAllMSLoginRecordReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSLoginRecordResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      loginRecords:
+        items:
+          $ref: '#/definitions/pb.MSLoginRecord'
+        type: array
+      total:
+        type: integer
+    type: object
   pb.GetAllMSMenuListReq:
     properties:
       commonReq:
@@ -843,6 +865,29 @@ definitions:
       updatedAtStr:
         type: string
       updatedBy:
+        type: string
+      userId:
+        type: string
+    type: object
+  pb.MSLoginRecord:
+    properties:
+      id:
+        type: string
+      ip:
+        type: string
+      ipCity:
+        type: string
+      ipCountry:
+        type: string
+      ipISP:
+        type: string
+      ipProvince:
+        type: string
+      time:
+        type: integer
+      timeStr:
+        type: string
+      userAgent:
         type: string
       userId:
         type: string
@@ -1691,6 +1736,38 @@ paths:
       summary: 获取全部ip白名单列表
       tags:
       - 管理系统ip白名单相关接口
+  /ms/get/loginlog/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部登录日志列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSLoginRecordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSLoginRecordResp'
+      summary: 获取全部登录日志列表
+      tags:
+      - 管理系统登录日志相关接口
   /ms/get/menu/detail:
     post:
       consumes:
