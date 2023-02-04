@@ -19,8 +19,6 @@ type (
 	BeforeConnectResp          = pb.BeforeConnectResp
 	GetAllConvIdOfUserReq      = pb.GetAllConvIdOfUserReq
 	GetAllConvIdOfUserResp     = pb.GetAllConvIdOfUserResp
-	GetAppSystemConfigReq      = pb.GetAppSystemConfigReq
-	GetAppSystemConfigResp     = pb.GetAppSystemConfigResp
 	GetUserLatestConnReq       = pb.GetUserLatestConnReq
 	GetUserLatestConnResp      = pb.GetUserLatestConnResp
 	ImMQBody                   = pb.ImMQBody
@@ -35,7 +33,6 @@ type (
 		GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
 		BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
-		GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error)
 		GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
 	}
 
@@ -88,11 +85,6 @@ func (m *defaultImService) BatchGetUserLatestConn(ctx context.Context, in *Batch
 func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.SendMsg(ctx, in, opts...)
-}
-
-func (m *defaultImService) GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error) {
-	client := pb.NewImServiceClient(m.cli.Conn())
-	return client.GetAppSystemConfig(ctx, in, opts...)
 }
 
 func (m *defaultImService) GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error) {

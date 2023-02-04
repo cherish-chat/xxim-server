@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtservice"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/config"
@@ -24,10 +25,11 @@ type ServiceContext struct {
 	imService       imservice.ImService
 	msgService      msgservice.MsgService
 	noticeService   noticeservice.NoticeService
+	appMgmtService  appmgmtservice.AppMgmtService
 	relationService relationservice.RelationService
 	userService     userservice.UserService
 	groupService    groupservice.GroupService
-	SystemConfigMgr *xconf.SystemConfigMgr
+	ConfigMgr       *xconf.ConfigMgr
 }
 
 func NewServiceContext(c config.Config, rc *redis.Redis) *ServiceContext {
@@ -36,7 +38,7 @@ func NewServiceContext(c config.Config, rc *redis.Redis) *ServiceContext {
 		Config: c,
 		redis:  rc,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	return s
 }
 
@@ -79,6 +81,13 @@ func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
 		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
 	}
 	return s.noticeService
+}
+
+func (s *ServiceContext) AppMgmtService() appmgmtservice.AppMgmtService {
+	if s.appMgmtService == nil {
+		s.appMgmtService = appmgmtservice.NewAppMgmtService(zrpc.MustNewClient(s.Config.AppMgmtRpc))
+	}
+	return s.appMgmtService
 }
 
 func (s *ServiceContext) RelationService() relationservice.RelationService {

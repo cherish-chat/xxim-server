@@ -47,8 +47,8 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		Id:           userTmp.UserId,
 		Password:     userTmp.Password,
 		PasswordSalt: userTmp.PasswordSalt,
-		Nickname:     l.svcCtx.SystemConfigMgr.Get("nickname_default"),
-		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
+		Nickname:     l.svcCtx.ConfigMgr.NicknameDefault(l.ctx),
+		Avatar:       utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(l.ctx), ""),
 		RegInfo:      userTmp.RegInfo,
 		CreateTime:   time.Now().UnixMilli(),
 	}

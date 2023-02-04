@@ -84,7 +84,7 @@ func (l *GetSingleConvSettingLogic) getSingleConvSettingFromDB(in *pb.GetSingleC
 }
 
 func (l *GetSingleConvSettingLogic) notFound(in *pb.GetSingleConvSettingReq) (*pb.GetSingleConvSettingResp, error) {
-	config := l.svcCtx.SystemConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
+	config := l.svcCtx.ConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
 		"singleConvSetting_isTop_Default":             "0",
 		"singleConvSetting_isDisturb_Default":         "0",
 		"singleConvSetting_notifyPreview_Default":     "1",

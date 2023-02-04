@@ -56,6 +56,9 @@ func init() {
 	initDefaultApiPaths("server", map[string]string{
 		"config": "服务器配置",
 	})
+	initDefaultApiPaths("appmgmt", map[string]string{
+		"config": "app配置",
+	})
 }
 
 func initDefaultApiPaths(group string, services map[string]string) {

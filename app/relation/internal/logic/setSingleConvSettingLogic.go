@@ -47,7 +47,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 	}
 	if dest.ConvId == "" {
 		// 不存在，插入
-		config := l.svcCtx.SystemConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
+		config := l.svcCtx.ConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
 			"singleConvSetting_isTop_Default":             "0",
 			"singleConvSetting_isDisturb_Default":         "0",
 			"singleConvSetting_notifyPreview_Default":     "1",

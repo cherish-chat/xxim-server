@@ -16,6 +16,7 @@ type Config struct {
 	UserRpc     zrpc.RpcClientConf
 	GroupRpc    zrpc.RpcClientConf
 	NoticeRpc   zrpc.RpcClientConf
+	AppMgmtRpc  zrpc.RpcClientConf
 	SuperAdmin  struct {
 		Id       string `json:",default=superadmin"`
 		Password string `json:",default=superadmin"` // 只有该管理员未创建时才会创建并设置密码 后续不会修改密码

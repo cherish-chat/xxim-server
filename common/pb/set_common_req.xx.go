@@ -84,10 +84,6 @@ func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
 func (x *AckNoticeDataReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

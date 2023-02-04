@@ -25,7 +25,7 @@ type ServiceContext struct {
 	relationService relationservice.RelationService
 	groupService    groupservice.GroupService
 	noticeService   noticeservice.NoticeService
-	SystemConfigMgr *xconf.SystemConfigMgr
+	ConfigMgr       *xconf.ConfigMgr
 }
 
 func (s *ServiceContext) Redis() *redis.Redis {
@@ -75,7 +75,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config: c,
 	}
 	ip2region.Init(c.Ip2RegionUrl)
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
 	s.Mysql().AutoMigrate(&immodel.UserConnectRecord{})
 	return s

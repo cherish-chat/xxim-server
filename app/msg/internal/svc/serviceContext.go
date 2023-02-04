@@ -28,7 +28,7 @@ type ServiceContext struct {
 	groupService       groupservice.GroupService
 	userService        userservice.UserService
 	MobPush            *mobpush.Pusher
-	SystemConfigMgr    *xconf.SystemConfigMgr
+	ConfigMgr          *xconf.ConfigMgr
 	SyncSendMsgLimiter *limit.TokenLimiter
 }
 
@@ -41,7 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		xorm.HashKv{},
 	)
 	s.MobPush = mobpush.NewPusher(c.MobPush)
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.SyncSendMsgLimiter = limit.NewTokenLimiter(c.SyncSendMsgLimit.Rate, c.SyncSendMsgLimit.Burst, s.Redis(), rediskey.SyncSendMsgLimiter())
 	return s
 }

@@ -210,7 +210,7 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
 	if !convSetting.Setting.GetNotifyPreview() {
-		alert, content = l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_title", "惺惺线路"), l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_content", "您有一条新消息")
+		alert, content = l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx)
 	}
 	// 推送
 	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
@@ -242,7 +242,7 @@ func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgDat
 		}
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
-	noPreviewAlert, noPreviewContent := l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_title", "惺惺线路"), l.svcCtx.SystemConfigMgr.GetOrDefault("offline_push_content", "您有一条新消息")
+	noPreviewAlert, noPreviewContent := l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx)
 	// 推送
 	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
 		if len(previewUids) > 0 {

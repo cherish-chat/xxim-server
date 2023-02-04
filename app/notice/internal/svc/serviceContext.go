@@ -24,7 +24,7 @@ type ServiceContext struct {
 	groupService    groupservice.GroupService
 	userService     userservice.UserService
 	msgService      msgservice.MsgService
-	SystemConfigMgr *xconf.SystemConfigMgr
+	ConfigMgr       *xconf.ConfigMgr
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,7 +37,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		noticemodel.NoticeMaxConvAutoId{},
 		xorm.HashKv{},
 	)
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	return s
 }
 

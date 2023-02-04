@@ -547,110 +547,6 @@ func (x *MsgNotifyOpt) GetVibrate() bool {
 	return false
 }
 
-//GetAppSystemConfigReq 获取系统配置
-type GetAppSystemConfigReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	CommonReq *CommonReq `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
-}
-
-func (x *GetAppSystemConfigReq) Reset() {
-	*x = GetAppSystemConfigReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_im_proto_msgTypes[8]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetAppSystemConfigReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAppSystemConfigReq) ProtoMessage() {}
-
-func (x *GetAppSystemConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_im_proto_msgTypes[8]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAppSystemConfigReq.ProtoReflect.Descriptor instead.
-func (*GetAppSystemConfigReq) Descriptor() ([]byte, []int) {
-	return file_im_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *GetAppSystemConfigReq) GetCommonReq() *CommonReq {
-	if x != nil {
-		return x.CommonReq
-	}
-	return nil
-}
-
-//GetAppSystemConfigResp 获取系统配置
-type GetAppSystemConfigResp struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	CommonResp *CommonResp       `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
-	Configs    map[string]string `protobuf:"bytes,2,rep,name=configs,proto3" json:"configs" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-}
-
-func (x *GetAppSystemConfigResp) Reset() {
-	*x = GetAppSystemConfigResp{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_im_proto_msgTypes[9]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetAppSystemConfigResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAppSystemConfigResp) ProtoMessage() {}
-
-func (x *GetAppSystemConfigResp) ProtoReflect() protoreflect.Message {
-	mi := &file_im_proto_msgTypes[9]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAppSystemConfigResp.ProtoReflect.Descriptor instead.
-func (*GetAppSystemConfigResp) Descriptor() ([]byte, []int) {
-	return file_im_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *GetAppSystemConfigResp) GetCommonResp() *CommonResp {
-	if x != nil {
-		return x.CommonResp
-	}
-	return nil
-}
-
-func (x *GetAppSystemConfigResp) GetConfigs() map[string]string {
-	if x != nil {
-		return x.Configs
-	}
-	return nil
-}
-
 //GetAllConvIdOfUserReq 获取用户所有会话id
 type GetAllConvIdOfUserReq struct {
 	state         protoimpl.MessageState
@@ -664,7 +560,7 @@ type GetAllConvIdOfUserReq struct {
 func (x *GetAllConvIdOfUserReq) Reset() {
 	*x = GetAllConvIdOfUserReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_im_proto_msgTypes[10]
+		mi := &file_im_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -677,7 +573,7 @@ func (x *GetAllConvIdOfUserReq) String() string {
 func (*GetAllConvIdOfUserReq) ProtoMessage() {}
 
 func (x *GetAllConvIdOfUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_im_proto_msgTypes[10]
+	mi := &file_im_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +586,7 @@ func (x *GetAllConvIdOfUserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllConvIdOfUserReq.ProtoReflect.Descriptor instead.
 func (*GetAllConvIdOfUserReq) Descriptor() ([]byte, []int) {
-	return file_im_proto_rawDescGZIP(), []int{10}
+	return file_im_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetAllConvIdOfUserReq) GetCommonReq() *CommonReq {
@@ -723,7 +619,7 @@ type GetAllConvIdOfUserResp struct {
 func (x *GetAllConvIdOfUserResp) Reset() {
 	*x = GetAllConvIdOfUserResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_im_proto_msgTypes[11]
+		mi := &file_im_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -736,7 +632,7 @@ func (x *GetAllConvIdOfUserResp) String() string {
 func (*GetAllConvIdOfUserResp) ProtoMessage() {}
 
 func (x *GetAllConvIdOfUserResp) ProtoReflect() protoreflect.Message {
-	mi := &file_im_proto_msgTypes[11]
+	mi := &file_im_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -749,7 +645,7 @@ func (x *GetAllConvIdOfUserResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllConvIdOfUserResp.ProtoReflect.Descriptor instead.
 func (*GetAllConvIdOfUserResp) Descriptor() ([]byte, []int) {
-	return file_im_proto_rawDescGZIP(), []int{11}
+	return file_im_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetAllConvIdOfUserResp) GetCommonResp() *CommonResp {
@@ -846,24 +742,7 @@ var file_im_proto_rawDesc = []byte{
 	0x73, 0x6f, 0x75, 0x6e, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x09, 0x73, 0x6f, 0x75, 0x6e, 0x64, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x76, 0x69,
 	0x62, 0x72, 0x61, 0x74, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x76, 0x69, 0x62,
-	0x72, 0x61, 0x74, 0x65, 0x22, 0x44, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x53, 0x79,
-	0x73, 0x74, 0x65, 0x6d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a,
-	0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52,
-	0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x22, 0xc7, 0x01, 0x0a, 0x16, 0x47,
-	0x65, 0x74, 0x41, 0x70, 0x70, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x6f, 0x6e, 0x66, 0x69,
-	0x67, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52,
-	0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43,
-	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x41, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x73,
-	0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41,
-	0x70, 0x70, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65,
-	0x73, 0x70, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52,
-	0x07, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x73, 0x1a, 0x3a, 0x0a, 0x0c, 0x43, 0x6f, 0x6e, 0x66,
-	0x69, 0x67, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
-	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
-	0x3a, 0x02, 0x38, 0x01, 0x22, 0x5c, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f,
+	0x72, 0x61, 0x74, 0x65, 0x22, 0x5c, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f,
 	0x6e, 0x76, 0x49, 0x64, 0x4f, 0x66, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a,
 	0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52,
@@ -881,7 +760,7 @@ var file_im_proto_rawDesc = []byte{
 	0x18, 0x04, 0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x66, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x49, 0x64,
 	0x73, 0x12, 0x1c, 0x0a, 0x09, 0x6e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x49, 0x64, 0x73, 0x18, 0x05,
 	0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x6e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x49, 0x64, 0x73, 0x32,
-	0x95, 0x05, 0x0a, 0x09, 0x69, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a,
+	0xc8, 0x04, 0x0a, 0x09, 0x69, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a,
 	0x0d, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x12, 0x14,
 	0x2e, 0x70, 0x62, 0x2e, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63,
 	0x74, 0x52, 0x65, 0x71, 0x1a, 0x15, 0x2e, 0x70, 0x62, 0x2e, 0x42, 0x65, 0x66, 0x6f, 0x72, 0x65,
@@ -913,17 +792,12 @@ var file_im_proto_rawDesc = []byte{
 	0x70, 0x12, 0x2a, 0x0a, 0x07, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x12, 0x0e, 0x2e, 0x70,
 	0x62, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x0f, 0x2e, 0x70,
 	0x62, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x73, 0x70, 0x12, 0x4b, 0x0a,
-	0x12, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x6f, 0x6e,
-	0x66, 0x69, 0x67, 0x12, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x53,
-	0x79, 0x73, 0x74, 0x65, 0x6d, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x1a, 0x1a,
-	0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d,
-	0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x12, 0x4b, 0x0a, 0x12, 0x47, 0x65,
-	0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x76, 0x49, 0x64, 0x4f, 0x66, 0x55, 0x73, 0x65, 0x72,
-	0x12, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x76,
-	0x49, 0x64, 0x4f, 0x66, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x1a, 0x2e, 0x70, 0x62,
-	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x76, 0x49, 0x64, 0x4f, 0x66, 0x55,
-	0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x12, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x76, 0x49, 0x64, 0x4f, 0x66, 0x55,
+	0x73, 0x65, 0x72, 0x12, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43,
+	0x6f, 0x6e, 0x76, 0x49, 0x64, 0x4f, 0x66, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x1a,
+	0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x76, 0x49, 0x64,
+	0x4f, 0x66, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f,
+	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -939,7 +813,7 @@ func file_im_proto_rawDescGZIP() []byte {
 }
 
 var file_im_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_im_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_im_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_im_proto_goTypes = []interface{}{
 	(ImMQBody_Event)(0),                // 0: pb.ImMQBody.Event
 	(*ImMQBody)(nil),                   // 1: pb.ImMQBody
@@ -950,60 +824,52 @@ var file_im_proto_goTypes = []interface{}{
 	(*BatchGetUserLatestConnReq)(nil),  // 6: pb.BatchGetUserLatestConnReq
 	(*BatchGetUserLatestConnResp)(nil), // 7: pb.BatchGetUserLatestConnResp
 	(*MsgNotifyOpt)(nil),               // 8: pb.MsgNotifyOpt
-	(*GetAppSystemConfigReq)(nil),      // 9: pb.GetAppSystemConfigReq
-	(*GetAppSystemConfigResp)(nil),     // 10: pb.GetAppSystemConfigResp
-	(*GetAllConvIdOfUserReq)(nil),      // 11: pb.GetAllConvIdOfUserReq
-	(*GetAllConvIdOfUserResp)(nil),     // 12: pb.GetAllConvIdOfUserResp
-	nil,                                // 13: pb.GetAppSystemConfigResp.ConfigsEntry
-	(*ConnParam)(nil),                  // 14: pb.ConnParam
-	(*IpRegion)(nil),                   // 15: pb.IpRegion
-	(*CommonResp)(nil),                 // 16: pb.CommonResp
-	(*CommonReq)(nil),                  // 17: pb.CommonReq
-	(*AfterConnectReq)(nil),            // 18: pb.AfterConnectReq
-	(*AfterDisconnectReq)(nil),         // 19: pb.AfterDisconnectReq
-	(*KickUserConnReq)(nil),            // 20: pb.KickUserConnReq
-	(*GetUserConnReq)(nil),             // 21: pb.GetUserConnReq
-	(*SendMsgReq)(nil),                 // 22: pb.SendMsgReq
-	(*KickUserConnResp)(nil),           // 23: pb.KickUserConnResp
-	(*GetUserConnResp)(nil),            // 24: pb.GetUserConnResp
-	(*SendMsgResp)(nil),                // 25: pb.SendMsgResp
+	(*GetAllConvIdOfUserReq)(nil),      // 9: pb.GetAllConvIdOfUserReq
+	(*GetAllConvIdOfUserResp)(nil),     // 10: pb.GetAllConvIdOfUserResp
+	(*ConnParam)(nil),                  // 11: pb.ConnParam
+	(*IpRegion)(nil),                   // 12: pb.IpRegion
+	(*CommonResp)(nil),                 // 13: pb.CommonResp
+	(*CommonReq)(nil),                  // 14: pb.CommonReq
+	(*AfterConnectReq)(nil),            // 15: pb.AfterConnectReq
+	(*AfterDisconnectReq)(nil),         // 16: pb.AfterDisconnectReq
+	(*KickUserConnReq)(nil),            // 17: pb.KickUserConnReq
+	(*GetUserConnReq)(nil),             // 18: pb.GetUserConnReq
+	(*SendMsgReq)(nil),                 // 19: pb.SendMsgReq
+	(*KickUserConnResp)(nil),           // 20: pb.KickUserConnResp
+	(*GetUserConnResp)(nil),            // 21: pb.GetUserConnResp
+	(*SendMsgResp)(nil),                // 22: pb.SendMsgResp
 }
 var file_im_proto_depIdxs = []int32{
 	0,  // 0: pb.ImMQBody.event:type_name -> pb.ImMQBody.Event
-	14, // 1: pb.BeforeConnectReq.connParam:type_name -> pb.ConnParam
-	15, // 2: pb.GetUserLatestConnResp.ipRegion:type_name -> pb.IpRegion
-	16, // 3: pb.BatchGetUserLatestConnResp.commonResp:type_name -> pb.CommonResp
+	11, // 1: pb.BeforeConnectReq.connParam:type_name -> pb.ConnParam
+	12, // 2: pb.GetUserLatestConnResp.ipRegion:type_name -> pb.IpRegion
+	13, // 3: pb.BatchGetUserLatestConnResp.commonResp:type_name -> pb.CommonResp
 	5,  // 4: pb.BatchGetUserLatestConnResp.userLatestConns:type_name -> pb.GetUserLatestConnResp
-	17, // 5: pb.GetAppSystemConfigReq.commonReq:type_name -> pb.CommonReq
-	16, // 6: pb.GetAppSystemConfigResp.commonResp:type_name -> pb.CommonResp
-	13, // 7: pb.GetAppSystemConfigResp.configs:type_name -> pb.GetAppSystemConfigResp.ConfigsEntry
-	17, // 8: pb.GetAllConvIdOfUserReq.commonReq:type_name -> pb.CommonReq
-	16, // 9: pb.GetAllConvIdOfUserResp.commonResp:type_name -> pb.CommonResp
-	2,  // 10: pb.imService.BeforeConnect:input_type -> pb.BeforeConnectReq
-	18, // 11: pb.imService.AfterConnect:input_type -> pb.AfterConnectReq
-	19, // 12: pb.imService.AfterDisconnect:input_type -> pb.AfterDisconnectReq
-	20, // 13: pb.imService.KickUserConn:input_type -> pb.KickUserConnReq
-	21, // 14: pb.imService.GetUserConn:input_type -> pb.GetUserConnReq
-	4,  // 15: pb.imService.GetUserLatestConn:input_type -> pb.GetUserLatestConnReq
-	6,  // 16: pb.imService.BatchGetUserLatestConn:input_type -> pb.BatchGetUserLatestConnReq
-	22, // 17: pb.imService.SendMsg:input_type -> pb.SendMsgReq
-	9,  // 18: pb.imService.GetAppSystemConfig:input_type -> pb.GetAppSystemConfigReq
-	11, // 19: pb.imService.GetAllConvIdOfUser:input_type -> pb.GetAllConvIdOfUserReq
-	3,  // 20: pb.imService.BeforeConnect:output_type -> pb.BeforeConnectResp
-	16, // 21: pb.imService.AfterConnect:output_type -> pb.CommonResp
-	16, // 22: pb.imService.AfterDisconnect:output_type -> pb.CommonResp
-	23, // 23: pb.imService.KickUserConn:output_type -> pb.KickUserConnResp
-	24, // 24: pb.imService.GetUserConn:output_type -> pb.GetUserConnResp
-	5,  // 25: pb.imService.GetUserLatestConn:output_type -> pb.GetUserLatestConnResp
-	7,  // 26: pb.imService.BatchGetUserLatestConn:output_type -> pb.BatchGetUserLatestConnResp
-	25, // 27: pb.imService.SendMsg:output_type -> pb.SendMsgResp
-	10, // 28: pb.imService.GetAppSystemConfig:output_type -> pb.GetAppSystemConfigResp
-	12, // 29: pb.imService.GetAllConvIdOfUser:output_type -> pb.GetAllConvIdOfUserResp
-	20, // [20:30] is the sub-list for method output_type
-	10, // [10:20] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	14, // 5: pb.GetAllConvIdOfUserReq.commonReq:type_name -> pb.CommonReq
+	13, // 6: pb.GetAllConvIdOfUserResp.commonResp:type_name -> pb.CommonResp
+	2,  // 7: pb.imService.BeforeConnect:input_type -> pb.BeforeConnectReq
+	15, // 8: pb.imService.AfterConnect:input_type -> pb.AfterConnectReq
+	16, // 9: pb.imService.AfterDisconnect:input_type -> pb.AfterDisconnectReq
+	17, // 10: pb.imService.KickUserConn:input_type -> pb.KickUserConnReq
+	18, // 11: pb.imService.GetUserConn:input_type -> pb.GetUserConnReq
+	4,  // 12: pb.imService.GetUserLatestConn:input_type -> pb.GetUserLatestConnReq
+	6,  // 13: pb.imService.BatchGetUserLatestConn:input_type -> pb.BatchGetUserLatestConnReq
+	19, // 14: pb.imService.SendMsg:input_type -> pb.SendMsgReq
+	9,  // 15: pb.imService.GetAllConvIdOfUser:input_type -> pb.GetAllConvIdOfUserReq
+	3,  // 16: pb.imService.BeforeConnect:output_type -> pb.BeforeConnectResp
+	13, // 17: pb.imService.AfterConnect:output_type -> pb.CommonResp
+	13, // 18: pb.imService.AfterDisconnect:output_type -> pb.CommonResp
+	20, // 19: pb.imService.KickUserConn:output_type -> pb.KickUserConnResp
+	21, // 20: pb.imService.GetUserConn:output_type -> pb.GetUserConnResp
+	5,  // 21: pb.imService.GetUserLatestConn:output_type -> pb.GetUserLatestConnResp
+	7,  // 22: pb.imService.BatchGetUserLatestConn:output_type -> pb.BatchGetUserLatestConnResp
+	22, // 23: pb.imService.SendMsg:output_type -> pb.SendMsgResp
+	10, // 24: pb.imService.GetAllConvIdOfUser:output_type -> pb.GetAllConvIdOfUserResp
+	16, // [16:25] is the sub-list for method output_type
+	7,  // [7:16] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_im_proto_init() }
@@ -1111,30 +977,6 @@ func file_im_proto_init() {
 			}
 		}
 		file_im_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAppSystemConfigReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_im_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAppSystemConfigResp); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_im_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllConvIdOfUserReq); i {
 			case 0:
 				return &v.state
@@ -1146,7 +988,7 @@ func file_im_proto_init() {
 				return nil
 			}
 		}
-		file_im_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_im_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetAllConvIdOfUserResp); i {
 			case 0:
 				return &v.state
@@ -1165,7 +1007,7 @@ func file_im_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_im_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

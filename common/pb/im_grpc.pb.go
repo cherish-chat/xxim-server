@@ -30,7 +30,6 @@ type ImServiceClient interface {
 	GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
 	BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
-	GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error)
 	GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
 }
 
@@ -114,15 +113,6 @@ func (c *imServiceClient) SendMsg(ctx context.Context, in *SendMsgReq, opts ...g
 	return out, nil
 }
 
-func (c *imServiceClient) GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error) {
-	out := new(GetAppSystemConfigResp)
-	err := c.cc.Invoke(ctx, "/pb.imService/GetAppSystemConfig", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *imServiceClient) GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error) {
 	out := new(GetAllConvIdOfUserResp)
 	err := c.cc.Invoke(ctx, "/pb.imService/GetAllConvIdOfUser", in, out, opts...)
@@ -144,7 +134,6 @@ type ImServiceServer interface {
 	GetUserLatestConn(context.Context, *GetUserLatestConnReq) (*GetUserLatestConnResp, error)
 	BatchGetUserLatestConn(context.Context, *BatchGetUserLatestConnReq) (*BatchGetUserLatestConnResp, error)
 	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
-	GetAppSystemConfig(context.Context, *GetAppSystemConfigReq) (*GetAppSystemConfigResp, error)
 	GetAllConvIdOfUser(context.Context, *GetAllConvIdOfUserReq) (*GetAllConvIdOfUserResp, error)
 	mustEmbedUnimplementedImServiceServer()
 }
@@ -176,9 +165,6 @@ func (UnimplementedImServiceServer) BatchGetUserLatestConn(context.Context, *Bat
 }
 func (UnimplementedImServiceServer) SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsg not implemented")
-}
-func (UnimplementedImServiceServer) GetAppSystemConfig(context.Context, *GetAppSystemConfigReq) (*GetAppSystemConfigResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppSystemConfig not implemented")
 }
 func (UnimplementedImServiceServer) GetAllConvIdOfUser(context.Context, *GetAllConvIdOfUserReq) (*GetAllConvIdOfUserResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllConvIdOfUser not implemented")
@@ -340,24 +326,6 @@ func _ImService_SendMsg_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ImService_GetAppSystemConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAppSystemConfigReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ImServiceServer).GetAppSystemConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.imService/GetAppSystemConfig",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ImServiceServer).GetAppSystemConfig(ctx, req.(*GetAppSystemConfigReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ImService_GetAllConvIdOfUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllConvIdOfUserReq)
 	if err := dec(in); err != nil {
@@ -414,10 +382,6 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMsg",
 			Handler:    _ImService_SendMsg_Handler,
-		},
-		{
-			MethodName: "GetAppSystemConfig",
-			Handler:    _ImService_GetAppSystemConfig_Handler,
 		},
 		{
 			MethodName: "GetAllConvIdOfUser",

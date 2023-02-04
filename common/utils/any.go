@@ -163,3 +163,7 @@ func ListToMap[T ListToMapper](list []T, filterFunc func(m T) bool) map[string]T
 	}
 	return m
 }
+
+type NUM interface {
+	int8 | uint8 | int16 | uint16 | int32 | uint32 | int64 | uint64 | int | uint | float32 | float64
+}

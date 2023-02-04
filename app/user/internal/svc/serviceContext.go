@@ -15,12 +15,12 @@ import (
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	zedis           *redis.Redis
-	mysql           *gorm.DB
-	imService       imservice.ImService
-	noticeService   noticeservice.NoticeService
-	SystemConfigMgr *xconf.SystemConfigMgr
+	Config        config.Config
+	zedis         *redis.Redis
+	mysql         *gorm.DB
+	imService     imservice.ImService
+	noticeService noticeservice.NoticeService
+	ConfigMgr     *xconf.ConfigMgr
 	*i18n.I18N
 }
 
@@ -29,7 +29,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.I18N = i18n.NewI18N(s.Mysql())
 	usermodel.InitUserSetting(s.Mysql())
 	s.Mysql().AutoMigrate(

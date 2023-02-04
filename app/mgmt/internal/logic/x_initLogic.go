@@ -50,7 +50,7 @@ func (l *InitLogic) Init() {
 		Password:     password,
 		PasswordSalt: salt,
 		Nickname:     "内置超级管理员",
-		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
+		Avatar:       utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(context.Background()), ""),
 		RoleId:       "1",
 		IsDisable:    false,
 		CreateTime:   time.Now().UnixMilli(),

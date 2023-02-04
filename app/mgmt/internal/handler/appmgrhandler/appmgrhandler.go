@@ -14,13 +14,13 @@ func NewAppMgrHandler(svcCtx *svc.ServiceContext) *AppMgrHandler {
 }
 
 func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
-	group := g.Group("/appmgr") // app管理
+	group := g.Group("/appmgmt") // app管理
 	// app基础配置
 	{
 		// 获取全部app基础配置列表
 		group.POST("/get/config/list/all", r.getAllConfigList)
 		// 更新全部app基础配置列表
-		group.POST("/update/config/list/all", r.updateAllConfigList)
+		group.POST("/update/config", r.updateAllConfigList)
 	}
 	// app版本管理
 	{

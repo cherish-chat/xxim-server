@@ -56,17 +56,6 @@ message MsgNotifyOpt {
   bool vibrate = 5; // 是否震动
 }
 
-//GetAppSystemConfigReq 获取系统配置
-message GetAppSystemConfigReq {
-  CommonReq commonReq = 1;
-}
-
-//GetAppSystemConfigResp 获取系统配置
-message GetAppSystemConfigResp {
-  CommonResp commonResp = 1;
-  map<string, string> configs = 2;
-}
-
 //GetAllConvIdOfUserReq 获取用户所有会话id
 message GetAllConvIdOfUserReq {
   CommonReq commonReq = 1;
@@ -91,6 +80,5 @@ service imService {
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
   rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
-  rpc GetAppSystemConfig(GetAppSystemConfigReq) returns (GetAppSystemConfigResp);
   rpc GetAllConvIdOfUser(GetAllConvIdOfUserReq) returns (GetAllConvIdOfUserResp);
 }

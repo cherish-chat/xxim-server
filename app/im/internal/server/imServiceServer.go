@@ -62,11 +62,6 @@ func (s *ImServiceServer) SendMsg(ctx context.Context, in *pb.SendMsgReq) (*pb.S
 	return l.SendMsg(in)
 }
 
-func (s *ImServiceServer) GetAppSystemConfig(ctx context.Context, in *pb.GetAppSystemConfigReq) (*pb.GetAppSystemConfigResp, error) {
-	l := logic.NewGetAppSystemConfigLogic(ctx, s.svcCtx)
-	return l.GetAppSystemConfig(in)
-}
-
 func (s *ImServiceServer) GetAllConvIdOfUser(ctx context.Context, in *pb.GetAllConvIdOfUserReq) (*pb.GetAllConvIdOfUserResp, error) {
 	l := logic.NewGetAllConvIdOfUserLogic(ctx, s.svcCtx)
 	return l.GetAllConvIdOfUser(in)
