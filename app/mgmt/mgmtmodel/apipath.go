@@ -36,7 +36,14 @@ func (m *ApiPath) ToPB() *pb.MSApiPath {
 	}
 }
 
-var defaultApiPaths []*ApiPath
+var defaultApiPaths = []*ApiPath{{
+	Id:         "login",
+	Title:      "登录",
+	Path:       "/api/ms/login",
+	LogEnable:  true,
+	CreateTime: time.Now().UnixMilli(),
+	UpdateTime: time.Now().UnixMilli(),
+}}
 
 func init() {
 	initDefaultApiPaths("ms", map[string]string{
