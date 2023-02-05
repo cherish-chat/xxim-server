@@ -50,6 +50,7 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 		Ips:         c.ConnParam.Ips,
 		NetworkUsed: c.ConnParam.NetworkUsed,
 		Headers:     c.ConnParam.Headers,
+		Timestamp:   c.ConnParam.Timestamp,
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("BeforeConnect err: %v", err)

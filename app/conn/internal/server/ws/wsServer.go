@@ -127,6 +127,7 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		Ips:         xhttp.GetRequestIP(r),
 		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
+		Timestamp:   time.Now().UnixMilli(),
 	}
 	compressionMode := websocket.CompressionNoContextTakeover
 	// https://github.com/nhooyr/websocket/issues/218

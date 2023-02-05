@@ -41,6 +41,7 @@ type (
 		Ips         string            // ip
 		NetworkUsed string            // 4G/5G/WIFI
 		Headers     map[string]string // 其他参数
+		Timestamp   int64             // 时间戳
 	}
 )
 
