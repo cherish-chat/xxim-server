@@ -73,6 +73,6 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 		}
 	default:
 		// 无效的消息类型
-		l.Errorf("invalid message type: %d, msg: %s", typ, string(msg))
+		l.Infof("invalid message type: %d, msg: %s", typ, string(msg))
 	}
 }
