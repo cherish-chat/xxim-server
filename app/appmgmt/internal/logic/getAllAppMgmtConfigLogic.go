@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtmodel"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -24,8 +23,15 @@ func NewGetAllAppMgmtConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetAllAppMgmtConfigLogic) GetAllAppMgmtConfig(in *pb.GetAllAppMgmtConfigReq) (*pb.GetAllAppMgmtConfigResp, error) {
-	var models []*appmgmtmodel.Config
-	l.svcCtx.Mysql().Model(&appmgmtmodel.Config{}).Find(&models)
+	models, err := l.svcCtx.ConfigMgr.GetAll(l.ctx)
+	if err != nil {
+		l.Errorf("get all app mgmt config error: %v", err)
+		return &pb.GetAllAppMgmtConfigResp{
+			CommonResp: pb.NewRetryErrorResp(),
+		}, err
+	}
+	//var models []*appmgmtmodel.Config
+	//l.svcCtx.Mysql().Model(&appmgmtmodel.Config{}).Find(&models)
 	var resp []*pb.AppMgmtConfig
 	for _, model := range models {
 		resp = append(resp, model.ToPB())

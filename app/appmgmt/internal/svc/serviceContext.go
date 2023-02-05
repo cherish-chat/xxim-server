@@ -43,7 +43,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 func (s *ServiceContext) Mysql() *gorm.DB {
 	if s.mysql == nil {
 		s.mysql = xorm.NewClient(s.Config.Mysql)
+		s.mysql.AutoMigrate(&appmgmtmodel.AutoIncrement{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Config{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Emoji{})
+		s.mysql.AutoMigrate(&appmgmtmodel.EmojiGroup{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Notice{})
+		s.mysql.AutoMigrate(&appmgmtmodel.ShieldWord{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Version{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Vpn{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

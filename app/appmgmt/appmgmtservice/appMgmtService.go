@@ -13,15 +13,111 @@ import (
 )
 
 type (
-	AppMgmtConfig           = pb.AppMgmtConfig
-	GetAllAppMgmtConfigReq  = pb.GetAllAppMgmtConfigReq
-	GetAllAppMgmtConfigResp = pb.GetAllAppMgmtConfigResp
-	UpdateAppMgmtConfigReq  = pb.UpdateAppMgmtConfigReq
-	UpdateAppMgmtConfigResp = pb.UpdateAppMgmtConfigResp
+	AddAppMgmtEmojiGroupReq        = pb.AddAppMgmtEmojiGroupReq
+	AddAppMgmtEmojiGroupResp       = pb.AddAppMgmtEmojiGroupResp
+	AddAppMgmtEmojiReq             = pb.AddAppMgmtEmojiReq
+	AddAppMgmtEmojiResp            = pb.AddAppMgmtEmojiResp
+	AddAppMgmtNoticeReq            = pb.AddAppMgmtNoticeReq
+	AddAppMgmtNoticeResp           = pb.AddAppMgmtNoticeResp
+	AddAppMgmtShieldWordReq        = pb.AddAppMgmtShieldWordReq
+	AddAppMgmtShieldWordResp       = pb.AddAppMgmtShieldWordResp
+	AddAppMgmtVersionReq           = pb.AddAppMgmtVersionReq
+	AddAppMgmtVersionResp          = pb.AddAppMgmtVersionResp
+	AddAppMgmtVpnReq               = pb.AddAppMgmtVpnReq
+	AddAppMgmtVpnResp              = pb.AddAppMgmtVpnResp
+	AppMgmtConfig                  = pb.AppMgmtConfig
+	AppMgmtEmoji                   = pb.AppMgmtEmoji
+	AppMgmtEmojiGroup              = pb.AppMgmtEmojiGroup
+	AppMgmtNotice                  = pb.AppMgmtNotice
+	AppMgmtShieldWord              = pb.AppMgmtShieldWord
+	AppMgmtVersion                 = pb.AppMgmtVersion
+	AppMgmtVpn                     = pb.AppMgmtVpn
+	DeleteAppMgmtEmojiGroupReq     = pb.DeleteAppMgmtEmojiGroupReq
+	DeleteAppMgmtEmojiGroupResp    = pb.DeleteAppMgmtEmojiGroupResp
+	DeleteAppMgmtEmojiReq          = pb.DeleteAppMgmtEmojiReq
+	DeleteAppMgmtEmojiResp         = pb.DeleteAppMgmtEmojiResp
+	DeleteAppMgmtNoticeReq         = pb.DeleteAppMgmtNoticeReq
+	DeleteAppMgmtNoticeResp        = pb.DeleteAppMgmtNoticeResp
+	DeleteAppMgmtShieldWordReq     = pb.DeleteAppMgmtShieldWordReq
+	DeleteAppMgmtShieldWordResp    = pb.DeleteAppMgmtShieldWordResp
+	DeleteAppMgmtVersionReq        = pb.DeleteAppMgmtVersionReq
+	DeleteAppMgmtVersionResp       = pb.DeleteAppMgmtVersionResp
+	DeleteAppMgmtVpnReq            = pb.DeleteAppMgmtVpnReq
+	DeleteAppMgmtVpnResp           = pb.DeleteAppMgmtVpnResp
+	GetAllAppMgmtConfigReq         = pb.GetAllAppMgmtConfigReq
+	GetAllAppMgmtConfigResp        = pb.GetAllAppMgmtConfigResp
+	GetAllAppMgmtEmojiGroupReq     = pb.GetAllAppMgmtEmojiGroupReq
+	GetAllAppMgmtEmojiGroupResp    = pb.GetAllAppMgmtEmojiGroupResp
+	GetAllAppMgmtEmojiReq          = pb.GetAllAppMgmtEmojiReq
+	GetAllAppMgmtEmojiResp         = pb.GetAllAppMgmtEmojiResp
+	GetAllAppMgmtNoticeReq         = pb.GetAllAppMgmtNoticeReq
+	GetAllAppMgmtNoticeResp        = pb.GetAllAppMgmtNoticeResp
+	GetAllAppMgmtShieldWordReq     = pb.GetAllAppMgmtShieldWordReq
+	GetAllAppMgmtShieldWordResp    = pb.GetAllAppMgmtShieldWordResp
+	GetAllAppMgmtVersionReq        = pb.GetAllAppMgmtVersionReq
+	GetAllAppMgmtVersionResp       = pb.GetAllAppMgmtVersionResp
+	GetAllAppMgmtVpnReq            = pb.GetAllAppMgmtVpnReq
+	GetAllAppMgmtVpnResp           = pb.GetAllAppMgmtVpnResp
+	GetAppMgmtEmojiDetailReq       = pb.GetAppMgmtEmojiDetailReq
+	GetAppMgmtEmojiDetailResp      = pb.GetAppMgmtEmojiDetailResp
+	GetAppMgmtEmojiGroupDetailReq  = pb.GetAppMgmtEmojiGroupDetailReq
+	GetAppMgmtEmojiGroupDetailResp = pb.GetAppMgmtEmojiGroupDetailResp
+	GetAppMgmtNoticeDetailReq      = pb.GetAppMgmtNoticeDetailReq
+	GetAppMgmtNoticeDetailResp     = pb.GetAppMgmtNoticeDetailResp
+	GetAppMgmtShieldWordDetailReq  = pb.GetAppMgmtShieldWordDetailReq
+	GetAppMgmtShieldWordDetailResp = pb.GetAppMgmtShieldWordDetailResp
+	GetAppMgmtVersionDetailReq     = pb.GetAppMgmtVersionDetailReq
+	GetAppMgmtVersionDetailResp    = pb.GetAppMgmtVersionDetailResp
+	GetAppMgmtVpnDetailReq         = pb.GetAppMgmtVpnDetailReq
+	GetAppMgmtVpnDetailResp        = pb.GetAppMgmtVpnDetailResp
+	UpdateAppMgmtConfigReq         = pb.UpdateAppMgmtConfigReq
+	UpdateAppMgmtConfigResp        = pb.UpdateAppMgmtConfigResp
+	UpdateAppMgmtEmojiGroupReq     = pb.UpdateAppMgmtEmojiGroupReq
+	UpdateAppMgmtEmojiGroupResp    = pb.UpdateAppMgmtEmojiGroupResp
+	UpdateAppMgmtEmojiReq          = pb.UpdateAppMgmtEmojiReq
+	UpdateAppMgmtEmojiResp         = pb.UpdateAppMgmtEmojiResp
+	UpdateAppMgmtNoticeReq         = pb.UpdateAppMgmtNoticeReq
+	UpdateAppMgmtNoticeResp        = pb.UpdateAppMgmtNoticeResp
+	UpdateAppMgmtShieldWordReq     = pb.UpdateAppMgmtShieldWordReq
+	UpdateAppMgmtShieldWordResp    = pb.UpdateAppMgmtShieldWordResp
+	UpdateAppMgmtVersionReq        = pb.UpdateAppMgmtVersionReq
+	UpdateAppMgmtVersionResp       = pb.UpdateAppMgmtVersionResp
+	UpdateAppMgmtVpnReq            = pb.UpdateAppMgmtVpnReq
+	UpdateAppMgmtVpnResp           = pb.UpdateAppMgmtVpnResp
 
 	AppMgmtService interface {
 		GetAllAppMgmtConfig(ctx context.Context, in *GetAllAppMgmtConfigReq, opts ...grpc.CallOption) (*GetAllAppMgmtConfigResp, error)
 		UpdateAppMgmtConfig(ctx context.Context, in *UpdateAppMgmtConfigReq, opts ...grpc.CallOption) (*UpdateAppMgmtConfigResp, error)
+		GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error)
+		GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error)
+		AddAppMgmtVersion(ctx context.Context, in *AddAppMgmtVersionReq, opts ...grpc.CallOption) (*AddAppMgmtVersionResp, error)
+		UpdateAppMgmtVersion(ctx context.Context, in *UpdateAppMgmtVersionReq, opts ...grpc.CallOption) (*UpdateAppMgmtVersionResp, error)
+		DeleteAppMgmtVersion(ctx context.Context, in *DeleteAppMgmtVersionReq, opts ...grpc.CallOption) (*DeleteAppMgmtVersionResp, error)
+		GetAllAppMgmtShieldWord(ctx context.Context, in *GetAllAppMgmtShieldWordReq, opts ...grpc.CallOption) (*GetAllAppMgmtShieldWordResp, error)
+		GetAppMgmtShieldWordDetail(ctx context.Context, in *GetAppMgmtShieldWordDetailReq, opts ...grpc.CallOption) (*GetAppMgmtShieldWordDetailResp, error)
+		AddAppMgmtShieldWord(ctx context.Context, in *AddAppMgmtShieldWordReq, opts ...grpc.CallOption) (*AddAppMgmtShieldWordResp, error)
+		UpdateAppMgmtShieldWord(ctx context.Context, in *UpdateAppMgmtShieldWordReq, opts ...grpc.CallOption) (*UpdateAppMgmtShieldWordResp, error)
+		DeleteAppMgmtShieldWord(ctx context.Context, in *DeleteAppMgmtShieldWordReq, opts ...grpc.CallOption) (*DeleteAppMgmtShieldWordResp, error)
+		GetAllAppMgmtVpn(ctx context.Context, in *GetAllAppMgmtVpnReq, opts ...grpc.CallOption) (*GetAllAppMgmtVpnResp, error)
+		GetAppMgmtVpnDetail(ctx context.Context, in *GetAppMgmtVpnDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVpnDetailResp, error)
+		AddAppMgmtVpn(ctx context.Context, in *AddAppMgmtVpnReq, opts ...grpc.CallOption) (*AddAppMgmtVpnResp, error)
+		UpdateAppMgmtVpn(ctx context.Context, in *UpdateAppMgmtVpnReq, opts ...grpc.CallOption) (*UpdateAppMgmtVpnResp, error)
+		DeleteAppMgmtVpn(ctx context.Context, in *DeleteAppMgmtVpnReq, opts ...grpc.CallOption) (*DeleteAppMgmtVpnResp, error)
+		GetAllAppMgmtEmoji(ctx context.Context, in *GetAllAppMgmtEmojiReq, opts ...grpc.CallOption) (*GetAllAppMgmtEmojiResp, error)
+		GetAppMgmtEmojiDetail(ctx context.Context, in *GetAppMgmtEmojiDetailReq, opts ...grpc.CallOption) (*GetAppMgmtEmojiDetailResp, error)
+		AddAppMgmtEmoji(ctx context.Context, in *AddAppMgmtEmojiReq, opts ...grpc.CallOption) (*AddAppMgmtEmojiResp, error)
+		UpdateAppMgmtEmoji(ctx context.Context, in *UpdateAppMgmtEmojiReq, opts ...grpc.CallOption) (*UpdateAppMgmtEmojiResp, error)
+		DeleteAppMgmtEmoji(ctx context.Context, in *DeleteAppMgmtEmojiReq, opts ...grpc.CallOption) (*DeleteAppMgmtEmojiResp, error)
+		GetAllAppMgmtEmojiGroup(ctx context.Context, in *GetAllAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*GetAllAppMgmtEmojiGroupResp, error)
+		GetAppMgmtEmojiGroupDetail(ctx context.Context, in *GetAppMgmtEmojiGroupDetailReq, opts ...grpc.CallOption) (*GetAppMgmtEmojiGroupDetailResp, error)
+		AddAppMgmtEmojiGroup(ctx context.Context, in *AddAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*AddAppMgmtEmojiGroupResp, error)
+		UpdateAppMgmtEmojiGroup(ctx context.Context, in *UpdateAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*UpdateAppMgmtEmojiGroupResp, error)
+		DeleteAppMgmtEmojiGroup(ctx context.Context, in *DeleteAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*DeleteAppMgmtEmojiGroupResp, error)
+		GetAllAppMgmtNotice(ctx context.Context, in *GetAllAppMgmtNoticeReq, opts ...grpc.CallOption) (*GetAllAppMgmtNoticeResp, error)
+		GetAppMgmtNoticeDetail(ctx context.Context, in *GetAppMgmtNoticeDetailReq, opts ...grpc.CallOption) (*GetAppMgmtNoticeDetailResp, error)
+		AddAppMgmtNotice(ctx context.Context, in *AddAppMgmtNoticeReq, opts ...grpc.CallOption) (*AddAppMgmtNoticeResp, error)
+		UpdateAppMgmtNotice(ctx context.Context, in *UpdateAppMgmtNoticeReq, opts ...grpc.CallOption) (*UpdateAppMgmtNoticeResp, error)
+		DeleteAppMgmtNotice(ctx context.Context, in *DeleteAppMgmtNoticeReq, opts ...grpc.CallOption) (*DeleteAppMgmtNoticeResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -43,4 +139,154 @@ func (m *defaultAppMgmtService) GetAllAppMgmtConfig(ctx context.Context, in *Get
 func (m *defaultAppMgmtService) UpdateAppMgmtConfig(ctx context.Context, in *UpdateAppMgmtConfigReq, opts ...grpc.CallOption) (*UpdateAppMgmtConfigResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.UpdateAppMgmtConfig(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtVersion(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtVersionDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtVersion(ctx context.Context, in *AddAppMgmtVersionReq, opts ...grpc.CallOption) (*AddAppMgmtVersionResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtVersion(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtVersion(ctx context.Context, in *UpdateAppMgmtVersionReq, opts ...grpc.CallOption) (*UpdateAppMgmtVersionResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtVersion(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtVersion(ctx context.Context, in *DeleteAppMgmtVersionReq, opts ...grpc.CallOption) (*DeleteAppMgmtVersionResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtVersion(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtShieldWord(ctx context.Context, in *GetAllAppMgmtShieldWordReq, opts ...grpc.CallOption) (*GetAllAppMgmtShieldWordResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtShieldWord(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtShieldWordDetail(ctx context.Context, in *GetAppMgmtShieldWordDetailReq, opts ...grpc.CallOption) (*GetAppMgmtShieldWordDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtShieldWordDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtShieldWord(ctx context.Context, in *AddAppMgmtShieldWordReq, opts ...grpc.CallOption) (*AddAppMgmtShieldWordResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtShieldWord(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtShieldWord(ctx context.Context, in *UpdateAppMgmtShieldWordReq, opts ...grpc.CallOption) (*UpdateAppMgmtShieldWordResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtShieldWord(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtShieldWord(ctx context.Context, in *DeleteAppMgmtShieldWordReq, opts ...grpc.CallOption) (*DeleteAppMgmtShieldWordResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtShieldWord(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtVpn(ctx context.Context, in *GetAllAppMgmtVpnReq, opts ...grpc.CallOption) (*GetAllAppMgmtVpnResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtVpn(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtVpnDetail(ctx context.Context, in *GetAppMgmtVpnDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVpnDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtVpnDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtVpn(ctx context.Context, in *AddAppMgmtVpnReq, opts ...grpc.CallOption) (*AddAppMgmtVpnResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtVpn(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtVpn(ctx context.Context, in *UpdateAppMgmtVpnReq, opts ...grpc.CallOption) (*UpdateAppMgmtVpnResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtVpn(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtVpn(ctx context.Context, in *DeleteAppMgmtVpnReq, opts ...grpc.CallOption) (*DeleteAppMgmtVpnResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtVpn(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtEmoji(ctx context.Context, in *GetAllAppMgmtEmojiReq, opts ...grpc.CallOption) (*GetAllAppMgmtEmojiResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtEmoji(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtEmojiDetail(ctx context.Context, in *GetAppMgmtEmojiDetailReq, opts ...grpc.CallOption) (*GetAppMgmtEmojiDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtEmojiDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtEmoji(ctx context.Context, in *AddAppMgmtEmojiReq, opts ...grpc.CallOption) (*AddAppMgmtEmojiResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtEmoji(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtEmoji(ctx context.Context, in *UpdateAppMgmtEmojiReq, opts ...grpc.CallOption) (*UpdateAppMgmtEmojiResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtEmoji(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtEmoji(ctx context.Context, in *DeleteAppMgmtEmojiReq, opts ...grpc.CallOption) (*DeleteAppMgmtEmojiResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtEmoji(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtEmojiGroup(ctx context.Context, in *GetAllAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*GetAllAppMgmtEmojiGroupResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtEmojiGroup(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtEmojiGroupDetail(ctx context.Context, in *GetAppMgmtEmojiGroupDetailReq, opts ...grpc.CallOption) (*GetAppMgmtEmojiGroupDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtEmojiGroupDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtEmojiGroup(ctx context.Context, in *AddAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*AddAppMgmtEmojiGroupResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtEmojiGroup(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtEmojiGroup(ctx context.Context, in *UpdateAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*UpdateAppMgmtEmojiGroupResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtEmojiGroup(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtEmojiGroup(ctx context.Context, in *DeleteAppMgmtEmojiGroupReq, opts ...grpc.CallOption) (*DeleteAppMgmtEmojiGroupResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtEmojiGroup(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtNotice(ctx context.Context, in *GetAllAppMgmtNoticeReq, opts ...grpc.CallOption) (*GetAllAppMgmtNoticeResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtNotice(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtNoticeDetail(ctx context.Context, in *GetAppMgmtNoticeDetailReq, opts ...grpc.CallOption) (*GetAppMgmtNoticeDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtNoticeDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtNotice(ctx context.Context, in *AddAppMgmtNoticeReq, opts ...grpc.CallOption) (*AddAppMgmtNoticeResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtNotice(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtNotice(ctx context.Context, in *UpdateAppMgmtNoticeReq, opts ...grpc.CallOption) (*UpdateAppMgmtNoticeResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtNotice(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtNotice(ctx context.Context, in *DeleteAppMgmtNoticeReq, opts ...grpc.CallOption) (*DeleteAppMgmtNoticeResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtNotice(ctx, in, opts...)
 }
