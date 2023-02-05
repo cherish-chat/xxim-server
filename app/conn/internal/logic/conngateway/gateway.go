@@ -3,6 +3,7 @@ package conngateway
 import (
 	"context"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
@@ -21,6 +22,12 @@ type IReq interface {
 type IResp interface {
 	proto.Message
 	GetCommonResp() *pb.CommonResp
+}
+
+var svcCtx *svc.ServiceContext
+
+func Init(sc *svc.ServiceContext) {
+	svcCtx = sc
 }
 
 type Route[REQ IReq, RESP IResp] struct {

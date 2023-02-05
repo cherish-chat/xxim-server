@@ -36,6 +36,16 @@ message GetUserLatestConnResp {
   string deviceId = 7;
 }
 
+//BeforeRequestReq
+message BeforeRequestReq {
+  CommonReq commonReq = 1;
+  string method = 2;
+}
+
+message BeforeRequestResp {
+  CommonResp commonResp = 1;
+}
+
 //batchGetUserLatestConnReq 批量获取用户最新连接信息
 message BatchGetUserLatestConnReq {
   repeated string userIds = 1;
@@ -77,6 +87,7 @@ service imService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
+  rpc BeforeRequest(BeforeRequestReq) returns (BeforeRequestResp);
   rpc GetUserLatestConn(GetUserLatestConnReq) returns (GetUserLatestConnResp);
   rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);

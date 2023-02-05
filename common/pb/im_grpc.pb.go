@@ -27,6 +27,7 @@ type ImServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 	GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
+	BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error)
 	GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
 	BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
@@ -86,6 +87,15 @@ func (c *imServiceClient) GetUserConn(ctx context.Context, in *GetUserConnReq, o
 	return out, nil
 }
 
+func (c *imServiceClient) BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error) {
+	out := new(BeforeRequestResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/BeforeRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *imServiceClient) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
 	out := new(GetUserLatestConnResp)
 	err := c.cc.Invoke(ctx, "/pb.imService/GetUserLatestConn", in, out, opts...)
@@ -131,6 +141,7 @@ type ImServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	KickUserConn(context.Context, *KickUserConnReq) (*KickUserConnResp, error)
 	GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error)
+	BeforeRequest(context.Context, *BeforeRequestReq) (*BeforeRequestResp, error)
 	GetUserLatestConn(context.Context, *GetUserLatestConnReq) (*GetUserLatestConnResp, error)
 	BatchGetUserLatestConn(context.Context, *BatchGetUserLatestConnReq) (*BatchGetUserLatestConnResp, error)
 	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
@@ -156,6 +167,9 @@ func (UnimplementedImServiceServer) KickUserConn(context.Context, *KickUserConnR
 }
 func (UnimplementedImServiceServer) GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserConn not implemented")
+}
+func (UnimplementedImServiceServer) BeforeRequest(context.Context, *BeforeRequestReq) (*BeforeRequestResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BeforeRequest not implemented")
 }
 func (UnimplementedImServiceServer) GetUserLatestConn(context.Context, *GetUserLatestConnReq) (*GetUserLatestConnResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserLatestConn not implemented")
@@ -272,6 +286,24 @@ func _ImService_GetUserConn_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ImService_BeforeRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BeforeRequestReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).BeforeRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/BeforeRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).BeforeRequest(ctx, req.(*BeforeRequestReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ImService_GetUserLatestConn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserLatestConnReq)
 	if err := dec(in); err != nil {
@@ -370,6 +402,10 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserConn",
 			Handler:    _ImService_GetUserConn_Handler,
+		},
+		{
+			MethodName: "BeforeRequest",
+			Handler:    _ImService_BeforeRequest_Handler,
 		},
 		{
 			MethodName: "GetUserLatestConn",

@@ -47,6 +47,11 @@ func (s *ImServiceServer) GetUserConn(ctx context.Context, in *pb.GetUserConnReq
 	return l.GetUserConn(in)
 }
 
+func (s *ImServiceServer) BeforeRequest(ctx context.Context, in *pb.BeforeRequestReq) (*pb.BeforeRequestResp, error) {
+	l := logic.NewBeforeRequestLogic(ctx, s.svcCtx)
+	return l.BeforeRequest(in)
+}
+
 func (s *ImServiceServer) GetUserLatestConn(ctx context.Context, in *pb.GetUserLatestConnReq) (*pb.GetUserLatestConnResp, error) {
 	l := logic.NewGetUserLatestConnLogic(ctx, s.svcCtx)
 	return l.GetUserLatestConn(in)

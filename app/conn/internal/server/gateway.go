@@ -198,6 +198,7 @@ func (s *ConnServer) registerGroup() {
 }
 
 func (s *ConnServer) registerGateway() {
+	conngateway.Init(s.svcCtx)
 	// 自带的
 	{
 		// 设置连接参数
@@ -221,7 +222,6 @@ func (s *ConnServer) registerGateway() {
 				Callback: logic.NewSetUserParamsLogic(s.svcCtx).Callback,
 			}
 			conngateway.AddRoute("/v1/conn/white/setUserParams", route)
-			//conngateway.Add("/v1/conn/white/setUserParams", logic.NewSetUserParamsLogic(s.svcCtx).Handler)
 		}
 	}
 	s.registerMsg()
