@@ -57,7 +57,7 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	respBuff, _ := proto.Marshal(resp)
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(ctx context.Context) {
-		reqLog(c, method, body, req, resp, err)
+		ReqLog(c, method, body, req, resp, err)
 	}, nil)
 	return &pb.ResponseBody{
 		Method: method,

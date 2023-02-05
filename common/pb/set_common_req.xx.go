@@ -143,5 +143,9 @@ func (x *SetUserParamsReq) Validate() error {
 }
 
 func (x *SetUserParamsResp) GetCommonResp() *CommonResp {
-	return &CommonResp{}
+	return &CommonResp{
+		Code: 0,
+		Msg:  nil,
+		Data: nil,
+	}
 }

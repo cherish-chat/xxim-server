@@ -221,6 +221,7 @@ func (s *ConnServer) registerGateway() {
 				Callback: logic.NewSetUserParamsLogic(s.svcCtx).Callback,
 			}
 			conngateway.AddRoute("/v1/conn/white/setUserParams", route)
+			//conngateway.Add("/v1/conn/white/setUserParams", logic.NewSetUserParamsLogic(s.svcCtx).Handler)
 		}
 	}
 	s.registerMsg()

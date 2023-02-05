@@ -54,10 +54,14 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("BeforeConnect err: %v", err)
+		// 断开连接
+		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(1), "认证失败，请重新登录")
 		return
 	}
 	if code != 0 {
 		logx.WithContext(ctx).Errorf("BeforeConnect code: %d", code)
+		// 断开连接
+		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(code), "您的账号在其他设备登录")
 		return
 	}
 	c.SetConnParams(&pb.ConnParam{

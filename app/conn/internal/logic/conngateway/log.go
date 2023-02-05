@@ -6,7 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func reqLog[REQ IReq, RESP IResp](c *types.UserConn, method string, body IBody, req REQ, resp RESP, err error) {
+func ReqLog[REQ IReq, RESP IResp](c *types.UserConn, method string, body IBody, req REQ, resp RESP, err error) {
 	reqStr := utils.AnyToString(req)
 	respStr := utils.AnyToString(resp)
 	reqId := body.GetReqId()

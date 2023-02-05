@@ -37,6 +37,12 @@ func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 	}
 }
 
+type Handler func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error)
+
+func Add(method string, handler Handler) {
+	routeMap[method] = handler
+}
+
 func PrintRoutes() {
 	strBuilder := strings.Builder{}
 	for method := range routeMap {
