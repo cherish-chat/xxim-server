@@ -26,6 +26,7 @@ message ConnParam {
   string osVersion = 10;
   string appVersion = 11;
   string language = 12;
+  int64 timestamp = 13;
 }
 
 // 获取用户的连接 可以用userId、platforms、devices过滤
