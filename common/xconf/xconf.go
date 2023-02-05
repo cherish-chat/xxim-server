@@ -35,11 +35,10 @@ func (m *ConfigMgr) Flush(ctx context.Context) error {
 	return err
 }
 
-func (m *ConfigMgr) getAll(ctx context.Context) ([]*appmgmtmodel.Config, error) {
+func (m *ConfigMgr) GetAll(ctx context.Context) ([]*appmgmtmodel.Config, error) {
 	logger := logx.WithContext(ctx)
 	val, err := m.rc.GetCtx(ctx, m.rediskey)
-	if err != nil {
-		logger.Errorf("get config from redis error: %v", err)
+	if err != nil || val == "" {
 		return m.getAllFromMysql(ctx)
 	}
 	if val == xredis.NotFound {
@@ -49,14 +48,14 @@ func (m *ConfigMgr) getAll(ctx context.Context) ([]*appmgmtmodel.Config, error) 
 	var configs []*appmgmtmodel.Config
 	err = json.Unmarshal([]byte(val), &configs)
 	if err != nil {
-		logger.Errorf("get config from redis unmarshal error: %v", err)
+		logger.Errorf("get config from redis unmarshal error: %v. val: %s", err, val)
 		return m.getAllFromMysql(ctx)
 	}
 	return configs, nil
 }
 
 func (m *ConfigMgr) GetCtx(ctx context.Context, k string) string {
-	configs, err := m.getAll(ctx)
+	configs, err := m.GetAll(ctx)
 	if err != nil {
 		return ""
 	}
@@ -69,7 +68,7 @@ func (m *ConfigMgr) GetCtx(ctx context.Context, k string) string {
 }
 
 func (m *ConfigMgr) GetOrDefaultCtx(ctx context.Context, k string, defaultValue string) string {
-	configs, err := m.getAll(ctx)
+	configs, err := m.GetAll(ctx)
 	if err != nil {
 		return defaultValue
 	}
@@ -83,7 +82,7 @@ func (m *ConfigMgr) GetOrDefaultCtx(ctx context.Context, k string, defaultValue 
 }
 
 func (m *ConfigMgr) GetSliceCtx(ctx context.Context, k string) []string {
-	configs, err := m.getAll(ctx)
+	configs, err := m.GetAll(ctx)
 	if err != nil {
 		return []string{}
 	}
@@ -102,7 +101,7 @@ func (m *ConfigMgr) GetSliceCtx(ctx context.Context, k string) []string {
 }
 
 func (m *ConfigMgr) MGetOrDefaultCtx(ctx context.Context, kv map[string]string) map[string]string {
-	configs, err := m.getAll(ctx)
+	configs, err := m.GetAll(ctx)
 	if err != nil {
 		return kv
 	}
