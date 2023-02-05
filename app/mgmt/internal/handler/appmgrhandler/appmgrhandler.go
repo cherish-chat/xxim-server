@@ -47,30 +47,26 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		group.POST("/update/shieldword", r.updateShieldWord)
 		// 删除app屏蔽词
 		group.POST("/delete/shieldword", r.deleteShieldWord)
-		// 批量增加app屏蔽词 使用\n分割
-		group.POST("/add/shieldword/batch", r.addShieldWordBatch)
 	}
 	// app连接管理 （长连接）
 	{
 		// 获取全部app连接列表
 		group.POST("/get/connection/list/all", r.getAllConnectionList)
-		// 获取app连接详情
-		group.POST("/get/connection/detail", r.getConnectionDetail)
 		// 踢出app连接
 		group.POST("/kickout/connection", r.kickoutConnection)
 	}
 	// VPN列表
 	{
 		// 获取全部VPN列表
-		group.POST("/get/vpn/list/all", r.getAllVPNList)
+		group.POST("/get/vpn/list/all", r.getAllVpnList)
 		// 获取VPN详情
-		group.POST("/get/vpn/detail", r.getVPNDetail)
+		group.POST("/get/vpn/detail", r.getVpnDetail)
 		// 增加VPN
-		group.POST("/add/vpn", r.addVPN)
+		group.POST("/add/vpn", r.addVpn)
 		// 更新VPN
-		group.POST("/update/vpn", r.updateVPN)
+		group.POST("/update/vpn", r.updateVpn)
 		// 删除VPN
-		group.POST("/delete/vpn", r.deleteVPN)
+		group.POST("/delete/vpn", r.deleteVpn)
 	}
 	// app内飘屏通知管理
 	{
@@ -84,18 +80,5 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		group.POST("/update/notice", r.updateNotice)
 		// 删除app内飘屏通知
 		group.POST("/delete/notice", r.deleteNotice)
-	}
-	// app公告管理
-	{
-		// 获取全部app公告列表
-		group.POST("/get/announcement/list/all", r.getAllAnnouncementList)
-		// 获取app公告详情
-		group.POST("/get/announcement/detail", r.getAnnouncementDetail)
-		// 增加app公告
-		group.POST("/add/announcement", r.addAnnouncement)
-		// 更新app公告
-		group.POST("/update/announcement", r.updateAnnouncement)
-		// 删除app公告
-		group.POST("/delete/announcement", r.deleteAnnouncement)
 	}
 }
