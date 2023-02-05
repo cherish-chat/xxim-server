@@ -33,6 +33,12 @@ func (l *GetAllAppMgmtEmojiGroupLogic) GetAllAppMgmtEmojiGroup(in *pb.GetAllAppM
 	var models []*appmgmtmodel.EmojiGroup
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
+		for k, v := range in.Filter {
+			switch k {
+			case "name":
+				wheres = append(wheres, xorm.Where("name LIKE ?", v+"%"))
+			}
+		}
 	}
 	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &appmgmtmodel.EmojiGroup{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
 	if err != nil {
@@ -54,11 +60,15 @@ func (l *GetAllAppMgmtEmojiGroupLogic) GetAllAppMgmtEmojiGroup(in *pb.GetAllAppM
 		}
 		mr.FinishVoid(getNoticeFs...)
 		for _, model := range noticeModels {
-			coverMap[model.Group] = model
+			coverMap[model.Id] = model
 		}
 	}
 	for _, model := range models {
-		role := model.ToPB(coverMap[model.CoverId])
+		emoji, ok := coverMap[model.CoverId]
+		if !ok {
+			emoji = &appmgmtmodel.Emoji{}
+		}
+		role := model.ToPB(emoji)
 		resp = append(resp, role)
 	}
 	return &pb.GetAllAppMgmtEmojiGroupResp{

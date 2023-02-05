@@ -37,7 +37,6 @@ func (l *UpdateAppMgmtEmojiLogic) UpdateAppMgmtEmoji(in *pb.UpdateAppMgmtEmojiRe
 	updateMap := map[string]interface{}{}
 	{
 		updateMap["name"] = in.AppMgmtEmoji.Name
-		updateMap["group"] = in.AppMgmtEmoji.Group
 		updateMap["cover"] = in.AppMgmtEmoji.Cover
 		updateMap["type"] = in.AppMgmtEmoji.Type
 		updateMap["staticUrl"] = in.AppMgmtEmoji.StaticUrl
@@ -48,18 +47,27 @@ func (l *UpdateAppMgmtEmojiLogic) UpdateAppMgmtEmoji(in *pb.UpdateAppMgmtEmojiRe
 	if len(updateMap) > 0 {
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			if in.AppMgmtEmoji.Cover {
-				// 把其他的封面都设置为false
-				err := tx.Model(model).Where("group = ?", in.AppMgmtEmoji.Group).Update("cover", false).Error
-				if err != nil {
-					l.Errorf("更新失败: %v", err)
-					return err
-				}
 				// 更新当前的封面
 				err = tx.Model(&appmgmtmodel.EmojiGroup{}).Where("name = ?", in.AppMgmtEmoji.Group).Update("coverId", in.AppMgmtEmoji.Id).Error
 				if err != nil {
 					l.Errorf("更新失败: %v", err)
 					return err
 				}
+			} else {
+				if model.Cover {
+					// update coverId = ""
+					err = tx.Model(&appmgmtmodel.EmojiGroup{}).Where("name = ?", in.AppMgmtEmoji.Group).Update("coverId", "").Error
+					if err != nil {
+						l.Errorf("更新失败: %v", err)
+						return err
+					}
+				}
+			}
+			// 把其他的封面都设置为false
+			err := tx.Model(model).Where("`group` = ?", in.AppMgmtEmoji.Group).Update("cover", false).Error
+			if err != nil {
+				l.Errorf("更新失败: %v", err)
+				return err
 			}
 			err = tx.Model(model).Where("id = ?", in.AppMgmtEmoji.Id).Updates(updateMap).Error
 			if err != nil {

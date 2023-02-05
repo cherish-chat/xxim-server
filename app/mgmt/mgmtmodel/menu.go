@@ -269,7 +269,7 @@ func initMenu(tx *gorm.DB) {
 				genMenu3("334", "330", "VPN删除", "app:vpn:del"),
 			),
 			// notice 公告
-			genMenu2("340", "300", "公告管理", "el-icon-ChatLineSquare", 0,
+			genMenu2("340", "300", "公告管理", "local-icon-tongzhi", 0,
 				"app:notice:list", "app/notice", "app/notice/index",
 				genMenu3("341", "340", "公告详情", "app:notice:detail"),
 				genMenu3("342", "340", "公告新增", "app:notice:add"),
@@ -280,6 +280,22 @@ func initMenu(tx *gorm.DB) {
 			genMenu2("350", "300", "连接管理", "el-icon-Connection", 0,
 				"app:connection:list", "app/connection", "app/connection/index",
 				genMenu3("351", "350", "踢出连接", "app:connection:del"),
+			),
+			// emoji 表情
+			genMenu2("360", "300", "表情管理", "local-icon-biaoqing", 0,
+				"app:emoji:list", "app/emoji", "app/emoji/index",
+				genMenu3("361", "360", "表情详情", "app:emoji:detail"),
+				genMenu3("362", "360", "表情新增", "app:emoji:add"),
+				genMenu3("363", "360", "表情编辑", "app:emoji:edit"),
+				genMenu3("364", "360", "表情删除", "app:emoji:del"),
+			),
+			// emojigroup 表情组
+			genMenu2("370", "300", "表情组管理", "local-icon-chuangyiwuliao", 0,
+				"app:emojigroup:list", "app/emojigroup", "app/emojigroup/index",
+				genMenu3("371", "370", "表情组详情", "app:emojigroup:detail"),
+				genMenu3("372", "370", "表情组新增", "app:emojigroup:add"),
+				genMenu3("373", "370", "表情组编辑", "app:emojigroup:edit"),
+				genMenu3("374", "370", "表情组删除", "app:emojigroup:del"),
 			),
 		),
 	})

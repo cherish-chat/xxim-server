@@ -1,5 +1,60 @@
 basePath: /api
 definitions:
+  appmgrhandler.getAllConnectionListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  appmgrhandler.getAllConnectionListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      connections:
+        items:
+          $ref: '#/definitions/appmgrhandler.getAllConnectionListRespItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  appmgrhandler.getAllConnectionListRespItem:
+    properties:
+      connectTime:
+        type: integer
+      connectTimeStr:
+        type: string
+      deviceId:
+        type: string
+      ip:
+        type: string
+      ipRegion:
+        type: string
+      platform:
+        type: string
+      userId:
+        type: string
+    type: object
+  appmgrhandler.kickoutConnectionReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      deviceId:
+        type: string
+      platform:
+        type: string
+      userId:
+        type: string
+    type: object
+  appmgrhandler.kickoutConnectionResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   mshandler.getAllMSRoleListResp:
     properties:
       count:
@@ -144,6 +199,68 @@ definitions:
         description: 排序
         type: integer
     type: object
+  pb.AddAppMgmtEmojiReq:
+    properties:
+      appMgmtEmoji:
+        $ref: '#/definitions/pb.AppMgmtEmoji'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddAppMgmtEmojiResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddAppMgmtNoticeReq:
+    properties:
+      appMgmtNotice:
+        $ref: '#/definitions/pb.AppMgmtNotice'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddAppMgmtNoticeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddAppMgmtShieldWordReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      words:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.AddAppMgmtShieldWordResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddAppMgmtVersionReq:
+    properties:
+      appMgmtVersion:
+        $ref: '#/definitions/pb.AppMgmtVersion'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddAppMgmtVersionResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddAppMgmtVpnReq:
+    properties:
+      appMgmtVpn:
+        $ref: '#/definitions/pb.AppMgmtVpn'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.AddMSApiPathReq:
     properties:
       apiPath:
@@ -210,6 +327,128 @@ definitions:
       type:
         type: string
       v:
+        type: string
+    type: object
+  pb.AppMgmtEmoji:
+    properties:
+      animatedUrl:
+        type: string
+      cover:
+        type: boolean
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      group:
+        type: string
+      id:
+        type: string
+      isEnable:
+        type: boolean
+      name:
+        type: string
+      sort:
+        type: integer
+      staticUrl:
+        type: string
+      type:
+        type: string
+    type: object
+  pb.AppMgmtEmojiGroup:
+    properties:
+      cover:
+        $ref: '#/definitions/pb.AppMgmtEmoji'
+      coverId:
+        type: string
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      isEnable:
+        type: boolean
+      name:
+        type: string
+    type: object
+  pb.AppMgmtNotice:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      endTime:
+        type: integer
+      id:
+        type: string
+      image:
+        type: string
+      isEnable:
+        type: boolean
+      platform:
+        type: string
+      position:
+        type: integer
+      sort:
+        type: integer
+      startTime:
+        type: integer
+      title:
+        type: string
+    type: object
+  pb.AppMgmtShieldWord:
+    properties:
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      id:
+        type: string
+      word:
+        type: string
+    type: object
+  pb.AppMgmtVersion:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      downloadUrl:
+        type: string
+      id:
+        type: string
+      platform:
+        type: string
+      type:
+        type: integer
+      version:
+        type: string
+    type: object
+  pb.AppMgmtVpn:
+    properties:
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      id:
+        type: string
+      ip:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      platform:
+        type: string
+      port:
+        type: integer
+      secretKey:
+        type: string
+      type:
+        type: string
+      username:
         type: string
     type: object
   pb.CommonReq:
@@ -308,6 +547,90 @@ definitions:
       webName:
         description: 网站名称
         type: string
+    type: object
+  pb.DeleteAppMgmtEmojiGroupReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      names:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtEmojiGroupResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteAppMgmtEmojiReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtEmojiResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteAppMgmtNoticeReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtNoticeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteAppMgmtShieldWordReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtShieldWordResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteAppMgmtVersionReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtVersionResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteAppMgmtVpnReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
     type: object
   pb.DeleteMSApiPathReq:
     properties:
@@ -408,6 +731,138 @@ definitions:
         type: array
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAllAppMgmtEmojiGroupReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtEmojiGroupResp:
+    properties:
+      appMgmtEmojiGroups:
+        items:
+          $ref: '#/definitions/pb.AppMgmtEmojiGroup'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtEmojiReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtEmojiResp:
+    properties:
+      appMgmtEmojis:
+        items:
+          $ref: '#/definitions/pb.AppMgmtEmoji'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtNoticeReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtNoticeResp:
+    properties:
+      appMgmtNotices:
+        items:
+          $ref: '#/definitions/pb.AppMgmtNotice'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtShieldWordReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtShieldWordResp:
+    properties:
+      appMgmtShieldWords:
+        items:
+          $ref: '#/definitions/pb.AppMgmtShieldWord'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtVersionReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtVersionResp:
+    properties:
+      appMgmtVersions:
+        items:
+          $ref: '#/definitions/pb.AppMgmtVersion'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtVpnReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtVpnResp:
+    properties:
+      appMgmtVpns:
+        items:
+          $ref: '#/definitions/pb.AppMgmtVpn'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
     type: object
   pb.GetAllMSApiPathListReq:
     properties:
@@ -540,6 +995,90 @@ definitions:
         type: object
       page:
         $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAppMgmtEmojiDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtEmojiDetailResp:
+    properties:
+      appMgmtEmoji:
+        $ref: '#/definitions/pb.AppMgmtEmoji'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtEmojiGroupDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      name:
+        type: string
+    type: object
+  pb.GetAppMgmtEmojiGroupDetailResp:
+    properties:
+      appMgmtEmojiGroup:
+        $ref: '#/definitions/pb.AppMgmtEmojiGroup'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtNoticeDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtNoticeDetailResp:
+    properties:
+      appMgmtNotice:
+        $ref: '#/definitions/pb.AppMgmtNotice'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtShieldWordDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtShieldWordDetailResp:
+    properties:
+      appMgmtShieldWord:
+        $ref: '#/definitions/pb.AppMgmtShieldWord'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtVersionDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtVersionDetailResp:
+    properties:
+      appMgmtVersion:
+        $ref: '#/definitions/pb.AppMgmtVersion'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtVpnDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtVpnDetailResp:
+    properties:
+      appMgmtVpn:
+        $ref: '#/definitions/pb.AppMgmtVpn'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
     type: object
   pb.GetMSApiPathDetailReq:
     properties:
@@ -1091,6 +1630,78 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.UpdateAppMgmtEmojiGroupReq:
+    properties:
+      appMgmtEmojiGroup:
+        $ref: '#/definitions/pb.AppMgmtEmojiGroup'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtEmojiGroupResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtEmojiReq:
+    properties:
+      appMgmtEmoji:
+        $ref: '#/definitions/pb.AppMgmtEmoji'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtEmojiResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtNoticeReq:
+    properties:
+      appMgmtNotice:
+        $ref: '#/definitions/pb.AppMgmtNotice'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtNoticeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtShieldWordReq:
+    properties:
+      appMgmtShieldWord:
+        $ref: '#/definitions/pb.AppMgmtShieldWord'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtShieldWordResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtVersionReq:
+    properties:
+      appMgmtVersion:
+        $ref: '#/definitions/pb.AppMgmtVersion'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtVersionResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtVpnReq:
+    properties:
+      appMgmtVpn:
+        $ref: '#/definitions/pb.AppMgmtVpn'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.UpdateMSApiPathReq:
     properties:
       apiPath:
@@ -1196,6 +1807,70 @@ paths:
       summary: 获取全部配置列表
       tags:
       - app管理配置管理相关接口
+  /appmgmt/get/connection/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取所有连接列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/appmgrhandler.getAllConnectionListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/appmgrhandler.getAllConnectionListResp'
+      summary: 获取所有连接列表
+      tags:
+      - app连接管理
+  /appmgmt/kickout/connection:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口踢出连接
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/appmgrhandler.kickoutConnectionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/appmgrhandler.kickoutConnectionResp'
+      summary: 踢出连接
+      tags:
+      - app连接管理
   /appmgmt/update/config:
     post:
       consumes:
@@ -1292,6 +1967,38 @@ paths:
       summary: 新增服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/add/emoji:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增app表情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtEmojiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtEmojiResp'
+      summary: 新增app表情
+      tags:
+      - app表情管理
   /ms/add/ipwhitelist:
     post:
       consumes:
@@ -1356,6 +2063,38 @@ paths:
       summary: 新增菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/add/notice:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增app公告
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtNoticeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtNoticeResp'
+      summary: 新增app公告
+      tags:
+      - app公告管理
   /ms/add/role:
     post:
       consumes:
@@ -1388,6 +2127,102 @@ paths:
       summary: 新增角色
       tags:
       - 管理系统角色相关接口
+  /ms/add/shieldword:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增app屏蔽词
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtShieldWordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtShieldWordResp'
+      summary: 新增app屏蔽词
+      tags:
+      - app屏蔽词管理
+  /ms/add/version:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增app版本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtVersionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtVersionResp'
+      summary: 新增app版本
+      tags:
+      - app版本管理
+  /ms/add/vpn:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增appVPN
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtVpnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtVpnResp'
+      summary: 新增appVPN
+      tags:
+      - appVPN管理
   /ms/config:
     post:
       consumes:
@@ -1467,6 +2302,70 @@ paths:
       summary: 删除服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/delete/emoji:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app表情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtEmojiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtEmojiResp'
+      summary: 删除app表情
+      tags:
+      - app表情管理
+  /ms/delete/emojigroup:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app表情组
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtEmojiGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtEmojiGroupResp'
+      summary: 删除app表情组
+      tags:
+      - app表情组管理
   /ms/delete/ipwhitelist:
     post:
       consumes:
@@ -1531,6 +2430,38 @@ paths:
       summary: 删除菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/delete/notice:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app公告
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtNoticeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtNoticeResp'
+      summary: 删除app公告
+      tags:
+      - app公告管理
   /ms/delete/operationlog:
     post:
       consumes:
@@ -1595,6 +2526,102 @@ paths:
       summary: 删除角色
       tags:
       - 管理系统角色相关接口
+  /ms/delete/shieldword:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app屏蔽词
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtShieldWordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtShieldWordResp'
+      summary: 删除app屏蔽词
+      tags:
+      - app屏蔽词管理
+  /ms/delete/version:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app版本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtVersionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtVersionResp'
+      summary: 删除app版本
+      tags:
+      - app版本管理
+  /ms/delete/vpn:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除appVPN
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtVpnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtVpnResp'
+      summary: 删除appVPN
+      tags:
+      - appVPN管理
   /ms/get/admin/detail:
     post:
       consumes:
@@ -1781,6 +2808,134 @@ paths:
       summary: 获取所有服务端ApiPath列表
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/get/emoji/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app表情详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtEmojiDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtEmojiDetailResp'
+      summary: 获取app表情详情
+      tags:
+      - app表情管理
+  /ms/get/emoji/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app表情列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtEmojiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtEmojiResp'
+      summary: 获取全部app表情列表
+      tags:
+      - app表情管理
+  /ms/get/emojigroup/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app表情组详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtEmojiGroupDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtEmojiGroupDetailResp'
+      summary: 获取app表情组详情
+      tags:
+      - app表情组管理
+  /ms/get/emojigroup/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app表情组列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtEmojiGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtEmojiGroupResp'
+      summary: 获取全部app表情组列表
+      tags:
+      - app表情组管理
   /ms/get/ipwhitelist/detail:
     post:
       consumes:
@@ -1973,6 +3128,70 @@ paths:
       summary: 获取所有菜单列表
       tags:
       - 管理系统菜单相关接口
+  /ms/get/notice/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app公告详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtNoticeDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtNoticeDetailResp'
+      summary: 获取app公告详情
+      tags:
+      - app公告管理
+  /ms/get/notice/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app公告列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtNoticeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtNoticeResp'
+      summary: 获取全部app公告列表
+      tags:
+      - app公告管理
   /ms/get/operationlog/detail:
     post:
       consumes:
@@ -2101,6 +3320,198 @@ paths:
       summary: 获取所有角色列表
       tags:
       - 管理系统角色相关接口
+  /ms/get/shieldword/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app屏蔽词详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtShieldWordDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtShieldWordDetailResp'
+      summary: 获取app屏蔽词详情
+      tags:
+      - app屏蔽词管理
+  /ms/get/shieldword/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app屏蔽词列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtShieldWordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtShieldWordResp'
+      summary: 获取全部app屏蔽词列表
+      tags:
+      - app屏蔽词管理
+  /ms/get/version/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app版本详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtVersionDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtVersionDetailResp'
+      summary: 获取app版本详情
+      tags:
+      - app版本管理
+  /ms/get/version/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app版本列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtVersionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtVersionResp'
+      summary: 获取全部app版本列表
+      tags:
+      - app版本管理
+  /ms/get/vpn/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取appVPN详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtVpnDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtVpnDetailResp'
+      summary: 获取appVPN详情
+      tags:
+      - appVPN管理
+  /ms/get/vpn/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部appVPN列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtVpnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtVpnResp'
+      summary: 获取全部appVPN列表
+      tags:
+      - appVPN管理
   /ms/health:
     post:
       consumes:
@@ -2245,6 +3656,70 @@ paths:
       summary: 更新服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/update/emoji:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app表情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtEmojiReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtEmojiResp'
+      summary: 更新app表情
+      tags:
+      - app表情管理
+  /ms/update/emojigroup:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app表情组
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtEmojiGroupReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtEmojiGroupResp'
+      summary: 更新app表情组
+      tags:
+      - app表情组管理
   /ms/update/ipwhitelist:
     post:
       consumes:
@@ -2309,6 +3784,38 @@ paths:
       summary: 更新菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/update/notice:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app公告
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtNoticeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtNoticeResp'
+      summary: 更新app公告
+      tags:
+      - app公告管理
   /ms/update/role:
     post:
       consumes:
@@ -2341,6 +3848,102 @@ paths:
       summary: 更新角色
       tags:
       - 管理系统角色相关接口
+  /ms/update/shieldword:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app屏蔽词
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtShieldWordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtShieldWordResp'
+      summary: 更新app屏蔽词
+      tags:
+      - app屏蔽词管理
+  /ms/update/version:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app版本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtVersionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtVersionResp'
+      summary: 更新app版本
+      tags:
+      - app版本管理
+  /ms/update/vpn:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新appVPN
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtVpnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtVpnResp'
+      summary: 更新appVPN
+      tags:
+      - appVPN管理
   /server/get/config/all:
     post:
       consumes:

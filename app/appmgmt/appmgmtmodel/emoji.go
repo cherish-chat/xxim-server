@@ -3,7 +3,9 @@ package appmgmtmodel
 import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Emoji struct {
@@ -43,7 +45,11 @@ func (m *EmojiGroup) TableName() string {
 }
 
 func (m *EmojiGroup) Insert(tx *gorm.DB) error {
-	return tx.Create(m).Error
+	err := tx.Create(m).Error
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func (m *EmojiGroup) ToPB(cover *Emoji) *pb.AppMgmtEmojiGroup {
@@ -58,7 +64,40 @@ func (m *EmojiGroup) ToPB(cover *Emoji) *pb.AppMgmtEmojiGroup {
 }
 
 func (m *Emoji) Insert(tx *gorm.DB) error {
-	return tx.Create(m).Error
+	err := tx.Create(m).Error
+	if err != nil {
+		return err
+	}
+	// 查询group  不存在则创建
+	var group EmojiGroup
+	err = tx.Where("name = ?", m.Group).First(&group).Error
+	if err != nil {
+		if xorm.RecordNotFound(err) {
+			group.Name = m.Group
+			group.CoverId = m.Id
+			group.IsEnable = true
+			group.CreateTime = time.Now().UnixMilli()
+			err = group.Insert(tx)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+	if m.Cover {
+		// 把其他的封面都设置为false
+		err = tx.Model(&Emoji{}).Where("`group` = ? and id != ?", m.Group, m.Id).Update("cover", false).Error
+		if err != nil {
+			return err
+		}
+		// 更新group中的封面
+		err = tx.Model(&EmojiGroup{}).Where("name = ?", m.Group).Update("coverId", m.Id).Error
+		if err != nil {
+			return err
+		}
+	}
+	return err
 }
 
 func (m *Emoji) ToPB() *pb.AppMgmtEmoji {

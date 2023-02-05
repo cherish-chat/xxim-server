@@ -65,6 +65,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/appmgmt/get/connection/list/all": {
+            "post": {
+                "description": "使用此接口获取所有连接列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app连接管理"
+                ],
+                "summary": "获取所有连接列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/appmgrhandler.getAllConnectionListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/appmgrhandler.getAllConnectionListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/appmgmt/kickout/connection": {
+            "post": {
+                "description": "使用此接口踢出连接",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app连接管理"
+                ],
+                "summary": "踢出连接",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/appmgrhandler.kickoutConnectionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/appmgrhandler.kickoutConnectionResp"
+                        }
+                    }
+                }
+            }
+        },
         "/appmgmt/update/config": {
             "post": {
                 "description": "使用此接口更新全部配置列表",
@@ -209,6 +305,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/add/emoji": {
+            "post": {
+                "description": "使用此接口新增app表情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情管理"
+                ],
+                "summary": "新增app表情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtEmojiReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtEmojiResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/ipwhitelist": {
             "post": {
                 "description": "使用此接口添加ip白名单",
@@ -305,6 +449,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/add/notice": {
+            "post": {
+                "description": "使用此接口新增app公告",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app公告管理"
+                ],
+                "summary": "新增app公告",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtNoticeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtNoticeResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/role": {
             "post": {
                 "description": "使用此接口新增角色",
@@ -348,6 +540,150 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.AddMSRoleResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/shieldword": {
+            "post": {
+                "description": "使用此接口新增app屏蔽词",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app屏蔽词管理"
+                ],
+                "summary": "新增app屏蔽词",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtShieldWordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtShieldWordResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/version": {
+            "post": {
+                "description": "使用此接口新增app版本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app版本管理"
+                ],
+                "summary": "新增app版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtVersionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtVersionResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/vpn": {
+            "post": {
+                "description": "使用此接口新增appVPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appVPN管理"
+                ],
+                "summary": "新增appVPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtVpnReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtVpnResp"
                         }
                     }
                 }
@@ -472,6 +808,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/delete/emoji": {
+            "post": {
+                "description": "使用此接口删除app表情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情管理"
+                ],
+                "summary": "删除app表情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtEmojiReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtEmojiResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/emojigroup": {
+            "post": {
+                "description": "使用此接口删除app表情组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情组管理"
+                ],
+                "summary": "删除app表情组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtEmojiGroupReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtEmojiGroupResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/delete/ipwhitelist": {
             "post": {
                 "description": "使用此接口删除ip白名单",
@@ -568,6 +1000,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/delete/notice": {
+            "post": {
+                "description": "使用此接口删除app公告",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app公告管理"
+                ],
+                "summary": "删除app公告",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtNoticeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtNoticeResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/delete/operationlog": {
             "post": {
                 "description": "使用此接口删除操作日志",
@@ -659,6 +1139,150 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.DeleteMSRoleResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/shieldword": {
+            "post": {
+                "description": "使用此接口删除app屏蔽词",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app屏蔽词管理"
+                ],
+                "summary": "删除app屏蔽词",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtShieldWordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtShieldWordResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/version": {
+            "post": {
+                "description": "使用此接口删除app版本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app版本管理"
+                ],
+                "summary": "删除app版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtVersionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtVersionResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/vpn": {
+            "post": {
+                "description": "使用此接口删除appVPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appVPN管理"
+                ],
+                "summary": "删除appVPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtVpnReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtVpnResp"
                         }
                     }
                 }
@@ -938,6 +1562,198 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.GetAllMSApiPathListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/emoji/detail": {
+            "post": {
+                "description": "使用此接口获取app表情详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情管理"
+                ],
+                "summary": "获取app表情详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtEmojiDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtEmojiDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/emoji/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app表情列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情管理"
+                ],
+                "summary": "获取全部app表情列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtEmojiReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtEmojiResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/emojigroup/detail": {
+            "post": {
+                "description": "使用此接口获取app表情组详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情组管理"
+                ],
+                "summary": "获取app表情组详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtEmojiGroupDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtEmojiGroupDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/emojigroup/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app表情组列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情组管理"
+                ],
+                "summary": "获取全部app表情组列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtEmojiGroupReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtEmojiGroupResp"
                         }
                     }
                 }
@@ -1231,6 +2047,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/get/notice/detail": {
+            "post": {
+                "description": "使用此接口获取app公告详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app公告管理"
+                ],
+                "summary": "获取app公告详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtNoticeDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtNoticeDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/notice/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app公告列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app公告管理"
+                ],
+                "summary": "获取全部app公告列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtNoticeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtNoticeResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/operationlog/detail": {
             "post": {
                 "description": "使用此接口获取操作日志详情",
@@ -1418,6 +2330,294 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/mshandler.getAllMSRoleListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/shieldword/detail": {
+            "post": {
+                "description": "使用此接口获取app屏蔽词详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app屏蔽词管理"
+                ],
+                "summary": "获取app屏蔽词详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtShieldWordDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtShieldWordDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/shieldword/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app屏蔽词列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app屏蔽词管理"
+                ],
+                "summary": "获取全部app屏蔽词列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtShieldWordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtShieldWordResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/version/detail": {
+            "post": {
+                "description": "使用此接口获取app版本详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app版本管理"
+                ],
+                "summary": "获取app版本详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtVersionDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtVersionDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/version/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app版本列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app版本管理"
+                ],
+                "summary": "获取全部app版本列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtVersionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtVersionResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/vpn/detail": {
+            "post": {
+                "description": "使用此接口获取appVPN详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appVPN管理"
+                ],
+                "summary": "获取appVPN详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtVpnDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtVpnDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/vpn/list/all": {
+            "post": {
+                "description": "使用此接口获取全部appVPN列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appVPN管理"
+                ],
+                "summary": "获取全部appVPN列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtVpnReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtVpnResp"
                         }
                     }
                 }
@@ -1640,6 +2840,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/update/emoji": {
+            "post": {
+                "description": "使用此接口更新app表情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情管理"
+                ],
+                "summary": "更新app表情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtEmojiReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtEmojiResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/emojigroup": {
+            "post": {
+                "description": "使用此接口更新app表情组",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app表情组管理"
+                ],
+                "summary": "更新app表情组",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtEmojiGroupReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtEmojiGroupResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/update/ipwhitelist": {
             "post": {
                 "description": "使用此接口更新ip白名单",
@@ -1736,6 +3032,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/update/notice": {
+            "post": {
+                "description": "使用此接口更新app公告",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app公告管理"
+                ],
+                "summary": "更新app公告",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtNoticeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtNoticeResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/update/role": {
             "post": {
                 "description": "使用此接口更新角色",
@@ -1779,6 +3123,150 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.UpdateMSRoleResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/shieldword": {
+            "post": {
+                "description": "使用此接口更新app屏蔽词",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app屏蔽词管理"
+                ],
+                "summary": "更新app屏蔽词",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtShieldWordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtShieldWordResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/version": {
+            "post": {
+                "description": "使用此接口更新app版本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app版本管理"
+                ],
+                "summary": "更新app版本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtVersionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtVersionResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/vpn": {
+            "post": {
+                "description": "使用此接口更新appVPN",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appVPN管理"
+                ],
+                "summary": "更新appVPN",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtVpnReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtVpnResp"
                         }
                     }
                 }
@@ -1888,6 +3376,91 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "appmgrhandler.getAllConnectionListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "appmgrhandler.getAllConnectionListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "connections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/appmgrhandler.getAllConnectionListRespItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "appmgrhandler.getAllConnectionListRespItem": {
+            "type": "object",
+            "properties": {
+                "connectTime": {
+                    "type": "integer"
+                },
+                "connectTimeStr": {
+                    "type": "string"
+                },
+                "deviceId": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ipRegion": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "appmgrhandler.kickoutConnectionReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "deviceId": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "appmgrhandler.kickoutConnectionResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "mshandler.getAllMSRoleListResp": {
             "type": "object",
             "properties": {
@@ -2096,6 +3669,104 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AddAppMgmtEmojiReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmoji": {
+                    "$ref": "#/definitions/pb.AppMgmtEmoji"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddAppMgmtNoticeReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtNotice": {
+                    "$ref": "#/definitions/pb.AppMgmtNotice"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddAppMgmtNoticeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddAppMgmtShieldWordReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "words": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.AddAppMgmtShieldWordResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddAppMgmtVersionReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtVersion": {
+                    "$ref": "#/definitions/pb.AppMgmtVersion"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddAppMgmtVersionResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddAppMgmtVpnReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtVpn": {
+                    "$ref": "#/definitions/pb.AppMgmtVpn"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddAppMgmtVpnResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.AddMSApiPathReq": {
             "type": "object",
             "properties": {
@@ -2199,6 +3870,192 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "v": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtEmoji": {
+            "type": "object",
+            "properties": {
+                "animatedUrl": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "boolean"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "group": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "staticUrl": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtEmojiGroup": {
+            "type": "object",
+            "properties": {
+                "cover": {
+                    "$ref": "#/definitions/pb.AppMgmtEmoji"
+                },
+                "coverId": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtNotice": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "endTime": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "startTime": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtShieldWord": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "word": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtVersion": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "downloadUrl": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtVpn": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "secretKey": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -2331,6 +4188,138 @@ const docTemplate = `{
                 "webName": {
                     "description": "网站名称",
                     "type": "string"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtEmojiGroupReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtEmojiGroupResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtEmojiReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtNoticeReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtNoticeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtShieldWordReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtShieldWordResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtVersionReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtVersionResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteAppMgmtVpnReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtVpnResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
                 }
             }
         },
@@ -2488,6 +4477,210 @@ const docTemplate = `{
                 },
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtEmojiGroupReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtEmojiGroupResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmojiGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtEmojiGroup"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtEmojiReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmojis": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtEmoji"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtNoticeReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtNoticeResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtNotices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtNotice"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtShieldWordReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtShieldWordResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtShieldWords": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtShieldWord"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtVersionReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtVersionResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtVersions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtVersion"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtVpnReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtVpnResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtVpns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtVpn"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -2692,6 +4885,138 @@ const docTemplate = `{
                 },
                 "page": {
                     "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAppMgmtEmojiDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtEmojiDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmoji": {
+                    "$ref": "#/definitions/pb.AppMgmtEmoji"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtEmojiGroupDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtEmojiGroupDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmojiGroup": {
+                    "$ref": "#/definitions/pb.AppMgmtEmojiGroup"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtNoticeDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtNoticeDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtNotice": {
+                    "$ref": "#/definitions/pb.AppMgmtNotice"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtShieldWordDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtShieldWordDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtShieldWord": {
+                    "$ref": "#/definitions/pb.AppMgmtShieldWord"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtVersionDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtVersionDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtVersion": {
+                    "$ref": "#/definitions/pb.AppMgmtVersion"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtVpnDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtVpnDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtVpn": {
+                    "$ref": "#/definitions/pb.AppMgmtVpn"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
                 }
             }
         },
@@ -3529,6 +5854,120 @@ const docTemplate = `{
             }
         },
         "pb.UpdateAppMgmtConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtEmojiGroupReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmojiGroup": {
+                    "$ref": "#/definitions/pb.AppMgmtEmojiGroup"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtEmojiGroupResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtEmojiReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtEmoji": {
+                    "$ref": "#/definitions/pb.AppMgmtEmoji"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtNoticeReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtNotice": {
+                    "$ref": "#/definitions/pb.AppMgmtNotice"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtNoticeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtShieldWordReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtShieldWord": {
+                    "$ref": "#/definitions/pb.AppMgmtShieldWord"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtShieldWordResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtVersionReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtVersion": {
+                    "$ref": "#/definitions/pb.AppMgmtVersion"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtVersionResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtVpnReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtVpn": {
+                    "$ref": "#/definitions/pb.AppMgmtVpn"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtVpnResp": {
             "type": "object",
             "properties": {
                 "commonResp": {

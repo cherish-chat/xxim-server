@@ -81,4 +81,28 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		// 删除app内飘屏通知
 		group.POST("/delete/notice", r.deleteNotice)
 	}
+	// app内表情组管理
+	{
+		// 获取全部app内表情组列表
+		group.POST("/get/emojigroup/list/all", r.getAllEmojiGroupList)
+		// 获取app内表情组详情
+		group.POST("/get/emojigroup/detail", r.getEmojiGroupDetail)
+		// 更新app内表情组
+		group.POST("/update/emojigroup", r.updateEmojiGroup)
+		// 删除app内表情组和表情
+		group.POST("/delete/emojigroup", r.deleteEmojiGroup)
+	}
+	// app内表情管理
+	{
+		// 获取全部app内表情列表
+		group.POST("/get/emoji/list/all", r.getAllEmojiList)
+		// 获取app内表情详情
+		group.POST("/get/emoji/detail", r.getEmojiDetail)
+		// 增加app内表情
+		group.POST("/add/emoji", r.addEmoji)
+		// 更新app内表情
+		group.POST("/update/emoji", r.updateEmoji)
+		// 删除app内表情
+		group.POST("/delete/emoji", r.deleteEmoji)
+	}
 }

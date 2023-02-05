@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"gorm.io/gorm"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/svc"
@@ -32,7 +34,13 @@ func (l *AddAppMgmtEmojiGroupLogic) AddAppMgmtEmojiGroup(in *pb.AddAppMgmtEmojiG
 		IsEnable:   in.AppMgmtEmojiGroup.IsEnable,
 		CreateTime: time.Now().UnixMilli(),
 	}
-	err := model.Insert(l.svcCtx.Mysql())
+	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+		err := model.Insert(tx)
+		if err != nil {
+			l.Errorf("insert err: %v", err)
+		}
+		return err
+	})
 	if err != nil {
 		l.Errorf("insert err: %v", err)
 		return &pb.AddAppMgmtEmojiGroupResp{
