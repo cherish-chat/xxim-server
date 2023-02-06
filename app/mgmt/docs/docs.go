@@ -305,6 +305,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/add/defaultconv": {
+            "post": {
+                "description": "使用此接口新增用户默认会话",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户默认会话管理"
+                ],
+                "summary": "新增用户默认会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserDefaultConvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserDefaultConvResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/emoji": {
             "post": {
                 "description": "使用此接口新增app表情",
@@ -353,9 +401,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/add/ipwhitelist": {
+        "/ms/add/invitationcode": {
             "post": {
-                "description": "使用此接口添加ip白名单",
+                "description": "使用此接口新增用户邀请码",
                 "consumes": [
                     "application/json"
                 ],
@@ -363,9 +411,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理系统ip白名单相关接口"
+                    "用户邀请码管理"
                 ],
-                "summary": "添加ip白名单",
+                "summary": "新增用户邀请码",
                 "parameters": [
                     {
                         "type": "string",
@@ -387,7 +435,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.AddMSIpWhiteListReq"
+                            "$ref": "#/definitions/pb.AddUserInvitationCodeReq"
                         }
                     }
                 ],
@@ -395,7 +443,103 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.AddMSIpWhiteListResp"
+                            "$ref": "#/definitions/pb.AddUserInvitationCodeResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/ipblacklist": {
+            "post": {
+                "description": "使用此接口新增用户ip黑名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip黑名单管理"
+                ],
+                "summary": "新增用户ip黑名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserIpBlackListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserIpBlackListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/ipwhitelist": {
+            "post": {
+                "description": "使用此接口新增用户ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip白名单管理"
+                ],
+                "summary": "新增用户ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserIpWhiteListResp"
                         }
                     }
                 }
@@ -444,6 +588,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.AddMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/model": {
+            "post": {
+                "description": "使用此接口新增用户模型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "新增用户模型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddUserModelResp"
                         }
                     }
                 }
@@ -808,6 +1000,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/delete/defaultconv": {
+            "post": {
+                "description": "使用此接口删除用户默认会话",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户默认会话管理"
+                ],
+                "summary": "删除用户默认会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserDefaultConvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserDefaultConvResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/delete/emoji": {
             "post": {
                 "description": "使用此接口删除app表情",
@@ -904,9 +1144,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/delete/ipwhitelist": {
+        "/ms/delete/invitationcode": {
             "post": {
-                "description": "使用此接口删除ip白名单",
+                "description": "使用此接口删除用户邀请码",
                 "consumes": [
                     "application/json"
                 ],
@@ -914,9 +1154,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理系统ip白名单相关接口"
+                    "用户邀请码管理"
                 ],
-                "summary": "删除ip白名单",
+                "summary": "删除用户邀请码",
                 "parameters": [
                     {
                         "type": "string",
@@ -938,7 +1178,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.DeleteMSIpWhiteListReq"
+                            "$ref": "#/definitions/pb.DeleteUserInvitationCodeReq"
                         }
                     }
                 ],
@@ -946,7 +1186,103 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.DeleteMSIpWhiteListResp"
+                            "$ref": "#/definitions/pb.DeleteUserInvitationCodeResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/ipblacklist": {
+            "post": {
+                "description": "使用此接口删除用户ip黑名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip黑名单管理"
+                ],
+                "summary": "删除用户ip黑名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserIpBlackListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserIpBlackListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/ipwhitelist": {
+            "post": {
+                "description": "使用此接口删除用户ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip白名单管理"
+                ],
+                "summary": "删除用户ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserIpWhiteListResp"
                         }
                     }
                 }
@@ -995,6 +1331,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.DeleteMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/model": {
+            "post": {
+                "description": "使用此接口删除用户模型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "删除用户模型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteUserModelResp"
                         }
                     }
                 }
@@ -1567,6 +1951,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/get/defaultconv/detail": {
+            "post": {
+                "description": "使用此接口获取用户默认会话详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户默认会话管理"
+                ],
+                "summary": "获取用户默认会话详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserDefaultConvDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserDefaultConvDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/defaultconv/list/all": {
+            "post": {
+                "description": "使用此接口获取全部用户默认会话列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户默认会话管理"
+                ],
+                "summary": "获取全部用户默认会话列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserDefaultConvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserDefaultConvResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/emoji/detail": {
             "post": {
                 "description": "使用此接口获取app表情详情",
@@ -1759,9 +2239,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/get/ipwhitelist/detail": {
+        "/ms/get/invitationcode/detail": {
             "post": {
-                "description": "使用此接口获取ip白名单详情",
+                "description": "使用此接口获取用户邀请码详情",
                 "consumes": [
                     "application/json"
                 ],
@@ -1769,9 +2249,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理系统ip白名单相关接口"
+                    "用户邀请码管理"
                 ],
-                "summary": "获取ip白名单详情",
+                "summary": "获取用户邀请码详情",
                 "parameters": [
                     {
                         "type": "string",
@@ -1793,7 +2273,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.GetMSIpWhiteListDetailReq"
+                            "$ref": "#/definitions/pb.GetUserInvitationCodeDetailReq"
                         }
                     }
                 ],
@@ -1801,7 +2281,199 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.GetMSIpWhiteListDetailResp"
+                            "$ref": "#/definitions/pb.GetUserInvitationCodeDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/invitationcode/list/all": {
+            "post": {
+                "description": "使用此接口获取全部用户邀请码列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户邀请码管理"
+                ],
+                "summary": "获取全部用户邀请码列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserInvitationCodeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserInvitationCodeResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/ipblacklist/detail": {
+            "post": {
+                "description": "使用此接口获取用户ip黑名单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip黑名单管理"
+                ],
+                "summary": "获取用户ip黑名单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserIpBlackListDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserIpBlackListDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/ipblacklist/list/all": {
+            "post": {
+                "description": "使用此接口获取全部用户ip黑名单列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip黑名单管理"
+                ],
+                "summary": "获取全部用户ip黑名单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserIpBlackListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserIpBlackListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/ipwhitelist/detail": {
+            "post": {
+                "description": "使用此接口获取用户ip白名单详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip白名单管理"
+                ],
+                "summary": "获取用户ip白名单详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserIpWhiteListDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserIpWhiteListDetailResp"
                         }
                     }
                 }
@@ -1809,7 +2481,7 @@ const docTemplate = `{
         },
         "/ms/get/ipwhitelist/list/all": {
             "post": {
-                "description": "使用此接口获取全部ip白名单列表",
+                "description": "使用此接口获取全部用户ip白名单列表",
                 "consumes": [
                     "application/json"
                 ],
@@ -1817,9 +2489,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理系统ip白名单相关接口"
+                    "用户ip白名单管理"
                 ],
-                "summary": "获取全部ip白名单列表",
+                "summary": "获取全部用户ip白名单列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -1841,7 +2513,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.GetAllMSIpWhiteListReq"
+                            "$ref": "#/definitions/pb.GetAllUserIpWhiteListReq"
                         }
                     }
                 ],
@@ -1849,7 +2521,7 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.GetAllMSIpWhiteListResp"
+                            "$ref": "#/definitions/pb.GetAllUserIpWhiteListResp"
                         }
                     }
                 }
@@ -1898,6 +2570,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.GetAllMSLoginRecordResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/loginrecord/list/all": {
+            "post": {
+                "description": "使用此接口获取全部用户登录记录列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户登录记录管理"
+                ],
+                "summary": "获取全部用户登录记录列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllLoginRecordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllLoginRecordResp"
                         }
                     }
                 }
@@ -2042,6 +2762,102 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.GetAllMSMenuListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/model/detail": {
+            "post": {
+                "description": "使用此接口获取用户模型详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "获取用户模型详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserModelDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetUserModelDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/model/list/all": {
+            "post": {
+                "description": "使用此接口获取全部用户模型列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "获取全部用户模型列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllUserModelResp"
                         }
                     }
                 }
@@ -2744,6 +3560,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/switch/model": {
+            "post": {
+                "description": "使用此接口切换用户状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "切换用户状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.SwitchUserModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.SwitchUserModelResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/update/admin": {
             "post": {
                 "description": "使用此接口更新管理员",
@@ -2835,6 +3699,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.UpdateMSApiPathResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/defaultconv": {
+            "post": {
+                "description": "使用此接口更新用户默认会话",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户默认会话管理"
+                ],
+                "summary": "更新用户默认会话",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserDefaultConvReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserDefaultConvResp"
                         }
                     }
                 }
@@ -2936,9 +3848,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/ms/update/ipwhitelist": {
+        "/ms/update/invitationcode": {
             "post": {
-                "description": "使用此接口更新ip白名单",
+                "description": "使用此接口更新用户邀请码",
                 "consumes": [
                     "application/json"
                 ],
@@ -2946,9 +3858,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "管理系统ip白名单相关接口"
+                    "用户邀请码管理"
                 ],
-                "summary": "更新ip白名单",
+                "summary": "更新用户邀请码",
                 "parameters": [
                     {
                         "type": "string",
@@ -2970,7 +3882,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pb.UpdateMSIpWhiteListReq"
+                            "$ref": "#/definitions/pb.UpdateUserInvitationCodeReq"
                         }
                     }
                 ],
@@ -2978,7 +3890,103 @@ const docTemplate = `{
                     "200": {
                         "description": "响应数据",
                         "schema": {
-                            "$ref": "#/definitions/pb.UpdateMSIpWhiteListResp"
+                            "$ref": "#/definitions/pb.UpdateUserInvitationCodeResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/ipblacklist": {
+            "post": {
+                "description": "使用此接口更新用户ip黑名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip黑名单管理"
+                ],
+                "summary": "更新用户ip黑名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserIpBlackListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserIpBlackListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/ipwhitelist": {
+            "post": {
+                "description": "使用此接口更新用户ip白名单",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户ip白名单管理"
+                ],
+                "summary": "更新用户ip白名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserIpWhiteListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserIpWhiteListResp"
                         }
                     }
                 }
@@ -3027,6 +4035,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.UpdateMSMenuResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/model": {
+            "post": {
+                "description": "使用此接口更新用户模型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "更新用户模型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateUserModelResp"
                         }
                     }
                 }
@@ -3851,6 +4907,104 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AddUserDefaultConvReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userDefaultConv": {
+                    "$ref": "#/definitions/pb.UserDefaultConv"
+                }
+            }
+        },
+        "pb.AddUserDefaultConvResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddUserInvitationCodeReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userInvitationCode": {
+                    "$ref": "#/definitions/pb.UserInvitationCode"
+                }
+            }
+        },
+        "pb.AddUserInvitationCodeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddUserIpBlackListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.AddUserIpBlackListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddUserIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.AddUserIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddUserModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "userModel": {
+                    "$ref": "#/definitions/pb.UserModel"
+                }
+            }
+        },
+        "pb.AddUserModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.AppMgmtConfig": {
             "type": "object",
             "properties": {
@@ -4455,6 +5609,116 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.DeleteUserDefaultConvReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteUserDefaultConvResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteUserInvitationCodeReq": {
+            "type": "object",
+            "properties": {
+                "codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.DeleteUserInvitationCodeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteUserIpBlackListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteUserIpBlackListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteUserIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteUserIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteUserModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteUserModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.GetAllAppMgmtConfigReq": {
             "type": "object",
             "properties": {
@@ -4684,6 +5948,40 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetAllLoginRecordReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllLoginRecordResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "loginRecordList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.LoginRecord"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.GetAllMSApiPathListReq": {
             "type": "object",
             "properties": {
@@ -4885,6 +6183,176 @@ const docTemplate = `{
                 },
                 "page": {
                     "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserDefaultConvReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserDefaultConvResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userDefaultConvs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserDefaultConv"
+                    }
+                }
+            }
+        },
+        "pb.GetAllUserInvitationCodeReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserInvitationCodeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userInvitationCodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserInvitationCode"
+                    }
+                }
+            }
+        },
+        "pb.GetAllUserIpBlackListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserIpBlackListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userIpLists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserIpList"
+                    }
+                }
+            }
+        },
+        "pb.GetAllUserIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userIpLists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserIpList"
+                    }
+                }
+            }
+        },
+        "pb.GetAllUserModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllUserModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userModelList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.UserModel"
+                    }
                 }
             }
         },
@@ -5458,6 +6926,116 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetUserDefaultConvDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetUserDefaultConvDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "userDefaultConv": {
+                    "$ref": "#/definitions/pb.UserDefaultConv"
+                }
+            }
+        },
+        "pb.GetUserInvitationCodeDetailReq": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.GetUserInvitationCodeDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "userInvitationCode": {
+                    "$ref": "#/definitions/pb.UserInvitationCode"
+                }
+            }
+        },
+        "pb.GetUserIpBlackListDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetUserIpBlackListDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.GetUserIpWhiteListDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetUserIpWhiteListDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.GetUserModelDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetUserModelDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "userModel": {
+                    "$ref": "#/definitions/pb.UserModel"
+                }
+            }
+        },
         "pb.HealthMSResp": {
             "type": "object",
             "properties": {
@@ -5496,6 +7074,56 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.LoginRecord": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "type": "string"
+                },
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceModel": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ipCity": {
+                    "type": "string"
+                },
+                "ipCountry": {
+                    "type": "string"
+                },
+                "ipISP": {
+                    "type": "string"
+                },
+                "ipProvince": {
+                    "type": "string"
+                },
+                "osVersion": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "integer"
+                },
+                "timeStr": {
+                    "type": "string"
+                },
+                "userAgent": {
+                    "type": "string"
+                },
+                "userId": {
                     "type": "string"
                 }
             }
@@ -5839,6 +7467,31 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.SwitchUserModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "disableIp": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "unblockTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.SwitchUserModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.UpdateAppMgmtConfigReq": {
             "type": "object",
             "properties": {
@@ -6075,6 +7728,350 @@ const docTemplate = `{
             "properties": {
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateUserDefaultConvReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userDefaultConv": {
+                    "$ref": "#/definitions/pb.UserDefaultConv"
+                }
+            }
+        },
+        "pb.UpdateUserDefaultConvResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateUserInvitationCodeReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userInvitationCode": {
+                    "$ref": "#/definitions/pb.UserInvitationCode"
+                }
+            }
+        },
+        "pb.UpdateUserInvitationCodeResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateUserIpBlackListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.UpdateUserIpBlackListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateUserIpWhiteListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userIpList": {
+                    "$ref": "#/definitions/pb.UserIpList"
+                }
+            }
+        },
+        "pb.UpdateUserIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateUserModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "userModel": {
+                    "$ref": "#/definitions/pb.UserModel"
+                }
+            }
+        },
+        "pb.UpdateUserModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UserBirthdayInfo": {
+            "type": "object",
+            "properties": {
+                "day": {
+                    "type": "integer"
+                },
+                "month": {
+                    "type": "integer"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.UserDefaultConv": {
+            "type": "object",
+            "properties": {
+                "convId": {
+                    "type": "string"
+                },
+                "convType": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "filterType": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invitationCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserInvitationCode": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "creator": {
+                    "type": "string"
+                },
+                "creatorType": {
+                    "type": "integer"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "remark": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserIpList": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "endIp": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "startIp": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserLevelInfo": {
+            "type": "object",
+            "properties": {
+                "exp": {
+                    "type": "integer"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "nextLevelExp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.UserLoginInfo": {
+            "type": "object",
+            "properties": {
+                "appVersion": {
+                    "type": "string"
+                },
+                "deviceId": {
+                    "type": "string"
+                },
+                "deviceModel": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ipCity": {
+                    "type": "string"
+                },
+                "ipCountry": {
+                    "type": "string"
+                },
+                "ipISP": {
+                    "type": "string"
+                },
+                "ipProvince": {
+                    "type": "string"
+                },
+                "osVersion": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "integer"
+                },
+                "userAgent": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserLoginRecord": {
+            "type": "object",
+            "properties": {
+                "ip": {
+                    "description": "ip",
+                    "type": "string"
+                },
+                "ipRegion": {
+                    "type": "string"
+                },
+                "time": {
+                    "description": "时间",
+                    "type": "integer"
+                },
+                "timeStr": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.UserModel": {
+            "type": "object",
+            "properties": {
+                "adminRemark": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "birthday": {
+                    "$ref": "#/definitions/pb.UserBirthdayInfo"
+                },
+                "blockRecordId": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "infoMap": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "invitationCode": {
+                    "type": "string"
+                },
+                "lastLoginRecord": {
+                    "$ref": "#/definitions/pb.UserLoginRecord"
+                },
+                "levelInfo": {
+                    "$ref": "#/definitions/pb.UserLevelInfo"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "mobileCountryCode": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "regInfo": {
+                    "$ref": "#/definitions/pb.UserLoginInfo"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "unblockTime": {
+                    "type": "integer"
+                },
+                "unblockTimeStr": {
+                    "type": "string"
+                },
+                "xb": {
+                    "type": "integer"
                 }
             }
         }

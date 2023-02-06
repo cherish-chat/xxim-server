@@ -314,6 +314,68 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.AddUserDefaultConvReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userDefaultConv:
+        $ref: '#/definitions/pb.UserDefaultConv'
+    type: object
+  pb.AddUserDefaultConvResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddUserInvitationCodeReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userInvitationCode:
+        $ref: '#/definitions/pb.UserInvitationCode'
+    type: object
+  pb.AddUserInvitationCodeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddUserIpBlackListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.AddUserIpBlackListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddUserIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.AddUserIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddUserModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      password:
+        type: string
+      userModel:
+        $ref: '#/definitions/pb.UserModel'
+    type: object
+  pb.AddUserModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.AppMgmtConfig:
     properties:
       group:
@@ -716,6 +778,76 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DeleteUserDefaultConvReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteUserDefaultConvResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteUserInvitationCodeReq:
+    properties:
+      codes:
+        items:
+          type: string
+        type: array
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.DeleteUserInvitationCodeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteUserIpBlackListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteUserIpBlackListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteUserIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteUserIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteUserModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteUserModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.GetAllAppMgmtConfigReq:
     properties:
       commonReq:
@@ -864,6 +996,28 @@ definitions:
       total:
         type: integer
     type: object
+  pb.GetAllLoginRecordReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllLoginRecordResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      loginRecordList:
+        items:
+          $ref: '#/definitions/pb.LoginRecord'
+        type: array
+      total:
+        type: integer
+    type: object
   pb.GetAllMSApiPathListReq:
     properties:
       commonReq:
@@ -995,6 +1149,116 @@ definitions:
         type: object
       page:
         $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserDefaultConvReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserDefaultConvResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      userDefaultConvs:
+        items:
+          $ref: '#/definitions/pb.UserDefaultConv'
+        type: array
+    type: object
+  pb.GetAllUserInvitationCodeReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserInvitationCodeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      userInvitationCodes:
+        items:
+          $ref: '#/definitions/pb.UserInvitationCode'
+        type: array
+    type: object
+  pb.GetAllUserIpBlackListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserIpBlackListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      userIpLists:
+        items:
+          $ref: '#/definitions/pb.UserIpList'
+        type: array
+    type: object
+  pb.GetAllUserIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      userIpLists:
+        items:
+          $ref: '#/definitions/pb.UserIpList'
+        type: array
+    type: object
+  pb.GetAllUserModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllUserModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+      userModelList:
+        items:
+          $ref: '#/definitions/pb.UserModel'
+        type: array
     type: object
   pb.GetAppMgmtEmojiDetailReq:
     properties:
@@ -1362,6 +1626,76 @@ definitions:
       port:
         type: integer
     type: object
+  pb.GetUserDefaultConvDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetUserDefaultConvDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      userDefaultConv:
+        $ref: '#/definitions/pb.UserDefaultConv'
+    type: object
+  pb.GetUserInvitationCodeDetailReq:
+    properties:
+      code:
+        type: string
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.GetUserInvitationCodeDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      userInvitationCode:
+        $ref: '#/definitions/pb.UserInvitationCode'
+    type: object
+  pb.GetUserIpBlackListDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetUserIpBlackListDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.GetUserIpWhiteListDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetUserIpWhiteListDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.GetUserModelDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetUserModelDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      userModel:
+        $ref: '#/definitions/pb.UserModel'
+    type: object
   pb.HealthMSResp:
     properties:
       commonResp:
@@ -1387,6 +1721,39 @@ definitions:
       id:
         type: string
       token:
+        type: string
+    type: object
+  pb.LoginRecord:
+    properties:
+      appVersion:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      id:
+        type: string
+      ip:
+        type: string
+      ipCity:
+        type: string
+      ipCountry:
+        type: string
+      ipISP:
+        type: string
+      ipProvince:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      time:
+        type: integer
+      timeStr:
+        type: string
+      userAgent:
+        type: string
+      userId:
         type: string
     type: object
   pb.MSApiPath:
@@ -1616,6 +1983,22 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.SwitchUserModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      disableIp:
+        type: boolean
+      id:
+        type: string
+      unblockTime:
+        type: integer
+    type: object
+  pb.SwitchUserModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.UpdateAppMgmtConfigReq:
     properties:
       appMgmtConfigs:
@@ -1766,6 +2149,230 @@ definitions:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateUserDefaultConvReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userDefaultConv:
+        $ref: '#/definitions/pb.UserDefaultConv'
+    type: object
+  pb.UpdateUserDefaultConvResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateUserInvitationCodeReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userInvitationCode:
+        $ref: '#/definitions/pb.UserInvitationCode'
+    type: object
+  pb.UpdateUserInvitationCodeResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateUserIpBlackListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.UpdateUserIpBlackListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateUserIpWhiteListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      userIpList:
+        $ref: '#/definitions/pb.UserIpList'
+    type: object
+  pb.UpdateUserIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateUserModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      password:
+        type: string
+      userModel:
+        $ref: '#/definitions/pb.UserModel'
+    type: object
+  pb.UpdateUserModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UserBirthdayInfo:
+    properties:
+      day:
+        type: integer
+      month:
+        type: integer
+      year:
+        type: integer
+    type: object
+  pb.UserDefaultConv:
+    properties:
+      convId:
+        type: string
+      convType:
+        type: integer
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      filterType:
+        type: integer
+      id:
+        type: string
+      invitationCode:
+        type: string
+    type: object
+  pb.UserInvitationCode:
+    properties:
+      code:
+        type: string
+      createTime:
+        type: integer
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      creator:
+        type: string
+      creatorType:
+        type: integer
+      isEnable:
+        type: boolean
+      remark:
+        type: string
+    type: object
+  pb.UserIpList:
+    properties:
+      createTime:
+        type: integer
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      endIp:
+        type: string
+      id:
+        type: string
+      isEnable:
+        type: boolean
+      platform:
+        type: string
+      remark:
+        type: string
+      startIp:
+        type: string
+      userId:
+        type: string
+    type: object
+  pb.UserLevelInfo:
+    properties:
+      exp:
+        type: integer
+      level:
+        type: integer
+      nextLevelExp:
+        type: integer
+    type: object
+  pb.UserLoginInfo:
+    properties:
+      appVersion:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      ip:
+        type: string
+      ipCity:
+        type: string
+      ipCountry:
+        type: string
+      ipISP:
+        type: string
+      ipProvince:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      time:
+        type: integer
+      userAgent:
+        type: string
+    type: object
+  pb.UserLoginRecord:
+    properties:
+      ip:
+        description: ip
+        type: string
+      ipRegion:
+        type: string
+      time:
+        description: 时间
+        type: integer
+      timeStr:
+        type: string
+    type: object
+  pb.UserModel:
+    properties:
+      adminRemark:
+        type: string
+      avatar:
+        type: string
+      birthday:
+        $ref: '#/definitions/pb.UserBirthdayInfo'
+      blockRecordId:
+        type: string
+      createTime:
+        type: integer
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      id:
+        type: string
+      infoMap:
+        additionalProperties:
+          type: string
+        type: object
+      invitationCode:
+        type: string
+      lastLoginRecord:
+        $ref: '#/definitions/pb.UserLoginRecord'
+      levelInfo:
+        $ref: '#/definitions/pb.UserLevelInfo'
+      mobile:
+        type: string
+      mobileCountryCode:
+        type: string
+      nickname:
+        type: string
+      regInfo:
+        $ref: '#/definitions/pb.UserLoginInfo'
+      role:
+        type: integer
+      unblockTime:
+        type: integer
+      unblockTimeStr:
+        type: string
+      xb:
+        type: integer
     type: object
 host: 127.0.0.1:6799
 info:
@@ -1967,6 +2574,38 @@ paths:
       summary: 新增服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/add/defaultconv:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增用户默认会话
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddUserDefaultConvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddUserDefaultConvResp'
+      summary: 新增用户默认会话
+      tags:
+      - 用户默认会话管理
   /ms/add/emoji:
     post:
       consumes:
@@ -1999,11 +2638,11 @@ paths:
       summary: 新增app表情
       tags:
       - app表情管理
-  /ms/add/ipwhitelist:
+  /ms/add/invitationcode:
     post:
       consumes:
       - application/json
-      description: 使用此接口添加ip白名单
+      description: 使用此接口新增用户邀请码
       parameters:
       - description: 用户令牌
         in: header
@@ -2020,17 +2659,81 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.AddMSIpWhiteListReq'
+          $ref: '#/definitions/pb.AddUserInvitationCodeReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.AddMSIpWhiteListResp'
-      summary: 添加ip白名单
+            $ref: '#/definitions/pb.AddUserInvitationCodeResp'
+      summary: 新增用户邀请码
       tags:
-      - 管理系统ip白名单相关接口
+      - 用户邀请码管理
+  /ms/add/ipblacklist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增用户ip黑名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddUserIpBlackListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddUserIpBlackListResp'
+      summary: 新增用户ip黑名单
+      tags:
+      - 用户ip黑名单管理
+  /ms/add/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增用户ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddUserIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddUserIpWhiteListResp'
+      summary: 新增用户ip白名单
+      tags:
+      - 用户ip白名单管理
   /ms/add/menu:
     post:
       consumes:
@@ -2063,6 +2766,38 @@ paths:
       summary: 新增菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/add/model:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增用户模型
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddUserModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddUserModelResp'
+      summary: 新增用户模型
+      tags:
+      - 用户模型管理
   /ms/add/notice:
     post:
       consumes:
@@ -2302,6 +3037,38 @@ paths:
       summary: 删除服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/delete/defaultconv:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除用户默认会话
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteUserDefaultConvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteUserDefaultConvResp'
+      summary: 删除用户默认会话
+      tags:
+      - 用户默认会话管理
   /ms/delete/emoji:
     post:
       consumes:
@@ -2366,11 +3133,11 @@ paths:
       summary: 删除app表情组
       tags:
       - app表情组管理
-  /ms/delete/ipwhitelist:
+  /ms/delete/invitationcode:
     post:
       consumes:
       - application/json
-      description: 使用此接口删除ip白名单
+      description: 使用此接口删除用户邀请码
       parameters:
       - description: 用户令牌
         in: header
@@ -2387,17 +3154,81 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.DeleteMSIpWhiteListReq'
+          $ref: '#/definitions/pb.DeleteUserInvitationCodeReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.DeleteMSIpWhiteListResp'
-      summary: 删除ip白名单
+            $ref: '#/definitions/pb.DeleteUserInvitationCodeResp'
+      summary: 删除用户邀请码
       tags:
-      - 管理系统ip白名单相关接口
+      - 用户邀请码管理
+  /ms/delete/ipblacklist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除用户ip黑名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteUserIpBlackListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteUserIpBlackListResp'
+      summary: 删除用户ip黑名单
+      tags:
+      - 用户ip黑名单管理
+  /ms/delete/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除用户ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteUserIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteUserIpWhiteListResp'
+      summary: 删除用户ip白名单
+      tags:
+      - 用户ip白名单管理
   /ms/delete/menu:
     post:
       consumes:
@@ -2430,6 +3261,38 @@ paths:
       summary: 删除菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/delete/model:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除用户模型
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteUserModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteUserModelResp'
+      summary: 删除用户模型
+      tags:
+      - 用户模型管理
   /ms/delete/notice:
     post:
       consumes:
@@ -2808,6 +3671,70 @@ paths:
       summary: 获取所有服务端ApiPath列表
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/get/defaultconv/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取用户默认会话详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetUserDefaultConvDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetUserDefaultConvDetailResp'
+      summary: 获取用户默认会话详情
+      tags:
+      - 用户默认会话管理
+  /ms/get/defaultconv/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部用户默认会话列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllUserDefaultConvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllUserDefaultConvResp'
+      summary: 获取全部用户默认会话列表
+      tags:
+      - 用户默认会话管理
   /ms/get/emoji/detail:
     post:
       consumes:
@@ -2936,11 +3863,139 @@ paths:
       summary: 获取全部app表情组列表
       tags:
       - app表情组管理
+  /ms/get/invitationcode/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取用户邀请码详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetUserInvitationCodeDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetUserInvitationCodeDetailResp'
+      summary: 获取用户邀请码详情
+      tags:
+      - 用户邀请码管理
+  /ms/get/invitationcode/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部用户邀请码列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllUserInvitationCodeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllUserInvitationCodeResp'
+      summary: 获取全部用户邀请码列表
+      tags:
+      - 用户邀请码管理
+  /ms/get/ipblacklist/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取用户ip黑名单详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetUserIpBlackListDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetUserIpBlackListDetailResp'
+      summary: 获取用户ip黑名单详情
+      tags:
+      - 用户ip黑名单管理
+  /ms/get/ipblacklist/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部用户ip黑名单列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllUserIpBlackListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllUserIpBlackListResp'
+      summary: 获取全部用户ip黑名单列表
+      tags:
+      - 用户ip黑名单管理
   /ms/get/ipwhitelist/detail:
     post:
       consumes:
       - application/json
-      description: 使用此接口获取ip白名单详情
+      description: 使用此接口获取用户ip白名单详情
       parameters:
       - description: 用户令牌
         in: header
@@ -2957,22 +4012,22 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.GetMSIpWhiteListDetailReq'
+          $ref: '#/definitions/pb.GetUserIpWhiteListDetailReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.GetMSIpWhiteListDetailResp'
-      summary: 获取ip白名单详情
+            $ref: '#/definitions/pb.GetUserIpWhiteListDetailResp'
+      summary: 获取用户ip白名单详情
       tags:
-      - 管理系统ip白名单相关接口
+      - 用户ip白名单管理
   /ms/get/ipwhitelist/list/all:
     post:
       consumes:
       - application/json
-      description: 使用此接口获取全部ip白名单列表
+      description: 使用此接口获取全部用户ip白名单列表
       parameters:
       - description: 用户令牌
         in: header
@@ -2989,17 +4044,17 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.GetAllMSIpWhiteListReq'
+          $ref: '#/definitions/pb.GetAllUserIpWhiteListReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.GetAllMSIpWhiteListResp'
-      summary: 获取全部ip白名单列表
+            $ref: '#/definitions/pb.GetAllUserIpWhiteListResp'
+      summary: 获取全部用户ip白名单列表
       tags:
-      - 管理系统ip白名单相关接口
+      - 用户ip白名单管理
   /ms/get/loginlog/list/all:
     post:
       consumes:
@@ -3032,6 +4087,38 @@ paths:
       summary: 获取全部登录日志列表
       tags:
       - 管理系统登录日志相关接口
+  /ms/get/loginrecord/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部用户登录记录列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllLoginRecordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllLoginRecordResp'
+      summary: 获取全部用户登录记录列表
+      tags:
+      - 用户登录记录管理
   /ms/get/menu/detail:
     post:
       consumes:
@@ -3128,6 +4215,70 @@ paths:
       summary: 获取所有菜单列表
       tags:
       - 管理系统菜单相关接口
+  /ms/get/model/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取用户模型详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetUserModelDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetUserModelDetailResp'
+      summary: 获取用户模型详情
+      tags:
+      - 用户模型管理
+  /ms/get/model/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部用户模型列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllUserModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllUserModelResp'
+      summary: 获取全部用户模型列表
+      tags:
+      - 用户模型管理
   /ms/get/notice/detail:
     post:
       consumes:
@@ -3592,6 +4743,38 @@ paths:
       summary: 切换管理员状态
       tags:
       - 管理员相关接口
+  /ms/switch/model:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口切换用户状态
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.SwitchUserModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.SwitchUserModelResp'
+      summary: 切换用户状态
+      tags:
+      - 用户模型管理
   /ms/update/admin:
     post:
       consumes:
@@ -3656,6 +4839,38 @@ paths:
       summary: 更新服务端ApiPath
       tags:
       - 管理系统服务端ApiPath相关接口
+  /ms/update/defaultconv:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新用户默认会话
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateUserDefaultConvReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateUserDefaultConvResp'
+      summary: 更新用户默认会话
+      tags:
+      - 用户默认会话管理
   /ms/update/emoji:
     post:
       consumes:
@@ -3720,11 +4935,11 @@ paths:
       summary: 更新app表情组
       tags:
       - app表情组管理
-  /ms/update/ipwhitelist:
+  /ms/update/invitationcode:
     post:
       consumes:
       - application/json
-      description: 使用此接口更新ip白名单
+      description: 使用此接口更新用户邀请码
       parameters:
       - description: 用户令牌
         in: header
@@ -3741,17 +4956,81 @@ paths:
         name: object
         required: true
         schema:
-          $ref: '#/definitions/pb.UpdateMSIpWhiteListReq'
+          $ref: '#/definitions/pb.UpdateUserInvitationCodeReq'
       produces:
       - application/json
       responses:
         "200":
           description: 响应数据
           schema:
-            $ref: '#/definitions/pb.UpdateMSIpWhiteListResp'
-      summary: 更新ip白名单
+            $ref: '#/definitions/pb.UpdateUserInvitationCodeResp'
+      summary: 更新用户邀请码
       tags:
-      - 管理系统ip白名单相关接口
+      - 用户邀请码管理
+  /ms/update/ipblacklist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新用户ip黑名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateUserIpBlackListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateUserIpBlackListResp'
+      summary: 更新用户ip黑名单
+      tags:
+      - 用户ip黑名单管理
+  /ms/update/ipwhitelist:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新用户ip白名单
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateUserIpWhiteListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateUserIpWhiteListResp'
+      summary: 更新用户ip白名单
+      tags:
+      - 用户ip白名单管理
   /ms/update/menu:
     post:
       consumes:
@@ -3784,6 +5063,38 @@ paths:
       summary: 更新菜单
       tags:
       - 管理系统菜单相关接口
+  /ms/update/model:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新用户模型
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateUserModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateUserModelResp'
+      summary: 更新用户模型
+      tags:
+      - 用户模型管理
   /ms/update/notice:
     post:
       consumes:
