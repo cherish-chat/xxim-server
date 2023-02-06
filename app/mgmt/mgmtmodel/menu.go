@@ -298,6 +298,51 @@ func initMenu(tx *gorm.DB) {
 				genMenu3("374", "370", "表情组删除", "app:emojigroup:del"),
 			),
 		),
+		genMenu1("400", "用户管理", "el-icon-UserFilled", 48, "user",
+			// defaultconv 默认会话
+			genMenu2("410", "400", "默认会话管理", "el-icon-ChatLineRound", 0,
+				"user:defaultconv:list", "user/defaultconv", "user/defaultconv/index",
+				genMenu3("411", "410", "默认会话详情", "user:defaultconv:detail"),
+				genMenu3("412", "410", "默认会话新增", "user:defaultconv:add"),
+				genMenu3("413", "410", "默认会话编辑", "user:defaultconv:edit"),
+				genMenu3("414", "410", "默认会话删除", "user:defaultconv:del"),
+			),
+			// invitationcode 邀请码
+			genMenu2("420", "400", "邀请码管理", "el-icon-ElementPlus", 0,
+				"user:invitationcode:list", "user/invitationcode", "user/invitationcode/index",
+				genMenu3("421", "420", "邀请码详情", "user:invitationcode:detail"),
+				genMenu3("422", "420", "邀请码新增", "user:invitationcode:add"),
+				genMenu3("423", "420", "邀请码编辑", "user:invitationcode:edit"),
+				genMenu3("424", "420", "邀请码删除", "user:invitationcode:del"),
+			),
+			// ipblacklist IP黑名单
+			genMenu2("430", "400", "IP黑名单管理", "el-icon-LocationFilled", 0,
+				"user:ipblacklist:list", "user/ipblacklist", "user/ipblacklist/index",
+				genMenu3("431", "430", "IP黑名单详情", "user:ipblacklist:detail"),
+				genMenu3("432", "430", "IP黑名单新增", "user:ipblacklist:add"),
+				genMenu3("433", "430", "IP黑名单编辑", "user:ipblacklist:edit"),
+				genMenu3("434", "430", "IP黑名单删除", "user:ipblacklist:del"),
+			),
+			// ipwhitelist IP白名单
+			genMenu2("440", "400", "IP白名单管理", "el-icon-Location", 0,
+				"user:ipwhitelist:list", "user/ipwhitelist", "user/ipwhitelist/index",
+				genMenu3("441", "440", "IP白名单详情", "user:ipwhitelist:detail"),
+				genMenu3("442", "440", "IP白名单新增", "user:ipwhitelist:add"),
+				genMenu3("443", "440", "IP白名单编辑", "user:ipwhitelist:edit"),
+				genMenu3("444", "440", "IP白名单删除", "user:ipwhitelist:del"),
+			),
+			// model 模型
+			genMenu2("450", "400", "用户管理", "el-icon-UserFilled", 0,
+				"user:model:list", "user/model", "user/model/index",
+				genMenu3("451", "450", "用户详情", "user:model:detail"),
+				genMenu3("452", "450", "用户新增", "user:model:add"),
+				genMenu3("453", "450", "用户编辑", "user:model:edit"),
+				genMenu3("454", "450", "用户删除", "user:model:del"),
+			),
+			// loginrecord 登录记录
+			genMenu2("460", "400", "登录记录管理", "local-icon-xiangji", 0,
+				"user:loginrecord:list", "user/loginrecord", "user/loginrecord/index"),
+		),
 	})
 	for _, menu := range menus {
 		insertIfNotFound(tx, menu.Id, menu)

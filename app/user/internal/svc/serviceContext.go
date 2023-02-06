@@ -37,6 +37,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		&usermodel.UserSetting{},
 		&usermodel.UserTmp{},
 		&usermodel.LoginRecord{},
+		&usermodel.AutoIncrement{},
+		&usermodel.DefaultConv{},
+		&usermodel.InvitationCode{},
+		&usermodel.IpWhiteList{},
+		&usermodel.IpBlackList{},
+		&usermodel.UserRecycleBin{},
+		&usermodel.StatusRecord{},
 	)
 	return s
 }

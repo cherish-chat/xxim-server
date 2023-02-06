@@ -3,6 +3,7 @@ package xorm
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"github.com/cherish-chat/xxim-server/common/utils"
 )
 
 type M map[string]any
@@ -30,6 +31,14 @@ func (m *M) Scan(src interface{}) error {
 		return nil
 	}
 	return json.Unmarshal(src.([]byte), m)
+}
+
+func (m M) StringMap() map[string]string {
+	mm := make(map[string]string)
+	for k, v := range m {
+		mm[k] = utils.AnyToString(v)
+	}
+	return mm
 }
 
 type SliceString []string
