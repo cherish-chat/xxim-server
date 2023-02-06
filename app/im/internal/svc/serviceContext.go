@@ -8,6 +8,7 @@ import (
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
+	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -24,6 +25,7 @@ type ServiceContext struct {
 	msgService      msgservice.MsgService
 	relationService relationservice.RelationService
 	groupService    groupservice.GroupService
+	userService     userservice.UserService
 	noticeService   noticeservice.NoticeService
 	ConfigMgr       *xconf.ConfigMgr
 }
@@ -68,6 +70,13 @@ func (s *ServiceContext) GroupService() groupservice.GroupService {
 		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
 	}
 	return s.groupService
+}
+
+func (s *ServiceContext) UserService() userservice.UserService {
+	if s.userService == nil {
+		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
+	}
+	return s.userService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
