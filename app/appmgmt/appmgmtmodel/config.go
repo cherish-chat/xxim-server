@@ -13,6 +13,7 @@ type Config struct {
 	Name  string `gorm:"column:name;type:varchar(255);"`
 	// 作用平台
 	ScopePlatforms string `gorm:"column:scopePlatforms;type:varchar(255);"` // 空: 所有平台, ios android windows mac linux web system
+	Options        string `gorm:"column:options;type:varchar(255);"`
 }
 
 func (m *Config) GetScopePlatforms() []string {
@@ -34,5 +35,6 @@ func (m *Config) ToPB() *pb.AppMgmtConfig {
 		Type:           m.Type,
 		Name:           m.Name,
 		ScopePlatforms: m.ScopePlatforms,
+		Options:        m.Options,
 	}
 }
