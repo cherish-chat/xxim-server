@@ -21,6 +21,8 @@ type (
 	BatchSetMinSeqReq               = pb.BatchSetMinSeqReq
 	BatchSetMinSeqResp              = pb.BatchSetMinSeqResp
 	FlushUsersSubConvReq            = pb.FlushUsersSubConvReq
+	GetAllMsgListReq                = pb.GetAllMsgListReq
+	GetAllMsgListResp               = pb.GetAllMsgListResp
 	GetConvOnlineCountReq           = pb.GetConvOnlineCountReq
 	GetConvOnlineCountResp          = pb.GetConvOnlineCountResp
 	GetConvSubscribersReq           = pb.GetConvSubscribersReq
@@ -63,6 +65,8 @@ type (
 		GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error)
 		// FlushUsersSubConv 刷新用户订阅的会话
 		FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// GetAllMsgList 获取所有消息
+		GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error)
 	}
 
 	defaultMsgService struct {
@@ -153,4 +157,10 @@ func (m *defaultMsgService) GetConvOnlineCount(ctx context.Context, in *GetConvO
 func (m *defaultMsgService) FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.FlushUsersSubConv(ctx, in, opts...)
+}
+
+// GetAllMsgList 获取所有消息
+func (m *defaultMsgService) GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.GetAllMsgList(ctx, in, opts...)
 }

@@ -100,3 +100,9 @@ func (s *MsgServiceServer) FlushUsersSubConv(ctx context.Context, in *pb.FlushUs
 	l := logic.NewFlushUsersSubConvLogic(ctx, s.svcCtx)
 	return l.FlushUsersSubConv(in)
 }
+
+// GetAllMsgList 获取所有消息
+func (s *MsgServiceServer) GetAllMsgList(ctx context.Context, in *pb.GetAllMsgListReq) (*pb.GetAllMsgListResp, error) {
+	l := logic.NewGetAllMsgListLogic(ctx, s.svcCtx)
+	return l.GetAllMsgList(in)
+}
