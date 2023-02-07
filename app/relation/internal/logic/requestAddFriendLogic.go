@@ -197,10 +197,11 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 				UserId: in.To,
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: 0,
 				Content:     nil,
+				UniqueId:    "requestAddFriend",
 				Title:       "",
 				Ext:         nil,
 			}

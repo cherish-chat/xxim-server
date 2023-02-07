@@ -85,6 +85,7 @@ service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc BeforeRequest(BeforeRequestReq) returns (BeforeRequestResp);

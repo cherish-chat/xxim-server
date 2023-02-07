@@ -36,3 +36,8 @@ func (s *ConnServiceServer) SendMsg(ctx context.Context, in *pb.SendMsgReq) (*pb
 	l := logic.NewSendMsgLogic(ctx, s.svcCtx)
 	return l.SendMsg(in)
 }
+
+func (s *ConnServiceServer) KeepAlive(ctx context.Context, in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
+	l := logic.NewKeepAliveLogic(ctx, s.svcCtx)
+	return l.KeepAlive(in)
+}

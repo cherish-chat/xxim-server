@@ -103,15 +103,16 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				ConvId: pb.HiddenConvIdGroup(in.GroupId),
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_GroupMemberLeave,
 				Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
 					GroupId: in.GroupId,
 					Tip:     tip,
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: "member",
+				Title:    "",
+				Ext:      nil,
 			}
 			err = notice.Insert(l.ctx, tx)
 			if err != nil {
@@ -215,14 +216,15 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 			ConvId: pb.HiddenConvIdGroup(group.Id),
 			Options: noticemodel.NoticeOption{
 				StorageForClient: false,
-				UpdateConvMsg:    false,
+				UpdateConvNotice: false,
 			},
 			ContentType: int32(contentType),
 			Content: utils.AnyToBytes(pb.NoticeContent_DismissGroup{
 				GroupId: group.Id,
 			}),
-			Title: "",
-			Ext:   nil,
+			UniqueId: "status",
+			Title:    "",
+			Ext:      nil,
 		}
 		err = notice.Insert(l.ctx, tx)
 		if err != nil {

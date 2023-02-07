@@ -26,6 +26,8 @@ type NoticeServiceClient interface {
 	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	//AfterDisconnect conn hook
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	//KeepAlive
+	KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 	//GetUserNoticeData 获取用户通知数据
 	GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error)
 	//AckNoticeData 确认通知数据
@@ -58,6 +60,15 @@ func (c *noticeServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisc
 	return out, nil
 }
 
+func (c *noticeServiceClient) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	out := new(KeepAliveResp)
+	err := c.cc.Invoke(ctx, "/pb.noticeService/KeepAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *noticeServiceClient) GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error) {
 	out := new(GetUserNoticeDataResp)
 	err := c.cc.Invoke(ctx, "/pb.noticeService/GetUserNoticeData", in, out, opts...)
@@ -84,6 +95,8 @@ type NoticeServiceServer interface {
 	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
 	//AfterDisconnect conn hook
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
+	//KeepAlive
+	KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error)
 	//GetUserNoticeData 获取用户通知数据
 	GetUserNoticeData(context.Context, *GetUserNoticeDataReq) (*GetUserNoticeDataResp, error)
 	//AckNoticeData 确认通知数据
@@ -100,6 +113,9 @@ func (UnimplementedNoticeServiceServer) AfterConnect(context.Context, *AfterConn
 }
 func (UnimplementedNoticeServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
+}
+func (UnimplementedNoticeServiceServer) KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeepAlive not implemented")
 }
 func (UnimplementedNoticeServiceServer) GetUserNoticeData(context.Context, *GetUserNoticeDataReq) (*GetUserNoticeDataResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserNoticeData not implemented")
@@ -156,6 +172,24 @@ func _NoticeService_AfterDisconnect_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NoticeService_KeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeepAliveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NoticeServiceServer).KeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.noticeService/KeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NoticeServiceServer).KeepAlive(ctx, req.(*KeepAliveReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NoticeService_GetUserNoticeData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserNoticeDataReq)
 	if err := dec(in); err != nil {
@@ -206,6 +240,10 @@ var NoticeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AfterDisconnect",
 			Handler:    _NoticeService_AfterDisconnect_Handler,
+		},
+		{
+			MethodName: "KeepAlive",
+			Handler:    _NoticeService_KeepAlive_Handler,
 		},
 		{
 			MethodName: "GetUserNoticeData",

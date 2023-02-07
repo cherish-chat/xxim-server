@@ -11,3 +11,5 @@ type SendMsgReq = pb.SendMsgReq
 type SendMsgResp = pb.SendMsgResp
 type AfterConnectReq = pb.AfterConnectReq
 type AfterDisconnectReq = pb.AfterDisconnectReq
+type KeepAliveReq = pb.KeepAliveReq
+type KeepAliveResp = pb.KeepAliveResp

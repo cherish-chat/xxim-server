@@ -30,6 +30,7 @@ type (
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 		BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error)
@@ -63,6 +64,11 @@ func (m *defaultImService) AfterConnect(ctx context.Context, in *AfterConnectReq
 func (m *defaultImService) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.AfterDisconnect(ctx, in, opts...)
+}
+
+func (m *defaultImService) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.KeepAlive(ctx, in, opts...)
 }
 
 func (m *defaultImService) KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error) {

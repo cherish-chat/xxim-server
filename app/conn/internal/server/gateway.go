@@ -273,6 +273,26 @@ func (s *ConnServer) registerMsg() {
 		}
 		conngateway.AddRoute("/v1/msg/getMsgById", route)
 	}
+	// ReadMsgReq ReadMsgResp
+	{
+		route := conngateway.Route[*pb.ReadMsgReq, *pb.ReadMsgResp]{
+			NewRequest: func() *pb.ReadMsgReq {
+				return &pb.ReadMsgReq{}
+			},
+			Do: s.svcCtx.MsgService().ReadMsg,
+		}
+		conngateway.AddRoute("/v1/msg/sendReadMsg", route)
+	}
+	// EditMsgReq EditMsgResp
+	{
+		route := conngateway.Route[*pb.EditMsgReq, *pb.EditMsgResp]{
+			NewRequest: func() *pb.EditMsgReq {
+				return &pb.EditMsgReq{}
+			},
+			Do: s.svcCtx.MsgService().EditMsg,
+		}
+		conngateway.AddRoute("/v1/msg/sendEditMsg", route)
+	}
 }
 
 func (s *ConnServer) registerNotice() {

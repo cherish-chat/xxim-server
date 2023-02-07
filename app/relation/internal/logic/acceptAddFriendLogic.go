@@ -74,14 +74,15 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 					UserId: userId,
 					Options: noticemodel.NoticeOption{
 						StorageForClient: false,
-						UpdateConvMsg:    false,
+						UpdateConvNotice: false,
 					},
 					ContentType: pb.NoticeContentType_SyncFriendList,
 					Content: utils.AnyToBytes(pb.NoticeContent_SyncFriendList{
 						Comment: "acceptAddFriend",
 					}),
-					Title: "",
-					Ext:   nil,
+					UniqueId: "syncFriendList",
+					Title:    "",
+					Ext:      nil,
 				}
 				err := notice.Insert(l.ctx, tx)
 				if err != nil {

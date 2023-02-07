@@ -106,15 +106,16 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 				ConvId: pb.HiddenConvIdGroup(apply.GroupId),
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_NewGroupMember,
 				Content: utils.AnyToBytes(pb.NoticeContent_NewGroupMember{
 					GroupId:  apply.GroupId,
 					MemberId: apply.UserId,
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: "member",
+				Title:    "",
+				Ext:      nil,
 			}
 			err = notice.Insert(l.ctx, tx)
 			if err != nil {
@@ -131,10 +132,10 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 				UserId: manager.UserId,
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_ApplyToBeGroupMember,
-				Content: utils.AnyToBytes(pb.NoticeContent_ApplyToBeGrouoMember{
+				Content: utils.AnyToBytes(pb.NoticeContent_ApplyToBeGroupMember{
 					ApplyId:      apply.Id,
 					GroupId:      apply.GroupId,
 					UserId:       apply.UserId,
@@ -144,8 +145,9 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 					HandleTime:   apply.HandleTime,
 					HandleUserId: apply.HandleUserId,
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: apply.Id,
+				Title:    "",
+				Ext:      nil,
 			}
 			err := notice.Insert(l.ctx, tx)
 			if err != nil {

@@ -61,19 +61,27 @@ func (l *UpdateUserInfoLogic) UpdateUserInfo(in *pb.UpdateUserInfoReq) (*pb.Upda
 			ConvId: pb.HiddenConvIdFriend(in.CommonReq.UserId),
 			Options: noticemodel.NoticeOption{
 				StorageForClient: false,
-				UpdateConvMsg:    false,
+				UpdateConvNotice: false,
 			},
 			ContentType: pb.NoticeContentType_UpdateUserInfo,
 			Content: utils.AnyToBytes(pb.NoticeContent_UpdateUserInfo{
 				UserId:    in.CommonReq.UserId,
 				UpdateMap: updateMap,
 			}),
-			Title: "",
-			Ext:   nil,
+			UniqueId: "updateUserInfo",
+			Title:    "",
+			Ext:      nil,
 		}
 		err = notice.Insert(l.ctx, tx)
 		if err != nil {
 			l.Errorf("insert notice failed, err: %v", err)
+			return err
+		}
+		return nil
+	}, func(tx *gorm.DB) error {
+		err := usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{in.CommonReq.UserId})
+		if err != nil {
+			l.Errorf("flush user cache failed, err: %v", err)
 			return err
 		}
 		return nil

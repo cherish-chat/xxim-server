@@ -135,14 +135,15 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 			ConvId: pb.HiddenConvIdGroup(group.Id),
 			Options: noticemodel.NoticeOption{
 				StorageForClient: false,
-				UpdateConvMsg:    false,
+				UpdateConvNotice: false,
 			},
 			ContentType: pb.NoticeContentType_CreateGroup,
 			Content: utils.AnyToBytes(pb.NoticeContent_CreateGroup{
 				GroupId: group.Id,
 			}),
-			Title: "",
-			Ext:   nil,
+			UniqueId: "create",
+			Title:    "",
+			Ext:      nil,
 		}
 		err = notice.Insert(l.ctx, tx)
 		if err != nil {

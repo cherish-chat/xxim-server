@@ -190,6 +190,35 @@ message GetAllMsgListResp {
   int64 total = 3;
   map<string, string> userMap = 4;
 }
+
+//ReadMsgReq 设置会话已读
+message ReadMsgReq {
+  string senderId = 1;
+  string convId = 2;
+  string seq = 3;
+  bytes noticeContent = 4;
+  CommonReq commonReq = 11;
+}
+
+message ReadMsgResp {
+  CommonResp commonResp = 1;
+}
+
+//EditMsgReq 编辑消息
+message EditMsgReq {
+  string senderId = 1;
+  string serverMsgId = 2;
+  int32 contentType = 3;
+  bytes content = 4;
+  bytes ext = 5;
+  bytes noticeContent = 6;
+  CommonReq commonReq = 11;
+}
+
+message EditMsgResp {
+  CommonResp commonResp = 1;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -206,6 +235,7 @@ service msgService {
   // conn hook
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
   //GetConvSubscribers 获取一个会话里所有的消息订阅者
   rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
   //OfflinePushMsg 离线推送消息
@@ -217,4 +247,8 @@ service msgService {
 
   //GetAllMsgList 获取所有消息
   rpc GetAllMsgList(GetAllMsgListReq) returns (GetAllMsgListResp) {}
+  //ReadMsg 设置会话已读
+  rpc ReadMsg(ReadMsgReq) returns (ReadMsgResp) {}
+  //EditMsg 编辑消息
+  rpc EditMsg(EditMsgReq) returns (EditMsgResp) {}
 }

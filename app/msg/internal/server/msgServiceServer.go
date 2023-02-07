@@ -77,6 +77,11 @@ func (s *MsgServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisc
 	return l.AfterDisconnect(in)
 }
 
+func (s *MsgServiceServer) KeepAlive(ctx context.Context, in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
+	l := logic.NewKeepAliveLogic(ctx, s.svcCtx)
+	return l.KeepAlive(in)
+}
+
 // GetConvSubscribers 获取一个会话里所有的消息订阅者
 func (s *MsgServiceServer) GetConvSubscribers(ctx context.Context, in *pb.GetConvSubscribersReq) (*pb.GetConvSubscribersResp, error) {
 	l := logic.NewGetConvSubscribersLogic(ctx, s.svcCtx)
@@ -105,4 +110,16 @@ func (s *MsgServiceServer) FlushUsersSubConv(ctx context.Context, in *pb.FlushUs
 func (s *MsgServiceServer) GetAllMsgList(ctx context.Context, in *pb.GetAllMsgListReq) (*pb.GetAllMsgListResp, error) {
 	l := logic.NewGetAllMsgListLogic(ctx, s.svcCtx)
 	return l.GetAllMsgList(in)
+}
+
+// ReadMsg 设置会话已读
+func (s *MsgServiceServer) ReadMsg(ctx context.Context, in *pb.ReadMsgReq) (*pb.ReadMsgResp, error) {
+	l := logic.NewReadMsgLogic(ctx, s.svcCtx)
+	return l.ReadMsg(in)
+}
+
+// EditMsg 编辑消息
+func (s *MsgServiceServer) EditMsg(ctx context.Context, in *pb.EditMsgReq) (*pb.EditMsgResp, error) {
+	l := logic.NewEditMsgLogic(ctx, s.svcCtx)
+	return l.EditMsg(in)
 }

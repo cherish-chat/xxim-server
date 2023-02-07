@@ -42,13 +42,14 @@ message ResponseBody {
 }
 
 message SetCxnParamsReq {
-  string platform = 1;
-  string deviceId = 2;
-  string deviceModel = 3;
-  string osVersion = 4;
-  string appVersion = 5;
-  string language = 6;
-  string networkUsed = 7;
+  string packageId = 1;
+  string platform = 2;
+  string deviceId = 3;
+  string deviceModel = 4;
+  string osVersion = 5;
+  string appVersion = 6;
+  string language = 7;
+  string networkUsed = 8;
   bytes ext = 11;
 }
 
@@ -113,7 +114,7 @@ message NoticeData {
     // 客户端是否需要保存消息
     bool storageForClient = 1;
     // 是否需要重新渲染会话
-    bool updateConvMsg = 2;
+    bool updateConvNotice = 2;
   }
   // 会话信息
   string convId = 1; // 会话id
@@ -173,6 +174,28 @@ message BatchGetConvSeqResp {
   }
   map<string, ConvSeq> convSeqMap = 1;
 }
+
+//ReadMsgReq 设置会话已读
+message ReadMsgReq {
+  string senderId = 1;
+  string convId = 2;
+  string seq = 3;
+  bytes noticeContent = 4;
+}
+
+message ReadMsgResp {}
+
+//EditMsgReq 编辑消息
+message EditMsgReq {
+  string senderId = 1;
+  string serverMsgId = 2;
+  int32 contentType = 3;
+  bytes content = 4;
+  bytes ext = 5;
+  bytes noticeContent = 6;
+}
+
+message EditMsgResp {}
 
 //AckNoticeDataReq 确认通知数据
 message AckNoticeDataReq {

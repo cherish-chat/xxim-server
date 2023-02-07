@@ -116,6 +116,14 @@ func (x *KickGroupMemberReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *ReadMsgReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *EditMsgReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *SetCxnParamsReq) SetCommonReq(r *CommonReq) {
 }
 

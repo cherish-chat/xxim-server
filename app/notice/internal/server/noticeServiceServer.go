@@ -34,6 +34,12 @@ func (s *NoticeServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterD
 	return l.AfterDisconnect(in)
 }
 
+// KeepAlive
+func (s *NoticeServiceServer) KeepAlive(ctx context.Context, in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
+	l := logic.NewKeepAliveLogic(ctx, s.svcCtx)
+	return l.KeepAlive(in)
+}
+
 // GetUserNoticeData 获取用户通知数据
 func (s *NoticeServiceServer) GetUserNoticeData(ctx context.Context, in *pb.GetUserNoticeDataReq) (*pb.GetUserNoticeDataResp, error) {
 	l := logic.NewGetUserNoticeDataLogic(ctx, s.svcCtx)

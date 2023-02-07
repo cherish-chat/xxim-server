@@ -90,13 +90,14 @@ message ResponseBody {
 }
 
 message SetCxnParamsReq {
-  string platform = 1;
-  string deviceId = 2;
-  string deviceModel = 3;
-  string osVersion = 4;
-  string appVersion = 5;
-  string language = 6;
-  string networkUsed = 7;
+  string packageId = 1;
+  string platform = 2;
+  string deviceId = 3;
+  string deviceModel = 4;
+  string osVersion = 5;
+  string appVersion = 6;
+  string language = 7;
+  string networkUsed = 8;
   bytes ext = 11;
 }
 
@@ -148,8 +149,17 @@ message AfterDisconnectReq {
   string disconnectedAt = 3;
 }
 
+//KeepAliveReq 心跳
+message KeepAliveReq {
+  CommonReq commonReq = 1;
+}
+
+message KeepAliveResp {
+  CommonResp commonResp = 1;
+}
 service connService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
 }

@@ -71,14 +71,15 @@ func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*p
 				ConvId: pb.HiddenConvIdGroup(in.GroupModel.Id),
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_SetGroupInfo,
 				Content: utils.AnyToBytes(pb.NoticeContent_DismissGroup{
 					GroupId: in.GroupModel.Id,
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: "info",
+				Title:    "",
+				Ext:      nil,
 			}
 			err = notice.Insert(l.ctx, tx)
 			if err != nil {

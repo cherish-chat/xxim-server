@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/pkg/mobpush"
@@ -27,6 +28,7 @@ type ServiceContext struct {
 	relationService    relationservice.RelationService
 	groupService       groupservice.GroupService
 	userService        userservice.UserService
+	noticeService      noticeservice.NoticeService
 	MobPush            *mobpush.Pusher
 	ConfigMgr          *xconf.ConfigMgr
 	SyncSendMsgLimiter *limit.TokenLimiter
@@ -93,4 +95,11 @@ func (s *ServiceContext) UserService() userservice.UserService {
 		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
 	}
 	return s.userService
+}
+
+func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
+	if s.noticeService == nil {
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+	}
+	return s.noticeService
 }

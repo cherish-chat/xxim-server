@@ -12,6 +12,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -20,11 +21,12 @@ type (
 		// 通知id 由convId+会话自增id+userId组成 主键
 		NoticeId string `gorm:"column:noticeId;type:char(152);primary_key;not null;" json:"noticeId"`
 		// 会话id
-		ConvId string `gorm:"column:convId;type:char(96);not null;index:cu;" json:"convId"`
+		ConvId string `gorm:"column:convId;type:char(96);not null;index:cu;index:unique_in_conv,unique;" json:"convId"`
 		// 自增id
 		ConvAutoId int64 `gorm:"column:convAutoId;type:bigint(20);not null;index;" json:"convAutoId"`
 		// 接收人id 如果为空表示广播
-		UserId string `gorm:"column:userId;type:char(32);not null;index:cu;" json:"userId"`
+		UserId   string `gorm:"column:userId;type:char(32);not null;index:cu;" json:"userId"`
+		UniqueId string `gorm:"column:uniqueId;type:char(160);not null;index:unique_in_conv,unique;" json:"uniqueId"`
 
 		Options NoticeOption `gorm:"column:options;type:json;" json:"options"`
 		// 创建时间
@@ -44,7 +46,7 @@ type (
 	}
 	NoticeOption struct {
 		StorageForClient bool `gorm:"column:storageForClient;type:tinyint(1);not null" json:"storageForClient"`
-		UpdateConvMsg    bool `gorm:"column:updateConvMsg;type:tinyint(1);not null" json:"updateConvMsg"`
+		UpdateConvNotice bool `gorm:"column:updateConvNotice;type:tinyint(1);not null" json:"updateConvNotice"`
 	}
 	NoticeAckRecord struct {
 		ConvId     string `gorm:"column:convId;type:char(96);index:cud,unique;default:'';" json:"convId"`
@@ -92,7 +94,34 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 	if m.Ext == nil {
 		m.Ext = make([]byte, 0)
 	}
-	return tx.Create(m).Error
+	// upsert insert on duplicate key
+	return tx.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "uniqueId"}, {Name: "convId"}},
+		// map 更新
+		DoUpdates: clause.Assignments(map[string]interface{}{
+			// 更新 noticeId
+			"noticeId": m.NoticeId,
+			// 更新 convAutoId
+			"convAutoId": m.ConvAutoId,
+			// 更新 createTime
+			"createTime": m.CreateTime,
+			// 更新 contentType
+			"contentType": m.ContentType,
+			// 更新 content
+			"content": m.Content,
+			// 更新 title
+			"title": m.Title,
+			// 更新 ext
+			"ext": m.Ext,
+			// 更新 options
+			"options": m.Options,
+			// 更新 convId
+			"convId": m.ConvId,
+			// 更新 userId
+			"userId": m.UserId,
+		}),
+	}).Create(m).Error
+
 }
 
 func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
@@ -133,15 +162,17 @@ func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId st
 	err := tx.Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).First(&ackRecord).Error
 	if err != nil {
 		if xorm.RecordNotFound(err) {
-			// 设置为maxConvAutoId
-			maxConvAutoId, err := GetMaxConvAutoId(ctx, tx, convId, 0)
-			if err != nil {
-				return 0, err
-			}
 			ackRecord.ConvId = convId
 			ackRecord.UserId = userId
 			ackRecord.DeviceId = deviceId
-			ackRecord.ConvAutoId = maxConvAutoId - 1
+			if pb.DefaultAckId(convId) == -1 {
+				// 设置为maxConvAutoId
+				maxConvAutoId, err := GetMaxConvAutoId(ctx, tx, convId, 0)
+				if err != nil {
+					return 0, err
+				}
+				ackRecord.ConvAutoId = maxConvAutoId - 1
+			}
 			err = tx.Model(&NoticeAckRecord{}).Create(&ackRecord).Error
 			if err != nil {
 				logger.Errorf("create minConvAutoId err: %v", err)

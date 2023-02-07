@@ -143,7 +143,7 @@ func (l *GetUserNoticeDataLogic) pushNotice(in *pb.GetUserNoticeDataReq, notice 
 		Content:     notice.Content,
 		Options: &pb.NoticeData_Options{
 			StorageForClient: notice.Options.StorageForClient,
-			UpdateConvMsg:    notice.Options.UpdateConvMsg,
+			UpdateConvNotice: notice.Options.UpdateConvNotice,
 		},
 		Ext: notice.Ext,
 	}

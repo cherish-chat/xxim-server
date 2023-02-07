@@ -5,8 +5,9 @@ import (
 )
 
 type HttpConfig struct {
-	Port int    `json:",default=6701"`
-	Host string `json:",default=0.0.0.0"`
+	Port       int    `json:",default=6701"`
+	Host       string `json:",default=0.0.0.0"`
+	KaInterval int64  `json:",default=30"` // keep alive interval seconds
 }
 
 type Config struct {

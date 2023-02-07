@@ -53,6 +53,8 @@ func (l *GetAllConvIdOfUserLogic) GetAllConvIdOfUser(in *pb.GetAllConvIdOfUserRe
 		for _, id := range friendIds {
 			convIds = append(convIds, pb.SingleConvId(in.UserId, id))
 			convIds = append(convIds, pb.HiddenConvIdFriend(id))
+			convIds = append(convIds, pb.HiddenConvId(pb.SingleConvId(in.UserId, id)))
+			noticIds = append(noticIds, pb.HiddenConvId(pb.SingleConvId(in.UserId, id)))
 			noticIds = append(noticIds, pb.HiddenConvIdFriend(id))
 		}
 	}

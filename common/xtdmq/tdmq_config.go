@@ -1,6 +1,7 @@
 package xtdmq
 
 import (
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"os"
 	"strings"
 )
@@ -64,10 +65,5 @@ func (c TDMQConsumerConfig) GetConsumerName() string {
 }
 
 func (c TDMQProducerConfig) GetProducerName() string {
-	if podName := os.Getenv("POD_NAME"); podName != "" {
-		tmp := strings.Split(podName, "-")
-		podNum := tmp[len(tmp)-1]
-		return c.ProducerName + "-" + podNum
-	}
-	return c.ProducerName
+	return utils.GenId()
 }

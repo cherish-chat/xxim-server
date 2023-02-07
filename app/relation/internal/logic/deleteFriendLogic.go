@@ -50,14 +50,15 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 				UserId: userId,
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_SyncFriendList,
 				Content: utils.AnyToBytes(pb.NoticeContent_SyncFriendList{
 					Comment: "deleteFriend",
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: "syncFriendList",
+				Title:    "",
+				Ext:      nil,
 			}
 			err := notice.Insert(l.ctx, tx)
 			if err != nil {

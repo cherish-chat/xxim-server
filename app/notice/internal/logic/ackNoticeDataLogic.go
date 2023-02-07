@@ -39,16 +39,16 @@ func (l *AckNoticeDataLogic) AckNoticeData(in *pb.AckNoticeDataReq) (*pb.AckNoti
 			}
 		})
 	}()
-	convId, seq, _ := pb.ParseServerNoticeId(in.NoticeId)
+	_, seq, _ := pb.ParseServerNoticeId(in.NoticeId)
 	ackRecord := &noticemodel.NoticeAckRecord{
-		ConvId:     convId,
+		ConvId:     in.ConvId,
 		UserId:     in.CommonReq.UserId,
 		DeviceId:   in.CommonReq.DeviceId,
 		ConvAutoId: seq,
 	}
 	err := l.svcCtx.Mysql().Model(ackRecord).
 		Where("convId = ? and userId = ? and deviceId = ?",
-			convId, in.CommonReq.UserId, in.CommonReq.DeviceId).
+			in.ConvId, in.CommonReq.UserId, in.CommonReq.DeviceId).
 		Updates(map[string]interface{}{
 			"convAutoId": seq,
 		}).Error
@@ -56,7 +56,7 @@ func (l *AckNoticeDataLogic) AckNoticeData(in *pb.AckNoticeDataReq) (*pb.AckNoti
 		l.Errorf("AckNoticeData failed, err: %v", err)
 		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	err = noticemodel.DelNoticeZSet(l.ctx, l.svcCtx.Redis(), convId, in.CommonReq.UserId, in.CommonReq.DeviceId, seq)
+	err = noticemodel.DelNoticeZSet(l.ctx, l.svcCtx.Redis(), in.ConvId, in.CommonReq.UserId, in.CommonReq.DeviceId, seq)
 	if err != nil {
 		l.Errorf("AckNoticeData failed, err: %v", err)
 		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err

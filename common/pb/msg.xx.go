@@ -71,12 +71,14 @@ func ParseSingleConv(convId string) []string {
 }
 
 func ParseServerNoticeId(noticeId string) (convId string, seq int64, userId string) {
+	// notice:convId-seq-uid
+	noticeId = strings.TrimPrefix(noticeId, NoticePrefix)
 	arr := strings.Split(noticeId, IdSeparator)
-	if len(arr) == 3 {
-		convId = arr[0]
-		seq, _ = strconv.ParseInt(arr[1], 10, 64)
-		userId = arr[2]
-	}
+	// userId 是最后一个
+	userId = arr[len(arr)-1]
+	// 剩下的是 convId-seq
+	convIdSeq := strings.TrimSuffix(noticeId, IdSeparator+userId)
+	convId, seq = ParseConvServerMsgId(convIdSeq)
 	return
 }
 

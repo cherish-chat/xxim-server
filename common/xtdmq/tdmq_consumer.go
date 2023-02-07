@@ -99,7 +99,7 @@ func (p *TDMQConsumer) Consume(
 			properties["topic"] = receive.Topic()
 		}
 		traceId, _ := properties["traceId"]
-		xtrace.RunWithTrace(
+		go xtrace.RunWithTrace(
 			traceId,
 			fmt.Sprintf("tdmqconsumer/topic:%s/subname:%s/consumername:%s", p.ConsumerConfig.TopicName, p.ConsumerConfig.SubName, p.ConsumerConfig.ConsumerName),
 			func(ctx context.Context) {
@@ -113,8 +113,9 @@ func (p *TDMQConsumer) Consume(
 						if err != nil {
 							logx.Errorf("redis incr error:%v", err)
 						}
-						if count == 12 {
-							// 重试12次，丢到死信队列，TODO 告警
+						if count > 2 {
+							// 告警
+							logx.Errorf("tdmq consumer retry count > 2, traceId:%s", traceId)
 						}
 						p.consumer.ReconsumeLater(receive, GetRetryDelay(count))
 					} else {

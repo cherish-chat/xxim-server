@@ -26,6 +26,8 @@ type (
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// AfterDisconnect conn hook
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// KeepAlive
+		KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 		// GetUserNoticeData 获取用户通知数据
 		GetUserNoticeData(ctx context.Context, in *GetUserNoticeDataReq, opts ...grpc.CallOption) (*GetUserNoticeDataResp, error)
 		// AckNoticeData 确认通知数据
@@ -53,6 +55,12 @@ func (m *defaultNoticeService) AfterConnect(ctx context.Context, in *AfterConnec
 func (m *defaultNoticeService) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewNoticeServiceClient(m.cli.Conn())
 	return client.AfterDisconnect(ctx, in, opts...)
+}
+
+// KeepAlive
+func (m *defaultNoticeService) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	client := pb.NewNoticeServiceClient(m.cli.Conn())
+	return client.KeepAlive(ctx, in, opts...)
 }
 
 // GetUserNoticeData 获取用户通知数据

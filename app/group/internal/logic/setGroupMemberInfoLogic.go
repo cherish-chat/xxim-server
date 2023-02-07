@@ -135,7 +135,7 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 				ConvId: pb.HiddenConvIdGroup(in.GroupId),
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_SetGroupMemberInfo,
 				Content: utils.AnyToBytes(pb.NoticeContent_SetGroupMemberInfo{
@@ -143,8 +143,9 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 					MemberId:  in.MemberId,
 					UpdateMap: updateMap,
 				}),
-				Title: "",
-				Ext:   nil,
+				Title:    "",
+				UniqueId: "member",
+				Ext:      nil,
 			}
 			err = notice.Insert(l.ctx, tx)
 			if err != nil {

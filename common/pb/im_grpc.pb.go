@@ -25,6 +25,7 @@ type ImServiceClient interface {
 	BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
 	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 	KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 	GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 	BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error)
@@ -63,6 +64,15 @@ func (c *imServiceClient) AfterConnect(ctx context.Context, in *AfterConnectReq,
 func (c *imServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, "/pb.imService/AfterDisconnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *imServiceClient) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	out := new(KeepAliveResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/KeepAlive", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,6 +149,7 @@ type ImServiceServer interface {
 	BeforeConnect(context.Context, *BeforeConnectReq) (*BeforeConnectResp, error)
 	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
+	KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error)
 	KickUserConn(context.Context, *KickUserConnReq) (*KickUserConnResp, error)
 	GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error)
 	BeforeRequest(context.Context, *BeforeRequestReq) (*BeforeRequestResp, error)
@@ -161,6 +172,9 @@ func (UnimplementedImServiceServer) AfterConnect(context.Context, *AfterConnectR
 }
 func (UnimplementedImServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
+}
+func (UnimplementedImServiceServer) KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeepAlive not implemented")
 }
 func (UnimplementedImServiceServer) KickUserConn(context.Context, *KickUserConnReq) (*KickUserConnResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KickUserConn not implemented")
@@ -246,6 +260,24 @@ func _ImService_AfterDisconnect_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ImServiceServer).AfterDisconnect(ctx, req.(*AfterDisconnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ImService_KeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeepAliveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).KeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/KeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).KeepAlive(ctx, req.(*KeepAliveReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -394,6 +426,10 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AfterDisconnect",
 			Handler:    _ImService_AfterDisconnect_Handler,
+		},
+		{
+			MethodName: "KeepAlive",
+			Handler:    _ImService_KeepAlive_Handler,
 		},
 		{
 			MethodName: "KickUserConn",

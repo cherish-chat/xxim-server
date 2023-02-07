@@ -37,6 +37,11 @@ func (s *ImServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisco
 	return l.AfterDisconnect(in)
 }
 
+func (s *ImServiceServer) KeepAlive(ctx context.Context, in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
+	l := logic.NewKeepAliveLogic(ctx, s.svcCtx)
+	return l.KeepAlive(in)
+}
+
 func (s *ImServiceServer) KickUserConn(ctx context.Context, in *pb.KickUserConnReq) (*pb.KickUserConnResp, error) {
 	l := logic.NewKickUserConnLogic(ctx, s.svcCtx)
 	return l.KickUserConn(in)

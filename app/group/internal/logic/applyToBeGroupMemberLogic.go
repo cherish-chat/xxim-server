@@ -76,10 +76,10 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 				UserId: manager.UserId,
 				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
+					UpdateConvNotice: false,
 				},
 				ContentType: pb.NoticeContentType_ApplyToBeGroupMember,
-				Content: utils.AnyToBytes(pb.NoticeContent_ApplyToBeGrouoMember{
+				Content: utils.AnyToBytes(pb.NoticeContent_ApplyToBeGroupMember{
 					ApplyId:      apply.Id,
 					GroupId:      apply.GroupId,
 					UserId:       apply.UserId,
@@ -89,8 +89,9 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 					HandleTime:   apply.HandleTime,
 					HandleUserId: apply.HandleUserId,
 				}),
-				Title: "",
-				Ext:   nil,
+				UniqueId: apply.Id,
+				Title:    "",
+				Ext:      nil,
 			}
 			err := notice.Insert(l.ctx, tx)
 			if err != nil {

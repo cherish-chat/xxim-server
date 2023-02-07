@@ -10,7 +10,7 @@ message NoticeData {
     // 客户端是否需要保存消息
     bool storageForClient = 1;
     // 是否需要重新渲染会话
-    bool updateConvMsg = 2;
+    bool updateConvNotice = 2;
   }
   // 会话信息
   string convId = 1; // 会话id
@@ -57,11 +57,14 @@ message AckNoticeDataReq {
 message AckNoticeDataResp {
   CommonResp commonResp = 1;
 }
+
 service noticeService {
   //AfterConnect conn hook
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   //AfterDisconnect conn hook
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  //KeepAlive
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
   //GetUserNoticeData 获取用户通知数据
   rpc GetUserNoticeData(GetUserNoticeDataReq) returns (GetUserNoticeDataResp);
   //AckNoticeData 确认通知数据

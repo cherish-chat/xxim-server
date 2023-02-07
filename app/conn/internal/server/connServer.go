@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/server/ws"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
@@ -25,6 +26,7 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 	server.SetOnReceive(l.OnReceive)
 	s.Server = server
 	s.registerGateway()
+	go logic.NewKeepAliveLogic(context.Background(), svcCtx).Start()
 	go l.Stats()
 	return s
 }

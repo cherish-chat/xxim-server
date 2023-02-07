@@ -27,7 +27,7 @@ func NewSetConnParamsLogic(svcCtx *svc.ServiceContext) *SetConnParamsLogic {
 func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnParamsReq, opts ...grpc.CallOption) (*pb.SetCxnParamsResp, error) {
 	return &pb.SetCxnParamsResp{
 		Platform:    req.GetPlatform(),
-		DeviceId:    req.GetDeviceId(),
+		DeviceId:    req.GetPackageId(),
 		DeviceModel: req.GetDeviceModel(),
 		OsVersion:   req.GetOsVersion(),
 		AppVersion:  req.GetAppVersion(),
