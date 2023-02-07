@@ -73,11 +73,11 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			// 解散群
 			var commonResp *pb.CommonResp
 			var err error
-			xtrace.StartFuncSpan(l.ctx, "DismissGroup", func(ctx context.Context) {
-				commonResp, err = l.DismissGroup(in)
+			xtrace.StartFuncSpan(l.ctx, "DismissRecoverGroup", func(ctx context.Context) {
+				commonResp, err = l.DismissRecoverGroup(in)
 			})
 			if err != nil {
-				l.Errorf("HandleGroupApply DismissGroup error: %v", err)
+				l.Errorf("HandleGroupApply DismissRecoverGroup error: %v", err)
 				return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
 			return &pb.KickGroupMemberResp{CommonResp: commonResp}, nil
@@ -172,7 +172,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 	return &pb.KickGroupMemberResp{}, nil
 }
 
-func (l *KickGroupMemberLogic) DismissGroup(in *pb.KickGroupMemberReq) (*pb.CommonResp, error) {
+func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*pb.CommonResp, error) {
 	// 查询group
 	mapGroupByIds, err := NewMapGroupByIdsLogic(l.ctx, l.svcCtx).MapGroupByIds(&pb.MapGroupByIdsReq{
 		Ids: []string{in.GroupId},
@@ -197,10 +197,18 @@ func (l *KickGroupMemberLogic) DismissGroup(in *pb.KickGroupMemberReq) (*pb.Comm
 		), nil
 	}
 	group := groupmodel.GroupFromBytes(groupBytes)
+	var (
+		dismissTime = time.Now().UnixMilli()
+		contentType = pb.NoticeContentType_DismissGroup
+	)
+	if group.DismissTime > 0 {
+		dismissTime = 0
+		contentType = pb.NoticeContentType_RecoverGroup
+	}
 	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 		// update dismissTime
 		return xorm.Update(tx, group, map[string]interface{}{
-			"dismissTime": time.Now().UnixMilli(),
+			"dismissTime": dismissTime,
 		})
 	}, func(tx *gorm.DB) error {
 		notice := &noticemodel.Notice{
@@ -209,7 +217,7 @@ func (l *KickGroupMemberLogic) DismissGroup(in *pb.KickGroupMemberReq) (*pb.Comm
 				StorageForClient: false,
 				UpdateConvMsg:    false,
 			},
-			ContentType: pb.NoticeContentType_DismissGroup,
+			ContentType: int32(contentType),
 			Content: utils.AnyToBytes(pb.NoticeContent_DismissGroup{
 				GroupId: group.Id,
 			}),

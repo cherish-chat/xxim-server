@@ -123,3 +123,33 @@ func (s *GroupServiceServer) HandleGroupApply(ctx context.Context, in *pb.Handle
 	l := logic.NewHandleGroupApplyLogic(ctx, s.svcCtx)
 	return l.HandleGroupApply(in)
 }
+
+// GetGroupListByUserId 分页获取某人的群列表
+func (s *GroupServiceServer) GetGroupListByUserId(ctx context.Context, in *pb.GetGroupListByUserIdReq) (*pb.GetGroupListByUserIdResp, error) {
+	l := logic.NewGetGroupListByUserIdLogic(ctx, s.svcCtx)
+	return l.GetGroupListByUserId(in)
+}
+
+// GetAllGroupModel 获取所有群组
+func (s *GroupServiceServer) GetAllGroupModel(ctx context.Context, in *pb.GetAllGroupModelReq) (*pb.GetAllGroupModelResp, error) {
+	l := logic.NewGetAllGroupModelLogic(ctx, s.svcCtx)
+	return l.GetAllGroupModel(in)
+}
+
+// GetGroupModelDetail 获取群组详情
+func (s *GroupServiceServer) GetGroupModelDetail(ctx context.Context, in *pb.GetGroupModelDetailReq) (*pb.GetGroupModelDetailResp, error) {
+	l := logic.NewGetGroupModelDetailLogic(ctx, s.svcCtx)
+	return l.GetGroupModelDetail(in)
+}
+
+// UpdateGroupModel 更新群组
+func (s *GroupServiceServer) UpdateGroupModel(ctx context.Context, in *pb.UpdateGroupModelReq) (*pb.UpdateGroupModelResp, error) {
+	l := logic.NewUpdateGroupModelLogic(ctx, s.svcCtx)
+	return l.UpdateGroupModel(in)
+}
+
+// DismissGroupModel 解散群组
+func (s *GroupServiceServer) DismissGroupModel(ctx context.Context, in *pb.DismissGroupModelReq) (*pb.DismissGroupModelResp, error) {
+	l := logic.NewDismissGroupModelLogic(ctx, s.svcCtx)
+	return l.DismissGroupModel(in)
+}

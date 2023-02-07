@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
@@ -29,28 +30,27 @@ type (
 		DismissTime int64 `bson:"dismissTime" json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;index"`
 		// 群描述
 		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(255);not null;default:''"`
-		// GroupSetting
-		Setting GroupSetting `bson:"setting" json:"setting" gorm:"column:setting;type:json;not null"`
 		// 群成员人数
 		MemberCount int `bson:"memberCount" json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;index"`
-	}
-	GroupSetting struct {
+
+		// GroupSetting
 		// 全体禁言开关
-		AllMute bool `bson:"allMute" json:"allMute"`
+		AllMute bool `bson:"allMute" json:"allMute" gorm:"column:allMute;type:tinyint(1);not null;default:0;index"`
 		// 发言频率限制
-		SpeakLimit *int32 `bson:"speakLimit,omitempty" json:"speakLimit"`
+		SpeakLimit int32 `bson:"speakLimit,omitempty" json:"speakLimit" gorm:"column:speakLimit;type:int;not null;default:0;"`
 		// 群成员人数上限
-		MaxMember int32 `bson:"maxMember,omitempty" json:"maxMember"`
+		MaxMember int32 `bson:"maxMember,omitempty" json:"maxMember" gorm:"column:maxMember;type:int;not null;default:0;"`
 		// 成员权限选项
 		// 群成员是否可以发起临时会话
-		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat"`
+		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat" gorm:"column:memberCanStartTempChat;type:tinyint(1);not null;default:0;"`
 		// 群成员是否可以邀请好友加入群
-		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend"`
+		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend" gorm:"column:memberCanInviteFriend;type:tinyint(1);not null;default:0;"`
 		// 新成员可见的历史消息条数
-		NewMemberHistoryMsgCount int32 `bson:"newMemberHistoryMsgCount,omitempty" json:"newMemberHistoryMsgCount"`
+		NewMemberHistoryMsgCount int32 `bson:"newMemberHistoryMsgCount,omitempty" json:"newMemberHistoryMsgCount" gorm:"column:newMemberHistoryMsgCount;type:int;not null;default:0;"`
 		// 是否开启匿名聊天
-		AnonymousChat   bool            `bson:"anonymousChat" json:"anonymousChat"`
-		JoinGroupOption JoinGroupOption `bson:"joinGroupOption" json:"joinGroupOption"`
+		AnonymousChat   bool            `bson:"anonymousChat" json:"anonymousChat" gorm:"column:anonymousChat;type:tinyint(1);not null;default:0;"`
+		JoinGroupOption JoinGroupOption `bson:"joinGroupOption" json:"joinGroupOption" gorm:"column:joinGroupOption;type:json;"`
+		AdminRemark     string          `bson:"adminRemark" json:"adminRemark" gorm:"column:adminRemark;type:varchar(255);not null;default:''"`
 	}
 	JoinGroupOption struct {
 		Type int `bson:"type" json:"type"`
@@ -79,12 +79,45 @@ func (m *Group) Bytes() []byte {
 	return data
 }
 
-func (m GroupSetting) Value() (driver.Value, error) {
+func (m *Group) ToPB() *pb.GroupModel {
+	return &pb.GroupModel{
+		Id:                       m.Id,
+		Name:                     m.Name,
+		Avatar:                   m.Avatar,
+		Owner:                    m.Owner,
+		Managers:                 m.Managers,
+		CreateTime:               m.CreateTime,
+		CreateTimeStr:            utils.TimeFormat(m.CreateTime),
+		DismissTime:              m.DismissTime,
+		DismissTimeStr:           utils.TimeFormat(m.DismissTime),
+		Description:              m.Description,
+		MemberCount:              int32(m.MemberCount),
+		AllMute:                  m.AllMute,
+		SpeakLimit:               m.SpeakLimit,
+		MaxMember:                m.MaxMember,
+		MemberCanStartTempChat:   m.MemberCanStartTempChat,
+		MemberCanInviteFriend:    m.MemberCanInviteFriend,
+		NewMemberHistoryMsgCount: m.NewMemberHistoryMsgCount,
+		AnonymousChat:            m.AnonymousChat,
+		JoinGroupOption:          m.JoinGroupOption.ToPB(),
+		AdminRemark:              m.AdminRemark,
+	}
+}
+
+func (m JoinGroupOption) Value() (driver.Value, error) {
 	return json.Marshal(m)
 }
 
-func (m *GroupSetting) Scan(src interface{}) error {
+func (m *JoinGroupOption) Scan(src interface{}) error {
 	return json.Unmarshal(src.([]byte), m)
+}
+
+func (m JoinGroupOption) ToPB() *pb.GroupModel_JoinGroupOption {
+	return &pb.GroupModel_JoinGroupOption{
+		Type:     int32(m.Type),
+		Question: m.Question,
+		Answer:   m.Answer,
+	}
 }
 
 func GroupFromBytes(data []byte) *Group {

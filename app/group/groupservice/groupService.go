@@ -21,13 +21,20 @@ type (
 	CreateGroupResp                                = pb.CreateGroupResp
 	DeleteGroupNoticeReq                           = pb.DeleteGroupNoticeReq
 	DeleteGroupNoticeResp                          = pb.DeleteGroupNoticeResp
+	DismissGroupModelReq                           = pb.DismissGroupModelReq
+	DismissGroupModelResp                          = pb.DismissGroupModelResp
 	EditGroupInfoReq                               = pb.EditGroupInfoReq
 	EditGroupInfoResp                              = pb.EditGroupInfoResp
 	EditGroupNoticeReq                             = pb.EditGroupNoticeReq
 	EditGroupNoticeResp                            = pb.EditGroupNoticeResp
+	GetAllGroupModelReq                            = pb.GetAllGroupModelReq
+	GetAllGroupModelResp                           = pb.GetAllGroupModelResp
 	GetGroupHomeReq                                = pb.GetGroupHomeReq
 	GetGroupHomeResp                               = pb.GetGroupHomeResp
 	GetGroupHomeResp_MemberStatistics              = pb.GetGroupHomeResp_MemberStatistics
+	GetGroupListByUserIdItem                       = pb.GetGroupListByUserIdItem
+	GetGroupListByUserIdReq                        = pb.GetGroupListByUserIdReq
+	GetGroupListByUserIdResp                       = pb.GetGroupListByUserIdResp
 	GetGroupMemberInfoReq                          = pb.GetGroupMemberInfoReq
 	GetGroupMemberInfoResp                         = pb.GetGroupMemberInfoResp
 	GetGroupMemberListReq                          = pb.GetGroupMemberListReq
@@ -35,6 +42,8 @@ type (
 	GetGroupMemberListReq_GetGroupMemberListOpt    = pb.GetGroupMemberListReq_GetGroupMemberListOpt
 	GetGroupMemberListResp                         = pb.GetGroupMemberListResp
 	GetGroupMemberListResp_GroupMember             = pb.GetGroupMemberListResp_GroupMember
+	GetGroupModelDetailReq                         = pb.GetGroupModelDetailReq
+	GetGroupModelDetailResp                        = pb.GetGroupModelDetailResp
 	GetGroupNoticeListReq                          = pb.GetGroupNoticeListReq
 	GetGroupNoticeListResp                         = pb.GetGroupNoticeListResp
 	GetMyGroupListReq                              = pb.GetMyGroupListReq
@@ -42,6 +51,8 @@ type (
 	GetMyGroupListResp                             = pb.GetMyGroupListResp
 	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
+	GroupModel                                     = pb.GroupModel
+	GroupModel_JoinGroupOption                     = pb.GroupModel_JoinGroupOption
 	GroupNotice                                    = pb.GroupNotice
 	HandleGroupApplyReq                            = pb.HandleGroupApplyReq
 	HandleGroupApplyResp                           = pb.HandleGroupApplyResp
@@ -57,6 +68,8 @@ type (
 	SyncGroupMemberCountResp                       = pb.SyncGroupMemberCountResp
 	TransferGroupOwnerReq                          = pb.TransferGroupOwnerReq
 	TransferGroupOwnerResp                         = pb.TransferGroupOwnerResp
+	UpdateGroupModelReq                            = pb.UpdateGroupModelReq
+	UpdateGroupModelResp                           = pb.UpdateGroupModelResp
 
 	GroupService interface {
 		// CreateGroup 创建群聊
@@ -93,6 +106,16 @@ type (
 		ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
 		// HandleGroupApply 处理群聊申请
 		HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+		// GetGroupListByUserId 分页获取某人的群列表
+		GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
+		// GetAllGroupModel 获取所有群组
+		GetAllGroupModel(ctx context.Context, in *GetAllGroupModelReq, opts ...grpc.CallOption) (*GetAllGroupModelResp, error)
+		// GetGroupModelDetail 获取群组详情
+		GetGroupModelDetail(ctx context.Context, in *GetGroupModelDetailReq, opts ...grpc.CallOption) (*GetGroupModelDetailResp, error)
+		// UpdateGroupModel 更新群组
+		UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
+		// DismissGroupModel 解散群组
+		DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
 	}
 
 	defaultGroupService struct {
@@ -206,4 +229,34 @@ func (m *defaultGroupService) ApplyToBeGroupMember(ctx context.Context, in *Appl
 func (m *defaultGroupService) HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.HandleGroupApply(ctx, in, opts...)
+}
+
+// GetGroupListByUserId 分页获取某人的群列表
+func (m *defaultGroupService) GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GetGroupListByUserId(ctx, in, opts...)
+}
+
+// GetAllGroupModel 获取所有群组
+func (m *defaultGroupService) GetAllGroupModel(ctx context.Context, in *GetAllGroupModelReq, opts ...grpc.CallOption) (*GetAllGroupModelResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GetAllGroupModel(ctx, in, opts...)
+}
+
+// GetGroupModelDetail 获取群组详情
+func (m *defaultGroupService) GetGroupModelDetail(ctx context.Context, in *GetGroupModelDetailReq, opts ...grpc.CallOption) (*GetGroupModelDetailResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GetGroupModelDetail(ctx, in, opts...)
+}
+
+// UpdateGroupModel 更新群组
+func (m *defaultGroupService) UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.UpdateGroupModel(ctx, in, opts...)
+}
+
+// DismissGroupModel 解散群组
+func (m *defaultGroupService) DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.DismissGroupModel(ctx, in, opts...)
 }
