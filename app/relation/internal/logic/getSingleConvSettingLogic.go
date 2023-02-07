@@ -38,7 +38,7 @@ func (l *GetSingleConvSettingLogic) GetSingleConvSetting(in *pb.GetSingleConvSet
 		UserId: in.UserId,
 	}
 	val, err := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.SingleConvSetting(in.ConvId, in.UserId))
-	if err != nil {
+	if err != nil || val == "" {
 		return l.getSingleConvSettingFromDB(in)
 	}
 	if val == xredis.NotFound {
