@@ -1141,6 +1141,54 @@
                 }
             }
         },
+        "/ms/delete/friend": {
+            "post": {
+                "description": "使用此接口删除好友",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户好友管理"
+                ],
+                "summary": "删除好友",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userhandler.deleteFriendReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteFriendResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/delete/invitationcode": {
             "post": {
                 "description": "使用此接口删除用户邀请码",
@@ -1664,6 +1712,54 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.DeleteAppMgmtVpnResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/dismiss/model": {
+            "post": {
+                "description": "使用此接口切换群聊状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群聊模型管理"
+                ],
+                "summary": "切换群聊状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "群聊令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DismissGroupModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DismissGroupModelResp"
                         }
                     }
                 }
@@ -2231,6 +2327,102 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.GetAllAppMgmtEmojiGroupResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/friend/list/all": {
+            "post": {
+                "description": "使用此接口获取好友列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户好友管理"
+                ],
+                "summary": "获取好友列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetFriendListByUserIdReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetFriendListByUserIdResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/group/list/all": {
+            "post": {
+                "description": "使用此接口获取群列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户群管理"
+                ],
+                "summary": "获取群列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetGroupListByUserIdReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetGroupListByUserIdResp"
                         }
                     }
                 }
@@ -2855,6 +3047,54 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.GetAllUserModelResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/msg/list/all": {
+            "post": {
+                "description": "使用此接口获取全部消息模型列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "消息模型管理"
+                ],
+                "summary": "获取全部消息模型列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "消息令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMsgListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMsgListResp"
                         }
                     }
                 }
@@ -5014,6 +5254,9 @@
                 "name": {
                     "type": "string"
                 },
+                "options": {
+                    "type": "string"
+                },
                 "scopePlatforms": {
                     "type": "string"
                 },
@@ -5474,6 +5717,14 @@
                 }
             }
         },
+        "pb.DeleteFriendResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.DeleteMSApiPathReq": {
             "type": "object",
             "properties": {
@@ -5716,6 +5967,28 @@
                 }
             }
         },
+        "pb.DismissGroupModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DismissGroupModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.GetAllAppMgmtConfigReq": {
             "type": "object",
             "properties": {
@@ -5939,6 +6212,40 @@
                 },
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllGroupModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllGroupModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "groupModels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.GroupModel"
+                    }
                 },
                 "total": {
                     "type": "integer"
@@ -6180,6 +6487,49 @@
                 },
                 "page": {
                     "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMsgListReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "convId": {
+                    "type": "string"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMsgListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "msgDataList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MsgData"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "userMap": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -6482,6 +6832,172 @@
                 },
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetFriendListByUserIdItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "nickname": {
+                    "description": "昵称",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "角色",
+                    "type": "string"
+                },
+                "userId": {
+                    "description": "用户id",
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetFriendListByUserIdReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "description": "分页",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/pb.Page"
+                        }
+                    ]
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetFriendListByUserIdResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "friendList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.GetFriendListByUserIdItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetGroupListByUserIdItem": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "description": "群id",
+                    "type": "string"
+                },
+                "joinTime": {
+                    "description": "加入时间",
+                    "type": "integer"
+                },
+                "joinTimeStr": {
+                    "type": "string"
+                },
+                "memberCount": {
+                    "description": "群人数",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "owner": {
+                    "description": "群主id",
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetGroupListByUserIdReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "description": "分页",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/pb.Page"
+                        }
+                    ]
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetGroupListByUserIdResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "groupList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.GetGroupListByUserIdItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetGroupModelDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetGroupModelDetailResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "groupModel": {
+                    "$ref": "#/definitions/pb.GroupModel"
                 }
             }
         },
@@ -7033,6 +7549,107 @@
                 }
             }
         },
+        "pb.GroupModel": {
+            "type": "object",
+            "properties": {
+                "adminRemark": {
+                    "type": "string"
+                },
+                "allMute": {
+                    "description": "全体禁言开关",
+                    "type": "boolean"
+                },
+                "anonymousChat": {
+                    "description": "是否开启匿名聊天",
+                    "type": "boolean"
+                },
+                "avatar": {
+                    "description": "群头像",
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "创建时间",
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "description": {
+                    "description": "群描述",
+                    "type": "string"
+                },
+                "dismissTime": {
+                    "description": "解散时间",
+                    "type": "integer"
+                },
+                "dismissTimeStr": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "群id 从10001开始 redis incr",
+                    "type": "string"
+                },
+                "joinGroupOption": {
+                    "$ref": "#/definitions/pb.GroupModel_JoinGroupOption"
+                },
+                "managers": {
+                    "description": "所有管理员",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "maxMember": {
+                    "description": "群成员人数上限",
+                    "type": "integer"
+                },
+                "memberCanInviteFriend": {
+                    "description": "群成员是否可以邀请好友加入群",
+                    "type": "boolean"
+                },
+                "memberCanStartTempChat": {
+                    "description": "成员权限选项\n群成员是否可以发起临时会话",
+                    "type": "boolean"
+                },
+                "memberCount": {
+                    "description": "群成员人数",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "群名称",
+                    "type": "string"
+                },
+                "newMemberHistoryMsgCount": {
+                    "description": "新成员可见的历史消息条数",
+                    "type": "integer"
+                },
+                "owner": {
+                    "description": "群主",
+                    "type": "string"
+                },
+                "speakLimit": {
+                    "description": "发言频率限制",
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GroupModel_JoinGroupOption": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "description": "答案",
+                    "type": "string"
+                },
+                "question": {
+                    "description": "验证信息\n问题",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "0:不需要验证 1:需要验证 2:需要问题验证",
+                    "type": "integer"
+                }
+            }
+        },
         "pb.HealthMSResp": {
             "type": "object",
             "properties": {
@@ -7434,6 +8051,125 @@
                 }
             }
         },
+        "pb.MsgData": {
+            "type": "object",
+            "properties": {
+                "atUsers": {
+                    "description": "强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入\"all\"",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "clientMsgId": {
+                    "type": "string"
+                },
+                "clientTime": {
+                    "type": "string"
+                },
+                "content": {
+                    "description": "消息内容",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "contentType": {
+                    "description": "消息内容类型",
+                    "type": "integer"
+                },
+                "convId": {
+                    "description": "会话id (单聊时 single:user1-user2，群聊时 group:groupId，通知号 notice:noticeId)",
+                    "type": "string"
+                },
+                "ext": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "offlinePush": {
+                    "description": "离线推送",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/pb.MsgData_OfflinePush"
+                        }
+                    ]
+                },
+                "options": {
+                    "description": "消息选项",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/pb.MsgData_Options"
+                        }
+                    ]
+                },
+                "senderId": {
+                    "description": "发送者id",
+                    "type": "string"
+                },
+                "senderInfo": {
+                    "description": "发送者信息",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "seq": {
+                    "description": "消息序号 会话内唯一且递增",
+                    "type": "string"
+                },
+                "serverMsgId": {
+                    "type": "string"
+                },
+                "serverTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MsgData_OfflinePush": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MsgData_Options": {
+            "type": "object",
+            "properties": {
+                "needDecrypt": {
+                    "description": "是否需要解密 （端对端加密技术，服务端无法解密）",
+                    "type": "boolean"
+                },
+                "offlinePush": {
+                    "description": "是否需要离线推送",
+                    "type": "boolean"
+                },
+                "storageForClient": {
+                    "description": "客户端是否需要保存消息",
+                    "type": "boolean"
+                },
+                "storageForServer": {
+                    "description": "服务端是否需要保存消息",
+                    "type": "boolean"
+                },
+                "updateConvMsg": {
+                    "description": "是否需要重新渲染会话",
+                    "type": "boolean"
+                },
+                "updateUnreadCount": {
+                    "description": "消息是否需要计入未读数",
+                    "type": "boolean"
+                }
+            }
+        },
         "pb.Page": {
             "type": "object",
             "properties": {
@@ -7618,6 +8354,25 @@
             }
         },
         "pb.UpdateAppMgmtVpnResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateGroupModelReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "groupModel": {
+                    "$ref": "#/definitions/pb.GroupModel"
+                }
+            }
+        },
+        "pb.UpdateGroupModelResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -8069,6 +8824,20 @@
                 },
                 "xb": {
                     "type": "integer"
+                }
+            }
+        },
+        "userhandler.deleteFriendReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "friendId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         }

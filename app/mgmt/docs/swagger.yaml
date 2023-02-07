@@ -384,6 +384,8 @@ definitions:
         type: string
       name:
         type: string
+      options:
+        type: string
       scopePlatforms:
         type: string
       type:
@@ -694,6 +696,11 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DeleteFriendResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.DeleteMSApiPathReq:
     properties:
       commonReq:
@@ -848,6 +855,20 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DismissGroupModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DismissGroupModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.GetAllAppMgmtConfigReq:
     properties:
       commonReq:
@@ -993,6 +1014,28 @@ definitions:
         type: array
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllGroupModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllGroupModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      groupModels:
+        items:
+          $ref: '#/definitions/pb.GroupModel'
+        type: array
       total:
         type: integer
     type: object
@@ -1149,6 +1192,34 @@ definitions:
         type: object
       page:
         $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMsgListReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      convId:
+        type: string
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMsgListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      msgDataList:
+        items:
+          $ref: '#/definitions/pb.MsgData'
+        type: array
+      total:
+        type: integer
+      userMap:
+        additionalProperties:
+          type: string
+        type: object
     type: object
   pb.GetAllUserDefaultConvReq:
     properties:
@@ -1343,6 +1414,115 @@ definitions:
         $ref: '#/definitions/pb.AppMgmtVpn'
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetFriendListByUserIdItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      role:
+        description: 角色
+        type: string
+      userId:
+        description: 用户id
+        type: string
+    type: object
+  pb.GetFriendListByUserIdReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        allOf:
+        - $ref: '#/definitions/pb.Page'
+        description: 分页
+      userId:
+        type: string
+    type: object
+  pb.GetFriendListByUserIdResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      friendList:
+        items:
+          $ref: '#/definitions/pb.GetFriendListByUserIdItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  pb.GetGroupListByUserIdItem:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      createTime:
+        description: 创建时间
+        type: integer
+      createTimeStr:
+        type: string
+      groupId:
+        description: 群id
+        type: string
+      joinTime:
+        description: 加入时间
+        type: integer
+      joinTimeStr:
+        type: string
+      memberCount:
+        description: 群人数
+        type: integer
+      name:
+        description: 名称
+        type: string
+      owner:
+        description: 群主id
+        type: string
+    type: object
+  pb.GetGroupListByUserIdReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        allOf:
+        - $ref: '#/definitions/pb.Page'
+        description: 分页
+      userId:
+        type: string
+    type: object
+  pb.GetGroupListByUserIdResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      groupList:
+        items:
+          $ref: '#/definitions/pb.GetGroupListByUserIdItem'
+        type: array
+      total:
+        type: integer
+    type: object
+  pb.GetGroupModelDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetGroupModelDetailResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      groupModel:
+        $ref: '#/definitions/pb.GroupModel'
     type: object
   pb.GetMSApiPathDetailReq:
     properties:
@@ -1696,6 +1876,83 @@ definitions:
       userModel:
         $ref: '#/definitions/pb.UserModel'
     type: object
+  pb.GroupModel:
+    properties:
+      adminRemark:
+        type: string
+      allMute:
+        description: 全体禁言开关
+        type: boolean
+      anonymousChat:
+        description: 是否开启匿名聊天
+        type: boolean
+      avatar:
+        description: 群头像
+        type: string
+      createTime:
+        description: 创建时间
+        type: integer
+      createTimeStr:
+        type: string
+      description:
+        description: 群描述
+        type: string
+      dismissTime:
+        description: 解散时间
+        type: integer
+      dismissTimeStr:
+        type: string
+      id:
+        description: 群id 从10001开始 redis incr
+        type: string
+      joinGroupOption:
+        $ref: '#/definitions/pb.GroupModel_JoinGroupOption'
+      managers:
+        description: 所有管理员
+        items:
+          type: string
+        type: array
+      maxMember:
+        description: 群成员人数上限
+        type: integer
+      memberCanInviteFriend:
+        description: 群成员是否可以邀请好友加入群
+        type: boolean
+      memberCanStartTempChat:
+        description: |-
+          成员权限选项
+          群成员是否可以发起临时会话
+        type: boolean
+      memberCount:
+        description: 群成员人数
+        type: integer
+      name:
+        description: 群名称
+        type: string
+      newMemberHistoryMsgCount:
+        description: 新成员可见的历史消息条数
+        type: integer
+      owner:
+        description: 群主
+        type: string
+      speakLimit:
+        description: 发言频率限制
+        type: integer
+    type: object
+  pb.GroupModel_JoinGroupOption:
+    properties:
+      answer:
+        description: 答案
+        type: string
+      question:
+        description: |-
+          验证信息
+          问题
+        type: string
+      type:
+        description: 0:不需要验证 1:需要验证 2:需要问题验证
+        type: integer
+    type: object
   pb.HealthMSResp:
     properties:
       commonResp:
@@ -1964,6 +2221,86 @@ definitions:
           type: string
         type: object
     type: object
+  pb.MsgData:
+    properties:
+      atUsers:
+        description: 强提醒用户id列表 用户不在线时，会收到离线推送，除非用户屏蔽了该会话 如果需要提醒所有人，可以传入"all"
+        items:
+          type: string
+        type: array
+      clientMsgId:
+        type: string
+      clientTime:
+        type: string
+      content:
+        description: 消息内容
+        items:
+          type: integer
+        type: array
+      contentType:
+        description: 消息内容类型
+        type: integer
+      convId:
+        description: 会话id (单聊时 single:user1-user2，群聊时 group:groupId，通知号 notice:noticeId)
+        type: string
+      ext:
+        items:
+          type: integer
+        type: array
+      offlinePush:
+        allOf:
+        - $ref: '#/definitions/pb.MsgData_OfflinePush'
+        description: 离线推送
+      options:
+        allOf:
+        - $ref: '#/definitions/pb.MsgData_Options'
+        description: 消息选项
+      senderId:
+        description: 发送者id
+        type: string
+      senderInfo:
+        description: 发送者信息
+        items:
+          type: integer
+        type: array
+      seq:
+        description: 消息序号 会话内唯一且递增
+        type: string
+      serverMsgId:
+        type: string
+      serverTime:
+        type: string
+    type: object
+  pb.MsgData_OfflinePush:
+    properties:
+      content:
+        type: string
+      payload:
+        type: string
+      title:
+        type: string
+    type: object
+  pb.MsgData_Options:
+    properties:
+      needDecrypt:
+        description: 是否需要解密 （端对端加密技术，服务端无法解密）
+        type: boolean
+      offlinePush:
+        description: 是否需要离线推送
+        type: boolean
+      storageForClient:
+        description: 客户端是否需要保存消息
+        type: boolean
+      storageForServer:
+        description: 服务端是否需要保存消息
+        type: boolean
+      updateConvMsg:
+        description: 是否需要重新渲染会话
+        type: boolean
+      updateUnreadCount:
+        description: 消息是否需要计入未读数
+        type: boolean
+    type: object
   pb.Page:
     properties:
       page:
@@ -2081,6 +2418,18 @@ definitions:
         $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.UpdateAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateGroupModelReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      groupModel:
+        $ref: '#/definitions/pb.GroupModel'
+    type: object
+  pb.UpdateGroupModelResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -2373,6 +2722,15 @@ definitions:
         type: string
       xb:
         type: integer
+    type: object
+  userhandler.deleteFriendReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      friendId:
+        type: string
+      userId:
+        type: string
     type: object
 host: 127.0.0.1:6799
 info:
@@ -3133,6 +3491,38 @@ paths:
       summary: 删除app表情组
       tags:
       - app表情组管理
+  /ms/delete/friend:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除好友
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/userhandler.deleteFriendReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteFriendResp'
+      summary: 删除好友
+      tags:
+      - 用户好友管理
   /ms/delete/invitationcode:
     post:
       consumes:
@@ -3485,6 +3875,38 @@ paths:
       summary: 删除appVPN
       tags:
       - appVPN管理
+  /ms/dismiss/model:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口切换群聊状态
+      parameters:
+      - description: 群聊令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DismissGroupModelReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DismissGroupModelResp'
+      summary: 切换群聊状态
+      tags:
+      - 群聊模型管理
   /ms/get/admin/detail:
     post:
       consumes:
@@ -3863,6 +4285,70 @@ paths:
       summary: 获取全部app表情组列表
       tags:
       - app表情组管理
+  /ms/get/friend/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取好友列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetFriendListByUserIdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetFriendListByUserIdResp'
+      summary: 获取好友列表
+      tags:
+      - 用户好友管理
+  /ms/get/group/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取群列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetGroupListByUserIdReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetGroupListByUserIdResp'
+      summary: 获取群列表
+      tags:
+      - 用户群管理
   /ms/get/invitationcode/detail:
     post:
       consumes:
@@ -4279,6 +4765,38 @@ paths:
       summary: 获取全部用户模型列表
       tags:
       - 用户模型管理
+  /ms/get/msg/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部消息模型列表
+      parameters:
+      - description: 消息令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMsgListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMsgListResp'
+      summary: 获取全部消息模型列表
+      tags:
+      - 消息模型管理
   /ms/get/notice/detail:
     post:
       consumes:
