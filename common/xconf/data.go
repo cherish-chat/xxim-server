@@ -73,6 +73,34 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("signature_if_not_set", str("用户", "signature_if_not_set", "这个人很懒，什么都没留下", "用户未设置签名时的签名"))
 	// avatars_default 用户默认头像
 	m.insertIfNotFound("avatars_default", arrayStr("用户", "avatars_default", []string{}, "用户默认头像"))
+
+	// 每个平台ip黑白名单
+	ipListModeOption := utils.AnyToString([]map[string]interface{}{
+		{
+			"label": "禁用",
+			"value": "0",
+		},
+		{
+			"label": "黑名单",
+			"value": "1",
+		},
+		{
+			"label": "白名单",
+			"value": "2",
+		},
+	})
+	// ip_list_mode.ios ios ip黑白名单模式
+	for _, platform := range []string{"ios", "android", "windows", "macos", "ipad", "linux", "web"} {
+		m.insertIfNotFound("ip_list_mode."+platform, &appmgmtmodel.Config{
+			Group:          "用户ip名单模式",
+			K:              "ip_list_mode." + platform,
+			V:              "0",
+			Type:           "option",
+			Name:           platform,
+			ScopePlatforms: platform,
+			Options:        ipListModeOption,
+		})
+	}
 }
 
 func (m *ConfigMgr) DefaultGroupDescription(ctx context.Context) string {

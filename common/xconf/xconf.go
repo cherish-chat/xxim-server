@@ -27,6 +27,8 @@ func NewConfigMgr(tx *gorm.DB, rc *redis.Redis, platform string) *ConfigMgr {
 		platform: platform,
 	}
 	m.initData()
+	// 清理缓存
+	m.Flush(context.Background())
 	return m
 }
 
