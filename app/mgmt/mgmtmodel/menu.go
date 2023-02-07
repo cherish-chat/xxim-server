@@ -343,6 +343,16 @@ func initMenu(tx *gorm.DB) {
 			genMenu2("460", "400", "登录记录管理", "local-icon-xiangji", 0,
 				"user:loginrecord:list", "user/loginrecord", "user/loginrecord/index"),
 		),
+		genMenu1("500", "群聊管理", "local-icon-weixin", 48, "group",
+			// model 模型
+			genMenu2("510", "500", "群聊管理", "local-icon-kezizhongxin", 0,
+				"group:model:list", "group/model", "group/model/index",
+				genMenu3("511", "510", "群聊详情", "group:model:detail"),
+				genMenu3("512", "510", "群聊新增", "group:model:add"),
+				genMenu3("513", "510", "群聊编辑", "group:model:edit"),
+				genMenu3("514", "510", "群聊删除", "group:model:del"),
+			),
+		),
 	})
 	for _, menu := range menus {
 		insertIfNotFound(tx, menu.Id, menu)

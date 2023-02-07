@@ -4,7 +4,9 @@ import (
 	"fmt"
 	_ "github.com/cherish-chat/xxim-server/app/mgmt/docs"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/appmgrhandler"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/grouphandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/middleware"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/msghandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/mshandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/serverhandler"
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler/userhandler"
@@ -42,6 +44,8 @@ func (s *MgmtServiceServer) NewHttpServer() *HttpServer {
 	mshandler.NewMSHandler(s.svcCtx).Register(apiGroup)
 	appmgrhandler.NewAppMgrHandler(s.svcCtx).Register(apiGroup)
 	userhandler.NewUserHandler(s.svcCtx).Register(apiGroup)
+	grouphandler.NewGroupHandler(s.svcCtx).Register(apiGroup)
+	msghandler.NewMsgHandler(s.svcCtx).Register(apiGroup)
 	// 表情管理 表情组and表情
 	// 配置发现导航中的外链 组and外链
 	return &HttpServer{svcCtx: s.svcCtx, Engine: engine}

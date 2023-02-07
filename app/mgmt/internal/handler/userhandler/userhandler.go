@@ -87,4 +87,16 @@ func (r *UserHandler) Register(g *gin.RouterGroup) {
 		// 列表
 		group.POST("/get/loginrecord/list/all", r.getAllLoginRecord)
 	}
+	{
+		// Friend 好友
+		// 列表
+		group.POST("/get/friend/list/all", r.getAllFriend)
+		// 删除
+		group.POST("/delete/friend", r.deleteFriend)
+	}
+	{
+		// Group 群组
+		// 列表
+		group.POST("/get/group/list/all", r.getAllGroup)
+	}
 }
