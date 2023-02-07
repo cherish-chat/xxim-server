@@ -22,6 +22,18 @@ const (
 	RoleGuest   Role = 3 // 游客
 )
 
+func (r Role) String() string {
+	switch r {
+	case RoleUser:
+		return "用户"
+	case RoleService:
+		return "客服"
+	case RoleGuest:
+		return "游客"
+	}
+	return "未知"
+}
+
 type (
 	Role int32 // 角色
 	User struct {

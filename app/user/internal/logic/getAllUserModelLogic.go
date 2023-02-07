@@ -33,6 +33,15 @@ func (l *GetAllUserModelLogic) GetAllUserModel(in *pb.GetAllUserModelReq) (*pb.G
 	var models []*usermodel.User
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
+		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
+			switch k {
+			case "id":
+				wheres = append(wheres, xorm.Where("id LIKE ?", v+"%"))
+			}
+		}
 	}
 	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &usermodel.User{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
 	if err != nil {
