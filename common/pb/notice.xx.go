@@ -33,6 +33,8 @@ const (
 	NoticeContentType_NewGroupMember     = 303 // 新群成员
 	NoticeContentType_DismissGroup       = 304 // 解散群
 	NoticeContentType_SetGroupMemberInfo = 305 // 设置群成员信息
+	NoticeContentType_SetGroupInfo       = 306 // 设置群信息
+	NoticeContentType_RecoverGroup       = 307 // 恢复群
 
 	// groupMember
 	NoticeContentType_ApplyToBeGroupMember = 401 // 申请加入群

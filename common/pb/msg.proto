@@ -176,6 +176,20 @@ message FlushUsersSubConvReq {
   repeated string userIds = 2;
 }
 
+//GetAllMsgListReq 获取所有消息
+message GetAllMsgListReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  Page page = 3;
+  map<string, string> filter = 4;
+}
+
+message GetAllMsgListResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2;
+  int64 total = 3;
+  map<string, string> userMap = 4;
+}
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -200,4 +214,7 @@ service msgService {
   rpc GetConvOnlineCount(GetConvOnlineCountReq) returns (GetConvOnlineCountResp) {}
   //FlushUsersSubConv 刷新用户订阅的会话
   rpc FlushUsersSubConv(FlushUsersSubConvReq) returns (CommonResp) {}
+
+  //GetAllMsgList 获取所有消息
+  rpc GetAllMsgList(GetAllMsgListReq) returns (GetAllMsgListResp) {}
 }

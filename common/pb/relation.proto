@@ -214,6 +214,30 @@ message GetMyFriendEventListResp {
   string pageIndex = 3; // 下次请求的pageIndex
 }
 
+//分页获取某人的好友列表
+message GetFriendListByUserIdReq {
+  CommonReq commonReq = 1;
+  // 分页
+  Page page = 2;
+  map<string, string> filter = 3;
+  string userId = 4;
+}
+message GetFriendListByUserIdItem {
+  // 用户id
+  string userId = 1;
+  // 头像
+  string avatar = 2;
+  // 昵称
+  string nickname = 3;
+  // 角色
+  string role = 4;
+}
+message GetFriendListByUserIdResp {
+  CommonResp commonResp = 1;
+  repeated GetFriendListByUserIdItem friendList = 2;
+  int64 total = 3;
+}
+
 service relationService {
   rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
   rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
@@ -228,4 +252,6 @@ service relationService {
   rpc GetSingleConvSetting(GetSingleConvSettingReq) returns (GetSingleConvSettingResp) {}
   rpc GetFriendList(GetFriendListReq) returns (GetFriendListResp) {}
   rpc GetMyFriendEventList(GetMyFriendEventListReq) returns (GetMyFriendEventListResp) {}
+
+  rpc GetFriendListByUserId(GetFriendListByUserIdReq) returns (GetFriendListByUserIdResp) {}
 }

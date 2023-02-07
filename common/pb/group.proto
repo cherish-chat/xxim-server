@@ -397,6 +397,186 @@ message HandleGroupApplyResp {
   CommonResp commonResp = 1;
 }
 
+
+//分页获取某人的群列表
+message GetGroupListByUserIdReq {
+  CommonReq commonReq = 1;
+  // 分页
+  Page page = 2;
+  map<string, string> filter = 3;
+  string userId = 4;
+}
+message GetGroupListByUserIdItem {
+  // 群id
+  string groupId = 1;
+  // 头像
+  string avatar = 2;
+  // 名称
+  string name = 3;
+  // 群人数
+  int64 memberCount = 4;
+  // 加入时间
+  int64 joinTime = 5;
+  string joinTimeStr = 6;
+  // 群主id
+  string owner = 7;
+  // 创建时间
+  int64 createTime = 8;
+  string createTimeStr = 9;
+}
+message GetGroupListByUserIdResp {
+  CommonResp commonResp = 1;
+  repeated GetGroupListByUserIdItem groupList = 2;
+  int64 total = 3;
+}
+
+/*
+type (
+	Group struct {
+		// 群id 从10001开始 redis incr
+		Id     string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);not null"`
+		Name   string `bson:"name" json:"name" gorm:"column:name;type:varchar(32);not null;index;default:''"`
+		Avatar string `bson:"avatar" json:"avatar"` // 群头像
+		// 群主
+		Owner string `bson:"owner" json:"owner" gorm:"column:owner;type:char(32);not null;index"`
+		// 所有管理员
+		Managers xorm.SliceString `bson:"managers" json:"managers" gorm:"column:managers;type:json;"`
+		// 创建时间
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index"`
+		// 解散时间
+		DismissTime int64 `bson:"dismissTime" json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;index"`
+		// 群描述
+		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(255);not null;default:''"`
+		// 群成员人数
+		MemberCount int `bson:"memberCount" json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;index"`
+
+		// GroupSetting
+		// 全体禁言开关
+		AllMute bool `bson:"allMute" json:"allMute" gorm:"column:allMute;type:tinyint(1);not null;default:0;index"`
+		// 发言频率限制
+		SpeakLimit int32 `bson:"speakLimit,omitempty" json:"speakLimit" gorm:"column:speakLimit;type:int;not null;default:0;"`
+		// 群成员人数上限
+		MaxMember int32 `bson:"maxMember,omitempty" json:"maxMember" gorm:"column:maxMember;type:int;not null;default:0;"`
+		// 成员权限选项
+		// 群成员是否可以发起临时会话
+		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat" gorm:"column:memberCanStartTempChat;type:tinyint(1);not null;default:0;"`
+		// 群成员是否可以邀请好友加入群
+		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend" gorm:"column:memberCanInviteFriend;type:tinyint(1);not null;default:0;"`
+		// 新成员可见的历史消息条数
+		NewMemberHistoryMsgCount int32 `bson:"newMemberHistoryMsgCount,omitempty" json:"newMemberHistoryMsgCount" gorm:"column:newMemberHistoryMsgCount;type:int;not null;default:0;"`
+		// 是否开启匿名聊天
+		AnonymousChat   bool            `bson:"anonymousChat" json:"anonymousChat" gorm:"column:anonymousChat;type:tinyint(1);not null;default:0;"`
+		JoinGroupOption JoinGroupOption `bson:"joinGroupOption" json:"joinGroupOption" gorm:"column:joinGroupOption;type:json;"`
+	}
+	JoinGroupOption struct {
+		Type int `bson:"type" json:"type"`
+		// 验证信息
+		// 问题
+		Question string `bson:"question" json:"question"`
+		// 答案
+		Answer string `bson:"answer" json:"answer"`
+	}
+)
+ */
+//GroupModel 群组
+message GroupModel {
+  message JoinGroupOption {
+    // 0:不需要验证 1:需要验证 2:需要问题验证
+    int32 type = 1;
+    // 验证信息
+    // 问题
+    string question = 2;
+    // 答案
+    string answer = 3;
+  }
+  // 群id 从10001开始 redis incr
+  string id = 1;
+  // 群名称
+  string name = 2;
+  // 群头像
+  string avatar = 3;
+  // 群主
+  string owner = 4;
+  // 所有管理员
+  repeated string managers = 5;
+  // 创建时间
+  int64 createTime = 6;
+  string createTimeStr = 7;
+  // 解散时间
+  int64 dismissTime = 8;
+  string dismissTimeStr = 9;
+  // 群描述
+  string description = 10;
+  // 群成员人数
+  int32 memberCount = 11;
+  // 全体禁言开关
+  bool allMute = 12;
+  // 发言频率限制
+  int32 speakLimit = 13;
+  // 群成员人数上限
+  int32 maxMember = 14;
+  // 成员权限选项
+  // 群成员是否可以发起临时会话
+  bool memberCanStartTempChat = 15;
+  // 群成员是否可以邀请好友加入群
+  bool memberCanInviteFriend = 16;
+  // 新成员可见的历史消息条数
+  int32 newMemberHistoryMsgCount = 17;
+  // 是否开启匿名聊天
+  bool anonymousChat = 18;
+  JoinGroupOption joinGroupOption = 19;
+
+  string adminRemark = 20;
+}
+
+//GetAllGroupModelReq 获取所有群组
+message GetAllGroupModelReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllGroupModelResp 获取所有群组
+message GetAllGroupModelResp {
+  CommonResp commonResp = 1;
+  repeated GroupModel groupModels = 2;
+  int64 total = 3;
+}
+
+//GetGroupModelDetailReq 获取群组详情
+message GetGroupModelDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetGroupModelDetailResp 获取群组详情
+message GetGroupModelDetailResp {
+  CommonResp commonResp = 1;
+  GroupModel groupModel = 2;
+}
+
+//UpdateGroupModelReq 更新群组
+message UpdateGroupModelReq {
+  CommonReq commonReq = 1;
+  GroupModel groupModel = 2;
+}
+
+//UpdateGroupModelResp 更新群组
+message UpdateGroupModelResp {
+  CommonResp commonResp = 1;
+}
+
+//DismissGroupModelReq 解散群组
+message DismissGroupModelReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DismissGroupModelResp 解散群组
+message DismissGroupModelResp {
+  CommonResp commonResp = 1;
+}
+
 service groupService {
   //CreateGroup 创建群聊
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
@@ -432,4 +612,16 @@ service groupService {
   rpc ApplyToBeGroupMember(ApplyToBeGroupMemberReq) returns (ApplyToBeGroupMemberResp) {}
   //HandleGroupApply 处理群聊申请
   rpc HandleGroupApply(HandleGroupApplyReq) returns (HandleGroupApplyResp) {}
+
+  //GetGroupListByUserId 分页获取某人的群列表
+  rpc GetGroupListByUserId(GetGroupListByUserIdReq) returns (GetGroupListByUserIdResp) {}
+
+  //GetAllGroupModel 获取所有群组
+  rpc GetAllGroupModel(GetAllGroupModelReq) returns (GetAllGroupModelResp) {}
+  //GetGroupModelDetail 获取群组详情
+  rpc GetGroupModelDetail(GetGroupModelDetailReq) returns (GetGroupModelDetailResp) {}
+  //UpdateGroupModel 更新群组
+  rpc UpdateGroupModel(UpdateGroupModelReq) returns (UpdateGroupModelResp) {}
+  //DismissGroupModel 解散群组
+  rpc DismissGroupModel(DismissGroupModelReq) returns (DismissGroupModelResp) {}
 }

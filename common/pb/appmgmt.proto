@@ -12,6 +12,7 @@ message AppMgmtConfig {
   string type = 4;
   string name = 5;
   string scopePlatforms = 6;
+  string options = 7;
 }
 
 //GetAllAppMgmtConfigReq 获取所有配置

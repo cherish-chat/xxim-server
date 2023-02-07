@@ -45,6 +45,8 @@ type MsgServiceClient interface {
 	GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error)
 	//FlushUsersSubConv 刷新用户订阅的会话
 	FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error)
+	//GetAllMsgList 获取所有消息
+	GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error)
 }
 
 type msgServiceClient struct {
@@ -181,6 +183,15 @@ func (c *msgServiceClient) FlushUsersSubConv(ctx context.Context, in *FlushUsers
 	return out, nil
 }
 
+func (c *msgServiceClient) GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error) {
+	out := new(GetAllMsgListResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetAllMsgList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -208,6 +219,8 @@ type MsgServiceServer interface {
 	GetConvOnlineCount(context.Context, *GetConvOnlineCountReq) (*GetConvOnlineCountResp, error)
 	//FlushUsersSubConv 刷新用户订阅的会话
 	FlushUsersSubConv(context.Context, *FlushUsersSubConvReq) (*CommonResp, error)
+	//GetAllMsgList 获取所有消息
+	GetAllMsgList(context.Context, *GetAllMsgListReq) (*GetAllMsgListResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -256,6 +269,9 @@ func (UnimplementedMsgServiceServer) GetConvOnlineCount(context.Context, *GetCon
 }
 func (UnimplementedMsgServiceServer) FlushUsersSubConv(context.Context, *FlushUsersSubConvReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FlushUsersSubConv not implemented")
+}
+func (UnimplementedMsgServiceServer) GetAllMsgList(context.Context, *GetAllMsgListReq) (*GetAllMsgListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMsgList not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -522,6 +538,24 @@ func _MsgService_FlushUsersSubConv_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_GetAllMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMsgListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).GetAllMsgList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/GetAllMsgList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).GetAllMsgList(ctx, req.(*GetAllMsgListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -584,6 +618,10 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FlushUsersSubConv",
 			Handler:    _MsgService_FlushUsersSubConv_Handler,
+		},
+		{
+			MethodName: "GetAllMsgList",
+			Handler:    _MsgService_GetAllMsgList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
