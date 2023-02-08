@@ -438,6 +438,7 @@ message MSUser {
   bool isDisable = 16;
   string lastLoginIp = 17;
   string lastLoginTime = 18;
+  string roleId = 19;
 }
 
 //GetAllMSUserListReq 获取所有用户列表请求

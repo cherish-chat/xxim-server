@@ -68,5 +68,6 @@ func (m *User) ToPBMSUser(record *LoginRecord) *pb.MSUser {
 		IsDisable:     m.IsDisable,
 		LastLoginIp:   record.Ip,
 		LastLoginTime: utils.TimeFormat(record.Time),
+		RoleId:        m.RoleId,
 	}
 }

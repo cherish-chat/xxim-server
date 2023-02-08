@@ -20,6 +20,7 @@ type getAllMSUserListRespUser struct {
 	Nickname      string `json:"nickname" structs:"nickname"`           // 昵称
 	Avatar        string `json:"avatar" structs:"avatar"`               // 头像
 	Role          string `json:"role" structs:"role"`                   // 角色
+	RoleId        string `json:"roleId" structs:"roleId"`               // 角色ID
 	IsMultipoint  bool   `json:"isMultipoint" structs:"isMultipoint"`   // 多端登录: [0=否, 1=是]
 	IsDisable     bool   `json:"isDisable" structs:"isDisable"`         // 是否禁用: [0=否, 1=是]
 	LastLoginIp   string `json:"lastLoginIp" structs:"lastLoginIp"`     // 最后登录IP
@@ -61,6 +62,7 @@ func (r *MSHandler) getAllAdminList(ctx *gin.Context) {
 			Nickname:      user.Nickname,
 			Avatar:        user.Avatar,
 			Role:          user.Role,
+			RoleId:        user.RoleId,
 			IsMultipoint:  false,
 			IsDisable:     user.IsDisable,
 			LastLoginIp:   user.LastLoginIp,
@@ -100,6 +102,7 @@ func (r *MSHandler) getAdminDetail(ctx *gin.Context) {
 		Nickname:      out.User.Nickname,
 		Avatar:        out.User.Avatar,
 		Role:          out.User.Role,
+		RoleId:        out.User.RoleId,
 		IsMultipoint:  false,
 		IsDisable:     out.User.IsDisable,
 		LastLoginIp:   out.User.LastLoginIp,

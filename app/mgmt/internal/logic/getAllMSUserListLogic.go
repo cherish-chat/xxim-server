@@ -31,6 +31,9 @@ func (l *GetAllMSUserListLogic) GetAllMSUserList(in *pb.GetAllMSUserListReq) (*p
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
 		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
 			switch k {
 			case "username":
 				wheres = append(wheres, xorm.Where("id = ?", v))
