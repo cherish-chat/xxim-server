@@ -55,7 +55,7 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 		for _, id := range convIds {
 			keys = append(keys, rediskey.ConvMembersSubscribed(id))
 		}
-		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*60*24)
+		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*5)
 		if err != nil {
 			l.Errorf("mzaddex error: %v", err)
 			return err

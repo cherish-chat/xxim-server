@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/zeromicro/go-zero/core/mr"
+	"google.golang.org/grpc"
 	"runtime"
 	"time"
 
@@ -28,7 +29,43 @@ func NewKeepAliveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *KeepAli
 }
 
 func (l *KeepAliveLogic) KeepAlive(in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
-	return l.svcCtx.ImService().KeepAlive(l.ctx, in)
+	logic := GetConnLogic()
+	// get all subscribers
+	userConns := logic.GetConnsByFilter(func(c *types.UserConn) bool {
+		return true
+	})
+	// number of cpu
+	cpu := runtime.NumCPU()
+	var fs []func()
+	// 把所有的用户连接分成cpu个数的组，每个组一个goroutine去处理
+	for i := 0; i < cpu; i++ {
+		fs = append(fs, func() {
+			// 根据 i 的值，计算出每个 goroutine 要处理的用户连接
+			for j := i; j < len(userConns); j += cpu {
+				conn := userConns[j]
+				// send keep alive
+				_, err := l.KeepAlive(&pb.KeepAliveReq{CommonReq: &pb.CommonReq{
+					UserId:      conn.ConnParam.UserId,
+					Token:       conn.ConnParam.Token,
+					DeviceModel: conn.ConnParam.DeviceModel,
+					DeviceId:    conn.ConnParam.DeviceId,
+					OsVersion:   conn.ConnParam.OsVersion,
+					Platform:    conn.ConnParam.Platform,
+					AppVersion:  conn.ConnParam.AppVersion,
+					Language:    conn.ConnParam.Language,
+					Ip:          conn.ConnParam.Ips,
+				}})
+				if err != nil {
+					l.Errorf("keep alive error: %s", err)
+				}
+			}
+		})
+	}
+	// 并发执行
+	if len(fs) > 0 {
+		mr.FinishVoid(fs...)
+	}
+	return &pb.KeepAliveResp{}, nil
 }
 
 func (l *KeepAliveLogic) Start() {
@@ -76,4 +113,17 @@ func (l *KeepAliveLogic) Start() {
 			return
 		}
 	}
+}
+
+func (l *KeepAliveLogic) DoKeepAlive(ctx context.Context, req *pb.KeepAliveReq, opts ...grpc.CallOption) (*pb.KeepAliveResp, error) {
+	return NewKeepAliveLogic(ctx, l.svcCtx).KeepAlive(req)
+}
+
+var singletonKeepAliveLogic *KeepAliveLogic
+
+func GetKeepAliveLogic(svcCtx *svc.ServiceContext) *KeepAliveLogic {
+	if singletonKeepAliveLogic == nil {
+		singletonKeepAliveLogic = NewKeepAliveLogic(context.Background(), svcCtx)
+	}
+	return singletonKeepAliveLogic
 }

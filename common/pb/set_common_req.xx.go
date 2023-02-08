@@ -124,6 +124,10 @@ func (x *EditMsgReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *KeepAliveReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *SetCxnParamsReq) SetCommonReq(r *CommonReq) {
 }
 

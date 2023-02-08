@@ -29,6 +29,7 @@ type getAllConnectionListRespItem struct {
 	ConnectTimeStr string `json:"connectTimeStr"`
 	Ip             string `json:"ip"`
 	IpRegion       string `json:"ipRegion"`
+	PodIp          string `json:"podIp"`
 }
 
 // getAllConnectionList 获取所有连接列表
@@ -126,6 +127,7 @@ func (r *AppMgrHandler) getAllConnectionList(ctx *gin.Context) {
 			ConnectTimeStr: utils.TimeFormat(conn.Timestamp),
 			Ip:             conn.Ips,
 			IpRegion:       ip2region.Ip2Region(conn.Ips).String(),
+			PodIp:          conn.PodIp,
 		})
 	}
 	handler.ReturnOk(ctx, &getAllConnectionListResp{

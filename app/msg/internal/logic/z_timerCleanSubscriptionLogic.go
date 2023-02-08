@@ -53,8 +53,8 @@ GETKEY:
 		return
 	}
 	for _, key := range keys {
-		// 	ZREMRANGEBYSCORE key 0 time.Now().AddDate(0, 0, -1).UnixMilli()
-		_, err := l.svcCtx.Redis().ZremrangebyscoreCtx(l.ctx, key, 0, time.Now().AddDate(0, 0, -1).UnixMilli())
+		// 	ZREMRANGEBYSCORE key 0 time.Now().Add(time.Second * 60 * 3).UnixMilli()
+		_, err := l.svcCtx.Redis().ZremrangebyscoreCtx(l.ctx, key, 0, time.Now().Add(time.Second*60*3).UnixMilli())
 		if err != nil {
 			l.Errorf("ZremrangebyscoreCtx error: %s", err.Error())
 		}

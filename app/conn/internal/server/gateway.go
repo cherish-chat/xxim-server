@@ -223,6 +223,16 @@ func (s *ConnServer) registerGateway() {
 			}
 			conngateway.AddRoute("/v1/conn/white/setUserParams", route)
 		}
+		// keepalive
+		{
+			route := conngateway.Route[*pb.KeepAliveReq, *pb.KeepAliveResp]{
+				NewRequest: func() *pb.KeepAliveReq {
+					return &pb.KeepAliveReq{}
+				},
+				Do: logic.GetKeepAliveLogic(s.svcCtx).DoKeepAlive,
+			}
+			conngateway.AddRoute("/v1/conn/keepAlive", route)
+		}
 	}
 	s.registerMsg()
 	s.registerNotice()
