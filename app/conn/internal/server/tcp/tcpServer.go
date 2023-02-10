@@ -27,7 +27,7 @@ func (c *userConn) Close(code int, desc string) error {
 }
 
 func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {
-	msgpkg := znet.NewMsgPackage(0, msg)
+	msgpkg := znet.NewMsgPackage(uint32(typ), msg)
 	buf, err := c.dataPacker.Pack(msgpkg)
 	if err != nil {
 		return err
