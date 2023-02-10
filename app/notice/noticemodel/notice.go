@@ -178,8 +178,9 @@ func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId st
 				logger.Errorf("create minConvAutoId err: %v", err)
 				return 0, err
 			}
+		} else {
+			logger.Errorf("get minConvAutoId err: %v", err)
 		}
-		logger.Errorf("get minConvAutoId err: %v", err)
 		return 0, err
 	}
 	return ackRecord.ConvAutoId, nil

@@ -34,7 +34,7 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	// 查询用户所有订阅的会话 检测是否有未消费的消息 进行推送
 	var convIds []string
 	var err error
-	convIds, err = l.getAllConv(in)
+	convIds, err = l.GetAllConv(in)
 	if err != nil {
 		return pb.NewRetryErrorResp(), err
 	}
@@ -68,7 +68,7 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	return pb.NewSuccessResp(), nil
 }
 
-func (l *AfterConnectLogic) getAllConv(in *pb.AfterConnectReq) ([]string, error) {
+func (l *AfterConnectLogic) GetAllConv(in *pb.AfterConnectReq) ([]string, error) {
 	var userId = in.ConnParam.UserId
 	var convIds []string
 	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
