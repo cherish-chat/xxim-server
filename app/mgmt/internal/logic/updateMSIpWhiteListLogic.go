@@ -43,6 +43,7 @@ func (l *UpdateMSIpWhiteListLogic) UpdateMSIpWhiteList(in *pb.UpdateMSIpWhiteLis
 		updateMap["remark"] = in.IpWhiteList.Remark
 	}
 	updateMap["isEnable"] = in.IpWhiteList.IsEnable
+	updateMap["userId"] = in.IpWhiteList.UserId
 	if len(updateMap) > 0 {
 		err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.IpWhiteList.Id).Updates(updateMap).Error
 		if err != nil {
