@@ -44,10 +44,12 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 			bodyData, _ = proto.Marshal(respBody)
 		}
 		if err != nil {
-			logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 			code := pb.ResponseBody_InternalError
 			if errors.Is(err, xerr.InvalidParamError) {
 				code = pb.ResponseBody_RequestError
+				logx.WithContext(ctx).Infof("OnReceiveBody error: %s", err.Error())
+			} else {
+				logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 			}
 			if respBody != nil {
 				code = respBody.Code
@@ -69,7 +71,7 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 			"dataLength": strconv.Itoa(len(data)),
 		}))
 		if err != nil {
-			logx.WithContext(ctx).Errorf("SendMsgToConn error: %s", err.Error())
+			logx.WithContext(ctx).Infof("SendMsgToConn error: %s", err.Error())
 		}
 	default:
 		// 无效的消息类型

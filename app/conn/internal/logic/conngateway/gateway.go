@@ -76,6 +76,6 @@ func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody
 	if fn, ok := routeMap[method]; ok {
 		return fn(ctx, c, body)
 	}
-	logx.Errorf("OnReceive: %s, 404 not found", method)
+	logx.Infof("OnReceive: %s, 404 not found", method)
 	return nil, xerr.InvalidParamError
 }
