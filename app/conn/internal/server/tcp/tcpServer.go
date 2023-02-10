@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	"net"
 	"strconv"
@@ -15,6 +16,7 @@ import (
 )
 
 var connIdMap sync.Map // key: uint32 value: *types.UserConn
+var dp = znet.NewDataPack()
 
 type userConn struct {
 	ctx        context.Context
@@ -75,12 +77,12 @@ type zinxHandler struct {
 }
 
 func (l *zinxHandler) Handle(request ziface.IRequest) {
-	uc := l.server.iConnection2UserConn(request.GetConnection())
-	if uc == nil {
-		return
-	}
 	msg := request.GetData()
+	uc := l.server.iConnection2UserConn(request.GetConnection())
 	go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
+		if uc == nil {
+			return
+		}
 		l.server.onReceive(uc.Ctx, uc, 2, msg)
 	}, propagation.MapCarrier{
 		"length":      strconv.Itoa(len(msg)),
@@ -130,6 +132,7 @@ func (s *Server) onConnStop(iConnection ziface.IConnection) {
 func (s *Server) iConnection2UserConn(iConnection ziface.IConnection) *types.UserConn {
 	conn, ok := connIdMap.Load(iConnection.GetConnID())
 	if !ok {
+		logx.WithContext(iConnection.Context()).Debugf("connIdMap not found connId:%d", iConnection.GetConnID())
 		iConnection.GetTCPConnection().Close()
 		return nil
 	}
@@ -143,7 +146,7 @@ func (s *Server) onConnStart(iConnection ziface.IConnection) {
 	uc := &userConn{
 		ctx:        iConnection.Context(),
 		tcp:        iConnection.GetTCPConnection(),
-		dataPacker: znet.NewDataPack(),
+		dataPacker: dp,
 	}
 	now := time.Now()
 	typeConn := &types.UserConn{
@@ -167,8 +170,10 @@ func (s *Server) onConnStart(iConnection ziface.IConnection) {
 	}
 	connIdMap.Store(iConnection.GetConnID(), typeConn)
 	s.addSubscriber(typeConn)
+	logx.WithContext(iConnection.Context()).Debugf("connIdMap add connId:%d", iConnection.GetConnID())
 }
 
 func (s *Server) deleteConn(iConnection ziface.IConnection) {
 	connIdMap.Delete(iConnection.GetConnID())
+	logx.WithContext(iConnection.Context()).Debugf("connIdMap delete connId:%d", iConnection.GetConnID())
 }
