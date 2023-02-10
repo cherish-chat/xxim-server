@@ -106,7 +106,7 @@ func NewServer(
 	s.zinx.SetOnConnStop(s.onConnStop)
 	s.zinx.SetOnConnStart(s.onConnStart)
 	handler := &zinxHandler{server: s}
-	s.zinx.AddRouter(0, handler)
+	s.zinx.AddRouter(2, handler)
 	return s
 }
 
