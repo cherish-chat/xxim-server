@@ -11,6 +11,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"net"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -160,7 +161,7 @@ func (s *Server) onConnStart(iConnection ziface.IConnection) {
 			AppVersion:  "",
 			Language:    "",
 			Platform:    "",
-			Ips:         iConnection.RemoteAddr().String(),
+			Ips:         getIp(iConnection.RemoteAddr()),
 			NetworkUsed: "",
 			Headers:     nil,
 			Timestamp:   now.UnixMilli(),
@@ -171,6 +172,13 @@ func (s *Server) onConnStart(iConnection ziface.IConnection) {
 	connIdMap.Store(iConnection.GetConnID(), typeConn)
 	s.addSubscriber(typeConn)
 	logx.WithContext(iConnection.Context()).Debugf("connIdMap add connId:%d", iConnection.GetConnID())
+}
+
+func getIp(addr net.Addr) string {
+	if addr == nil {
+		return ""
+	}
+	return strings.Split(addr.String(), ":")[0]
 }
 
 func (s *Server) deleteConn(iConnection ziface.IConnection) {
