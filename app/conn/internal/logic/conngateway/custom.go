@@ -61,11 +61,13 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 			}, nil
 		} else {
 			if beforeRequestResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+				data, _ := proto.Marshal(beforeRequestResp.CommonResp)
 				logger.Errorf("BeforeRequest err: %v", beforeRequestResp.GetCommonResp().GetMsg())
 				return &pb.ResponseBody{
 					ReqId:  body.GetReqId(),
 					Method: method,
 					Code:   pb.ResponseBody_Code(beforeRequestResp.GetCommonResp().GetCode()),
+					Data:   data,
 				}, nil
 			}
 		}
@@ -84,7 +86,12 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 			callback(ctx, resp, c)
 		}
 	}
-	respBuff, _ := proto.Marshal(resp)
+	var respBuff []byte
+	if resp.GetCommonResp().GetCode() == pb.CommonResp_Success {
+		respBuff, _ = proto.Marshal(resp)
+	} else {
+		respBuff, _ = proto.Marshal(resp.GetCommonResp())
+	}
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(ctx context.Context) {
 		ReqLog(c, method, body, req, resp, err)

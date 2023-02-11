@@ -118,6 +118,16 @@ func (s *ConnServer) registerUser() {
 			}
 			conngateway.AddRoute("/v1/user/white/confirmRegister", route)
 		}
+		// 注册
+		{
+			route := conngateway.Route[*pb.RegisterReq, *pb.RegisterResp]{
+				NewRequest: func() *pb.RegisterReq {
+					return &pb.RegisterReq{}
+				},
+				Do: s.svcCtx.UserService().Register,
+			}
+			conngateway.AddRoute("/v1/user/white/register", route)
+		}
 	}
 }
 

@@ -59,6 +59,12 @@ func PrintRoutes() {
 	fmt.Printf("路由列表:\n%s", strBuilder.String())
 }
 
+var authErrorResp []byte
+
+func init() {
+	authErrorResp, _ = proto.Marshal(pb.NewAuthErrorResp("未登录"))
+}
+
 func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 	if c.ConnParam.UserId == "" || c.ConnParam.Token == "" {
 		// 未登录
@@ -69,7 +75,7 @@ func OnReceive(method string, ctx context.Context, c *types.UserConn, body IBody
 				Method: method,
 				ReqId:  body.GetReqId(),
 				Code:   pb.ResponseBody_AuthError,
-				Data:   nil,
+				Data:   authErrorResp,
 			}, nil
 		}
 	}

@@ -51,14 +51,16 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 			} else {
 				logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 			}
+			var data []byte
 			if respBody != nil {
 				code = respBody.Code
+				data = respBody.Data
 			}
 			bodyData, _ = proto.Marshal(&pb.ResponseBody{
 				ReqId:  body.ReqId,
 				Method: body.Method,
 				Code:   code,
-				Data:   nil,
+				Data:   data,
 			})
 		}
 		data, _ := proto.Marshal(&pb.PushBody{

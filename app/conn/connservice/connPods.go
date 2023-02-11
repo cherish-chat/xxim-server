@@ -55,10 +55,13 @@ func (s *ConnPodsMgr) initConnRpc() {
 					if _, ok := s.connPods.Load(endpoint); !ok {
 						s.connPods.Store(endpoint, &ConnPod{
 							PodIpPort: endpoint,
-							ConnService: NewConnService(zrpc.MustNewClient(zrpc.RpcClientConf{
-								Endpoints: []string{endpoint},
-								NonBlock:  true,
-							})),
+							ConnService: NewConnService(zrpc.MustNewClient(
+								zrpc.RpcClientConf{
+									Endpoints: []string{endpoint},
+									NonBlock:  true,
+								},
+								utils.Zrpc.Options()...,
+							)),
 						})
 					}
 				}
