@@ -18,7 +18,6 @@ import (
 type customBody struct {
 	Data  []byte
 	ReqId string
-	Event pb.ActiveEvent
 }
 
 func (c *customBody) GetData() []byte {
@@ -27,10 +26,6 @@ func (c *customBody) GetData() []byte {
 
 func (c *customBody) GetReqId() string {
 	return c.ReqId
-}
-
-func (c *customBody) GetEvent() pb.ActiveEvent {
-	return c.Event
 }
 
 func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, msg []byte) {
@@ -42,36 +37,28 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 		err := proto.Unmarshal(msg, body)
 		var respBody *pb.ResponseBody
 		if err == nil {
-			if body.Event == pb.ActiveEvent_CustomRequest {
-				customRequestBody := &pb.CustomRequestBody{}
-				err = proto.Unmarshal(body.Data, customRequestBody)
-				if err == nil {
-					respBody, err = conngateway.OnReceive(customRequestBody.Method, ctx, c, &customBody{
-						Data:  customRequestBody.Data,
-						ReqId: body.ReqId,
-						Event: body.Event,
-					})
-				}
-			} else {
-				method := strconv.Itoa(int(body.Event.Number()))
-				respBody, err = conngateway.OnReceive(method, ctx, c, body)
-			}
+			respBody, err = conngateway.OnReceive(body.Method, ctx, c, &customBody{
+				Data:  body.Data,
+				ReqId: body.ReqId,
+			})
 			bodyData, _ = proto.Marshal(respBody)
 		}
 		if err != nil {
-			logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 			code := pb.ResponseBody_InternalError
 			if errors.Is(err, xerr.InvalidParamError) {
 				code = pb.ResponseBody_RequestError
+				logx.WithContext(ctx).Infof("OnReceiveBody error: %s", err.Error())
+			} else {
+				logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
 			}
 			if respBody != nil {
 				code = respBody.Code
 			}
 			bodyData, _ = proto.Marshal(&pb.ResponseBody{
-				Event: body.Event,
-				ReqId: body.ReqId,
-				Code:  code,
-				Data:  nil,
+				ReqId:  body.ReqId,
+				Method: body.Method,
+				Code:   code,
+				Data:   nil,
 			})
 		}
 		data, _ := proto.Marshal(&pb.PushBody{
@@ -84,10 +71,10 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 			"dataLength": strconv.Itoa(len(data)),
 		}))
 		if err != nil {
-			logx.WithContext(ctx).Errorf("SendMsgToConn error: %s", err.Error())
+			logx.WithContext(ctx).Infof("SendMsgToConn error: %s", err.Error())
 		}
 	default:
 		// 无效的消息类型
-		l.Errorf("invalid message type: %d, msg: %s", typ, string(msg))
+		l.Infof("invalid message type: %d, msg: %s", typ, string(msg))
 	}
 }

@@ -42,6 +42,10 @@ func ServerMsgId(convId string, seq int64) string {
 	return convId + IdSeparator + strconv.FormatInt(seq, 10)
 }
 
+func ServerNoticeId(convId string, seq int64, userId string) string {
+	return convId + IdSeparator + strconv.FormatInt(seq, 10) + IdSeparator + userId
+}
+
 func SingleConvId(id1 string, id2 string) string {
 	if id1 < id2 {
 		return SinglePrefix + id1 + IdSeparator + id2
@@ -64,6 +68,18 @@ func IsSingleConv(convId string) bool {
 func ParseSingleConv(convId string) []string {
 	arr := strings.Split(strings.TrimPrefix(convId, SinglePrefix), IdSeparator)
 	return arr
+}
+
+func ParseServerNoticeId(noticeId string) (convId string, seq int64, userId string) {
+	// notice:convId-seq-uid
+	noticeId = strings.TrimPrefix(noticeId, NoticePrefix)
+	arr := strings.Split(noticeId, IdSeparator)
+	// userId 是最后一个
+	userId = arr[len(arr)-1]
+	// 剩下的是 convId-seq
+	convIdSeq := strings.TrimSuffix(noticeId, IdSeparator+userId)
+	convId, seq = ParseConvServerMsgId(convIdSeq)
+	return
 }
 
 func IsGroupConv(convId string) bool {

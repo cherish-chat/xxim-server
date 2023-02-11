@@ -134,7 +134,7 @@ func (p *Pusher) Push(
 					logx.WithContext(ctx).Errorf("push error: %v", err)
 				}
 			}
-			logx.WithContext(ctx).Infof("push success: %s", string(respBuf))
+			logx.WithContext(ctx).Debugf("push success: %s", string(respBuf))
 		}
 	}
 	return "", nil

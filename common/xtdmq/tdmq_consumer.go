@@ -56,7 +56,7 @@ func (p *TDMQConsumer) init() {
 	p.client = client
 	// 使用客户端创建生产者
 	consumer, err := client.Subscribe(pulsar.ConsumerOptions{
-		// topic完整路径，格式为persistent://集群（租户）ID/命名空间/Topic名称
+		// topic完整路径，格式为persistent://集群（租户）Id/命名空间/Topic名称
 		Topic:                       p.ConsumerConfig.TopicName,
 		SubscriptionName:            p.ConsumerConfig.GetSubName(),
 		Type:                        pulsar.SubscriptionType(p.ConsumerConfig.SubType),
@@ -99,7 +99,7 @@ func (p *TDMQConsumer) Consume(
 			properties["topic"] = receive.Topic()
 		}
 		traceId, _ := properties["traceId"]
-		xtrace.RunWithTrace(
+		go xtrace.RunWithTrace(
 			traceId,
 			fmt.Sprintf("tdmqconsumer/topic:%s/subname:%s/consumername:%s", p.ConsumerConfig.TopicName, p.ConsumerConfig.SubName, p.ConsumerConfig.ConsumerName),
 			func(ctx context.Context) {
@@ -113,8 +113,9 @@ func (p *TDMQConsumer) Consume(
 						if err != nil {
 							logx.Errorf("redis incr error:%v", err)
 						}
-						if count == 12 {
-							// 重试12次，丢到死信队列，TODO 告警
+						if count > 2 {
+							// 告警
+							logx.Errorf("tdmq consumer retry count > 2, traceId:%s", traceId)
 						}
 						p.consumer.ReconsumeLater(receive, GetRetryDelay(count))
 					} else {

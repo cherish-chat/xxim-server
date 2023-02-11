@@ -2,6 +2,10 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 
+message MStr {
+  map<string, string> m = 1;
+}
+
 message CommonResp {
   enum Code {
     Success = 0;
@@ -13,6 +17,8 @@ message CommonResp {
     ToastError = 5;    // toast 错误 只有 message
     AlertError = 7;    // alert 错误 只有一个确定按钮
     RetryError = 8;    // alert 错误 有一个取消按钮 和一个重试按钮
+    ForbiddenError = 9; // 无权限
+    NeedSecondPasswordError = 10; // 需要输入二级密码/设置二级密码
   }
   Code code = 1;
   optional string msg = 2;
@@ -43,6 +49,7 @@ message CommonReq {
   string deviceId = 12;
   string osVersion = 13;
   string platform = 14;
+  string packageId = 15;
 
   string appVersion = 21;
   string language = 22;
@@ -59,10 +66,9 @@ enum ConvType {
 }
 
 enum ContentType {
-  UNKNOWN_Content = 0;
+  UNKNOWN = 0;
   TYPING = 1; // 正在输入
-  READ = 2; // 已读
-  REVOKE = 3; // 撤回
+  TIP = 2; // 提示 灰色小字 比如：xxx加入群聊、xxx撤回了一条消息
 
   TEXT = 11; // 文本
   IMAGE = 12; // 图片
@@ -74,10 +80,18 @@ enum ContentType {
   MERGE = 18; // 合并
   EMOJI = 19; // 表情
   COMMAND = 20; // 命令
-  RICH_TXT = 21; // 富文本
+  RICH_TEXT = 21; // 富文本
   MARKDOWN = 22; // markdown
 
   CUSTOM = 100; // 自定义消息
+}
+
+enum NoticeType {
+  INVALID = 0;
+  // 已读
+  READ = 1;
+  // 编辑
+  EDIT = 2;
 }
 
 message IpRegion {

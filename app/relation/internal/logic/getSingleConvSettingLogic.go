@@ -38,7 +38,7 @@ func (l *GetSingleConvSettingLogic) GetSingleConvSetting(in *pb.GetSingleConvSet
 		UserId: in.UserId,
 	}
 	val, err := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.SingleConvSetting(in.ConvId, in.UserId))
-	if err != nil {
+	if err != nil || val == "" {
 		return l.getSingleConvSettingFromDB(in)
 	}
 	if val == xredis.NotFound {
@@ -84,7 +84,7 @@ func (l *GetSingleConvSettingLogic) getSingleConvSettingFromDB(in *pb.GetSingleC
 }
 
 func (l *GetSingleConvSettingLogic) notFound(in *pb.GetSingleConvSettingReq) (*pb.GetSingleConvSettingResp, error) {
-	config := l.svcCtx.SystemConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
+	config := l.svcCtx.ConfigMgr.MGetOrDefaultCtx(l.ctx, map[string]string{
 		"singleConvSetting_isTop_Default":             "0",
 		"singleConvSetting_isDisturb_Default":         "0",
 		"singleConvSetting_notifyPreview_Default":     "1",

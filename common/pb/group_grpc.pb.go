@@ -40,36 +40,32 @@ type GroupServiceClient interface {
 	GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
-	//SetGroupSetting 设置群设置
-	SetGroupSetting(ctx context.Context, in *SetGroupSettingReq, opts ...grpc.CallOption) (*SetGroupSettingResp, error)
-	//GetGroupSetting 获取群设置
-	GetGroupSetting(ctx context.Context, in *GetGroupSettingReq, opts ...grpc.CallOption) (*GetGroupSettingResp, error)
 	//TransferGroupOwner 转让群主
 	TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error)
-	//SetGroupMemberRole 设置群成员角色
-	SetGroupMemberRole(ctx context.Context, in *SetGroupMemberRoleReq, opts ...grpc.CallOption) (*SetGroupMemberRoleResp, error)
 	//KickGroupMember 踢出群成员
 	KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error)
-	//QuitGroup 退出群聊
-	QuitGroup(ctx context.Context, in *QuitGroupReq, opts ...grpc.CallOption) (*QuitGroupResp, error)
-	//BanGroupMember 禁言群成员
-	BanGroupMember(ctx context.Context, in *BanGroupMemberReq, opts ...grpc.CallOption) (*BanGroupMemberResp, error)
-	//BanAllGroupMember 禁言全部群成员
-	BanAllGroupMember(ctx context.Context, in *BanAllGroupMemberReq, opts ...grpc.CallOption) (*BanAllGroupMemberResp, error)
-	//UnbanGroupMember 解除禁言群成员
-	UnbanGroupMember(ctx context.Context, in *UnbanGroupMemberReq, opts ...grpc.CallOption) (*UnbanGroupMemberResp, error)
-	//UnbanAllGroupMember 解除禁言全部群成员
-	UnbanAllGroupMember(ctx context.Context, in *UnbanAllGroupMemberReq, opts ...grpc.CallOption) (*UnbanAllGroupMemberResp, error)
 	//GetGroupMemberList 获取群成员列表
 	GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error)
-	//DismissGroup 解散群聊
-	DismissGroup(ctx context.Context, in *DismissGroupReq, opts ...grpc.CallOption) (*DismissGroupResp, error)
-	//SetGroupMsgNotifyType 设置群消息通知选项
-	SetGroupMsgNotifyType(ctx context.Context, in *SetGroupMsgNotifyTypeReq, opts ...grpc.CallOption) (*SetGroupMsgNotifyTypeResp, error)
 	//GetMyGroupList 获取我的群聊列表
 	GetMyGroupList(ctx context.Context, in *GetMyGroupListReq, opts ...grpc.CallOption) (*GetMyGroupListResp, error)
 	//MapGroupByIds 获取群聊信息
 	MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error)
+	//SyncGroupMemberCount 同步群成员数量
+	SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error)
+	//ApplyToBeGroupMember 申请加入群聊
+	ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
+	//HandleGroupApply 处理群聊申请
+	HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+	//GetGroupListByUserId 分页获取某人的群列表
+	GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
+	//GetAllGroupModel 获取所有群组
+	GetAllGroupModel(ctx context.Context, in *GetAllGroupModelReq, opts ...grpc.CallOption) (*GetAllGroupModelResp, error)
+	//GetGroupModelDetail 获取群组详情
+	GetGroupModelDetail(ctx context.Context, in *GetGroupModelDetailReq, opts ...grpc.CallOption) (*GetGroupModelDetailResp, error)
+	//UpdateGroupModel 更新群组
+	UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
+	//DismissGroupModel 解散群组
+	DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
 }
 
 type groupServiceClient struct {
@@ -161,36 +157,9 @@ func (c *groupServiceClient) EditGroupInfo(ctx context.Context, in *EditGroupInf
 	return out, nil
 }
 
-func (c *groupServiceClient) SetGroupSetting(ctx context.Context, in *SetGroupSettingReq, opts ...grpc.CallOption) (*SetGroupSettingResp, error) {
-	out := new(SetGroupSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/SetGroupSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) GetGroupSetting(ctx context.Context, in *GetGroupSettingReq, opts ...grpc.CallOption) (*GetGroupSettingResp, error) {
-	out := new(GetGroupSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *groupServiceClient) TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error) {
 	out := new(TransferGroupOwnerResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/TransferGroupOwner", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) SetGroupMemberRole(ctx context.Context, in *SetGroupMemberRoleReq, opts ...grpc.CallOption) (*SetGroupMemberRoleResp, error) {
-	out := new(SetGroupMemberRoleResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/SetGroupMemberRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -206,72 +175,9 @@ func (c *groupServiceClient) KickGroupMember(ctx context.Context, in *KickGroupM
 	return out, nil
 }
 
-func (c *groupServiceClient) QuitGroup(ctx context.Context, in *QuitGroupReq, opts ...grpc.CallOption) (*QuitGroupResp, error) {
-	out := new(QuitGroupResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/QuitGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) BanGroupMember(ctx context.Context, in *BanGroupMemberReq, opts ...grpc.CallOption) (*BanGroupMemberResp, error) {
-	out := new(BanGroupMemberResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/BanGroupMember", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) BanAllGroupMember(ctx context.Context, in *BanAllGroupMemberReq, opts ...grpc.CallOption) (*BanAllGroupMemberResp, error) {
-	out := new(BanAllGroupMemberResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/BanAllGroupMember", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) UnbanGroupMember(ctx context.Context, in *UnbanGroupMemberReq, opts ...grpc.CallOption) (*UnbanGroupMemberResp, error) {
-	out := new(UnbanGroupMemberResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/UnbanGroupMember", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) UnbanAllGroupMember(ctx context.Context, in *UnbanAllGroupMemberReq, opts ...grpc.CallOption) (*UnbanAllGroupMemberResp, error) {
-	out := new(UnbanAllGroupMemberResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/UnbanAllGroupMember", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *groupServiceClient) GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error) {
 	out := new(GetGroupMemberListResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupMemberList", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) DismissGroup(ctx context.Context, in *DismissGroupReq, opts ...grpc.CallOption) (*DismissGroupResp, error) {
-	out := new(DismissGroupResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/DismissGroup", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *groupServiceClient) SetGroupMsgNotifyType(ctx context.Context, in *SetGroupMsgNotifyTypeReq, opts ...grpc.CallOption) (*SetGroupMsgNotifyTypeResp, error) {
-	out := new(SetGroupMsgNotifyTypeResp)
-	err := c.cc.Invoke(ctx, "/pb.groupService/SetGroupMsgNotifyType", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -290,6 +196,78 @@ func (c *groupServiceClient) GetMyGroupList(ctx context.Context, in *GetMyGroupL
 func (c *groupServiceClient) MapGroupByIds(ctx context.Context, in *MapGroupByIdsReq, opts ...grpc.CallOption) (*MapGroupByIdsResp, error) {
 	out := new(MapGroupByIdsResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/MapGroupByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) SyncGroupMemberCount(ctx context.Context, in *SyncGroupMemberCountReq, opts ...grpc.CallOption) (*SyncGroupMemberCountResp, error) {
+	out := new(SyncGroupMemberCountResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/SyncGroupMemberCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error) {
+	out := new(ApplyToBeGroupMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ApplyToBeGroupMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error) {
+	out := new(HandleGroupApplyResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/HandleGroupApply", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error) {
+	out := new(GetGroupListByUserIdResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupListByUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) GetAllGroupModel(ctx context.Context, in *GetAllGroupModelReq, opts ...grpc.CallOption) (*GetAllGroupModelResp, error) {
+	out := new(GetAllGroupModelResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GetAllGroupModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) GetGroupModelDetail(ctx context.Context, in *GetGroupModelDetailReq, opts ...grpc.CallOption) (*GetGroupModelDetailResp, error) {
+	out := new(GetGroupModelDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupModelDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error) {
+	out := new(UpdateGroupModelResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/UpdateGroupModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error) {
+	out := new(DismissGroupModelResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/DismissGroupModel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -318,36 +296,32 @@ type GroupServiceServer interface {
 	GetGroupMemberInfo(context.Context, *GetGroupMemberInfoReq) (*GetGroupMemberInfoResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error)
-	//SetGroupSetting 设置群设置
-	SetGroupSetting(context.Context, *SetGroupSettingReq) (*SetGroupSettingResp, error)
-	//GetGroupSetting 获取群设置
-	GetGroupSetting(context.Context, *GetGroupSettingReq) (*GetGroupSettingResp, error)
 	//TransferGroupOwner 转让群主
 	TransferGroupOwner(context.Context, *TransferGroupOwnerReq) (*TransferGroupOwnerResp, error)
-	//SetGroupMemberRole 设置群成员角色
-	SetGroupMemberRole(context.Context, *SetGroupMemberRoleReq) (*SetGroupMemberRoleResp, error)
 	//KickGroupMember 踢出群成员
 	KickGroupMember(context.Context, *KickGroupMemberReq) (*KickGroupMemberResp, error)
-	//QuitGroup 退出群聊
-	QuitGroup(context.Context, *QuitGroupReq) (*QuitGroupResp, error)
-	//BanGroupMember 禁言群成员
-	BanGroupMember(context.Context, *BanGroupMemberReq) (*BanGroupMemberResp, error)
-	//BanAllGroupMember 禁言全部群成员
-	BanAllGroupMember(context.Context, *BanAllGroupMemberReq) (*BanAllGroupMemberResp, error)
-	//UnbanGroupMember 解除禁言群成员
-	UnbanGroupMember(context.Context, *UnbanGroupMemberReq) (*UnbanGroupMemberResp, error)
-	//UnbanAllGroupMember 解除禁言全部群成员
-	UnbanAllGroupMember(context.Context, *UnbanAllGroupMemberReq) (*UnbanAllGroupMemberResp, error)
 	//GetGroupMemberList 获取群成员列表
 	GetGroupMemberList(context.Context, *GetGroupMemberListReq) (*GetGroupMemberListResp, error)
-	//DismissGroup 解散群聊
-	DismissGroup(context.Context, *DismissGroupReq) (*DismissGroupResp, error)
-	//SetGroupMsgNotifyType 设置群消息通知选项
-	SetGroupMsgNotifyType(context.Context, *SetGroupMsgNotifyTypeReq) (*SetGroupMsgNotifyTypeResp, error)
 	//GetMyGroupList 获取我的群聊列表
 	GetMyGroupList(context.Context, *GetMyGroupListReq) (*GetMyGroupListResp, error)
 	//MapGroupByIds 获取群聊信息
 	MapGroupByIds(context.Context, *MapGroupByIdsReq) (*MapGroupByIdsResp, error)
+	//SyncGroupMemberCount 同步群成员数量
+	SyncGroupMemberCount(context.Context, *SyncGroupMemberCountReq) (*SyncGroupMemberCountResp, error)
+	//ApplyToBeGroupMember 申请加入群聊
+	ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error)
+	//HandleGroupApply 处理群聊申请
+	HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error)
+	//GetGroupListByUserId 分页获取某人的群列表
+	GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error)
+	//GetAllGroupModel 获取所有群组
+	GetAllGroupModel(context.Context, *GetAllGroupModelReq) (*GetAllGroupModelResp, error)
+	//GetGroupModelDetail 获取群组详情
+	GetGroupModelDetail(context.Context, *GetGroupModelDetailReq) (*GetGroupModelDetailResp, error)
+	//UpdateGroupModel 更新群组
+	UpdateGroupModel(context.Context, *UpdateGroupModelReq) (*UpdateGroupModelResp, error)
+	//DismissGroupModel 解散群组
+	DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -382,50 +356,44 @@ func (UnimplementedGroupServiceServer) GetGroupMemberInfo(context.Context, *GetG
 func (UnimplementedGroupServiceServer) EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditGroupInfo not implemented")
 }
-func (UnimplementedGroupServiceServer) SetGroupSetting(context.Context, *SetGroupSettingReq) (*SetGroupSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetGroupSetting not implemented")
-}
-func (UnimplementedGroupServiceServer) GetGroupSetting(context.Context, *GetGroupSettingReq) (*GetGroupSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupSetting not implemented")
-}
 func (UnimplementedGroupServiceServer) TransferGroupOwner(context.Context, *TransferGroupOwnerReq) (*TransferGroupOwnerResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransferGroupOwner not implemented")
-}
-func (UnimplementedGroupServiceServer) SetGroupMemberRole(context.Context, *SetGroupMemberRoleReq) (*SetGroupMemberRoleResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetGroupMemberRole not implemented")
 }
 func (UnimplementedGroupServiceServer) KickGroupMember(context.Context, *KickGroupMemberReq) (*KickGroupMemberResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KickGroupMember not implemented")
 }
-func (UnimplementedGroupServiceServer) QuitGroup(context.Context, *QuitGroupReq) (*QuitGroupResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QuitGroup not implemented")
-}
-func (UnimplementedGroupServiceServer) BanGroupMember(context.Context, *BanGroupMemberReq) (*BanGroupMemberResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BanGroupMember not implemented")
-}
-func (UnimplementedGroupServiceServer) BanAllGroupMember(context.Context, *BanAllGroupMemberReq) (*BanAllGroupMemberResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BanAllGroupMember not implemented")
-}
-func (UnimplementedGroupServiceServer) UnbanGroupMember(context.Context, *UnbanGroupMemberReq) (*UnbanGroupMemberResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnbanGroupMember not implemented")
-}
-func (UnimplementedGroupServiceServer) UnbanAllGroupMember(context.Context, *UnbanAllGroupMemberReq) (*UnbanAllGroupMemberResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UnbanAllGroupMember not implemented")
-}
 func (UnimplementedGroupServiceServer) GetGroupMemberList(context.Context, *GetGroupMemberListReq) (*GetGroupMemberListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMemberList not implemented")
-}
-func (UnimplementedGroupServiceServer) DismissGroup(context.Context, *DismissGroupReq) (*DismissGroupResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DismissGroup not implemented")
-}
-func (UnimplementedGroupServiceServer) SetGroupMsgNotifyType(context.Context, *SetGroupMsgNotifyTypeReq) (*SetGroupMsgNotifyTypeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetGroupMsgNotifyType not implemented")
 }
 func (UnimplementedGroupServiceServer) GetMyGroupList(context.Context, *GetMyGroupListReq) (*GetMyGroupListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyGroupList not implemented")
 }
 func (UnimplementedGroupServiceServer) MapGroupByIds(context.Context, *MapGroupByIdsReq) (*MapGroupByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapGroupByIds not implemented")
+}
+func (UnimplementedGroupServiceServer) SyncGroupMemberCount(context.Context, *SyncGroupMemberCountReq) (*SyncGroupMemberCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncGroupMemberCount not implemented")
+}
+func (UnimplementedGroupServiceServer) ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyToBeGroupMember not implemented")
+}
+func (UnimplementedGroupServiceServer) HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleGroupApply not implemented")
+}
+func (UnimplementedGroupServiceServer) GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupListByUserId not implemented")
+}
+func (UnimplementedGroupServiceServer) GetAllGroupModel(context.Context, *GetAllGroupModelReq) (*GetAllGroupModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllGroupModel not implemented")
+}
+func (UnimplementedGroupServiceServer) GetGroupModelDetail(context.Context, *GetGroupModelDetailReq) (*GetGroupModelDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupModelDetail not implemented")
+}
+func (UnimplementedGroupServiceServer) UpdateGroupModel(context.Context, *UpdateGroupModelReq) (*UpdateGroupModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupModel not implemented")
+}
+func (UnimplementedGroupServiceServer) DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DismissGroupModel not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -602,42 +570,6 @@ func _GroupService_EditGroupInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GroupService_SetGroupSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetGroupSettingReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).SetGroupSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/SetGroupSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).SetGroupSetting(ctx, req.(*SetGroupSettingReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_GetGroupSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGroupSettingReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).GetGroupSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/GetGroupSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).GetGroupSetting(ctx, req.(*GetGroupSettingReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _GroupService_TransferGroupOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TransferGroupOwnerReq)
 	if err := dec(in); err != nil {
@@ -652,24 +584,6 @@ func _GroupService_TransferGroupOwner_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).TransferGroupOwner(ctx, req.(*TransferGroupOwnerReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_SetGroupMemberRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetGroupMemberRoleReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).SetGroupMemberRole(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/SetGroupMemberRole",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).SetGroupMemberRole(ctx, req.(*SetGroupMemberRoleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -692,96 +606,6 @@ func _GroupService_KickGroupMember_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GroupService_QuitGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QuitGroupReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).QuitGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/QuitGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).QuitGroup(ctx, req.(*QuitGroupReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_BanGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BanGroupMemberReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).BanGroupMember(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/BanGroupMember",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).BanGroupMember(ctx, req.(*BanGroupMemberReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_BanAllGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BanAllGroupMemberReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).BanAllGroupMember(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/BanAllGroupMember",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).BanAllGroupMember(ctx, req.(*BanAllGroupMemberReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_UnbanGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnbanGroupMemberReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).UnbanGroupMember(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/UnbanGroupMember",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).UnbanGroupMember(ctx, req.(*UnbanGroupMemberReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_UnbanAllGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnbanAllGroupMemberReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).UnbanAllGroupMember(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/UnbanAllGroupMember",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).UnbanAllGroupMember(ctx, req.(*UnbanAllGroupMemberReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _GroupService_GetGroupMemberList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetGroupMemberListReq)
 	if err := dec(in); err != nil {
@@ -796,42 +620,6 @@ func _GroupService_GetGroupMemberList_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).GetGroupMemberList(ctx, req.(*GetGroupMemberListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_DismissGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DismissGroupReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).DismissGroup(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/DismissGroup",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).DismissGroup(ctx, req.(*DismissGroupReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GroupService_SetGroupMsgNotifyType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetGroupMsgNotifyTypeReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GroupServiceServer).SetGroupMsgNotifyType(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.groupService/SetGroupMsgNotifyType",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServiceServer).SetGroupMsgNotifyType(ctx, req.(*SetGroupMsgNotifyTypeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -868,6 +656,150 @@ func _GroupService_MapGroupByIds_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).MapGroupByIds(ctx, req.(*MapGroupByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_SyncGroupMemberCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncGroupMemberCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).SyncGroupMemberCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/SyncGroupMemberCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).SyncGroupMemberCount(ctx, req.(*SyncGroupMemberCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_ApplyToBeGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplyToBeGroupMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ApplyToBeGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ApplyToBeGroupMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ApplyToBeGroupMember(ctx, req.(*ApplyToBeGroupMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_HandleGroupApply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleGroupApplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).HandleGroupApply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/HandleGroupApply",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).HandleGroupApply(ctx, req.(*HandleGroupApplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_GetGroupListByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupListByUserIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetGroupListByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GetGroupListByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetGroupListByUserId(ctx, req.(*GetGroupListByUserIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_GetAllGroupModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllGroupModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetAllGroupModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GetAllGroupModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetAllGroupModel(ctx, req.(*GetAllGroupModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_GetGroupModelDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupModelDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetGroupModelDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GetGroupModelDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetGroupModelDetail(ctx, req.(*GetGroupModelDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_UpdateGroupModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).UpdateGroupModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/UpdateGroupModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).UpdateGroupModel(ctx, req.(*UpdateGroupModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_DismissGroupModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DismissGroupModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).DismissGroupModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/DismissGroupModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).DismissGroupModel(ctx, req.(*DismissGroupModelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -916,56 +848,16 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GroupService_EditGroupInfo_Handler,
 		},
 		{
-			MethodName: "SetGroupSetting",
-			Handler:    _GroupService_SetGroupSetting_Handler,
-		},
-		{
-			MethodName: "GetGroupSetting",
-			Handler:    _GroupService_GetGroupSetting_Handler,
-		},
-		{
 			MethodName: "TransferGroupOwner",
 			Handler:    _GroupService_TransferGroupOwner_Handler,
-		},
-		{
-			MethodName: "SetGroupMemberRole",
-			Handler:    _GroupService_SetGroupMemberRole_Handler,
 		},
 		{
 			MethodName: "KickGroupMember",
 			Handler:    _GroupService_KickGroupMember_Handler,
 		},
 		{
-			MethodName: "QuitGroup",
-			Handler:    _GroupService_QuitGroup_Handler,
-		},
-		{
-			MethodName: "BanGroupMember",
-			Handler:    _GroupService_BanGroupMember_Handler,
-		},
-		{
-			MethodName: "BanAllGroupMember",
-			Handler:    _GroupService_BanAllGroupMember_Handler,
-		},
-		{
-			MethodName: "UnbanGroupMember",
-			Handler:    _GroupService_UnbanGroupMember_Handler,
-		},
-		{
-			MethodName: "UnbanAllGroupMember",
-			Handler:    _GroupService_UnbanAllGroupMember_Handler,
-		},
-		{
 			MethodName: "GetGroupMemberList",
 			Handler:    _GroupService_GetGroupMemberList_Handler,
-		},
-		{
-			MethodName: "DismissGroup",
-			Handler:    _GroupService_DismissGroup_Handler,
-		},
-		{
-			MethodName: "SetGroupMsgNotifyType",
-			Handler:    _GroupService_SetGroupMsgNotifyType_Handler,
 		},
 		{
 			MethodName: "GetMyGroupList",
@@ -974,6 +866,38 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MapGroupByIds",
 			Handler:    _GroupService_MapGroupByIds_Handler,
+		},
+		{
+			MethodName: "SyncGroupMemberCount",
+			Handler:    _GroupService_SyncGroupMemberCount_Handler,
+		},
+		{
+			MethodName: "ApplyToBeGroupMember",
+			Handler:    _GroupService_ApplyToBeGroupMember_Handler,
+		},
+		{
+			MethodName: "HandleGroupApply",
+			Handler:    _GroupService_HandleGroupApply_Handler,
+		},
+		{
+			MethodName: "GetGroupListByUserId",
+			Handler:    _GroupService_GetGroupListByUserId_Handler,
+		},
+		{
+			MethodName: "GetAllGroupModel",
+			Handler:    _GroupService_GetAllGroupModel_Handler,
+		},
+		{
+			MethodName: "GetGroupModelDetail",
+			Handler:    _GroupService_GetGroupModelDetail_Handler,
+		},
+		{
+			MethodName: "UpdateGroupModel",
+			Handler:    _GroupService_UpdateGroupModel_Handler,
+		},
+		{
+			MethodName: "DismissGroupModel",
+			Handler:    _GroupService_DismissGroupModel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -17,9 +17,10 @@ type (
 	AfterDisconnectReq = pb.AfterDisconnectReq
 	ConnMQBody         = pb.ConnMQBody
 	ConnParam          = pb.ConnParam
-	CustomRequestBody  = pb.CustomRequestBody
 	GetUserConnReq     = pb.GetUserConnReq
 	GetUserConnResp    = pb.GetUserConnResp
+	KeepAliveReq       = pb.KeepAliveReq
+	KeepAliveResp      = pb.KeepAliveResp
 	KickUserConnReq    = pb.KickUserConnReq
 	KickUserConnResp   = pb.KickUserConnResp
 	PushBody           = pb.PushBody
@@ -27,11 +28,16 @@ type (
 	ResponseBody       = pb.ResponseBody
 	SendMsgReq         = pb.SendMsgReq
 	SendMsgResp        = pb.SendMsgResp
+	SetCxnParamsReq    = pb.SetCxnParamsReq
+	SetCxnParamsResp   = pb.SetCxnParamsResp
+	SetUserParamsReq   = pb.SetUserParamsReq
+	SetUserParamsResp  = pb.SetUserParamsResp
 
 	ConnService interface {
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
+		KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 	}
 
 	defaultConnService struct {
@@ -58,4 +64,9 @@ func (m *defaultConnService) GetUserConn(ctx context.Context, in *GetUserConnReq
 func (m *defaultConnService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error) {
 	client := pb.NewConnServiceClient(m.cli.Conn())
 	return client.SendMsg(ctx, in, opts...)
+}
+
+func (m *defaultConnService) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	client := pb.NewConnServiceClient(m.cli.Conn())
+	return client.KeepAlive(ctx, in, opts...)
 }

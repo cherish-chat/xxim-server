@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -87,7 +86,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= utils.AnyToInt64(l.svcCtx.SystemConfigMgr.Get("app.friend_max_count")) {
+		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx) {
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
@@ -193,43 +192,35 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 			}
 			return err
 		}, func(tx *gorm.DB) error {
-			data := &pb.NoticeData{
-				ConvId:         noticemodel.ConvId_FriendNotice,
-				UnreadCount:    0,
-				UnreadAbsolute: false,
-				NoticeId:       fmt.Sprintf("%s", in.To),
-				CreateTime:     "",
-				Title:          "",
-				ContentType:    1,
-				Content:        []byte{},
-				Options: &pb.NoticeData_Options{
+			notice := &noticemodel.Notice{
+				ConvId: pb.HiddenConvIdFriendMember(),
+				UserId: in.To,
+				Options: noticemodel.NoticeOption{
 					StorageForClient: false,
-					UpdateConvMsg:    false,
-					OnlinePushOnce:   false,
+					UpdateConvNotice: false,
 				},
-				Ext: nil,
+				ContentType: 0,
+				Content:     nil,
+				UniqueId:    "requestAddFriend",
+				Title:       "",
+				Ext:         nil,
 			}
-			m := noticemodel.NoticeFromPB(data, false, in.To)
-			err := m.Upsert(tx)
+			err := notice.Insert(l.ctx, tx)
 			if err != nil {
-				l.Errorf("Upsert failed, err: %v", err)
+				l.Errorf("insert notice failed, err: %v", err)
+				return err
 			}
-			return err
+			return nil
 		})
 		if err != nil {
 			l.Errorf("Transaction failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
-	l.svcCtx.NoticeService().SendNoticeData(l.ctx, &pb.SendNoticeDataReq{
+	l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 		CommonReq: in.CommonReq,
-		NoticeData: &pb.NoticeData{
-			NoticeId: fmt.Sprintf("%s", in.To),
-			ConvId:   noticemodel.ConvId_FriendNotice,
-		},
-		UserId:      utils.AnyPtr(in.To),
-		IsBroadcast: nil,
-		Inserted:    utils.AnyPtr(true),
+		UserId:    in.To,
+		ConvId:    pb.HiddenConvIdFriendMember(),
 	})
 	return &pb.RequestAddFriendResp{}, nil
 }

@@ -84,10 +84,6 @@ func (x *GetMyFriendEventListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *GetAppSystemConfigReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
 func (x *AckNoticeDataReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
@@ -98,4 +94,70 @@ func (x *UpdateUserInfoReq) SetCommonReq(r *CommonReq) {
 
 func (x *GetMyGroupListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
+}
+
+func (x *SetGroupMemberInfoReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetGroupMemberInfoReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *ApplyToBeGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *HandleGroupApplyReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *KickGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *ReadMsgReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *EditMsgReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *KeepAliveReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *SetCxnParamsReq) SetCommonReq(r *CommonReq) {
+}
+
+func (x *SetCxnParamsReq) GetCommonReq() *CommonReq {
+	return &CommonReq{}
+}
+
+func (x *SetCxnParamsReq) Validate() error {
+	return nil
+}
+
+func (x *SetCxnParamsResp) GetCommonResp() *CommonResp {
+	return &CommonResp{}
+}
+
+func (x *SetUserParamsReq) SetCommonReq(r *CommonReq) {
+}
+
+func (x *SetUserParamsReq) GetCommonReq() *CommonReq {
+	return &CommonReq{}
+}
+
+func (x *SetUserParamsReq) Validate() error {
+	return nil
+}
+
+func (x *SetUserParamsResp) GetCommonResp() *CommonResp {
+	return &CommonResp{
+		Code: 0,
+		Msg:  nil,
+		Data: nil,
+	}
 }

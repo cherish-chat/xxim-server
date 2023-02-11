@@ -10,6 +10,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"os"
 )
 
 type (
@@ -88,7 +89,24 @@ func SaveToken(
 	rc *redis.Redis,
 	token *TokenObj,
 ) error {
-	key := rediskey.UserToken(token.UserId)
+	return saveToken(ctx, rediskey.UserToken, rc, token)
+}
+
+func SaveTokenAdmin(
+	ctx context.Context,
+	rc *redis.Redis,
+	token *TokenObj,
+) error {
+	return saveToken(ctx, rediskey.MSUserToken, rc, token)
+}
+
+func saveToken(
+	ctx context.Context,
+	keyFunc func(string) string,
+	rc *redis.Redis,
+	token *TokenObj,
+) error {
+	key := keyFunc(token.UserId)
 	hkey := tokenClaimsString(token.Token)
 	err := rc.HsetCtx(ctx, key, hkey, utils.AnyToString(token))
 	if err != nil {
@@ -97,8 +115,36 @@ func SaveToken(
 	return nil
 }
 
+func VerifyTokenAdmin(
+	ctx context.Context,
+	rc *redis.Redis,
+	userId string,
+	tokenStr string,
+	opts ...OptionFunc,
+) (VerifyTokenCode, string) {
+	return verifyToken(ctx, rediskey.MSUserToken, rc, userId, tokenStr, opts...)
+}
+
 func VerifyToken(
 	ctx context.Context,
+	rc *redis.Redis,
+	userId string,
+	tokenStr string,
+	opts ...OptionFunc,
+) (VerifyTokenCode, string) {
+	code, msg := verifyToken(ctx, rediskey.UserToken, rc, userId, tokenStr, opts...)
+	if code != VerifyTokenCodeOK {
+		// TODO debug
+		if os.Getenv("DEBUG") != "" {
+			return VerifyTokenCodeOK, ""
+		}
+	}
+	return code, msg
+}
+
+func verifyToken(
+	ctx context.Context,
+	keyFunc func(string) string,
 	rc *redis.Redis,
 	userId string,
 	tokenStr string,
@@ -109,7 +155,7 @@ func VerifyToken(
 		o(option)
 	}
 	logger := logx.WithContext(ctx)
-	key := rediskey.UserToken(userId)
+	key := keyFunc(userId)
 	hkey := tokenClaimsString(tokenStr)
 	tokenObj := &TokenObj{}
 	val, err := rc.HgetCtx(ctx, key, hkey)
@@ -162,6 +208,16 @@ func VerifyToken(
 	return VerifyTokenCodeOK, ""
 }
 
+// BanTokenAdmin 封禁userId的所有token
+func BanTokenAdmin(
+	ctx context.Context,
+	rc *redis.Redis,
+	userId string,
+	data string,
+) error {
+	return banToken(ctx, rediskey.MSUserToken, rc, userId, data)
+}
+
 // BanToken 封禁userId的所有token
 func BanToken(
 	ctx context.Context,
@@ -169,7 +225,18 @@ func BanToken(
 	userId string,
 	data string,
 ) error {
-	key := rediskey.UserToken(userId)
+	return banToken(ctx, rediskey.UserToken, rc, userId, data)
+}
+
+// BanToken 封禁userId的所有token
+func banToken(
+	ctx context.Context,
+	keyFunc func(string) string,
+	rc *redis.Redis,
+	userId string,
+	data string,
+) error {
+	key := keyFunc(userId)
 	vals, err := rc.HgetallCtx(ctx, key)
 	if err != nil {
 		return err

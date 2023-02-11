@@ -20,7 +20,11 @@ type (
 	BatchGetMsgListByConvIdReq_Item = pb.BatchGetMsgListByConvIdReq_Item
 	BatchSetMinSeqReq               = pb.BatchSetMinSeqReq
 	BatchSetMinSeqResp              = pb.BatchSetMinSeqResp
+	EditMsgReq                      = pb.EditMsgReq
+	EditMsgResp                     = pb.EditMsgResp
 	FlushUsersSubConvReq            = pb.FlushUsersSubConvReq
+	GetAllMsgListReq                = pb.GetAllMsgListReq
+	GetAllMsgListResp               = pb.GetAllMsgListResp
 	GetConvOnlineCountReq           = pb.GetConvOnlineCountReq
 	GetConvOnlineCountResp          = pb.GetConvOnlineCountResp
 	GetConvSubscribersReq           = pb.GetConvSubscribersReq
@@ -36,6 +40,8 @@ type (
 	OfflinePushMsgReq               = pb.OfflinePushMsgReq
 	OfflinePushMsgResp              = pb.OfflinePushMsgResp
 	PushMsgListReq                  = pb.PushMsgListReq
+	ReadMsgReq                      = pb.ReadMsgReq
+	ReadMsgResp                     = pb.ReadMsgResp
 	SendMsgListReq                  = pb.SendMsgListReq
 	SendMsgListResp                 = pb.SendMsgListResp
 
@@ -55,6 +61,7 @@ type (
 		//  conn hook
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 		// GetConvSubscribers 获取一个会话里所有的消息订阅者
 		GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
 		// OfflinePushMsg 离线推送消息
@@ -63,6 +70,12 @@ type (
 		GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error)
 		// FlushUsersSubConv 刷新用户订阅的会话
 		FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// GetAllMsgList 获取所有消息
+		GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error)
+		// ReadMsg 设置会话已读
+		ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error)
+		// EditMsg 编辑消息
+		EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error)
 	}
 
 	defaultMsgService struct {
@@ -131,6 +144,11 @@ func (m *defaultMsgService) AfterDisconnect(ctx context.Context, in *AfterDiscon
 	return client.AfterDisconnect(ctx, in, opts...)
 }
 
+func (m *defaultMsgService) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.KeepAlive(ctx, in, opts...)
+}
+
 // GetConvSubscribers 获取一个会话里所有的消息订阅者
 func (m *defaultMsgService) GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
@@ -153,4 +171,22 @@ func (m *defaultMsgService) GetConvOnlineCount(ctx context.Context, in *GetConvO
 func (m *defaultMsgService) FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.FlushUsersSubConv(ctx, in, opts...)
+}
+
+// GetAllMsgList 获取所有消息
+func (m *defaultMsgService) GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.GetAllMsgList(ctx, in, opts...)
+}
+
+// ReadMsg 设置会话已读
+func (m *defaultMsgService) ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.ReadMsg(ctx, in, opts...)
+}
+
+// EditMsg 编辑消息
+func (m *defaultMsgService) EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.EditMsg(ctx, in, opts...)
 }

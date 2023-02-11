@@ -85,6 +85,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	return &pb.LoginResp{
 		IsNewUser: false,
 		Token:     tokenObj.Token,
+		UserId:    user.Id,
 	}, nil
 }
 
@@ -130,5 +131,6 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 		CommonResp: pb.NewSuccessResp(),
 		IsNewUser:  true,
 		Token:      "",
+		UserId:     in.Id,
 	}, nil
 }

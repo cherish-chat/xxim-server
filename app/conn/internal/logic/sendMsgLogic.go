@@ -62,7 +62,7 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 			PodIp:       l.svcCtx.PodIp,
 		}
 		if err != nil {
-			l.Errorf("SendMsg error: %v, uid: %s, platform: %s", err, c.ConnParam.UserId, c.ConnParam.Platform)
+			l.Infof("SendMsg error: %v, uid: %s, platform: %s", err, c.ConnParam.UserId, c.ConnParam.Platform)
 			failedUserIds = append(failedUserIds, c.ConnParam.UserId)
 			failedUserIdMap[c.ConnParam.UserId] = p
 		} else {

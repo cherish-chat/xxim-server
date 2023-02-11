@@ -1,0 +1,558 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+import "conn.proto";
+
+//AppMgmtConfig app管理系统 配置
+message AppMgmtConfig {
+  string group = 1;
+  string k = 2;
+  string v = 3;
+  string type = 4;
+  string name = 5;
+  string scopePlatforms = 6;
+  string options = 7;
+}
+
+//GetAllAppMgmtConfigReq 获取所有配置
+message GetAllAppMgmtConfigReq {
+  CommonReq commonReq = 1;
+  string scopePlatform = 2;
+}
+
+//GetAllAppMgmtConfigResp 获取所有配置
+message GetAllAppMgmtConfigResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtConfig appMgmtConfigs = 2;
+}
+
+//UpdateAppMgmtConfigReq 更新配置
+message UpdateAppMgmtConfigReq {
+  CommonReq commonReq = 1;
+  repeated AppMgmtConfig appMgmtConfigs = 2;
+}
+
+//UpdateAppMgmtConfigResp 更新配置
+message UpdateAppMgmtConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//AppMgmtVersion app管理系统 版本
+message AppMgmtVersion {
+  string id = 1;
+  string version = 2;
+  string platform = 3;
+  int32 type = 4;
+  string content = 5;
+  string downloadUrl = 6;
+  int64 createdAt = 7;
+  string createdAtStr = 8;
+}
+
+//GetAllAppMgmtVersionReq 获取所有版本
+message GetAllAppMgmtVersionReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtVersionResp 获取所有版本
+message GetAllAppMgmtVersionResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtVersion appMgmtVersions = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtVersionDetailReq 获取版本详情
+message GetAppMgmtVersionDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtVersionDetailResp 获取版本详情
+message GetAppMgmtVersionDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtVersion appMgmtVersion = 2;
+}
+
+//AddAppMgmtVersionReq 添加版本
+message AddAppMgmtVersionReq {
+  CommonReq commonReq = 1;
+  AppMgmtVersion appMgmtVersion = 2;
+}
+
+//AddAppMgmtVersionResp 添加版本
+message AddAppMgmtVersionResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtVersionReq 更新版本
+message UpdateAppMgmtVersionReq {
+  CommonReq commonReq = 1;
+  AppMgmtVersion appMgmtVersion = 2;
+}
+
+//UpdateAppMgmtVersionResp 更新版本
+message UpdateAppMgmtVersionResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtVersionReq 删除版本
+message DeleteAppMgmtVersionReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtVersionResp 删除版本
+message DeleteAppMgmtVersionResp {
+  CommonResp commonResp = 1;
+}
+
+//AppMgmtShieldWord 屏蔽词
+message AppMgmtShieldWord {
+  string id = 1;
+  string word = 2;
+  int64 createdAt = 3;
+  string createdAtStr = 4;
+}
+
+//GetAllAppMgmtShieldWordReq 获取所有屏蔽词
+message GetAllAppMgmtShieldWordReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtShieldWordResp 获取所有屏蔽词
+message GetAllAppMgmtShieldWordResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtShieldWord appMgmtShieldWords = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtShieldWordDetailReq 获取屏蔽词详情
+message GetAppMgmtShieldWordDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtShieldWordDetailResp 获取屏蔽词详情
+message GetAppMgmtShieldWordDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtShieldWord appMgmtShieldWord = 2;
+}
+
+//AddAppMgmtShieldWordReq 添加屏蔽词
+message AddAppMgmtShieldWordReq {
+  CommonReq commonReq = 1;
+  repeated string words = 2;
+}
+
+//AddAppMgmtShieldWordResp 添加屏蔽词
+message AddAppMgmtShieldWordResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtShieldWordReq 更新屏蔽词
+message UpdateAppMgmtShieldWordReq {
+  CommonReq commonReq = 1;
+  AppMgmtShieldWord appMgmtShieldWord = 2;
+}
+
+//UpdateAppMgmtShieldWordResp 更新屏蔽词
+message UpdateAppMgmtShieldWordResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtShieldWordReq 删除屏蔽词
+message DeleteAppMgmtShieldWordReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtShieldWordResp 删除屏蔽词
+message DeleteAppMgmtShieldWordResp {
+  CommonResp commonResp = 1;
+}
+
+//AppMgmtVpn vpn
+message AppMgmtVpn {
+  string id = 1;
+  string name = 2;
+  string platform = 3;
+  string type = 4;
+  string ip = 5;
+  int32 port = 6;
+  string username = 7;
+  string password = 8;
+  string secretKey = 9;
+  int64 createdAt = 10;
+  string createdAtStr = 11;
+}
+
+//GetAllAppMgmtVpnReq 获取所有vpn
+message GetAllAppMgmtVpnReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtVpnResp 获取所有vpn
+message GetAllAppMgmtVpnResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtVpn appMgmtVpns = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtVpnDetailReq 获取vpn详情
+message GetAppMgmtVpnDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtVpnDetailResp 获取vpn详情
+message GetAppMgmtVpnDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtVpn appMgmtVpn = 2;
+}
+
+//AddAppMgmtVpnReq 添加vpn
+message AddAppMgmtVpnReq {
+  CommonReq commonReq = 1;
+  AppMgmtVpn appMgmtVpn = 2;
+}
+
+//AddAppMgmtVpnResp 添加vpn
+message AddAppMgmtVpnResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtVpnReq 更新vpn
+message UpdateAppMgmtVpnReq {
+  CommonReq commonReq = 1;
+  AppMgmtVpn appMgmtVpn = 2;
+}
+
+//UpdateAppMgmtVpnResp 更新vpn
+message UpdateAppMgmtVpnResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtVpnReq 删除vpn
+message DeleteAppMgmtVpnReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtVpnResp 删除vpn
+message DeleteAppMgmtVpnResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type Emoji struct {
+	Id    string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
+	Group string `gorm:"column:group;type:varchar(32);not null;default:'';index;" json:"group"`
+	// 是否是组封面
+	Cover bool `gorm:"column:cover;type:tinyint(1);not null;default:0;" json:"cover"`
+	// 表情名称
+	Name string `gorm:"column:name;type:varchar(64);not null;default:'';" json:"name"`
+	// 表情类型
+	Type string `gorm:"column:type;type:varchar(32);not null;default:'';" json:"type"`
+	// 静态图
+	StaticUrl string `gorm:"column:staticUrl;type:varchar(255);not null;default:'';" json:"staticUrl"`
+	// 动态图
+	AnimatedUrl string `gorm:"column:animatedUrl;type:varchar(255);not null;default:'';" json:"animatedUrl"`
+	// 排序
+	Sort int32 `gorm:"column:sort;type:int(11);not null;default:0;" json:"sort"`
+
+	IsEnable   bool  `gorm:"column:isEnable;type:tinyint(1);not null;default:1;" json:"isEnable"`
+	CreateTime int64 `gorm:"column:createTime;type:bigint(20);not null;default:0;" json:"createTime"`
+}
+ */
+//AppMgmtEmoji emoji
+message AppMgmtEmoji {
+  string id = 1;
+  string group = 2;
+  bool cover = 3;
+  string name = 4;
+  string type = 5;
+  string staticUrl = 6;
+  string animatedUrl = 7;
+  int32 sort = 8;
+
+  bool isEnable = 9;
+  int64 createdAt = 10;
+  string createdAtStr = 11;
+}
+
+//GetAllAppMgmtEmojiReq 获取所有emoji
+message GetAllAppMgmtEmojiReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtEmojiResp 获取所有emoji
+message GetAllAppMgmtEmojiResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtEmoji appMgmtEmojis = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtEmojiDetailReq 获取emoji详情
+message GetAppMgmtEmojiDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtEmojiDetailResp 获取emoji详情
+message GetAppMgmtEmojiDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtEmoji appMgmtEmoji = 2;
+}
+
+//AddAppMgmtEmojiReq 添加emoji
+message AddAppMgmtEmojiReq {
+  CommonReq commonReq = 1;
+  AppMgmtEmoji appMgmtEmoji = 2;
+}
+
+//AddAppMgmtEmojiResp 添加emoji
+message AddAppMgmtEmojiResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtEmojiReq 更新emoji
+message UpdateAppMgmtEmojiReq {
+  CommonReq commonReq = 1;
+  AppMgmtEmoji appMgmtEmoji = 2;
+}
+
+//UpdateAppMgmtEmojiResp 更新emoji
+message UpdateAppMgmtEmojiResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtEmojiReq 删除emoji
+message DeleteAppMgmtEmojiReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtEmojiResp 删除emoji
+message DeleteAppMgmtEmojiResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type EmojiGroup struct {
+	Name    string `gorm:"column:name;type:varchar(32);primary_key;not null" json:"name"`
+	CoverId string `gorm:"column:coverId;type:varchar(32);not null;default:'';" json:"coverId"`
+
+	IsEnable   bool  `gorm:"column:isEnable;type:tinyint(1);not null;default:1;" json:"isEnable"`
+	CreateTime int64 `gorm:"column:createTime;type:bigint(20);not null;default:0;" json:"createTime"`
+}
+ */
+//AppMgmtEmojiGroup emojiGroup
+message AppMgmtEmojiGroup {
+  string name = 1;
+  string coverId = 2;
+  AppMgmtEmoji cover = 3;
+  bool isEnable = 4;
+  int64 createTime = 5;
+  string createTimeStr = 6;
+}
+
+//GetAllAppMgmtEmojiGroupReq 获取所有emojiGroup
+message GetAllAppMgmtEmojiGroupReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtEmojiGroupResp 获取所有emojiGroup
+message GetAllAppMgmtEmojiGroupResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtEmojiGroup appMgmtEmojiGroups = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtEmojiGroupDetailReq 获取emojiGroup详情
+message GetAppMgmtEmojiGroupDetailReq {
+  CommonReq commonReq = 1;
+  string name = 2;
+}
+
+//GetAppMgmtEmojiGroupDetailResp 获取emojiGroup详情
+message GetAppMgmtEmojiGroupDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtEmojiGroup appMgmtEmojiGroup = 2;
+}
+
+//AddAppMgmtEmojiGroupReq 添加emojiGroup
+message AddAppMgmtEmojiGroupReq {
+  CommonReq commonReq = 1;
+  AppMgmtEmojiGroup appMgmtEmojiGroup = 2;
+}
+
+//AddAppMgmtEmojiGroupResp 添加emojiGroup
+message AddAppMgmtEmojiGroupResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtEmojiGroupReq 更新emojiGroup
+message UpdateAppMgmtEmojiGroupReq {
+  CommonReq commonReq = 1;
+  AppMgmtEmojiGroup appMgmtEmojiGroup = 2;
+}
+
+//UpdateAppMgmtEmojiGroupResp 更新emojiGroup
+message UpdateAppMgmtEmojiGroupResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtEmojiGroupReq 删除emojiGroup
+message DeleteAppMgmtEmojiGroupReq {
+  CommonReq commonReq = 1;
+  repeated string names = 2;
+}
+
+//DeleteAppMgmtEmojiGroupResp 删除emojiGroup
+message DeleteAppMgmtEmojiGroupResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+// Notice app飘屏公告
+type Notice struct {
+	Id         string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
+	Position   int8   `gorm:"column:position;type:tinyint(1);not null;default:0;index;" json:"position"` // 1: 开屏广告 2: 首页弹窗 3: 首页飘屏
+	Platform   string `gorm:"column:platform;type:varchar(16);not null;default:'';index;" json:"platform"`
+	Title      string `gorm:"column:title;type:varchar(255);not null;default:'';" json:"title"`
+	Image      string `gorm:"column:image;type:varchar(255);not null;default:'';" json:"image"`
+	Content    string `gorm:"column:content;type:text;" json:"content"`
+	Sort      int    `gorm:"column:sort;type:int(11);not null;default:0;" json:"sort"`
+	IsEnable   bool   `gorm:"column:isEnable;type:tinyint(1);not null;default:0;" json:"isEnable"`
+	StartTime  int64  `gorm:"column:startTime;type:bigint(20);not null;default:0;" json:"startTime"`
+	EndTime    int64  `gorm:"column:endTime;type:bigint(20);not null;default:0;" json:"endTime"`
+	CreateTime int64  `gorm:"column:createTime;type:bigint(20);not null;default:0;" json:"createTime"`
+}
+ */
+//AppMgmtNotice app飘屏公告
+message AppMgmtNotice {
+  string id = 1;
+  int32 position = 2;
+  string platform = 3;
+  string title = 4;
+  string image = 5;
+  string content = 6;
+  int32 sort = 7;
+  bool isEnable = 8;
+  int64 startTime = 9;
+  int64 endTime = 10;
+  int64 createdAt = 11;
+  string createdAtStr = 12;
+}
+
+//GetAllAppMgmtNoticeReq 获取所有app飘屏公告
+message GetAllAppMgmtNoticeReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtNoticeResp 获取所有app飘屏公告
+message GetAllAppMgmtNoticeResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtNotice appMgmtNotices = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtNoticeDetailReq 获取app飘屏公告详情
+message GetAppMgmtNoticeDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtNoticeDetailResp 获取app飘屏公告详情
+message GetAppMgmtNoticeDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtNotice appMgmtNotice = 2;
+}
+
+//AddAppMgmtNoticeReq 添加app飘屏公告
+message AddAppMgmtNoticeReq {
+  CommonReq commonReq = 1;
+  AppMgmtNotice appMgmtNotice = 2;
+}
+
+//AddAppMgmtNoticeResp 添加app飘屏公告
+message AddAppMgmtNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtNoticeReq 更新app飘屏公告
+message UpdateAppMgmtNoticeReq {
+  CommonReq commonReq = 1;
+  AppMgmtNotice appMgmtNotice = 2;
+}
+
+//UpdateAppMgmtNoticeResp 更新app飘屏公告
+message UpdateAppMgmtNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtNoticeReq 删除app飘屏公告
+message DeleteAppMgmtNoticeReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtNoticeResp 删除app飘屏公告
+message DeleteAppMgmtNoticeResp {
+  CommonResp commonResp = 1;
+}
+
+service appMgmtService {
+  rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
+  rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
+
+  rpc GetAllAppMgmtVersion(GetAllAppMgmtVersionReq) returns (GetAllAppMgmtVersionResp);
+  rpc GetAppMgmtVersionDetail(GetAppMgmtVersionDetailReq) returns (GetAppMgmtVersionDetailResp);
+  rpc AddAppMgmtVersion(AddAppMgmtVersionReq) returns (AddAppMgmtVersionResp);
+  rpc UpdateAppMgmtVersion(UpdateAppMgmtVersionReq) returns (UpdateAppMgmtVersionResp);
+  rpc DeleteAppMgmtVersion(DeleteAppMgmtVersionReq) returns (DeleteAppMgmtVersionResp);
+
+  rpc GetAllAppMgmtShieldWord(GetAllAppMgmtShieldWordReq) returns (GetAllAppMgmtShieldWordResp);
+  rpc GetAppMgmtShieldWordDetail(GetAppMgmtShieldWordDetailReq) returns (GetAppMgmtShieldWordDetailResp);
+  rpc AddAppMgmtShieldWord(AddAppMgmtShieldWordReq) returns (AddAppMgmtShieldWordResp);
+  rpc UpdateAppMgmtShieldWord(UpdateAppMgmtShieldWordReq) returns (UpdateAppMgmtShieldWordResp);
+  rpc DeleteAppMgmtShieldWord(DeleteAppMgmtShieldWordReq) returns (DeleteAppMgmtShieldWordResp);
+
+  rpc GetAllAppMgmtVpn(GetAllAppMgmtVpnReq) returns (GetAllAppMgmtVpnResp);
+  rpc GetAppMgmtVpnDetail(GetAppMgmtVpnDetailReq) returns (GetAppMgmtVpnDetailResp);
+  rpc AddAppMgmtVpn(AddAppMgmtVpnReq) returns (AddAppMgmtVpnResp);
+  rpc UpdateAppMgmtVpn(UpdateAppMgmtVpnReq) returns (UpdateAppMgmtVpnResp);
+  rpc DeleteAppMgmtVpn(DeleteAppMgmtVpnReq) returns (DeleteAppMgmtVpnResp);
+
+  rpc GetAllAppMgmtEmoji(GetAllAppMgmtEmojiReq) returns (GetAllAppMgmtEmojiResp);
+  rpc GetAppMgmtEmojiDetail(GetAppMgmtEmojiDetailReq) returns (GetAppMgmtEmojiDetailResp);
+  rpc AddAppMgmtEmoji(AddAppMgmtEmojiReq) returns (AddAppMgmtEmojiResp);
+  rpc UpdateAppMgmtEmoji(UpdateAppMgmtEmojiReq) returns (UpdateAppMgmtEmojiResp);
+  rpc DeleteAppMgmtEmoji(DeleteAppMgmtEmojiReq) returns (DeleteAppMgmtEmojiResp);
+
+  rpc GetAllAppMgmtEmojiGroup(GetAllAppMgmtEmojiGroupReq) returns (GetAllAppMgmtEmojiGroupResp);
+  rpc GetAppMgmtEmojiGroupDetail(GetAppMgmtEmojiGroupDetailReq) returns (GetAppMgmtEmojiGroupDetailResp);
+  rpc AddAppMgmtEmojiGroup(AddAppMgmtEmojiGroupReq) returns (AddAppMgmtEmojiGroupResp);
+  rpc UpdateAppMgmtEmojiGroup(UpdateAppMgmtEmojiGroupReq) returns (UpdateAppMgmtEmojiGroupResp);
+  rpc DeleteAppMgmtEmojiGroup(DeleteAppMgmtEmojiGroupReq) returns (DeleteAppMgmtEmojiGroupResp);
+
+  rpc GetAllAppMgmtNotice(GetAllAppMgmtNoticeReq) returns (GetAllAppMgmtNoticeResp);
+  rpc GetAppMgmtNoticeDetail(GetAppMgmtNoticeDetailReq) returns (GetAppMgmtNoticeDetailResp);
+  rpc AddAppMgmtNotice(AddAppMgmtNoticeReq) returns (AddAppMgmtNoticeResp);
+  rpc UpdateAppMgmtNotice(UpdateAppMgmtNoticeReq) returns (UpdateAppMgmtNoticeResp);
+  rpc DeleteAppMgmtNotice(DeleteAppMgmtNoticeReq) returns (DeleteAppMgmtNoticeResp);
+
+}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -35,6 +34,7 @@ func (l *GetUserConnLogic) GetUserConn(in *pb.GetUserConnReq) (*pb.GetUserConnRe
 			NetworkUsed: conn.ConnParam.NetworkUsed,
 			Headers:     conn.ConnParam.Headers,
 			PodIp:       l.svcCtx.PodIp,
+			Timestamp:   conn.ConnParam.Timestamp,
 		})
 	}
 	return &pb.GetUserConnResp{ConnParams: resp}, nil

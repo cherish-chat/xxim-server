@@ -17,8 +17,10 @@ type (
 	BatchGetUserLatestConnResp = pb.BatchGetUserLatestConnResp
 	BeforeConnectReq           = pb.BeforeConnectReq
 	BeforeConnectResp          = pb.BeforeConnectResp
-	GetAppSystemConfigReq      = pb.GetAppSystemConfigReq
-	GetAppSystemConfigResp     = pb.GetAppSystemConfigResp
+	BeforeRequestReq           = pb.BeforeRequestReq
+	BeforeRequestResp          = pb.BeforeRequestResp
+	GetAllConvIdOfUserReq      = pb.GetAllConvIdOfUserReq
+	GetAllConvIdOfUserResp     = pb.GetAllConvIdOfUserResp
 	GetUserLatestConnReq       = pb.GetUserLatestConnReq
 	GetUserLatestConnResp      = pb.GetUserLatestConnResp
 	ImMQBody                   = pb.ImMQBody
@@ -28,12 +30,14 @@ type (
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+		KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 		KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 		GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
+		BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error)
 		GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error)
 		BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
-		GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error)
+		GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
 	}
 
 	defaultImService struct {
@@ -62,6 +66,11 @@ func (m *defaultImService) AfterDisconnect(ctx context.Context, in *AfterDisconn
 	return client.AfterDisconnect(ctx, in, opts...)
 }
 
+func (m *defaultImService) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.KeepAlive(ctx, in, opts...)
+}
+
 func (m *defaultImService) KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.KickUserConn(ctx, in, opts...)
@@ -70,6 +79,11 @@ func (m *defaultImService) KickUserConn(ctx context.Context, in *KickUserConnReq
 func (m *defaultImService) GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetUserConn(ctx, in, opts...)
+}
+
+func (m *defaultImService) BeforeRequest(ctx context.Context, in *BeforeRequestReq, opts ...grpc.CallOption) (*BeforeRequestResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.BeforeRequest(ctx, in, opts...)
 }
 
 func (m *defaultImService) GetUserLatestConn(ctx context.Context, in *GetUserLatestConnReq, opts ...grpc.CallOption) (*GetUserLatestConnResp, error) {
@@ -87,7 +101,7 @@ func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...
 	return client.SendMsg(ctx, in, opts...)
 }
 
-func (m *defaultImService) GetAppSystemConfig(ctx context.Context, in *GetAppSystemConfigReq, opts ...grpc.CallOption) (*GetAppSystemConfigResp, error) {
+func (m *defaultImService) GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
-	return client.GetAppSystemConfig(ctx, in, opts...)
+	return client.GetAllConvIdOfUser(ctx, in, opts...)
 }

@@ -42,6 +42,9 @@ func (l *BatchGetUserLatestConnLogic) BatchGetUserLatestConn(in *pb.BatchGetUser
 	}
 	var resp = make([]*pb.GetUserLatestConnResp, 0)
 	for _, latestConnRecord := range latestConnRecords {
+		if latestConnRecord == "" {
+			continue
+		}
 		model := &immodel.UserConnectRecord{}
 		err := json.Unmarshal([]byte(latestConnRecord), model)
 		if err != nil {

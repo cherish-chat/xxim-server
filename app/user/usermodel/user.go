@@ -13,15 +13,44 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
+	"time"
 )
 
+const (
+	RoleUser    Role = 0 // 普通用户
+	RoleService Role = 1 //客服
+	RoleGuest   Role = 3 // 游客
+)
+
+func (r Role) String() string {
+	switch r {
+	case RoleUser:
+		return "用户"
+	case RoleService:
+		return "客服"
+	case RoleGuest:
+		return "游客"
+	}
+	return "未知"
+}
+
 type (
+	Role int32 // 角色
 	User struct {
+		// 账号信息
 		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
 		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
 		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64);"`
-		Nickname     string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
-		Avatar       string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
+		// 邀请码
+		InvitationCode string `bson:"invitationCode" json:"invitationCode" gorm:"column:invitationCode;type:char(32);index;"`
+		// 手机号
+		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;"`
+		// 手机号国家码
+		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';"`
+
+		// 基本信息
+		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
+		Avatar   string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
 		// 注册信息
 		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json;"`
 		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`
@@ -29,6 +58,19 @@ type (
 		// 其他信息
 		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:infoMap;type:json;"`
 		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:levelInfo;type:json;"`
+
+		// 角色 角色有: 0.用户 1.客服 2.游客
+		Role Role `bson:"role" json:"role" gorm:"column:role;type:tinyint(1);index;"`
+
+		// 解封时间
+		UnblockTime int64 `bson:"unblockTime" json:"unblockTime" gorm:"column:unblockTime;type:bigint(20);index;default:0;"`
+		// 封禁记录id
+		BlockRecordId string `bson:"blockRecordId" json:"blockRecordId" gorm:"column:blockRecordId;type:char(32);index;default:'';"`
+
+		// 管理员给的备注
+		AdminRemark string `bson:"adminRemark" json:"adminRemark" gorm:"column:adminRemark;type:varchar(64);default:'';"`
+		// 创建时间
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
 	}
 	LoginInfo struct {
 		// 13位时间戳
@@ -60,7 +102,21 @@ type (
 		Exp          int32 `bson:"exp" json:"exp"`
 		NextLevelExp int32 `bson:"nextLevelExp" json:"nextLevelExp"`
 	}
+
+	// UserRecycleBin 回收站
+	UserRecycleBin struct {
+		Id         string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
+		UserModel  *User  `bson:"userModel" json:"userModel" gorm:"column:userModel;type:json;"`
+		CreateTime int64  `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
+		Creator    string `bson:"creator" json:"creator" gorm:"column:creator;type:char(32);index;"`
+		Ip         string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
+		IpRegion   string `bson:"ipRegion" json:"ipRegion" gorm:"column:ipRegion;type:varchar(64);"`
+	}
 )
+
+func (m *UserRecycleBin) TableName() string {
+	return "user_recycle_bin"
+}
 
 func (m LevelInfo) Pb() *pb.LevelInfo {
 	return &pb.LevelInfo{
@@ -103,6 +159,14 @@ func (m *User) BaseInfo() *pb.UserBaseInfo {
 		Birthday: m.Birthday,
 		IpRegion: nil,
 	}
+}
+
+func (m *User) IsDisable() bool {
+	return m.UnblockTime > time.Now().UnixMilli()
+}
+
+func (m *User) Insert(tx *gorm.DB) error {
+	return tx.Create(m).Error
 }
 
 func UserFromBytes(bytes []byte) *User {
@@ -240,10 +304,75 @@ func (m *LoginInfo) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), m)
 }
 
+func (m LoginInfo) ToPB() *pb.UserLoginInfo {
+	return &pb.UserLoginInfo{
+		Time:        m.Time,
+		Ip:          m.Ip,
+		IpCountry:   m.IpCountry,
+		IpProvince:  m.IpProvince,
+		IpCity:      m.IpCity,
+		IpISP:       m.IpISP,
+		AppVersion:  m.AppVersion,
+		UserAgent:   m.UserAgent,
+		OsVersion:   m.OsVersion,
+		Platform:    m.Platform,
+		DeviceId:    m.DeviceId,
+		DeviceModel: m.DeviceModel,
+	}
+}
+
 func (m LevelInfo) Value() (driver.Value, error) {
 	return json.Marshal(m)
 }
 
 func (m *LevelInfo) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), m)
+}
+
+func (m LevelInfo) ToPB() *pb.UserLevelInfo {
+	return &pb.UserLevelInfo{
+		Level: m.Level,
+	}
+}
+
+func (m User) Value() (driver.Value, error) {
+	return json.Marshal(m)
+}
+
+func (m *User) Scan(input interface{}) error {
+	return json.Unmarshal(input.([]byte), m)
+}
+
+func (m *User) ToPB() *pb.UserModel {
+	if m.Birthday == nil {
+		m.Birthday = &pb.BirthdayInfo{}
+	}
+	if m.InfoMap == nil {
+		m.InfoMap = make(xorm.M)
+	}
+	return &pb.UserModel{
+		Id:                m.Id,
+		InvitationCode:    m.InvitationCode,
+		Mobile:            m.Mobile,
+		MobileCountryCode: m.MobileCountryCode,
+		Nickname:          m.Nickname,
+		Avatar:            m.Avatar,
+		RegInfo:           m.RegInfo.ToPB(),
+		Xb:                int32(m.Xb),
+		Birthday: &pb.UserBirthdayInfo{
+			Year:  m.Birthday.Year,
+			Month: m.Birthday.Month,
+			Day:   m.Birthday.Day,
+		},
+		InfoMap:        m.InfoMap.StringMap(),
+		LevelInfo:      m.LevelInfo.ToPB(),
+		Role:           int32(m.Role),
+		UnblockTime:    m.UnblockTime,
+		UnblockTimeStr: utils.TimeFormat(m.UnblockTime),
+		AdminRemark:    m.AdminRemark,
+		BlockRecordId:  m.BlockRecordId,
+		CreateTime:     m.CreateTime,
+		CreatedAt:      m.CreateTime,
+		CreatedAtStr:   utils.If(m.CreateTime > 0, utils.TimeFormat(m.CreateTime), utils.TimeFormat(m.RegInfo.Time)),
+	}
 }

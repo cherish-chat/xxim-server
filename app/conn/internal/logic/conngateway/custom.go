@@ -14,7 +14,6 @@ import (
 type IBody interface {
 	GetData() []byte
 	GetReqId() string
-	GetEvent() pb.ActiveEvent
 }
 
 func OnReceiveCustom[REQ IReq, RESP IResp](
@@ -24,42 +23,76 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	body IBody,
 	req REQ,
 	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
+	callback func(ctx context.Context, resp RESP, c *types.UserConn),
 ) (*pb.ResponseBody, error) {
+	logger := logx.WithContext(ctx)
 	err := proto.Unmarshal(body.GetData(), req)
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", method, err.Error())
 		return nil, err
 	}
+	commonReq := &pb.CommonReq{
+		UserId:      c.ConnParam.UserId,
+		Token:       c.ConnParam.Token,
+		DeviceModel: c.ConnParam.DeviceModel,
+		DeviceId:    c.ConnParam.DeviceId,
+		OsVersion:   c.ConnParam.OsVersion,
+		Platform:    c.ConnParam.Platform,
+		AppVersion:  c.ConnParam.AppVersion,
+		Language:    c.ConnParam.Language,
+		Ip:          c.ConnParam.Ips,
+	}
+	var beforeRequestResp *pb.BeforeRequestResp
+	// BeforeRequest
+	{
+		xtrace.StartFuncSpan(ctx, method+"/BeforeRequest", func(ctx context.Context) {
+			beforeRequestResp, err = svcCtx.ImService().BeforeRequest(ctx, &pb.BeforeRequestReq{CommonReq: commonReq, Method: method})
+			if err != nil {
+				logger.Errorf("BeforeRequest err: %v", err)
+				return
+			}
+		})
+		if err != nil {
+			logger.Errorf("BeforeRequest err: %v", err)
+			return &pb.ResponseBody{
+				ReqId:  body.GetReqId(),
+				Method: method,
+				Code:   pb.ResponseBody_AuthError,
+			}, nil
+		} else {
+			if beforeRequestResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+				logger.Errorf("BeforeRequest err: %v", beforeRequestResp.GetCommonResp().GetMsg())
+				return &pb.ResponseBody{
+					ReqId:  body.GetReqId(),
+					Method: method,
+					Code:   pb.ResponseBody_Code(beforeRequestResp.GetCommonResp().GetCode()),
+				}, nil
+			}
+		}
+	}
 	var resp RESP
 	xtrace.StartFuncSpan(ctx, method, func(ctx context.Context) {
-		req.SetCommonReq(&pb.CommonReq{
-			UserId:      c.ConnParam.UserId,
-			Token:       c.ConnParam.Token,
-			DeviceModel: c.ConnParam.DeviceModel,
-			DeviceId:    c.ConnParam.DeviceId,
-			OsVersion:   c.ConnParam.OsVersion,
-			Platform:    c.ConnParam.Platform,
-			AppVersion:  c.ConnParam.AppVersion,
-			Language:    c.ConnParam.Language,
-			Ip:          c.ConnParam.Ips,
-		})
+		req.SetCommonReq(commonReq)
 		resp, err = do(ctx, req)
 	}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
 		"req-id": body.GetReqId(),
-		"event":  body.GetEvent().String(),
 	}))
 	if err != nil {
-		logx.WithContext(c.Ctx).Errorf("%s error: %s", method, err.Error())
+		logger.Errorf("%s error: %s", method, err.Error())
+	} else {
+		if callback != nil {
+			callback(ctx, resp, c)
+		}
 	}
 	respBuff, _ := proto.Marshal(resp)
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(ctx context.Context) {
-		reqLog(c, body, req, resp, err)
+		ReqLog(c, method, body, req, resp, err)
 	}, nil)
 	return &pb.ResponseBody{
-		Event: body.GetEvent(),
-		ReqId: body.GetReqId(),
-		Code:  pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
-		Data:  respBuff,
+		Method: method,
+		ReqId:  body.GetReqId(),
+		Code:   pb.ResponseBody_Code(resp.GetCommonResp().GetCode()),
+		Data:   respBuff,
 	}, err
 }

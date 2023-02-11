@@ -127,6 +127,7 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		Ips:         xhttp.GetRequestIP(r),
 		NetworkUsed: r.URL.Query().Get("networkUsed"),
 		Headers:     headers,
+		Timestamp:   time.Now().UnixMilli(),
 	}
 	compressionMode := websocket.CompressionNoContextTakeover
 	// https://github.com/nhooyr/websocket/issues/218
@@ -142,6 +143,10 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		CompressionThreshold: 0,
 	})
 	if err != nil {
+		// 如果是 / 说明是健康检查
+		if r.URL.Path == "/" {
+			return
+		}
 		logger.Errorf("failed to accept websocket connection: %v", err)
 		return
 	}
@@ -196,7 +201,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, conn *types.UserConn) {
 	defer cancelFunc()
 	for {
-		logx.WithContext(ctx).Infof("start read")
+		logx.WithContext(ctx).Debugf("start read")
 		typ, msg, err := conn.Conn.Read(ctx)
 		if err != nil {
 			if errors.Is(err, io.EOF) {
@@ -204,12 +209,16 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 			} else if websocket.CloseStatus(err) == websocket.StatusNormalClosure ||
 				websocket.CloseStatus(err) == websocket.StatusGoingAway {
 				// 正常关闭
+				logx.Infof("websocket closed: %v", err)
+			} else if strings.Contains(err.Error(), "connection reset by peer") {
+				// 网络断开
+				logx.Infof("websocket closed: %v", err)
 			} else {
 				logx.Errorf("failed to read message: %v", err)
 			}
 			return
 		}
-		logx.WithContext(ctx).Infof("read message.length: %d", len(msg))
+		logx.WithContext(ctx).Debugf("read message.length: %d", len(msg))
 		go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
 			s.onReceive(ctx, conn, typ, msg)
 		}, propagation.MapCarrier{

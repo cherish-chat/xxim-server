@@ -22,6 +22,11 @@ message ConnParam {
   string networkUsed = 6;
   map<string, string> headers = 7;
   string podIp = 8;
+  string deviceModel = 9;
+  string osVersion = 10;
+  string appVersion = 11;
+  string language = 12;
+  int64 timestamp = 13;
 }
 
 // 获取用户的连接 可以用userId、platforms、devices过滤
@@ -48,7 +53,7 @@ enum PushEvent {
   // 消息推送
   PushMsgDataList = 0;
   // 通知推送
-  PushNoticeDataList = 1;
+  PushNoticeData = 1;
   // 响应返回
   PushResponseBody = 2;
 }
@@ -58,32 +63,11 @@ message PushBody {
   bytes data = 2;
 }
 
-// 客户端发送事件
-enum ActiveEvent {
-  // 发送消息
-  SendMsgList = 0;
-  // 批量获取会话的消息seq
-  SyncConvSeq = 1;
-  // 批量同步消息列表
-  SyncMsgList = 2;
-  // 确认消费通知
-  AckNotice = 3;
-  // 获取一条消息
-  GetMsgById = 4;
-  // 自定义请求
-  CustomRequest = 100;
-}
-
 // 客户端发送的消息体
 message RequestBody {
-  ActiveEvent event = 1;
-  string reqId = 2;
+  string reqId = 1;
+  string method = 2;
   bytes data = 3;
-}
-
-message CustomRequestBody {
-  string method = 1;
-  bytes data = 2;
 }
 
 // 服务端返回响应的消息体
@@ -99,10 +83,45 @@ message ResponseBody {
     AlertError = 7;
     RetryError = 8;
   }
-  ActiveEvent event = 1;
-  string reqId = 2;
+  string reqId = 1;
+  string method = 2;
   Code code = 3;
   bytes data = 4;
+}
+
+message SetCxnParamsReq {
+  string packageId = 1;
+  string platform = 2;
+  string deviceId = 3;
+  string deviceModel = 4;
+  string osVersion = 5;
+  string appVersion = 6;
+  string language = 7;
+  string networkUsed = 8;
+  bytes ext = 11;
+}
+
+message SetCxnParamsResp {
+  string platform = 1;
+  string deviceId = 2;
+  string deviceModel = 3;
+  string osVersion = 4;
+  string appVersion = 5;
+  string language = 6;
+  string networkUsed = 7;
+  bytes ext = 11;
+}
+
+message SetUserParamsReq {
+  string userId = 1;
+  string token = 2;
+  bytes ext = 11;
+}
+
+message SetUserParamsResp {
+  string userId = 1;
+  string token = 2;
+  bytes ext = 11;
 }
 
 message SendMsgReq {
@@ -130,8 +149,17 @@ message AfterDisconnectReq {
   string disconnectedAt = 3;
 }
 
+//KeepAliveReq 心跳
+message KeepAliveReq {
+  CommonReq commonReq = 1;
+}
+
+message KeepAliveResp {
+  CommonResp commonResp = 1;
+}
 service connService {
   rpc KickUserConn(KickUserConnReq) returns (KickUserConnResp);
   rpc GetUserConn(GetUserConnReq) returns (GetUserConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
 }

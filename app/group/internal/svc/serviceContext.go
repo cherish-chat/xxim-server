@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/app/group/internal/config"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
@@ -27,7 +28,7 @@ type ServiceContext struct {
 	msgService      msgservice.MsgService
 	noticeService   noticeservice.NoticeService
 	relationService relationservice.RelationService
-	SystemConfigMgr *xconf.SystemConfigMgr
+	ConfigMgr       *xconf.ConfigMgr
 	*i18n.I18N
 }
 
@@ -35,12 +36,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.I18N = i18n.NewI18N(s.Mysql())
 	s.InitGroupIdCache()
 	s.Mysql().AutoMigrate(
 		groupmodel.Group{},
 		groupmodel.GroupMember{},
+		groupmodel.GroupApply{},
 	)
 	return s
 }
@@ -96,7 +98,7 @@ func (s *ServiceContext) RelationService() relationservice.RelationService {
 
 func (s *ServiceContext) InitGroupIdCache() {
 	val, err := s.Redis().Hget(rediskey.IncrId(), rediskey.IncrGroup())
-	defaultMinGroupId := s.SystemConfigMgr.GetOrDefault("default_min_group_id", "10000")
+	defaultMinGroupId := s.ConfigMgr.DefaultMinGroupId(context.Background())
 	if err != nil {
 		if err == redis.Nil {
 			// 不存在，从数据库中获取

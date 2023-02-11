@@ -36,6 +36,33 @@ type UserServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
+	GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
+	GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
+	AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
+	UpdateUserInvitationCode(ctx context.Context, in *UpdateUserInvitationCodeReq, opts ...grpc.CallOption) (*UpdateUserInvitationCodeResp, error)
+	DeleteUserInvitationCode(ctx context.Context, in *DeleteUserInvitationCodeReq, opts ...grpc.CallOption) (*DeleteUserInvitationCodeResp, error)
+	GetAllUserIpWhiteList(ctx context.Context, in *GetAllUserIpWhiteListReq, opts ...grpc.CallOption) (*GetAllUserIpWhiteListResp, error)
+	GetUserIpWhiteListDetail(ctx context.Context, in *GetUserIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetUserIpWhiteListDetailResp, error)
+	AddUserIpWhiteList(ctx context.Context, in *AddUserIpWhiteListReq, opts ...grpc.CallOption) (*AddUserIpWhiteListResp, error)
+	UpdateUserIpWhiteList(ctx context.Context, in *UpdateUserIpWhiteListReq, opts ...grpc.CallOption) (*UpdateUserIpWhiteListResp, error)
+	DeleteUserIpWhiteList(ctx context.Context, in *DeleteUserIpWhiteListReq, opts ...grpc.CallOption) (*DeleteUserIpWhiteListResp, error)
+	GetAllUserIpBlackList(ctx context.Context, in *GetAllUserIpBlackListReq, opts ...grpc.CallOption) (*GetAllUserIpBlackListResp, error)
+	GetUserIpBlackListDetail(ctx context.Context, in *GetUserIpBlackListDetailReq, opts ...grpc.CallOption) (*GetUserIpBlackListDetailResp, error)
+	AddUserIpBlackList(ctx context.Context, in *AddUserIpBlackListReq, opts ...grpc.CallOption) (*AddUserIpBlackListResp, error)
+	UpdateUserIpBlackList(ctx context.Context, in *UpdateUserIpBlackListReq, opts ...grpc.CallOption) (*UpdateUserIpBlackListResp, error)
+	DeleteUserIpBlackList(ctx context.Context, in *DeleteUserIpBlackListReq, opts ...grpc.CallOption) (*DeleteUserIpBlackListResp, error)
+	GetAllUserDefaultConv(ctx context.Context, in *GetAllUserDefaultConvReq, opts ...grpc.CallOption) (*GetAllUserDefaultConvResp, error)
+	GetUserDefaultConvDetail(ctx context.Context, in *GetUserDefaultConvDetailReq, opts ...grpc.CallOption) (*GetUserDefaultConvDetailResp, error)
+	AddUserDefaultConv(ctx context.Context, in *AddUserDefaultConvReq, opts ...grpc.CallOption) (*AddUserDefaultConvResp, error)
+	UpdateUserDefaultConv(ctx context.Context, in *UpdateUserDefaultConvReq, opts ...grpc.CallOption) (*UpdateUserDefaultConvResp, error)
+	DeleteUserDefaultConv(ctx context.Context, in *DeleteUserDefaultConvReq, opts ...grpc.CallOption) (*DeleteUserDefaultConvResp, error)
+	GetAllUserModel(ctx context.Context, in *GetAllUserModelReq, opts ...grpc.CallOption) (*GetAllUserModelResp, error)
+	GetUserModelDetail(ctx context.Context, in *GetUserModelDetailReq, opts ...grpc.CallOption) (*GetUserModelDetailResp, error)
+	AddUserModel(ctx context.Context, in *AddUserModelReq, opts ...grpc.CallOption) (*AddUserModelResp, error)
+	UpdateUserModel(ctx context.Context, in *UpdateUserModelReq, opts ...grpc.CallOption) (*UpdateUserModelResp, error)
+	DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
+	SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
+	GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
 }
 
 type userServiceClient struct {
@@ -154,6 +181,249 @@ func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserIn
 	return out, nil
 }
 
+func (c *userServiceClient) GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error) {
+	out := new(GetAllUserInvitationCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllUserInvitationCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error) {
+	out := new(GetUserInvitationCodeDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserInvitationCodeDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error) {
+	out := new(AddUserInvitationCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AddUserInvitationCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserInvitationCode(ctx context.Context, in *UpdateUserInvitationCodeReq, opts ...grpc.CallOption) (*UpdateUserInvitationCodeResp, error) {
+	out := new(UpdateUserInvitationCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserInvitationCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUserInvitationCode(ctx context.Context, in *DeleteUserInvitationCodeReq, opts ...grpc.CallOption) (*DeleteUserInvitationCodeResp, error) {
+	out := new(DeleteUserInvitationCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DeleteUserInvitationCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllUserIpWhiteList(ctx context.Context, in *GetAllUserIpWhiteListReq, opts ...grpc.CallOption) (*GetAllUserIpWhiteListResp, error) {
+	out := new(GetAllUserIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllUserIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserIpWhiteListDetail(ctx context.Context, in *GetUserIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetUserIpWhiteListDetailResp, error) {
+	out := new(GetUserIpWhiteListDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserIpWhiteListDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserIpWhiteList(ctx context.Context, in *AddUserIpWhiteListReq, opts ...grpc.CallOption) (*AddUserIpWhiteListResp, error) {
+	out := new(AddUserIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AddUserIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserIpWhiteList(ctx context.Context, in *UpdateUserIpWhiteListReq, opts ...grpc.CallOption) (*UpdateUserIpWhiteListResp, error) {
+	out := new(UpdateUserIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUserIpWhiteList(ctx context.Context, in *DeleteUserIpWhiteListReq, opts ...grpc.CallOption) (*DeleteUserIpWhiteListResp, error) {
+	out := new(DeleteUserIpWhiteListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DeleteUserIpWhiteList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllUserIpBlackList(ctx context.Context, in *GetAllUserIpBlackListReq, opts ...grpc.CallOption) (*GetAllUserIpBlackListResp, error) {
+	out := new(GetAllUserIpBlackListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllUserIpBlackList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserIpBlackListDetail(ctx context.Context, in *GetUserIpBlackListDetailReq, opts ...grpc.CallOption) (*GetUserIpBlackListDetailResp, error) {
+	out := new(GetUserIpBlackListDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserIpBlackListDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserIpBlackList(ctx context.Context, in *AddUserIpBlackListReq, opts ...grpc.CallOption) (*AddUserIpBlackListResp, error) {
+	out := new(AddUserIpBlackListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AddUserIpBlackList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserIpBlackList(ctx context.Context, in *UpdateUserIpBlackListReq, opts ...grpc.CallOption) (*UpdateUserIpBlackListResp, error) {
+	out := new(UpdateUserIpBlackListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserIpBlackList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUserIpBlackList(ctx context.Context, in *DeleteUserIpBlackListReq, opts ...grpc.CallOption) (*DeleteUserIpBlackListResp, error) {
+	out := new(DeleteUserIpBlackListResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DeleteUserIpBlackList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllUserDefaultConv(ctx context.Context, in *GetAllUserDefaultConvReq, opts ...grpc.CallOption) (*GetAllUserDefaultConvResp, error) {
+	out := new(GetAllUserDefaultConvResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllUserDefaultConv", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserDefaultConvDetail(ctx context.Context, in *GetUserDefaultConvDetailReq, opts ...grpc.CallOption) (*GetUserDefaultConvDetailResp, error) {
+	out := new(GetUserDefaultConvDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserDefaultConvDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserDefaultConv(ctx context.Context, in *AddUserDefaultConvReq, opts ...grpc.CallOption) (*AddUserDefaultConvResp, error) {
+	out := new(AddUserDefaultConvResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AddUserDefaultConv", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserDefaultConv(ctx context.Context, in *UpdateUserDefaultConvReq, opts ...grpc.CallOption) (*UpdateUserDefaultConvResp, error) {
+	out := new(UpdateUserDefaultConvResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserDefaultConv", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUserDefaultConv(ctx context.Context, in *DeleteUserDefaultConvReq, opts ...grpc.CallOption) (*DeleteUserDefaultConvResp, error) {
+	out := new(DeleteUserDefaultConvResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DeleteUserDefaultConv", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllUserModel(ctx context.Context, in *GetAllUserModelReq, opts ...grpc.CallOption) (*GetAllUserModelResp, error) {
+	out := new(GetAllUserModelResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllUserModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserModelDetail(ctx context.Context, in *GetUserModelDetailReq, opts ...grpc.CallOption) (*GetUserModelDetailResp, error) {
+	out := new(GetUserModelDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserModelDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) AddUserModel(ctx context.Context, in *AddUserModelReq, opts ...grpc.CallOption) (*AddUserModelResp, error) {
+	out := new(AddUserModelResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/AddUserModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserModel(ctx context.Context, in *UpdateUserModelReq, opts ...grpc.CallOption) (*UpdateUserModelResp, error) {
+	out := new(UpdateUserModelResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error) {
+	out := new(DeleteUserModelResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DeleteUserModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error) {
+	out := new(SwitchUserModelResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/SwitchUserModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error) {
+	out := new(GetAllLoginRecordResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetAllLoginRecord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -172,6 +442,33 @@ type UserServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	BatchGetUserAllDevices(context.Context, *BatchGetUserAllDevicesReq) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*UpdateUserInfoResp, error)
+	GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error)
+	GetUserInvitationCodeDetail(context.Context, *GetUserInvitationCodeDetailReq) (*GetUserInvitationCodeDetailResp, error)
+	AddUserInvitationCode(context.Context, *AddUserInvitationCodeReq) (*AddUserInvitationCodeResp, error)
+	UpdateUserInvitationCode(context.Context, *UpdateUserInvitationCodeReq) (*UpdateUserInvitationCodeResp, error)
+	DeleteUserInvitationCode(context.Context, *DeleteUserInvitationCodeReq) (*DeleteUserInvitationCodeResp, error)
+	GetAllUserIpWhiteList(context.Context, *GetAllUserIpWhiteListReq) (*GetAllUserIpWhiteListResp, error)
+	GetUserIpWhiteListDetail(context.Context, *GetUserIpWhiteListDetailReq) (*GetUserIpWhiteListDetailResp, error)
+	AddUserIpWhiteList(context.Context, *AddUserIpWhiteListReq) (*AddUserIpWhiteListResp, error)
+	UpdateUserIpWhiteList(context.Context, *UpdateUserIpWhiteListReq) (*UpdateUserIpWhiteListResp, error)
+	DeleteUserIpWhiteList(context.Context, *DeleteUserIpWhiteListReq) (*DeleteUserIpWhiteListResp, error)
+	GetAllUserIpBlackList(context.Context, *GetAllUserIpBlackListReq) (*GetAllUserIpBlackListResp, error)
+	GetUserIpBlackListDetail(context.Context, *GetUserIpBlackListDetailReq) (*GetUserIpBlackListDetailResp, error)
+	AddUserIpBlackList(context.Context, *AddUserIpBlackListReq) (*AddUserIpBlackListResp, error)
+	UpdateUserIpBlackList(context.Context, *UpdateUserIpBlackListReq) (*UpdateUserIpBlackListResp, error)
+	DeleteUserIpBlackList(context.Context, *DeleteUserIpBlackListReq) (*DeleteUserIpBlackListResp, error)
+	GetAllUserDefaultConv(context.Context, *GetAllUserDefaultConvReq) (*GetAllUserDefaultConvResp, error)
+	GetUserDefaultConvDetail(context.Context, *GetUserDefaultConvDetailReq) (*GetUserDefaultConvDetailResp, error)
+	AddUserDefaultConv(context.Context, *AddUserDefaultConvReq) (*AddUserDefaultConvResp, error)
+	UpdateUserDefaultConv(context.Context, *UpdateUserDefaultConvReq) (*UpdateUserDefaultConvResp, error)
+	DeleteUserDefaultConv(context.Context, *DeleteUserDefaultConvReq) (*DeleteUserDefaultConvResp, error)
+	GetAllUserModel(context.Context, *GetAllUserModelReq) (*GetAllUserModelResp, error)
+	GetUserModelDetail(context.Context, *GetUserModelDetailReq) (*GetUserModelDetailResp, error)
+	AddUserModel(context.Context, *AddUserModelReq) (*AddUserModelResp, error)
+	UpdateUserModel(context.Context, *UpdateUserModelReq) (*UpdateUserModelResp, error)
+	DeleteUserModel(context.Context, *DeleteUserModelReq) (*DeleteUserModelResp, error)
+	SwitchUserModel(context.Context, *SwitchUserModelReq) (*SwitchUserModelResp, error)
+	GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -214,6 +511,87 @@ func (UnimplementedUserServiceServer) BatchGetUserAllDevices(context.Context, *B
 }
 func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*UpdateUserInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserInvitationCode not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserInvitationCodeDetail(context.Context, *GetUserInvitationCodeDetailReq) (*GetUserInvitationCodeDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInvitationCodeDetail not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserInvitationCode(context.Context, *AddUserInvitationCodeReq) (*AddUserInvitationCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserInvitationCode not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserInvitationCode(context.Context, *UpdateUserInvitationCodeReq) (*UpdateUserInvitationCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInvitationCode not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUserInvitationCode(context.Context, *DeleteUserInvitationCodeReq) (*DeleteUserInvitationCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserInvitationCode not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUserIpWhiteList(context.Context, *GetAllUserIpWhiteListReq) (*GetAllUserIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserIpWhiteList not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserIpWhiteListDetail(context.Context, *GetUserIpWhiteListDetailReq) (*GetUserIpWhiteListDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserIpWhiteListDetail not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserIpWhiteList(context.Context, *AddUserIpWhiteListReq) (*AddUserIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserIpWhiteList not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserIpWhiteList(context.Context, *UpdateUserIpWhiteListReq) (*UpdateUserIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserIpWhiteList not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUserIpWhiteList(context.Context, *DeleteUserIpWhiteListReq) (*DeleteUserIpWhiteListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserIpWhiteList not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUserIpBlackList(context.Context, *GetAllUserIpBlackListReq) (*GetAllUserIpBlackListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserIpBlackList not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserIpBlackListDetail(context.Context, *GetUserIpBlackListDetailReq) (*GetUserIpBlackListDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserIpBlackListDetail not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserIpBlackList(context.Context, *AddUserIpBlackListReq) (*AddUserIpBlackListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserIpBlackList not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserIpBlackList(context.Context, *UpdateUserIpBlackListReq) (*UpdateUserIpBlackListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserIpBlackList not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUserIpBlackList(context.Context, *DeleteUserIpBlackListReq) (*DeleteUserIpBlackListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserIpBlackList not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUserDefaultConv(context.Context, *GetAllUserDefaultConvReq) (*GetAllUserDefaultConvResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserDefaultConv not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserDefaultConvDetail(context.Context, *GetUserDefaultConvDetailReq) (*GetUserDefaultConvDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserDefaultConvDetail not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserDefaultConv(context.Context, *AddUserDefaultConvReq) (*AddUserDefaultConvResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserDefaultConv not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserDefaultConv(context.Context, *UpdateUserDefaultConvReq) (*UpdateUserDefaultConvResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserDefaultConv not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUserDefaultConv(context.Context, *DeleteUserDefaultConvReq) (*DeleteUserDefaultConvResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserDefaultConv not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllUserModel(context.Context, *GetAllUserModelReq) (*GetAllUserModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserModel not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserModelDetail(context.Context, *GetUserModelDetailReq) (*GetUserModelDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserModelDetail not implemented")
+}
+func (UnimplementedUserServiceServer) AddUserModel(context.Context, *AddUserModelReq) (*AddUserModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserModel not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserModel(context.Context, *UpdateUserModelReq) (*UpdateUserModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserModel not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteUserModel(context.Context, *DeleteUserModelReq) (*DeleteUserModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserModel not implemented")
+}
+func (UnimplementedUserServiceServer) SwitchUserModel(context.Context, *SwitchUserModelReq) (*SwitchUserModelResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SwitchUserModel not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllLoginRecord not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -444,6 +822,492 @@ func _UserService_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetAllUserInvitationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserInvitationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUserInvitationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllUserInvitationCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUserInvitationCode(ctx, req.(*GetAllUserInvitationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserInvitationCodeDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInvitationCodeDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserInvitationCodeDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserInvitationCodeDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserInvitationCodeDetail(ctx, req.(*GetUserInvitationCodeDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserInvitationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserInvitationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserInvitationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AddUserInvitationCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserInvitationCode(ctx, req.(*AddUserInvitationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserInvitationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserInvitationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserInvitationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserInvitationCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserInvitationCode(ctx, req.(*UpdateUserInvitationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUserInvitationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserInvitationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUserInvitationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DeleteUserInvitationCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUserInvitationCode(ctx, req.(*DeleteUserInvitationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllUserIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUserIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllUserIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUserIpWhiteList(ctx, req.(*GetAllUserIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserIpWhiteListDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserIpWhiteListDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserIpWhiteListDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserIpWhiteListDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserIpWhiteListDetail(ctx, req.(*GetUserIpWhiteListDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AddUserIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserIpWhiteList(ctx, req.(*AddUserIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserIpWhiteList(ctx, req.(*UpdateUserIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUserIpWhiteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserIpWhiteListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUserIpWhiteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DeleteUserIpWhiteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUserIpWhiteList(ctx, req.(*DeleteUserIpWhiteListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllUserIpBlackList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserIpBlackListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUserIpBlackList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllUserIpBlackList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUserIpBlackList(ctx, req.(*GetAllUserIpBlackListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserIpBlackListDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserIpBlackListDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserIpBlackListDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserIpBlackListDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserIpBlackListDetail(ctx, req.(*GetUserIpBlackListDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserIpBlackList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserIpBlackListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserIpBlackList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AddUserIpBlackList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserIpBlackList(ctx, req.(*AddUserIpBlackListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserIpBlackList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserIpBlackListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserIpBlackList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserIpBlackList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserIpBlackList(ctx, req.(*UpdateUserIpBlackListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUserIpBlackList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserIpBlackListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUserIpBlackList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DeleteUserIpBlackList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUserIpBlackList(ctx, req.(*DeleteUserIpBlackListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllUserDefaultConv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserDefaultConvReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUserDefaultConv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllUserDefaultConv",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUserDefaultConv(ctx, req.(*GetAllUserDefaultConvReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserDefaultConvDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserDefaultConvDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserDefaultConvDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserDefaultConvDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserDefaultConvDetail(ctx, req.(*GetUserDefaultConvDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserDefaultConv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserDefaultConvReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserDefaultConv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AddUserDefaultConv",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserDefaultConv(ctx, req.(*AddUserDefaultConvReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserDefaultConv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserDefaultConvReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserDefaultConv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserDefaultConv",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserDefaultConv(ctx, req.(*UpdateUserDefaultConvReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUserDefaultConv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserDefaultConvReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUserDefaultConv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DeleteUserDefaultConv",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUserDefaultConv(ctx, req.(*DeleteUserDefaultConvReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllUserModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllUserModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllUserModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllUserModel(ctx, req.(*GetAllUserModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserModelDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserModelDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserModelDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserModelDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserModelDetail(ctx, req.(*GetUserModelDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_AddUserModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).AddUserModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/AddUserModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).AddUserModel(ctx, req.(*AddUserModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserModel(ctx, req.(*UpdateUserModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_DeleteUserModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteUserModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DeleteUserModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteUserModel(ctx, req.(*DeleteUserModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SwitchUserModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SwitchUserModelReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SwitchUserModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/SwitchUserModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SwitchUserModel(ctx, req.(*SwitchUserModelReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllLoginRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllLoginRecordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllLoginRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetAllLoginRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllLoginRecord(ctx, req.(*GetAllLoginRecordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -498,6 +1362,114 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _UserService_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "GetAllUserInvitationCode",
+			Handler:    _UserService_GetAllUserInvitationCode_Handler,
+		},
+		{
+			MethodName: "GetUserInvitationCodeDetail",
+			Handler:    _UserService_GetUserInvitationCodeDetail_Handler,
+		},
+		{
+			MethodName: "AddUserInvitationCode",
+			Handler:    _UserService_AddUserInvitationCode_Handler,
+		},
+		{
+			MethodName: "UpdateUserInvitationCode",
+			Handler:    _UserService_UpdateUserInvitationCode_Handler,
+		},
+		{
+			MethodName: "DeleteUserInvitationCode",
+			Handler:    _UserService_DeleteUserInvitationCode_Handler,
+		},
+		{
+			MethodName: "GetAllUserIpWhiteList",
+			Handler:    _UserService_GetAllUserIpWhiteList_Handler,
+		},
+		{
+			MethodName: "GetUserIpWhiteListDetail",
+			Handler:    _UserService_GetUserIpWhiteListDetail_Handler,
+		},
+		{
+			MethodName: "AddUserIpWhiteList",
+			Handler:    _UserService_AddUserIpWhiteList_Handler,
+		},
+		{
+			MethodName: "UpdateUserIpWhiteList",
+			Handler:    _UserService_UpdateUserIpWhiteList_Handler,
+		},
+		{
+			MethodName: "DeleteUserIpWhiteList",
+			Handler:    _UserService_DeleteUserIpWhiteList_Handler,
+		},
+		{
+			MethodName: "GetAllUserIpBlackList",
+			Handler:    _UserService_GetAllUserIpBlackList_Handler,
+		},
+		{
+			MethodName: "GetUserIpBlackListDetail",
+			Handler:    _UserService_GetUserIpBlackListDetail_Handler,
+		},
+		{
+			MethodName: "AddUserIpBlackList",
+			Handler:    _UserService_AddUserIpBlackList_Handler,
+		},
+		{
+			MethodName: "UpdateUserIpBlackList",
+			Handler:    _UserService_UpdateUserIpBlackList_Handler,
+		},
+		{
+			MethodName: "DeleteUserIpBlackList",
+			Handler:    _UserService_DeleteUserIpBlackList_Handler,
+		},
+		{
+			MethodName: "GetAllUserDefaultConv",
+			Handler:    _UserService_GetAllUserDefaultConv_Handler,
+		},
+		{
+			MethodName: "GetUserDefaultConvDetail",
+			Handler:    _UserService_GetUserDefaultConvDetail_Handler,
+		},
+		{
+			MethodName: "AddUserDefaultConv",
+			Handler:    _UserService_AddUserDefaultConv_Handler,
+		},
+		{
+			MethodName: "UpdateUserDefaultConv",
+			Handler:    _UserService_UpdateUserDefaultConv_Handler,
+		},
+		{
+			MethodName: "DeleteUserDefaultConv",
+			Handler:    _UserService_DeleteUserDefaultConv_Handler,
+		},
+		{
+			MethodName: "GetAllUserModel",
+			Handler:    _UserService_GetAllUserModel_Handler,
+		},
+		{
+			MethodName: "GetUserModelDetail",
+			Handler:    _UserService_GetUserModelDetail_Handler,
+		},
+		{
+			MethodName: "AddUserModel",
+			Handler:    _UserService_AddUserModel_Handler,
+		},
+		{
+			MethodName: "UpdateUserModel",
+			Handler:    _UserService_UpdateUserModel_Handler,
+		},
+		{
+			MethodName: "DeleteUserModel",
+			Handler:    _UserService_DeleteUserModel_Handler,
+		},
+		{
+			MethodName: "SwitchUserModel",
+			Handler:    _UserService_SwitchUserModel_Handler,
+		},
+		{
+			MethodName: "GetAllLoginRecord",
+			Handler:    _UserService_GetAllLoginRecord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,18 +2,12 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
-	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
-	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/zeromicro/go-zero/core/mr"
-	"google.golang.org/protobuf/proto"
-	"gorm.io/gorm"
-	"time"
-
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"google.golang.org/protobuf/proto"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,111 +28,137 @@ func NewGetUserNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // GetUserNoticeData 获取用户通知数据
 func (l *GetUserNoticeDataLogic) GetUserNoticeData(in *pb.GetUserNoticeDataReq) (*pb.GetUserNoticeDataResp, error) {
-	// 获取用户在线状态
-	conn, err := l.svcCtx.ImService().GetUserConn(l.ctx, &pb.GetUserConnReq{
-		UserIds: []string{in.UserId},
-	})
-	if err != nil {
-		l.Errorf("get user latest conn error: %v", err)
-		return &pb.GetUserNoticeDataResp{}, err
-	}
-	if len(conn.ConnParams) == 0 {
-		// 用户不在线
-		return &pb.GetUserNoticeDataResp{}, nil
-	}
-	var deviceIds []string
-	for _, v := range conn.ConnParams {
-		deviceIds = append(deviceIds, v.DeviceId)
-	}
-	// 获取用户订阅的通知
-	var getUserNoticeConvIdsResp *pb.GetUserNoticeConvIdsResp
-	xtrace.StartFuncSpan(l.ctx, "GetUserNoticeConvIds", func(ctx context.Context) {
-		getUserNoticeConvIdsResp, err = NewGetUserNoticeConvIdsLogic(ctx, l.svcCtx).GetUserNoticeConvIds(&pb.GetUserNoticeConvIdsReq{UserId: in.UserId})
-	})
-	if err != nil {
-		l.Errorf("get user notice convIds error: %v", err)
-		return &pb.GetUserNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
-	}
-	if len(getUserNoticeConvIdsResp.ConvIds) == 0 {
-		return &pb.GetUserNoticeDataResp{}, nil
-	}
-	// 获取用户设备所有会话最终ack的消息的时间
-	// hmget key convId1 convId2 ...
-	var fs []func() error
-	for _, deviceId := range deviceIds {
-		fs = append(fs, func() error {
-			values, err := l.svcCtx.Redis().HmgetCtx(l.ctx, rediskey.UserAckRecord(in.UserId, deviceId), getUserNoticeConvIdsResp.ConvIds...)
-			if err != nil {
-				l.Errorf("hmget user ack record error: %v", err)
-				return err
-			}
-			dest := &noticemodel.Notice{}
-			tx := l.svcCtx.Mysql().Model(dest).
-				Where("((userId = ? OR isBroadcast = ?) AND pushInvalid = ?)", in.UserId, true, false)
-			orBuilder := ""
-			args := make([]interface{}, 0)
-			for i, convId := range getUserNoticeConvIdsResp.ConvIds {
-				if values[i] == "" {
-					// 设置为当前时间
-					values[i] = "0"
-					err = l.svcCtx.Redis().HsetCtx(l.ctx, rediskey.UserAckRecord(in.UserId, deviceId), convId, utils.AnyToString(time.Now().UnixMilli()))
-					if err != nil {
-						l.Errorf("hset user ack record error: %v", err)
-						return err
-					}
-				}
-				orBuilder += "(convId = ? AND createTime > ?) OR "
-				args = append(args, convId, utils.AnyToInt64(values[i]))
-			}
-			orBuilder = orBuilder[:len(orBuilder)-4]
-			tx = tx.Where("("+orBuilder+")", args...)
-			err = tx.Order("createTime ASC").First(dest).Error
-			if err != nil {
-				if xorm.RecordNotFound(err) {
-					return nil
-				}
-				l.Errorf("get user notice data error: %v", err)
-				return err
-			}
-
-			noticeDataListBytes, _ := proto.Marshal(&pb.NoticeDataList{NoticeDataList: []*pb.NoticeData{dest.ToProto()}})
-			err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-				if dest.Options.OnlinePushOnce {
-					// 设置为失效
-					dest.PushInvalid = true
-					err := tx.Model(dest).Where("noticeId = ? AND convId = ?", dest.NoticeId, dest.ConvId).Update("pushInvalid", true).Error
-					if err != nil {
-						l.Errorf("update notice pushInvalid error: %v", err)
-						return err
-					}
-				}
-				return nil
-			}, func(*gorm.DB) error {
-				resp, err := l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
-					GetUserConnReq: &pb.GetUserConnReq{
-						UserIds: []string{in.UserId},
-						Devices: []string{deviceId},
-					},
-					Event: pb.PushEvent_PushNoticeDataList,
-					Data:  noticeDataListBytes,
-				})
-				if err != nil {
-					l.Errorf("PushNoticeData SendMsg err: %v", err)
-				} else {
-					l.Infof("PushNoticeData SendMsg resp: %v", utils.AnyToString(resp))
-				}
-				return err
+	if in.UserId == "" {
+		// 查询会话的订阅者
+		subscribers, err := l.svcCtx.MsgService().GetConvSubscribers(l.ctx, &pb.GetConvSubscribersReq{
+			CommonReq:      in.CommonReq,
+			ConvId:         in.ConvId,
+			LastActiveTime: nil,
+		})
+		if err != nil {
+			l.Errorf("GetUserNoticeData failed, err: %v", err)
+			return nil, err
+		}
+		for _, userId := range subscribers.UserIdList {
+			resp, err := l.getUserNoticeData(&pb.GetUserNoticeDataReq{
+				CommonReq: in.GetCommonReq(),
+				UserId:    userId,
+				ConvId:    in.ConvId,
+				DeviceId:  in.DeviceId,
 			})
 			if err != nil {
-				l.Errorf("PushNoticeData SendMsg error: %v", err)
-				return err
+				l.Errorf("GetUserNoticeData failed, err: %v", err)
+				return resp, err
 			}
-			return nil
-		})
+		}
+		return &pb.GetUserNoticeDataResp{}, nil
+	} else {
+		return l.getUserNoticeData(in)
 	}
-	err = mr.Finish(fs...)
-	if err != nil {
-		return &pb.GetUserNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
+}
+
+func (l *GetUserNoticeDataLogic) getUserNoticeData(in *pb.GetUserNoticeDataReq) (*pb.GetUserNoticeDataResp, error) {
+	var maxSeq int64
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "GetMaxConvAutoId", func(ctx context.Context) {
+		maxSeq, err = noticemodel.GetMaxConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, 0)
+	})
+	if in.DeviceId == nil {
+		// 查询用户当前在线的设备
+		userConn, err := l.svcCtx.ImService().GetUserConn(l.ctx, &pb.GetUserConnReq{
+			UserIds: []string{in.UserId},
+		})
+		if err != nil {
+			l.Errorf("GetUserNoticeData failed, err: %v", err)
+			return nil, err
+		}
+		var deviceIds []string
+		for _, conn := range userConn.ConnParams {
+			deviceIds = append(deviceIds, conn.DeviceId)
+		}
+		if len(deviceIds) == 0 {
+			return &pb.GetUserNoticeDataResp{}, nil
+		}
+		for _, deviceId := range deviceIds {
+			err = l.getDeviceNoticeData(in, maxSeq, deviceId)
+			if err != nil {
+				l.Errorf("GetUserNoticeData failed, err: %v", err)
+				return nil, err
+			}
+		}
+	} else {
+		err = l.getDeviceNoticeData(in, maxSeq, *in.DeviceId)
+		if err != nil {
+			l.Errorf("GetUserNoticeData failed, err: %v", err)
+			return &pb.GetUserNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
 	}
 	return &pb.GetUserNoticeDataResp{}, nil
+}
+
+func (l *GetUserNoticeDataLogic) getDeviceNoticeData(in *pb.GetUserNoticeDataReq, maxSeq int64, deviceId string) error {
+	var minSeq int64
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "GetMinConvAutoId", func(ctx context.Context) {
+		minSeq, err = noticemodel.GetMinConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, in.UserId, deviceId)
+	})
+	if err != nil {
+		l.Errorf("GetUserNoticeData failed, err: %v", err)
+		return err
+	}
+	if minSeq >= maxSeq {
+		return nil
+	}
+	notice, err := noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, deviceId, minSeq, maxSeq)
+	if err != nil {
+		l.Errorf("GetUserNoticeData failed, err: %v", err)
+		return err
+	}
+	if notice == nil {
+		// 查询广播的通知
+		notice, err = noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, "", deviceId, minSeq, maxSeq)
+		if err != nil {
+			l.Errorf("GetUserNoticeData failed, err: %v", err)
+			return err
+		}
+		if notice != nil {
+			// 推送通知
+			err = l.pushNotice(in, notice, deviceId)
+			if err != nil {
+				l.Errorf("GetUserNoticeData failed, err: %v", err)
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (l *GetUserNoticeDataLogic) pushNotice(in *pb.GetUserNoticeDataReq, notice *noticemodel.Notice, deviceId string) error {
+	noticeData := &pb.NoticeData{
+		ConvId:      notice.ConvId,
+		NoticeId:    notice.NoticeId,
+		CreateTime:  strconv.FormatInt(notice.CreateTime, 10),
+		Title:       notice.Title,
+		ContentType: notice.ContentType,
+		Content:     notice.Content,
+		Options: &pb.NoticeData_Options{
+			StorageForClient: notice.Options.StorageForClient,
+			UpdateConvNotice: notice.Options.UpdateConvNotice,
+		},
+		Ext: notice.Ext,
+	}
+	data, _ := proto.Marshal(noticeData)
+	_, err := l.svcCtx.ImService().SendMsg(l.ctx, &pb.SendMsgReq{
+		GetUserConnReq: &pb.GetUserConnReq{
+			UserIds: []string{in.UserId},
+			Devices: []string{deviceId},
+		},
+		Event: pb.PushEvent_PushNoticeData,
+		Data:  data,
+	})
+	if err != nil {
+		l.Errorf("GetUserNoticeData failed, err: %v", err)
+		return err
+	}
+	return nil
 }

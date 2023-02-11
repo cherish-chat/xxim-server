@@ -30,7 +30,7 @@ func (l *MapGroupByIdsLogic) MapGroupByIds(in *pb.MapGroupByIdsReq) (*pb.MapGrou
 	var groups []*groupmodel.Group
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "GetGroupByIds", func(ctx context.Context) {
-		err = l.svcCtx.Mysql().Model(&groupmodel.Group{}).Where("id in (?)", in.Ids).Find(&groups).Error
+		groups, err = groupmodel.ListGroupByIdsFromRedis(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.Ids)
 	})
 	if err != nil {
 		l.Errorf("get group list error: %v", err)

@@ -3,26 +3,26 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtservice"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/server"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
-	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/msg.yaml", "the config file")
+var mgmtRpcAddress = flag.String("a", "127.0.0.1:6708", "mgmt rpc address")
 
 func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	mgmtservice.MustLoadConfig(*mgmtRpcAddress, "msg", &c)
 	ctx := svc.NewServiceContext(c)
 	svr := server.NewMsgServiceServer(ctx)
 	svr.Start()

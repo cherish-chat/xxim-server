@@ -37,6 +37,7 @@ type MsgServiceClient interface {
 	// conn hook
 	AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
+	KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error)
 	//OfflinePushMsg 离线推送消息
@@ -45,6 +46,12 @@ type MsgServiceClient interface {
 	GetConvOnlineCount(ctx context.Context, in *GetConvOnlineCountReq, opts ...grpc.CallOption) (*GetConvOnlineCountResp, error)
 	//FlushUsersSubConv 刷新用户订阅的会话
 	FlushUsersSubConv(ctx context.Context, in *FlushUsersSubConvReq, opts ...grpc.CallOption) (*CommonResp, error)
+	//GetAllMsgList 获取所有消息
+	GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error)
+	//ReadMsg 设置会话已读
+	ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error)
+	//EditMsg 编辑消息
+	EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error)
 }
 
 type msgServiceClient struct {
@@ -145,6 +152,15 @@ func (c *msgServiceClient) AfterDisconnect(ctx context.Context, in *AfterDisconn
 	return out, nil
 }
 
+func (c *msgServiceClient) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	out := new(KeepAliveResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/KeepAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgServiceClient) GetConvSubscribers(ctx context.Context, in *GetConvSubscribersReq, opts ...grpc.CallOption) (*GetConvSubscribersResp, error) {
 	out := new(GetConvSubscribersResp)
 	err := c.cc.Invoke(ctx, "/pb.msgService/GetConvSubscribers", in, out, opts...)
@@ -181,6 +197,33 @@ func (c *msgServiceClient) FlushUsersSubConv(ctx context.Context, in *FlushUsers
 	return out, nil
 }
 
+func (c *msgServiceClient) GetAllMsgList(ctx context.Context, in *GetAllMsgListReq, opts ...grpc.CallOption) (*GetAllMsgListResp, error) {
+	out := new(GetAllMsgListResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetAllMsgList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error) {
+	out := new(ReadMsgResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/ReadMsg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error) {
+	out := new(EditMsgResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/EditMsg", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -200,6 +243,7 @@ type MsgServiceServer interface {
 	// conn hook
 	AfterConnect(context.Context, *AfterConnectReq) (*CommonResp, error)
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
+	KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error)
 	//GetConvSubscribers 获取一个会话里所有的消息订阅者
 	GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error)
 	//OfflinePushMsg 离线推送消息
@@ -208,6 +252,12 @@ type MsgServiceServer interface {
 	GetConvOnlineCount(context.Context, *GetConvOnlineCountReq) (*GetConvOnlineCountResp, error)
 	//FlushUsersSubConv 刷新用户订阅的会话
 	FlushUsersSubConv(context.Context, *FlushUsersSubConvReq) (*CommonResp, error)
+	//GetAllMsgList 获取所有消息
+	GetAllMsgList(context.Context, *GetAllMsgListReq) (*GetAllMsgListResp, error)
+	//ReadMsg 设置会话已读
+	ReadMsg(context.Context, *ReadMsgReq) (*ReadMsgResp, error)
+	//EditMsg 编辑消息
+	EditMsg(context.Context, *EditMsgReq) (*EditMsgResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -245,6 +295,9 @@ func (UnimplementedMsgServiceServer) AfterConnect(context.Context, *AfterConnect
 func (UnimplementedMsgServiceServer) AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AfterDisconnect not implemented")
 }
+func (UnimplementedMsgServiceServer) KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeepAlive not implemented")
+}
 func (UnimplementedMsgServiceServer) GetConvSubscribers(context.Context, *GetConvSubscribersReq) (*GetConvSubscribersResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConvSubscribers not implemented")
 }
@@ -256,6 +309,15 @@ func (UnimplementedMsgServiceServer) GetConvOnlineCount(context.Context, *GetCon
 }
 func (UnimplementedMsgServiceServer) FlushUsersSubConv(context.Context, *FlushUsersSubConvReq) (*CommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FlushUsersSubConv not implemented")
+}
+func (UnimplementedMsgServiceServer) GetAllMsgList(context.Context, *GetAllMsgListReq) (*GetAllMsgListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMsgList not implemented")
+}
+func (UnimplementedMsgServiceServer) ReadMsg(context.Context, *ReadMsgReq) (*ReadMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMsg not implemented")
+}
+func (UnimplementedMsgServiceServer) EditMsg(context.Context, *EditMsgReq) (*EditMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditMsg not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -450,6 +512,24 @@ func _MsgService_AfterDisconnect_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_KeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeepAliveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).KeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/KeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).KeepAlive(ctx, req.(*KeepAliveReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MsgService_GetConvSubscribers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetConvSubscribersReq)
 	if err := dec(in); err != nil {
@@ -522,6 +602,60 @@ func _MsgService_FlushUsersSubConv_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_GetAllMsgList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMsgListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).GetAllMsgList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/GetAllMsgList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).GetAllMsgList(ctx, req.(*GetAllMsgListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_ReadMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).ReadMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/ReadMsg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).ReadMsg(ctx, req.(*ReadMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_EditMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).EditMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/EditMsg",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).EditMsg(ctx, req.(*EditMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -570,6 +704,10 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MsgService_AfterDisconnect_Handler,
 		},
 		{
+			MethodName: "KeepAlive",
+			Handler:    _MsgService_KeepAlive_Handler,
+		},
+		{
 			MethodName: "GetConvSubscribers",
 			Handler:    _MsgService_GetConvSubscribers_Handler,
 		},
@@ -584,6 +722,18 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FlushUsersSubConv",
 			Handler:    _MsgService_FlushUsersSubConv_Handler,
+		},
+		{
+			MethodName: "GetAllMsgList",
+			Handler:    _MsgService_GetAllMsgList_Handler,
+		},
+		{
+			MethodName: "ReadMsg",
+			Handler:    _MsgService_ReadMsg_Handler,
+		},
+		{
+			MethodName: "EditMsg",
+			Handler:    _MsgService_EditMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

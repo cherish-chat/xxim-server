@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"go.opentelemetry.io/otel/propagation"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -26,6 +28,14 @@ func NewBatchGetConvSeqLogic(ctx context.Context, svcCtx *svc.ServiceContext) *B
 
 // BatchGetConvSeq 批量获取会话的seq
 func (l *BatchGetConvSeqLogic) BatchGetConvSeq(in *pb.BatchGetConvSeqReq) (*pb.BatchGetConvSeqResp, error) {
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "KeepAlive", func(ctx context.Context) {
+		_, e := l.svcCtx.ImService().KeepAlive(ctx, &pb.KeepAliveReq{CommonReq: in.GetCommonReq()})
+		if e != nil {
+			l.Errorf("KeepAlive failed, err: %v", e)
+		}
+	}, propagation.MapCarrier{
+		"userId": in.CommonReq.UserId,
+	})
 	if len(in.ConvIdList) == 0 {
 		return &pb.BatchGetConvSeqResp{}, nil
 	}

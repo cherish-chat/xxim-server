@@ -2,10 +2,13 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"gorm.io/gorm"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -40,6 +43,30 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		for _, userId := range []string{in.CommonReq.UserId, in.UserId} {
+			notice := &noticemodel.Notice{
+				ConvId: pb.HiddenConvIdCommand(),
+				UserId: userId,
+				Options: noticemodel.NoticeOption{
+					StorageForClient: false,
+					UpdateConvNotice: false,
+				},
+				ContentType: pb.NoticeContentType_SyncFriendList,
+				Content: utils.AnyToBytes(pb.NoticeContent_SyncFriendList{
+					Comment: "deleteFriend",
+				}),
+				UniqueId: "syncFriendList",
+				Title:    "",
+				Ext:      nil,
+			}
+			err := notice.Insert(l.ctx, tx)
+			if err != nil {
+				l.Errorf("insert notice failed, err: %v", err)
+				return err
+			}
+		}
+		return nil
 	})
 	if err != nil {
 		l.Errorf("DeleteFriend failed, err: %v", err)
@@ -53,10 +80,31 @@ func (l *DeleteFriendLogic) DeleteFriend(in *pb.DeleteFriendReq) (*pb.DeleteFrie
 			return &pb.DeleteFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		// 预热缓存
-		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
+		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.UserId)
 			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
 		}, nil)
+		// 刷新订阅
+		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{
+				in.UserId, in.CommonReq.UserId,
+			}})
+			if err != nil {
+				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+				return err
+			}
+			for _, userId := range []string{in.UserId, in.CommonReq.UserId} {
+				_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+					UserId: userId,
+					ConvId: pb.HiddenConvIdCommand(),
+				})
+				if err != nil {
+					l.Errorf("SendNoticeData failed, err: %v", err)
+					return err
+				}
+			}
+			return err
+		})
 	}
 	if in.Block {
 		xtrace.StartFuncSpan(l.ctx, "BlockUser", func(ctx context.Context) {

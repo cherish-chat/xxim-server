@@ -25,6 +25,7 @@ type ConnServiceClient interface {
 	KickUserConn(ctx context.Context, in *KickUserConnReq, opts ...grpc.CallOption) (*KickUserConnResp, error)
 	GetUserConn(ctx context.Context, in *GetUserConnReq, opts ...grpc.CallOption) (*GetUserConnResp, error)
 	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
+	KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error)
 }
 
 type connServiceClient struct {
@@ -62,6 +63,15 @@ func (c *connServiceClient) SendMsg(ctx context.Context, in *SendMsgReq, opts ..
 	return out, nil
 }
 
+func (c *connServiceClient) KeepAlive(ctx context.Context, in *KeepAliveReq, opts ...grpc.CallOption) (*KeepAliveResp, error) {
+	out := new(KeepAliveResp)
+	err := c.cc.Invoke(ctx, "/pb.connService/KeepAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnServiceServer is the server API for ConnService service.
 // All implementations must embed UnimplementedConnServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type ConnServiceServer interface {
 	KickUserConn(context.Context, *KickUserConnReq) (*KickUserConnResp, error)
 	GetUserConn(context.Context, *GetUserConnReq) (*GetUserConnResp, error)
 	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
+	KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error)
 	mustEmbedUnimplementedConnServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedConnServiceServer) GetUserConn(context.Context, *GetUserConnR
 }
 func (UnimplementedConnServiceServer) SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMsg not implemented")
+}
+func (UnimplementedConnServiceServer) KeepAlive(context.Context, *KeepAliveReq) (*KeepAliveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method KeepAlive not implemented")
 }
 func (UnimplementedConnServiceServer) mustEmbedUnimplementedConnServiceServer() {}
 
@@ -152,6 +166,24 @@ func _ConnService_SendMsg_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnService_KeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(KeepAliveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnServiceServer).KeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.connService/KeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnServiceServer).KeepAlive(ctx, req.(*KeepAliveReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConnService_ServiceDesc is the grpc.ServiceDesc for ConnService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var ConnService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMsg",
 			Handler:    _ConnService_SendMsg_Handler,
+		},
+		{
+			MethodName: "KeepAlive",
+			Handler:    _ConnService_KeepAlive_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

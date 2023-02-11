@@ -53,7 +53,7 @@ message MsgData {
   Options options = 41; // 消息选项
   OfflinePush offlinePush = 42; // 离线推送
 
-  bytes ext = 100;
+  bytes ext = 101;
 }
 
 message MsgDataList {
@@ -61,11 +61,11 @@ message MsgDataList {
 }
 
 message SendMsgListReq {
-  CommonReq commonReq = 1;
-  repeated MsgData msgDataList = 2;
+  repeated MsgData msgDataList = 1;
   // options
   // 1. 延迟时间（秒） 不得大于 864000秒 也就是10天
-  optional int32 deliverAfter = 11;
+  optional int32 deliverAfter = 2;
+  CommonReq commonReq = 11;
 }
 
 message SendMsgListResp {
@@ -81,26 +81,26 @@ message BatchGetMsgListByConvIdReq {
     string convId = 1;
     repeated string seqList = 2;
   }
-  CommonReq commonReq = 1;
-  repeated Item items = 2;
-  bool push = 3;
+  repeated Item items = 1;
+  bool push = 2;
+  CommonReq commonReq = 11;
 }
 
 message GetMsgListResp {
-  CommonResp commonResp = 1;
-  repeated MsgData msgDataList = 2;
+  repeated MsgData msgDataList = 1;
+  CommonResp commonResp = 11;
 }
 
 message GetMsgByIdReq {
-  CommonReq commonReq = 1;
-  optional string serverMsgId = 2;
-  optional string clientMsgId = 3;
-  bool push = 4;
+  optional string serverMsgId = 1;
+  optional string clientMsgId = 2;
+  bool push = 3;
+  CommonReq commonReq = 11;
 }
 
 message GetMsgByIdResp {
-  CommonResp commonResp = 1;
-  MsgData msgData = 2;
+  MsgData msgData = 1;
+  CommonResp commonResp = 11;
 }
 
 //批量设置用户某会话的minseq
@@ -117,19 +117,19 @@ message BatchSetMinSeqResp {
 
 //批量获取会话的seq
 message BatchGetConvSeqReq {
-  CommonReq commonReq = 1;
-  repeated string convIdList = 2;
+  repeated string convIdList = 1;
+  CommonReq commonReq = 11;
 }
 
 message BatchGetConvSeqResp {
-  CommonResp commonResp = 1;
   message ConvSeq {
     string convId = 1;
     string minSeq = 2;
     string maxSeq = 3;
     string updateTime = 4;
   }
-  map<string, ConvSeq> convSeqMap = 2;
+  map<string, ConvSeq> convSeqMap = 1;
+  CommonResp commonResp = 11;
 }
 
 //GetConvSubscribersReq 获取一个会话里所有的消息订阅者
@@ -176,6 +176,49 @@ message FlushUsersSubConvReq {
   repeated string userIds = 2;
 }
 
+//GetAllMsgListReq 获取所有消息
+message GetAllMsgListReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  Page page = 3;
+  map<string, string> filter = 4;
+}
+
+message GetAllMsgListResp {
+  CommonResp commonResp = 1;
+  repeated MsgData msgDataList = 2;
+  int64 total = 3;
+  map<string, string> userMap = 4;
+}
+
+//ReadMsgReq 设置会话已读
+message ReadMsgReq {
+  string senderId = 1;
+  string convId = 2;
+  string seq = 3;
+  bytes noticeContent = 4;
+  CommonReq commonReq = 11;
+}
+
+message ReadMsgResp {
+  CommonResp commonResp = 1;
+}
+
+//EditMsgReq 编辑消息
+message EditMsgReq {
+  string senderId = 1;
+  string serverMsgId = 2;
+  int32 contentType = 3;
+  bytes content = 4;
+  bytes ext = 5;
+  bytes noticeContent = 6;
+  CommonReq commonReq = 11;
+}
+
+message EditMsgResp {
+  CommonResp commonResp = 1;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -192,6 +235,7 @@ service msgService {
   // conn hook
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
+  rpc KeepAlive(KeepAliveReq) returns (KeepAliveResp);
   //GetConvSubscribers 获取一个会话里所有的消息订阅者
   rpc GetConvSubscribers(GetConvSubscribersReq) returns (GetConvSubscribersResp) {}
   //OfflinePushMsg 离线推送消息
@@ -200,4 +244,11 @@ service msgService {
   rpc GetConvOnlineCount(GetConvOnlineCountReq) returns (GetConvOnlineCountResp) {}
   //FlushUsersSubConv 刷新用户订阅的会话
   rpc FlushUsersSubConv(FlushUsersSubConvReq) returns (CommonResp) {}
+
+  //GetAllMsgList 获取所有消息
+  rpc GetAllMsgList(GetAllMsgListReq) returns (GetAllMsgListResp) {}
+  //ReadMsg 设置会话已读
+  rpc ReadMsg(ReadMsgReq) returns (ReadMsgResp) {}
+  //EditMsg 编辑消息
+  rpc EditMsg(EditMsgReq) returns (EditMsgResp) {}
 }

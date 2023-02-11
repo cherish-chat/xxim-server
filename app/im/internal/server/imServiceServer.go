@@ -37,6 +37,11 @@ func (s *ImServiceServer) AfterDisconnect(ctx context.Context, in *pb.AfterDisco
 	return l.AfterDisconnect(in)
 }
 
+func (s *ImServiceServer) KeepAlive(ctx context.Context, in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
+	l := logic.NewKeepAliveLogic(ctx, s.svcCtx)
+	return l.KeepAlive(in)
+}
+
 func (s *ImServiceServer) KickUserConn(ctx context.Context, in *pb.KickUserConnReq) (*pb.KickUserConnResp, error) {
 	l := logic.NewKickUserConnLogic(ctx, s.svcCtx)
 	return l.KickUserConn(in)
@@ -45,6 +50,11 @@ func (s *ImServiceServer) KickUserConn(ctx context.Context, in *pb.KickUserConnR
 func (s *ImServiceServer) GetUserConn(ctx context.Context, in *pb.GetUserConnReq) (*pb.GetUserConnResp, error) {
 	l := logic.NewGetUserConnLogic(ctx, s.svcCtx)
 	return l.GetUserConn(in)
+}
+
+func (s *ImServiceServer) BeforeRequest(ctx context.Context, in *pb.BeforeRequestReq) (*pb.BeforeRequestResp, error) {
+	l := logic.NewBeforeRequestLogic(ctx, s.svcCtx)
+	return l.BeforeRequest(in)
 }
 
 func (s *ImServiceServer) GetUserLatestConn(ctx context.Context, in *pb.GetUserLatestConnReq) (*pb.GetUserLatestConnResp, error) {
@@ -62,7 +72,7 @@ func (s *ImServiceServer) SendMsg(ctx context.Context, in *pb.SendMsgReq) (*pb.S
 	return l.SendMsg(in)
 }
 
-func (s *ImServiceServer) GetAppSystemConfig(ctx context.Context, in *pb.GetAppSystemConfigReq) (*pb.GetAppSystemConfigResp, error) {
-	l := logic.NewGetAppSystemConfigLogic(ctx, s.svcCtx)
-	return l.GetAppSystemConfig(in)
+func (s *ImServiceServer) GetAllConvIdOfUser(ctx context.Context, in *pb.GetAllConvIdOfUserReq) (*pb.GetAllConvIdOfUserResp, error) {
+	l := logic.NewGetAllConvIdOfUserLogic(ctx, s.svcCtx)
+	return l.GetAllConvIdOfUser(in)
 }

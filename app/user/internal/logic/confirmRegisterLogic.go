@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -46,9 +47,10 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		Id:           userTmp.UserId,
 		Password:     userTmp.Password,
 		PasswordSalt: userTmp.PasswordSalt,
-		Nickname:     l.svcCtx.SystemConfigMgr.Get("nickname_default"),
-		Avatar:       utils.AnyRandomInSlice(l.svcCtx.SystemConfigMgr.GetSlice("avatars_default"), ""),
+		Nickname:     l.svcCtx.ConfigMgr.NicknameDefault(l.ctx),
+		Avatar:       utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(l.ctx), ""),
 		RegInfo:      userTmp.RegInfo,
+		CreateTime:   time.Now().UnixMilli(),
 	}
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)
 	if err != nil {
@@ -75,5 +77,5 @@ func (l *ConfirmRegisterLogic) ConfirmRegister(in *pb.ConfirmRegisterReq) (*pb.C
 		l.Errorf("ConfirmRegisterLogic ConfirmRegister err: %v", err)
 		return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp}, err
 	}
-	return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp, Token: resp.Token}, nil
+	return &pb.ConfirmRegisterResp{CommonResp: resp.CommonResp, Token: resp.Token, UserId: in.Id}, nil
 }

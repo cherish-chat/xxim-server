@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/pkg/mobpush"
@@ -27,8 +28,9 @@ type ServiceContext struct {
 	relationService    relationservice.RelationService
 	groupService       groupservice.GroupService
 	userService        userservice.UserService
+	noticeService      noticeservice.NoticeService
 	MobPush            *mobpush.Pusher
-	SystemConfigMgr    *xconf.SystemConfigMgr
+	ConfigMgr          *xconf.ConfigMgr
 	SyncSendMsgLimiter *limit.TokenLimiter
 }
 
@@ -41,14 +43,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		xorm.HashKv{},
 	)
 	s.MobPush = mobpush.NewPusher(c.MobPush)
-	s.SystemConfigMgr = xconf.NewSystemConfigMgr("system", c.Name, s.Mysql())
+	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.SyncSendMsgLimiter = limit.NewTokenLimiter(c.SyncSendMsgLimit.Rate, c.SyncSendMsgLimit.Burst, s.Redis(), rediskey.SyncSendMsgLimiter())
 	return s
 }
 
 func (s *ServiceContext) MsgProducer() *xtdmq.TDMQProducer {
 	if s.msgProducer == nil {
-		s.msgProducer = xtdmq.NewTDMQProducer(s.Config.TDMQ.TDMQConfig, s.Config.TDMQ.Producers.Msg)
+		s.msgProducer = xtdmq.NewTDMQProducer(s.Config.TDMQ.TDMQConfig, s.Config.TDMQ.Producer)
 	}
 	return s.msgProducer
 }
@@ -93,4 +95,11 @@ func (s *ServiceContext) UserService() userservice.UserService {
 		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
 	}
 	return s.userService
+}
+
+func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
+	if s.noticeService == nil {
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+	}
+	return s.noticeService
 }

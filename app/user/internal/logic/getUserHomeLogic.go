@@ -42,7 +42,7 @@ func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeRe
 		Xb:        user.Xb,
 		Birthday:  user.Birthday,
 		IpRegion:  nil,
-		Signature: user.InfoMap.Get("signature", l.svcCtx.SystemConfigMgr.Get("signature_if_not_set")),
+		Signature: user.InfoMap.Get("signature", l.svcCtx.ConfigMgr.SignatureIfNotSet(l.ctx)),
 		LevelInfo: user.LevelInfo.Pb(),
 	}
 	latestConn, err := l.svcCtx.ImService().GetUserLatestConn(l.ctx, &pb.GetUserLatestConnReq{UserId: user.Id})

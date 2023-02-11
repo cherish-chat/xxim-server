@@ -67,6 +67,7 @@ message LoginResp {
   bool isNewUser = 2;
   // token
   string token = 3; // 如果是新用户，token为空
+  string userId = 4;
 }
 
 // 确认注册
@@ -79,6 +80,7 @@ message ConfirmRegisterReq {
 message ConfirmRegisterResp {
   CommonResp commonResp = 1;
   string token = 2;
+  string userId = 3;
 }
 
 //mapUserByIds 获取用户信息
@@ -201,6 +203,590 @@ message UpdateUserInfoResp {
   CommonResp commonResp = 1;
 }
 
+/*
+type InvitationCode struct {
+	Code        string `gorm:"column:code;type:varchar(32);not null;primary_key;" json:"code"`
+	Remark      string `gorm:"column:remark;type:varchar(255);not null" json:"remark"`
+	Creator     string `gorm:"column:creator;type:varchar(32);not null" json:"creator"`
+	CreatorType int32  `gorm:"column:creatorType;type:tinyint(1);not null" json:"creatorType"` // 0:管理员 1:用户
+	IsEnable    bool   `gorm:"column:isEnable;type:tinyint(1);not null" json:"isEnable"`
+	CreateTime  int64  `gorm:"column:createTime;type:bigint(20);not null" json:"createTime"`
+}
+ */
+//UserInvitationCode 用户邀请码
+message UserInvitationCode {
+  string code = 1;
+  string remark = 2;
+  string creator = 3;
+  int32 creatorType = 4;
+  bool isEnable = 5;
+  int64 createTime = 6;
+
+  int64 createdAt = 21;
+  string createdAtStr = 22;
+}
+
+//GetAllUserInvitationCodeReq 获取所有用户邀请码
+message GetAllUserInvitationCodeReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllUserInvitationCodeResp 获取所有用户邀请码
+message GetAllUserInvitationCodeResp {
+  CommonResp commonResp = 1;
+  repeated UserInvitationCode userInvitationCodes = 2;
+  int64 total = 3;
+}
+
+//GetUserInvitationCodeDetailReq 获取用户邀请码详情
+message GetUserInvitationCodeDetailReq {
+  CommonReq commonReq = 1;
+  string code = 2;
+}
+
+//GetUserInvitationCodeDetailResp 获取用户邀请码详情
+message GetUserInvitationCodeDetailResp {
+  CommonResp commonResp = 1;
+  UserInvitationCode userInvitationCode = 2;
+}
+
+//AddUserInvitationCodeReq 创建用户邀请码
+message AddUserInvitationCodeReq {
+  CommonReq commonReq = 1;
+  UserInvitationCode userInvitationCode = 2;
+}
+
+//AddUserInvitationCodeResp 创建用户邀请码
+message AddUserInvitationCodeResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserInvitationCodeReq 更新用户邀请码
+message UpdateUserInvitationCodeReq {
+  CommonReq commonReq = 1;
+  UserInvitationCode userInvitationCode = 2;
+}
+
+//UpdateUserInvitationCodeResp 更新用户邀请码
+message UpdateUserInvitationCodeResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteUserInvitationCodeReq 删除用户邀请码
+message DeleteUserInvitationCodeReq {
+  CommonReq commonReq = 1;
+  repeated string codes = 2;
+}
+
+//DeleteUserInvitationCodeResp 删除用户邀请码
+message DeleteUserInvitationCodeResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type IpList struct {
+	Id         string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
+	Platform   string `gorm:"column:platform;type:varchar(32);not null;default:'';" json:"platform"` // 针对平台
+	StartIp    string `gorm:"column:startIp;not null;default:'';comment:'起始IP';"`
+	EndIp      string `gorm:"column:endIp;not null;default:'';comment:'结束IP';"`
+	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注';"`
+	UserId     string `gorm:"column:userId;not null;default:'';comment:'用户ID';"` // 如果为空，则表示针对所有用户
+	IsEnable   bool   `gorm:"column:isEnable;not null;default:0;comment:'是否启用';index;"`
+	CreateTime int64  `gorm:"column:createTime;not null;default:0;comment:'创建时间';index;"`
+}
+ */
+//UserIpList 用户IP名单
+message UserIpList {
+  string id = 1;
+  string platform = 2;
+  string startIp = 3;
+  string endIp = 4;
+  string remark = 5;
+  string userId = 6;
+  bool isEnable = 7;
+  int64 createTime = 8;
+
+  int64 createdAt = 21;
+  string createdAtStr = 22;
+}
+
+//GetAllUserIpWhiteListReq 获取所有用户IP白名单
+message GetAllUserIpWhiteListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllUserIpWhiteListResp 获取所有用户IP白名单
+message GetAllUserIpWhiteListResp {
+  CommonResp commonResp = 1;
+  repeated UserIpList userIpLists = 2;
+  int64 total = 3;
+}
+
+//GetUserIpWhiteListDetailReq 获取用户IP白名单详情
+message GetUserIpWhiteListDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetUserIpWhiteListDetailResp 获取用户IP白名单详情
+message GetUserIpWhiteListDetailResp {
+  CommonResp commonResp = 1;
+  UserIpList userIpList = 2;
+}
+
+//AddUserIpWhiteListReq 创建用户IP白名单
+message AddUserIpWhiteListReq {
+  CommonReq commonReq = 1;
+  UserIpList userIpList = 2;
+}
+
+//AddUserIpWhiteListResp 创建用户IP白名单
+message AddUserIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserIpWhiteListReq 更新用户IP白名单
+message UpdateUserIpWhiteListReq {
+  CommonReq commonReq = 1;
+  UserIpList userIpList = 2;
+}
+
+//UpdateUserIpWhiteListResp 更新用户IP白名单
+message UpdateUserIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteUserIpWhiteListReq 删除用户IP白名单
+message DeleteUserIpWhiteListReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteUserIpWhiteListResp 删除用户IP白名单
+message DeleteUserIpWhiteListResp {
+  CommonResp commonResp = 1;
+}
+
+//GetAllUserIpBlackListReq 获取所有用户IP黑名单
+message GetAllUserIpBlackListReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllUserIpBlackListResp 获取所有用户IP黑名单
+message GetAllUserIpBlackListResp {
+  CommonResp commonResp = 1;
+  repeated UserIpList userIpLists = 2;
+  int64 total = 3;
+}
+
+//GetUserIpBlackListDetailReq 获取用户IP黑名单详情
+message GetUserIpBlackListDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetUserIpBlackListDetailResp 获取用户IP黑名单详情
+message GetUserIpBlackListDetailResp {
+  CommonResp commonResp = 1;
+  UserIpList userIpList = 2;
+}
+
+//AddUserIpBlackListReq 创建用户IP黑名单
+message AddUserIpBlackListReq {
+  CommonReq commonReq = 1;
+  UserIpList userIpList = 2;
+}
+
+//AddUserIpBlackListResp 创建用户IP黑名单
+message AddUserIpBlackListResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserIpBlackListReq 更新用户IP黑名单
+message UpdateUserIpBlackListReq {
+  CommonReq commonReq = 1;
+  UserIpList userIpList = 2;
+}
+
+//UpdateUserIpBlackListResp 更新用户IP黑名单
+message UpdateUserIpBlackListResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteUserIpBlackListReq 删除用户IP黑名单
+message DeleteUserIpBlackListReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteUserIpBlackListResp 删除用户IP黑名单
+message DeleteUserIpBlackListResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type DefaultConv struct {
+	Id string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
+	// 会话类型
+	ConvType int32 `gorm:"column:convType;type:tinyint(1);not null" json:"convType"` // 0:好友 1:群聊
+	// 类型
+	FilterType     int32  `gorm:"column:filterType;type:tinyint(1);not null" json:"filterType"`                     // 0:所有注册用户 1:使用邀请码注册用户
+	InvitationCode string `gorm:"column:invitationCode;type:varchar(32);not null;default:0;" json:"invitationCode"` // 空表示所有邀请码用户
+
+	ConvId string `gorm:"column:convId;type:varchar(32);not null" json:"convId"` // 会话id
+}
+ */
+//UserDefaultConv 用户默认会话
+message UserDefaultConv {
+  string id = 1;
+  int32 convType = 2;
+  int32 filterType = 3;
+  string invitationCode = 4;
+  string convId = 5;
+
+  int64 createdAt = 21;
+  string createdAtStr = 22;
+}
+
+//GetAllUserDefaultConvReq 获取所有用户默认会话
+message GetAllUserDefaultConvReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllUserDefaultConvResp 获取所有用户默认会话
+message GetAllUserDefaultConvResp {
+  CommonResp commonResp = 1;
+  repeated UserDefaultConv userDefaultConvs = 2;
+  int64 total = 3;
+}
+
+//GetUserDefaultConvDetailReq 获取用户默认会话详情
+message GetUserDefaultConvDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetUserDefaultConvDetailResp 获取用户默认会话详情
+message GetUserDefaultConvDetailResp {
+  CommonResp commonResp = 1;
+  UserDefaultConv userDefaultConv = 2;
+}
+
+//AddUserDefaultConvReq 创建用户默认会话
+message AddUserDefaultConvReq {
+  CommonReq commonReq = 1;
+  UserDefaultConv userDefaultConv = 2;
+}
+
+//AddUserDefaultConvResp 创建用户默认会话
+message AddUserDefaultConvResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserDefaultConvReq 更新用户默认会话
+message UpdateUserDefaultConvReq {
+  CommonReq commonReq = 1;
+  UserDefaultConv userDefaultConv = 2;
+}
+
+//UpdateUserDefaultConvResp 更新用户默认会话
+message UpdateUserDefaultConvResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteUserDefaultConvReq 删除用户默认会话
+message DeleteUserDefaultConvReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteUserDefaultConvResp 删除用户默认会话
+message DeleteUserDefaultConvResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+const (
+	RoleUser    Role = 0 // 普通用户
+	RoleService Role = 1 //客服
+	RoleGuest   Role = 3 // 游客
+)
+
+type (
+	Role int32 // 角色
+	User struct {
+		// 账号信息
+		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
+		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
+		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64);"`
+		// 邀请码
+		InvitationCode string `bson:"invitationCode" json:"invitationCode" gorm:"column:invitationCode;type:char(32);index;"`
+		// 手机号
+		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;"`
+		// 手机号国家码
+		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';"`
+
+		// 基本信息
+		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
+		Avatar   string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
+		// 注册信息
+		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json;"`
+		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`
+		Birthday *pb.BirthdayInfo `bson:"birthday,omitempty" json:"birthday,omitempty" gorm:"column:birthday;type:json;"`
+		// 其他信息
+		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:infoMap;type:json;"`
+		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:levelInfo;type:json;"`
+
+		// 角色 角色有: 0.用户 1.客服 2.游客
+		Role Role `bson:"role" json:"role" gorm:"column:role;type:tinyint(1);index;"`
+
+		// 解封时间
+		UnblockTime int64 `bson:"unblockTime" json:"unblockTime" gorm:"column:unblockTime;type:bigint(20);index;default:0;"`
+		// 封禁记录id
+		BlockRecordId string `bson:"blockRecordId" json:"blockRecordId" gorm:"column:blockRecordId;type:char(32);index;default:'';"`
+
+		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
+	}
+	LoginInfo struct {
+		// 13位时间戳
+		Time int64  `bson:"time" json:"time" gorm:"column:time;type:bigint(13);index;"`
+		Ip   string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
+		// 中国
+		IpCountry string `bson:"ipCountry" json:"ipCountry" gorm:"column:ipCountry;type:varchar(64);"`
+		// 北京市
+		IpProvince string `bson:"ipProvince" json:"ipProvince" gorm:"column:ipProvince;type:varchar(64);"`
+		// 北京市
+		IpCity string `bson:"ipCity" json:"ipCity" gorm:"column:ipCity;type:varchar(64);"`
+		// 电信
+		IpISP string `bson:"ipService" json:"ipService" gorm:"column:ipService;type:varchar(64);"`
+		// 1.0.0
+		AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
+		// user-agent
+		UserAgent string `bson:"userAgent" json:"userAgent" gorm:"column:userAgent;type:varchar(255);"`
+		// 10.0.0
+		OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
+		// iphone/ipad/android/pc/mac/linux/windows
+		Platform string `bson:"platform" json:"platform" gorm:"column:platform;type:varchar(64);"`
+		// 设备id
+		DeviceId string `bson:"deviceId" json:"deviceId" gorm:"column:deviceId;type:varchar(64);"`
+		// 设备型号
+		DeviceModel string `bson:"deviceModel" json:"deviceModel" gorm:"column:deviceModel;type:varchar(64);"`
+	}
+	LevelInfo struct {
+		Level        int32 `bson:"level" json:"level"`
+		Exp          int32 `bson:"exp" json:"exp"`
+		NextLevelExp int32 `bson:"nextLevelExp" json:"nextLevelExp"`
+	}
+)
+ */
+enum UserRole {
+  User = 0;
+  Service = 1;
+  Guest = 3;
+}
+
+message UserLevelInfo {
+  int32 level = 1;
+  int32 exp = 2;
+  int32 nextLevelExp = 3;
+}
+
+message UserLoginInfo {
+  int64 time = 1;
+  string ip = 2;
+  string ipCountry = 3;
+  string ipProvince = 4;
+  string ipCity = 5;
+  string ipISP = 6;
+  string appVersion = 7;
+  string userAgent = 8;
+  string osVersion = 9;
+  string platform = 10;
+  string deviceId = 11;
+  string deviceModel = 12;
+}
+
+message UserBirthdayInfo {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+}
+message UserLoginRecord {
+  // 时间
+  int64 time = 1;
+  string timeStr = 2;
+  // ip
+  string ip = 3;
+  string ipRegion = 4;
+}
+message UserModel {
+  string id = 1;
+  string invitationCode = 2;
+  string mobile = 3;
+  string mobileCountryCode = 4;
+  string nickname = 5;
+  string avatar = 6;
+  UserLoginInfo regInfo = 7;
+  int32 xb = 8;
+  UserBirthdayInfo birthday = 9;
+  map<string, string> infoMap = 10;
+  UserLevelInfo levelInfo = 11;
+  int32 role = 12;
+  int64 unblockTime = 13;
+  string unblockTimeStr = 14;
+  string blockRecordId = 15;
+  int64 createTime = 16;
+  UserLoginRecord lastLoginRecord = 17;
+  string adminRemark = 18;
+
+  int64 createdAt = 21;
+  string createdAtStr = 22;
+}
+
+//GetAllUserModelReq 获取所有用户信息请求
+message GetAllUserModelReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllUserModelResp 获取所有用户信息响应
+message GetAllUserModelResp {
+  CommonResp commonResp = 1;
+  repeated UserModel userModelList = 2;
+  int64 total = 3;
+}
+
+//GetUserModelDetailReq 获取用户信息请求
+message GetUserModelDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetUserModelDetailResp 获取用户信息响应
+message GetUserModelDetailResp {
+  CommonResp commonResp = 1;
+  UserModel userModel = 2;
+}
+
+//AddUserModelReq 添加用户信息请求
+message AddUserModelReq {
+  CommonReq commonReq = 1;
+  UserModel userModel = 2;
+  string password = 3;
+}
+
+//AddUserModelResp 添加用户信息响应
+message AddUserModelResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserModelReq 更新用户信息请求
+message UpdateUserModelReq {
+  CommonReq commonReq = 1;
+  UserModel userModel = 2;
+  string password = 3;
+}
+
+//UpdateUserModelResp 更新用户信息响应
+message UpdateUserModelResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteUserModelReq 删除用户信息请求
+message DeleteUserModelReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteUserModelResp 删除用户信息响应
+message DeleteUserModelResp {
+  CommonResp commonResp = 1;
+}
+
+//SwitchUserModelReq 切换用户状态请求
+message SwitchUserModelReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+  int64 unblockTime = 3;
+  bool disableIp = 4;
+}
+
+//SwitchUserModelResp 切换用户状态响应
+message SwitchUserModelResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type LoginRecord struct {
+	Id     string `bson:"_id" json:"id" gorm:"column:id;type:char(32);primary_key"`
+	UserId string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);index"`
+  // 13位时间戳
+  Time int64  `bson:"time" json:"time" gorm:"column:time;type:bigint(13);index;"`
+  Ip   string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
+  // 中国
+  IpCountry string `bson:"ipCountry" json:"ipCountry" gorm:"column:ipCountry;type:varchar(64);"`
+  // 北京市
+  IpProvince string `bson:"ipProvince" json:"ipProvince" gorm:"column:ipProvince;type:varchar(64);"`
+  // 北京市
+  IpCity string `bson:"ipCity" json:"ipCity" gorm:"column:ipCity;type:varchar(64);"`
+  // 电信
+  IpISP string `bson:"ipService" json:"ipService" gorm:"column:ipService;type:varchar(64);"`
+  // 1.0.0
+  AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
+  // user-agent
+  UserAgent string `bson:"userAgent" json:"userAgent" gorm:"column:userAgent;type:varchar(255);"`
+  // 10.0.0
+  OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
+  // iphone/ipad/android/pc/mac/linux/windows
+  Platform string `bson:"platform" json:"platform" gorm:"column:platform;type:varchar(64);"`
+  // 设备id
+  DeviceId string `bson:"deviceId" json:"deviceId" gorm:"column:deviceId;type:varchar(64);"`
+  // 设备型号
+  DeviceModel string `bson:"deviceModel" json:"deviceModel" gorm:"column:deviceModel;type:varchar(64);"`
+}
+ */
+//LoginRecord 用户登录记录
+message LoginRecord {
+  string id = 1;
+  string userId = 2;
+  int64 time = 3;
+  string timeStr = 4;
+  string ip = 5;
+  string ipCountry = 6;
+  string ipProvince = 7;
+  string ipCity = 8;
+  string ipISP = 9;
+  string appVersion = 10;
+  string userAgent = 11;
+  string osVersion = 12;
+  string platform = 13;
+  string deviceId = 14;
+  string deviceModel = 15;
+}
+
+//GetAllLoginRecordReq 获取所有用户登录记录请求
+message GetAllLoginRecordReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllLoginRecordResp 获取所有用户登录记录响应
+message GetAllLoginRecordResp {
+  CommonResp commonResp = 1;
+  repeated LoginRecord loginRecordList = 2;
+  int64 total = 3;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -216,4 +802,37 @@ service userService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
   rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp) {}
+
+  rpc GetAllUserInvitationCode(GetAllUserInvitationCodeReq) returns (GetAllUserInvitationCodeResp) {}
+  rpc GetUserInvitationCodeDetail(GetUserInvitationCodeDetailReq) returns (GetUserInvitationCodeDetailResp) {}
+  rpc AddUserInvitationCode(AddUserInvitationCodeReq) returns (AddUserInvitationCodeResp) {}
+  rpc UpdateUserInvitationCode(UpdateUserInvitationCodeReq) returns (UpdateUserInvitationCodeResp) {}
+  rpc DeleteUserInvitationCode(DeleteUserInvitationCodeReq) returns (DeleteUserInvitationCodeResp) {}
+
+  rpc GetAllUserIpWhiteList(GetAllUserIpWhiteListReq) returns (GetAllUserIpWhiteListResp) {}
+  rpc GetUserIpWhiteListDetail(GetUserIpWhiteListDetailReq) returns (GetUserIpWhiteListDetailResp) {}
+  rpc AddUserIpWhiteList(AddUserIpWhiteListReq) returns (AddUserIpWhiteListResp) {}
+  rpc UpdateUserIpWhiteList(UpdateUserIpWhiteListReq) returns (UpdateUserIpWhiteListResp) {}
+  rpc DeleteUserIpWhiteList(DeleteUserIpWhiteListReq) returns (DeleteUserIpWhiteListResp) {}
+
+  rpc GetAllUserIpBlackList(GetAllUserIpBlackListReq) returns (GetAllUserIpBlackListResp) {}
+  rpc GetUserIpBlackListDetail(GetUserIpBlackListDetailReq) returns (GetUserIpBlackListDetailResp) {}
+  rpc AddUserIpBlackList(AddUserIpBlackListReq) returns (AddUserIpBlackListResp) {}
+  rpc UpdateUserIpBlackList(UpdateUserIpBlackListReq) returns (UpdateUserIpBlackListResp) {}
+  rpc DeleteUserIpBlackList(DeleteUserIpBlackListReq) returns (DeleteUserIpBlackListResp) {}
+
+  rpc GetAllUserDefaultConv(GetAllUserDefaultConvReq) returns (GetAllUserDefaultConvResp) {}
+  rpc GetUserDefaultConvDetail(GetUserDefaultConvDetailReq) returns (GetUserDefaultConvDetailResp) {}
+  rpc AddUserDefaultConv(AddUserDefaultConvReq) returns (AddUserDefaultConvResp) {}
+  rpc UpdateUserDefaultConv(UpdateUserDefaultConvReq) returns (UpdateUserDefaultConvResp) {}
+  rpc DeleteUserDefaultConv(DeleteUserDefaultConvReq) returns (DeleteUserDefaultConvResp) {}
+
+  rpc GetAllUserModel(GetAllUserModelReq) returns (GetAllUserModelResp) {}
+  rpc GetUserModelDetail(GetUserModelDetailReq) returns (GetUserModelDetailResp) {}
+  rpc AddUserModel(AddUserModelReq) returns (AddUserModelResp) {}
+  rpc UpdateUserModel(UpdateUserModelReq) returns (UpdateUserModelResp) {}
+  rpc DeleteUserModel(DeleteUserModelReq) returns (DeleteUserModelResp) {}
+  rpc SwitchUserModel(SwitchUserModelReq) returns (SwitchUserModelResp) {}
+
+  rpc GetAllLoginRecord(GetAllLoginRecordReq) returns (GetAllLoginRecordResp) {}
 }

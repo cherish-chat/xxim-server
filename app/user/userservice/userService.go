@@ -13,6 +13,16 @@ import (
 )
 
 type (
+	AddUserDefaultConvReq                 = pb.AddUserDefaultConvReq
+	AddUserDefaultConvResp                = pb.AddUserDefaultConvResp
+	AddUserInvitationCodeReq              = pb.AddUserInvitationCodeReq
+	AddUserInvitationCodeResp             = pb.AddUserInvitationCodeResp
+	AddUserIpBlackListReq                 = pb.AddUserIpBlackListReq
+	AddUserIpBlackListResp                = pb.AddUserIpBlackListResp
+	AddUserIpWhiteListReq                 = pb.AddUserIpWhiteListReq
+	AddUserIpWhiteListResp                = pb.AddUserIpWhiteListResp
+	AddUserModelReq                       = pb.AddUserModelReq
+	AddUserModelResp                      = pb.AddUserModelResp
 	BatchGetUserAllDevicesReq             = pb.BatchGetUserAllDevicesReq
 	BatchGetUserAllDevicesResp            = pb.BatchGetUserAllDevicesResp
 	BatchGetUserAllDevicesResp_AllDevices = pb.BatchGetUserAllDevicesResp_AllDevices
@@ -21,11 +31,44 @@ type (
 	BirthdayInfo                          = pb.BirthdayInfo
 	ConfirmRegisterReq                    = pb.ConfirmRegisterReq
 	ConfirmRegisterResp                   = pb.ConfirmRegisterResp
+	DeleteUserDefaultConvReq              = pb.DeleteUserDefaultConvReq
+	DeleteUserDefaultConvResp             = pb.DeleteUserDefaultConvResp
+	DeleteUserInvitationCodeReq           = pb.DeleteUserInvitationCodeReq
+	DeleteUserInvitationCodeResp          = pb.DeleteUserInvitationCodeResp
+	DeleteUserIpBlackListReq              = pb.DeleteUserIpBlackListReq
+	DeleteUserIpBlackListResp             = pb.DeleteUserIpBlackListResp
+	DeleteUserIpWhiteListReq              = pb.DeleteUserIpWhiteListReq
+	DeleteUserIpWhiteListResp             = pb.DeleteUserIpWhiteListResp
+	DeleteUserModelReq                    = pb.DeleteUserModelReq
+	DeleteUserModelResp                   = pb.DeleteUserModelResp
+	GetAllLoginRecordReq                  = pb.GetAllLoginRecordReq
+	GetAllLoginRecordResp                 = pb.GetAllLoginRecordResp
+	GetAllUserDefaultConvReq              = pb.GetAllUserDefaultConvReq
+	GetAllUserDefaultConvResp             = pb.GetAllUserDefaultConvResp
+	GetAllUserInvitationCodeReq           = pb.GetAllUserInvitationCodeReq
+	GetAllUserInvitationCodeResp          = pb.GetAllUserInvitationCodeResp
+	GetAllUserIpBlackListReq              = pb.GetAllUserIpBlackListReq
+	GetAllUserIpBlackListResp             = pb.GetAllUserIpBlackListResp
+	GetAllUserIpWhiteListReq              = pb.GetAllUserIpWhiteListReq
+	GetAllUserIpWhiteListResp             = pb.GetAllUserIpWhiteListResp
+	GetAllUserModelReq                    = pb.GetAllUserModelReq
+	GetAllUserModelResp                   = pb.GetAllUserModelResp
+	GetUserDefaultConvDetailReq           = pb.GetUserDefaultConvDetailReq
+	GetUserDefaultConvDetailResp          = pb.GetUserDefaultConvDetailResp
 	GetUserHomeReq                        = pb.GetUserHomeReq
 	GetUserHomeResp                       = pb.GetUserHomeResp
+	GetUserInvitationCodeDetailReq        = pb.GetUserInvitationCodeDetailReq
+	GetUserInvitationCodeDetailResp       = pb.GetUserInvitationCodeDetailResp
+	GetUserIpBlackListDetailReq           = pb.GetUserIpBlackListDetailReq
+	GetUserIpBlackListDetailResp          = pb.GetUserIpBlackListDetailResp
+	GetUserIpWhiteListDetailReq           = pb.GetUserIpWhiteListDetailReq
+	GetUserIpWhiteListDetailResp          = pb.GetUserIpWhiteListDetailResp
+	GetUserModelDetailReq                 = pb.GetUserModelDetailReq
+	GetUserModelDetailResp                = pb.GetUserModelDetailResp
 	GetUserSettingsReq                    = pb.GetUserSettingsReq
 	GetUserSettingsResp                   = pb.GetUserSettingsResp
 	LevelInfo                             = pb.LevelInfo
+	LoginRecord                           = pb.LoginRecord
 	LoginReq                              = pb.LoginReq
 	LoginResp                             = pb.LoginResp
 	MapUserByIdsReq                       = pb.MapUserByIdsReq
@@ -34,9 +77,29 @@ type (
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
 	SetUserSettingsReq                    = pb.SetUserSettingsReq
 	SetUserSettingsResp                   = pb.SetUserSettingsResp
+	SwitchUserModelReq                    = pb.SwitchUserModelReq
+	SwitchUserModelResp                   = pb.SwitchUserModelResp
+	UpdateUserDefaultConvReq              = pb.UpdateUserDefaultConvReq
+	UpdateUserDefaultConvResp             = pb.UpdateUserDefaultConvResp
 	UpdateUserInfoReq                     = pb.UpdateUserInfoReq
 	UpdateUserInfoResp                    = pb.UpdateUserInfoResp
+	UpdateUserInvitationCodeReq           = pb.UpdateUserInvitationCodeReq
+	UpdateUserInvitationCodeResp          = pb.UpdateUserInvitationCodeResp
+	UpdateUserIpBlackListReq              = pb.UpdateUserIpBlackListReq
+	UpdateUserIpBlackListResp             = pb.UpdateUserIpBlackListResp
+	UpdateUserIpWhiteListReq              = pb.UpdateUserIpWhiteListReq
+	UpdateUserIpWhiteListResp             = pb.UpdateUserIpWhiteListResp
+	UpdateUserModelReq                    = pb.UpdateUserModelReq
+	UpdateUserModelResp                   = pb.UpdateUserModelResp
 	UserBaseInfo                          = pb.UserBaseInfo
+	UserBirthdayInfo                      = pb.UserBirthdayInfo
+	UserDefaultConv                       = pb.UserDefaultConv
+	UserInvitationCode                    = pb.UserInvitationCode
+	UserIpList                            = pb.UserIpList
+	UserLevelInfo                         = pb.UserLevelInfo
+	UserLoginInfo                         = pb.UserLoginInfo
+	UserLoginRecord                       = pb.UserLoginRecord
+	UserModel                             = pb.UserModel
 	UserSetting                           = pb.UserSetting
 
 	UserService interface {
@@ -54,6 +117,33 @@ type (
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
+		GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
+		GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
+		AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
+		UpdateUserInvitationCode(ctx context.Context, in *UpdateUserInvitationCodeReq, opts ...grpc.CallOption) (*UpdateUserInvitationCodeResp, error)
+		DeleteUserInvitationCode(ctx context.Context, in *DeleteUserInvitationCodeReq, opts ...grpc.CallOption) (*DeleteUserInvitationCodeResp, error)
+		GetAllUserIpWhiteList(ctx context.Context, in *GetAllUserIpWhiteListReq, opts ...grpc.CallOption) (*GetAllUserIpWhiteListResp, error)
+		GetUserIpWhiteListDetail(ctx context.Context, in *GetUserIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetUserIpWhiteListDetailResp, error)
+		AddUserIpWhiteList(ctx context.Context, in *AddUserIpWhiteListReq, opts ...grpc.CallOption) (*AddUserIpWhiteListResp, error)
+		UpdateUserIpWhiteList(ctx context.Context, in *UpdateUserIpWhiteListReq, opts ...grpc.CallOption) (*UpdateUserIpWhiteListResp, error)
+		DeleteUserIpWhiteList(ctx context.Context, in *DeleteUserIpWhiteListReq, opts ...grpc.CallOption) (*DeleteUserIpWhiteListResp, error)
+		GetAllUserIpBlackList(ctx context.Context, in *GetAllUserIpBlackListReq, opts ...grpc.CallOption) (*GetAllUserIpBlackListResp, error)
+		GetUserIpBlackListDetail(ctx context.Context, in *GetUserIpBlackListDetailReq, opts ...grpc.CallOption) (*GetUserIpBlackListDetailResp, error)
+		AddUserIpBlackList(ctx context.Context, in *AddUserIpBlackListReq, opts ...grpc.CallOption) (*AddUserIpBlackListResp, error)
+		UpdateUserIpBlackList(ctx context.Context, in *UpdateUserIpBlackListReq, opts ...grpc.CallOption) (*UpdateUserIpBlackListResp, error)
+		DeleteUserIpBlackList(ctx context.Context, in *DeleteUserIpBlackListReq, opts ...grpc.CallOption) (*DeleteUserIpBlackListResp, error)
+		GetAllUserDefaultConv(ctx context.Context, in *GetAllUserDefaultConvReq, opts ...grpc.CallOption) (*GetAllUserDefaultConvResp, error)
+		GetUserDefaultConvDetail(ctx context.Context, in *GetUserDefaultConvDetailReq, opts ...grpc.CallOption) (*GetUserDefaultConvDetailResp, error)
+		AddUserDefaultConv(ctx context.Context, in *AddUserDefaultConvReq, opts ...grpc.CallOption) (*AddUserDefaultConvResp, error)
+		UpdateUserDefaultConv(ctx context.Context, in *UpdateUserDefaultConvReq, opts ...grpc.CallOption) (*UpdateUserDefaultConvResp, error)
+		DeleteUserDefaultConv(ctx context.Context, in *DeleteUserDefaultConvReq, opts ...grpc.CallOption) (*DeleteUserDefaultConvResp, error)
+		GetAllUserModel(ctx context.Context, in *GetAllUserModelReq, opts ...grpc.CallOption) (*GetAllUserModelResp, error)
+		GetUserModelDetail(ctx context.Context, in *GetUserModelDetailReq, opts ...grpc.CallOption) (*GetUserModelDetailResp, error)
+		AddUserModel(ctx context.Context, in *AddUserModelReq, opts ...grpc.CallOption) (*AddUserModelResp, error)
+		UpdateUserModel(ctx context.Context, in *UpdateUserModelReq, opts ...grpc.CallOption) (*UpdateUserModelResp, error)
+		DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
+		SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
+		GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
 	}
 
 	defaultUserService struct {
@@ -127,4 +217,139 @@ func (m *defaultUserService) BatchGetUserAllDevices(ctx context.Context, in *Bat
 func (m *defaultUserService) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UpdateUserInfo(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllUserInvitationCode(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserInvitationCodeDetail(ctx, in, opts...)
+}
+
+func (m *defaultUserService) AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AddUserInvitationCode(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserInvitationCode(ctx context.Context, in *UpdateUserInvitationCodeReq, opts ...grpc.CallOption) (*UpdateUserInvitationCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserInvitationCode(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DeleteUserInvitationCode(ctx context.Context, in *DeleteUserInvitationCodeReq, opts ...grpc.CallOption) (*DeleteUserInvitationCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DeleteUserInvitationCode(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllUserIpWhiteList(ctx context.Context, in *GetAllUserIpWhiteListReq, opts ...grpc.CallOption) (*GetAllUserIpWhiteListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllUserIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserIpWhiteListDetail(ctx context.Context, in *GetUserIpWhiteListDetailReq, opts ...grpc.CallOption) (*GetUserIpWhiteListDetailResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserIpWhiteListDetail(ctx, in, opts...)
+}
+
+func (m *defaultUserService) AddUserIpWhiteList(ctx context.Context, in *AddUserIpWhiteListReq, opts ...grpc.CallOption) (*AddUserIpWhiteListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AddUserIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserIpWhiteList(ctx context.Context, in *UpdateUserIpWhiteListReq, opts ...grpc.CallOption) (*UpdateUserIpWhiteListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DeleteUserIpWhiteList(ctx context.Context, in *DeleteUserIpWhiteListReq, opts ...grpc.CallOption) (*DeleteUserIpWhiteListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DeleteUserIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllUserIpBlackList(ctx context.Context, in *GetAllUserIpBlackListReq, opts ...grpc.CallOption) (*GetAllUserIpBlackListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllUserIpBlackList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserIpBlackListDetail(ctx context.Context, in *GetUserIpBlackListDetailReq, opts ...grpc.CallOption) (*GetUserIpBlackListDetailResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserIpBlackListDetail(ctx, in, opts...)
+}
+
+func (m *defaultUserService) AddUserIpBlackList(ctx context.Context, in *AddUserIpBlackListReq, opts ...grpc.CallOption) (*AddUserIpBlackListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AddUserIpBlackList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserIpBlackList(ctx context.Context, in *UpdateUserIpBlackListReq, opts ...grpc.CallOption) (*UpdateUserIpBlackListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserIpBlackList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DeleteUserIpBlackList(ctx context.Context, in *DeleteUserIpBlackListReq, opts ...grpc.CallOption) (*DeleteUserIpBlackListResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DeleteUserIpBlackList(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllUserDefaultConv(ctx context.Context, in *GetAllUserDefaultConvReq, opts ...grpc.CallOption) (*GetAllUserDefaultConvResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllUserDefaultConv(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserDefaultConvDetail(ctx context.Context, in *GetUserDefaultConvDetailReq, opts ...grpc.CallOption) (*GetUserDefaultConvDetailResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserDefaultConvDetail(ctx, in, opts...)
+}
+
+func (m *defaultUserService) AddUserDefaultConv(ctx context.Context, in *AddUserDefaultConvReq, opts ...grpc.CallOption) (*AddUserDefaultConvResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AddUserDefaultConv(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserDefaultConv(ctx context.Context, in *UpdateUserDefaultConvReq, opts ...grpc.CallOption) (*UpdateUserDefaultConvResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserDefaultConv(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DeleteUserDefaultConv(ctx context.Context, in *DeleteUserDefaultConvReq, opts ...grpc.CallOption) (*DeleteUserDefaultConvResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DeleteUserDefaultConv(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllUserModel(ctx context.Context, in *GetAllUserModelReq, opts ...grpc.CallOption) (*GetAllUserModelResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllUserModel(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserModelDetail(ctx context.Context, in *GetUserModelDetailReq, opts ...grpc.CallOption) (*GetUserModelDetailResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserModelDetail(ctx, in, opts...)
+}
+
+func (m *defaultUserService) AddUserModel(ctx context.Context, in *AddUserModelReq, opts ...grpc.CallOption) (*AddUserModelResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.AddUserModel(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserModel(ctx context.Context, in *UpdateUserModelReq, opts ...grpc.CallOption) (*UpdateUserModelResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserModel(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DeleteUserModel(ctx, in, opts...)
+}
+
+func (m *defaultUserService) SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.SwitchUserModel(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetAllLoginRecord(ctx, in, opts...)
 }

@@ -2,16 +2,11 @@ package logic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
-	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
-	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"go.opentelemetry.io/otel/propagation"
-	"time"
-
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
-
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -31,36 +26,40 @@ func NewAckNoticeDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ack
 
 // AckNoticeData 确认通知数据
 func (l *AckNoticeDataLogic) AckNoticeData(in *pb.AckNoticeDataReq) (*pb.AckNoticeDataResp, error) {
-	notice := &noticemodel.Notice{}
-	err := l.svcCtx.Mysql().Model(&noticemodel.Notice{}).Where("noticeId = ? AND convId = ?", in.NoticeId, in.ConvId).Limit(1).Find(notice).Error
-	if err != nil {
-		l.Errorf("find notice error: %v", err)
-		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
-	}
-	hmSetMap := map[string]string{
-		in.ConvId: utils.AnyToString(notice.CreateTime),
-	}
-	err = l.svcCtx.Redis().HmsetCtx(l.ctx, rediskey.UserAckRecord(in.CommonReq.UserId, in.CommonReq.DeviceId), hmSetMap)
-	if err != nil {
-		l.Errorf("redis hset error: %v", err)
-		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
-	}
-	// 再次查询
-	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "GetUserNoticeConvIds", func(ctx context.Context) {
-		for i := 0; i < 12; i++ {
-			resp, err := NewGetUserNoticeDataLogic(ctx, l.svcCtx).GetUserNoticeData(&pb.GetUserNoticeDataReq{
-				CommonReq: in.CommonReq,
+	defer func() {
+		xtrace.StartFuncSpan(l.ctx, "GetUserNoticeData", func(ctx context.Context) {
+			_, err := NewGetUserNoticeDataLogic(ctx, l.svcCtx).GetUserNoticeData(&pb.GetUserNoticeDataReq{
+				CommonReq: in.GetCommonReq(),
 				UserId:    in.CommonReq.UserId,
+				ConvId:    in.ConvId,
+				DeviceId:  utils.AnyPtr(in.CommonReq.DeviceId),
 			})
 			if err != nil {
-				l.Errorf("get user notice data error: %v", err)
-			} else if resp.CommonResp != nil && resp.CommonResp.Failed() {
-				l.Errorf("get user notice data failed: %v", utils.AnyToString(resp))
-			} else {
-				break
+				l.Errorf("GetUserNoticeData failed, err: %v", err)
 			}
-			time.Sleep(2 * time.Second)
-		}
-	}, propagation.MapCarrier{})
+		})
+	}()
+	_, seq, _ := pb.ParseServerNoticeId(in.NoticeId)
+	ackRecord := &noticemodel.NoticeAckRecord{
+		ConvId:     in.ConvId,
+		UserId:     in.CommonReq.UserId,
+		DeviceId:   in.CommonReq.DeviceId,
+		ConvAutoId: seq,
+	}
+	err := l.svcCtx.Mysql().Model(ackRecord).
+		Where("convId = ? and userId = ? and deviceId = ?",
+			in.ConvId, in.CommonReq.UserId, in.CommonReq.DeviceId).
+		Updates(map[string]interface{}{
+			"convAutoId": seq,
+		}).Error
+	if err != nil {
+		l.Errorf("AckNoticeData failed, err: %v", err)
+		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	err = noticemodel.DelNoticeZSet(l.ctx, l.svcCtx.Redis(), in.ConvId, in.CommonReq.UserId, in.CommonReq.DeviceId, seq)
+	if err != nil {
+		l.Errorf("AckNoticeData failed, err: %v", err)
+		return &pb.AckNoticeDataResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	return &pb.AckNoticeDataResp{}, nil
 }
