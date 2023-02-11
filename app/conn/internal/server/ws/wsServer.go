@@ -95,7 +95,13 @@ type userConn struct {
 }
 
 func (c *userConn) Close(code int, desc string) error {
-	return c.ws.Close(websocket.StatusCode(code), desc)
+	err := c.ws.Close(websocket.StatusCode(code), desc)
+	if err != nil {
+		if strings.Contains(err.Error(), "already wrote close") {
+			return nil
+		}
+	}
+	return err
 }
 
 func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {

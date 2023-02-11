@@ -80,6 +80,9 @@ type zinxHandler struct {
 func (l *zinxHandler) Handle(request ziface.IRequest) {
 	msg := request.GetData()
 	uc := l.server.iConnection2UserConn(request.GetConnection())
+	if uc == nil {
+		return
+	}
 	go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
 		if uc == nil {
 			return
