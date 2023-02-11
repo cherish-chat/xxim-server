@@ -36,6 +36,7 @@ func (l *UpdateUserInvitationCodeLogic) UpdateUserInvitationCode(in *pb.UpdateUs
 	{
 		updateMap["remark"] = in.UserInvitationCode.Remark
 		updateMap["isEnable"] = in.UserInvitationCode.IsEnable
+		updateMap["defaultConvMode"] = in.UserInvitationCode.DefaultConvMode
 	}
 	if len(updateMap) > 0 {
 		err = l.svcCtx.Mysql().Model(model).Where("code = ?", in.UserInvitationCode.Code).Updates(updateMap).Error

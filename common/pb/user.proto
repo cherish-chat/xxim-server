@@ -83,6 +83,22 @@ message ConfirmRegisterResp {
   string userId = 3;
 }
 
+// 注册
+message RegisterReq {
+  CommonReq commonReq = 1;
+  string id = 2; // 用户id 只能是英文和数字_，长度为6-20
+  string password = 3; // 密码 // md5 数据库中会存入该值加盐后的值
+  optional string nickname = 4;
+  optional XB xb = 5;
+  optional BirthdayInfo birthday = 6;
+}
+
+message RegisterResp {
+  CommonResp commonResp = 1;
+  string token = 2;
+  string userId = 3;
+}
+
 //mapUserByIds 获取用户信息
 message MapUserByIdsReq {
   CommonReq commonReq = 1;
@@ -220,7 +236,8 @@ message UserInvitationCode {
   string creator = 3;
   int32 creatorType = 4;
   bool isEnable = 5;
-  int64 createTime = 6;
+  int32 defaultConvMode = 6; // 默认会话模式 0:添加所有预设会话 1:只添加一个会话(轮询) 2:只添加一个会话(随机) 3:不添加会话
+  int64 createTime = 7;
 
   int64 createdAt = 21;
   string createdAtStr = 22;
@@ -790,6 +807,8 @@ message GetAllLoginRecordResp {
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
+  rpc Register(RegisterReq) returns (RegisterResp) {}
+
   rpc MapUserByIds(MapUserByIdsReq) returns (MapUserByIdsResp) {}
   rpc BatchGetUserBaseInfo(BatchGetUserBaseInfoReq) returns (BatchGetUserBaseInfoResp) {}
   rpc SearchUsersByKeyword(SearchUsersByKeywordReq) returns (SearchUsersByKeywordResp) {}

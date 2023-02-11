@@ -10,6 +10,10 @@ func NoticeSortSetKey(convId string, userId string, deviceId string) string {
 	return "z:notice:" + convId + ":" + userId + ":" + deviceId
 }
 
+func NoticeConvAutoId(convId string) string {
+	return "h:notice_conv_auto_id:" + convId
+}
+
 func NoticeSortSetExpire() int {
 	return xredis.ExpireMinutes(5)
 }

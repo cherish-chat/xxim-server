@@ -40,7 +40,7 @@ func (l *ReadMsgLogic) ReadMsg(in *pb.ReadMsgReq) (*pb.ReadMsgResp, error) {
 		Title:       "",
 		Ext:         nil,
 	}
-	err := notice.Insert(l.ctx, l.svcCtx.Mysql())
+	err := notice.Insert(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis())
 	if err != nil {
 		l.Errorf("insert notice failed, err: %v", err)
 		return &pb.ReadMsgResp{CommonResp: pb.NewRetryErrorResp()}, err

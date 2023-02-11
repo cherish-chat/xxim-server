@@ -1,9 +1,5 @@
 package rediskey
 
-func UserConnLock() string {
-	return "conn:user_lock"
-}
-
-func UserConnLockExpire() int {
-	return 10
+func ConnUserMap(podIp string) string {
+	return "h:conn_user_map:" + podIp
 }

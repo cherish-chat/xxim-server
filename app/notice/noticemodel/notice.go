@@ -4,15 +4,16 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strconv"
 	"time"
 )
 
@@ -76,10 +77,10 @@ func (m *NoticeOption) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), m)
 }
 
-func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
+func (m *Notice) Insert(ctx context.Context, tx *gorm.DB, rc *redis.Redis) error {
 	if m.ConvAutoId == 0 {
 		// 获取maxConvAutoId
-		convAutoId, err := GetMaxConvAutoId(ctx, tx, m.ConvId, 1)
+		convAutoId, err := GetMaxConvAutoId(ctx, rc, m.ConvId, 1)
 		if err != nil {
 			return err
 		}
@@ -124,38 +125,53 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 
 }
 
-func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
-	logger := logx.WithContext(ctx)
-	// 获取 加行锁
-	var maxConvAutoId = &NoticeMaxConvAutoId{}
-	maxConvAutoId.ConvId = convId
-	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).First(maxConvAutoId).Error
-	if err != nil {
-		if xorm.RecordNotFound(err) {
-			// 不存在，初始化
-			maxConvAutoId.ConvAutoId = 1 + incr
-			err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
-			if err != nil {
-				logger.Errorf("create maxConvAutoId err: %v", err)
+/*
+	func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
+		logger := logx.WithContext(ctx)
+		// 获取 加行锁
+		var maxConvAutoId = &NoticeMaxConvAutoId{}
+		maxConvAutoId.ConvId = convId
+		err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).First(maxConvAutoId).Error
+		if err != nil {
+			if xorm.RecordNotFound(err) {
+				// 不存在，初始化
+				maxConvAutoId.ConvAutoId = 1 + incr
+				err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
+				if err != nil {
+					logger.Errorf("create maxConvAutoId err: %v", err)
+					return 0, err
+				}
+				return maxConvAutoId.ConvAutoId, nil
+			} else {
+				logger.Errorf("get maxConvAutoId err: %v", err)
 				return 0, err
 			}
-			return maxConvAutoId.ConvAutoId, nil
-		} else {
-			logger.Errorf("get maxConvAutoId err: %v", err)
-			return 0, err
 		}
-	}
-	if incr > 0 {
-		// 更新
-		err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
-		if err != nil {
-			logger.Errorf("update maxConvAutoId err: %v", err)
-			return 0, err
+		if incr > 0 {
+			// 更新
+			err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
+			if err != nil {
+				logger.Errorf("update maxConvAutoId err: %v", err)
+				return 0, err
+			}
 		}
+		return maxConvAutoId.ConvAutoId + incr, nil
 	}
-	return maxConvAutoId.ConvAutoId + incr, nil
+*/
+func GetMaxConvAutoId(ctx context.Context, rc *redis.Redis, convId string, incr int64) (int64, error) {
+	logger := logx.WithContext(ctx)
+	// incr redis
+	key := rediskey.NoticeConvAutoId(convId)
+	maxHKey := convId
+	val, err := rc.HincrbyCtx(ctx, key, maxHKey, int(incr))
+	if err != nil {
+		logger.Errorf("incr redis err: %v", err)
+		return 0, err
+	}
+	return int64(val), nil
 }
 
+/*
 func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId string, deviceId string) (int64, error) {
 	logger := logx.WithContext(ctx)
 	var ackRecord NoticeAckRecord
@@ -184,6 +200,48 @@ func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId st
 		return 0, err
 	}
 	return ackRecord.ConvAutoId, nil
+}
+*/
+
+func GetMinConvAutoId(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string) (int64, error) {
+	logger := logx.WithContext(ctx)
+	key := rediskey.NoticeConvAutoId(convId)
+	hkey := fmt.Sprintf("%s:%s", userId, deviceId)
+	val, err := rc.HgetCtx(ctx, key, hkey)
+	if err == redis.Nil || val == "" {
+		if pb.DefaultAckId(convId) == -1 {
+			// 设置为maxConvAutoId
+			maxConvAutoId, err := GetMaxConvAutoId(ctx, rc, convId, 0)
+			if err != nil {
+				return 0, err
+			}
+			err = rc.HsetCtx(ctx, key, hkey, strconv.FormatInt(maxConvAutoId-1, 10))
+			if err != nil {
+				logger.Errorf("set minConvAutoId err: %v", err)
+				return 0, err
+			}
+			return maxConvAutoId - 1, nil
+		} else {
+			return 0, nil
+		}
+	}
+	if err != nil {
+		logger.Errorf("get minConvAutoId err: %v", err)
+		return 0, err
+	}
+	minConvAutoId, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		logger.Errorf("parse minConvAutoId err: %v", err)
+		return 0, err
+	}
+	return minConvAutoId, nil
+}
+
+func SetMinConvAutoId(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string, seq int64) error {
+	// hset
+	key := rediskey.NoticeConvAutoId(convId)
+	hkey := fmt.Sprintf("%s:%s", userId, deviceId)
+	return rc.HsetCtx(ctx, key, hkey, strconv.FormatInt(seq, 10))
 }
 
 func GetNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {

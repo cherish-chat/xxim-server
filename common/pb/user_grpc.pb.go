@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 	BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
@@ -85,6 +86,15 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginReq, opts ...grp
 func (c *userServiceClient) ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error) {
 	out := new(ConfirmRegisterResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/ConfirmRegister", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -430,6 +440,7 @@ func (c *userServiceClient) GetAllLoginRecord(ctx context.Context, in *GetAllLog
 type UserServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
 	BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
@@ -481,6 +492,9 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginReq) (*LoginR
 }
 func (UnimplementedUserServiceServer) ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmRegister not implemented")
+}
+func (UnimplementedUserServiceServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserServiceServer) MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapUserByIds not implemented")
@@ -638,6 +652,24 @@ func _UserService_ConfirmRegister_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ConfirmRegister(ctx, req.(*ConfirmRegisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Register(ctx, req.(*RegisterReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1322,6 +1354,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmRegister",
 			Handler:    _UserService_ConfirmRegister_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _UserService_Register_Handler,
 		},
 		{
 			MethodName: "MapUserByIds",

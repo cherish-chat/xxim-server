@@ -32,6 +32,11 @@ func (s *UserServiceServer) ConfirmRegister(ctx context.Context, in *pb.ConfirmR
 	return l.ConfirmRegister(in)
 }
 
+func (s *UserServiceServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
+	return l.Register(in)
+}
+
 func (s *UserServiceServer) MapUserByIds(ctx context.Context, in *pb.MapUserByIdsReq) (*pb.MapUserByIdsResp, error) {
 	l := logic.NewMapUserByIdsLogic(ctx, s.svcCtx)
 	return l.MapUserByIds(in)

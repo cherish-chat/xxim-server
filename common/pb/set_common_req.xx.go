@@ -161,3 +161,7 @@ func (x *SetUserParamsResp) GetCommonResp() *CommonResp {
 		Data: nil,
 	}
 }
+
+func (x *RegisterReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

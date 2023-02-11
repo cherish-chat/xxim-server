@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
-	"github.com/zeromicro/go-zero/core/mr"
 	"go.opentelemetry.io/otel/propagation"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,10 +27,6 @@ func NewAfterConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Afte
 
 // AfterConnect conn hook
 func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp, error) {
-	return l.afterConnect(in)
-}
-
-func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp, error) {
 	// 查询用户所有订阅的会话 检测是否有未消费的消息 进行推送
 	var convIds []string
 	var err error
@@ -40,28 +36,37 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 	}
 	// 并发查询未消费的消息
 	var fs []func() error
-	for _, convId := range convIds {
-		convId := convId
-		fs = append(fs, func() error {
-			var err error
-			xtrace.StartFuncSpan(l.ctx, "getUserNoticeData", func(ctx context.Context) {
-				_, err = NewGetUserNoticeDataLogic(ctx, l.svcCtx).GetUserNoticeData(&pb.GetUserNoticeDataReq{
-					CommonReq: &pb.CommonReq{
-						UserId: in.ConnParam.UserId,
-					},
-					UserId: in.ConnParam.UserId,
-					ConvId: convId,
-				})
-			}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
-				"conv_id": convId,
-			}))
-			if err != nil {
-				l.Errorf("get user notice data error: %v", err)
+	xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "noticeService/AfterConnect/GetUnreadNotice", func(ctx context.Context) {
+		for _, convId := range convIds {
+			convId := convId
+			fs = append(fs, func() error {
+				var err error
+				xtrace.StartFuncSpan(ctx, "getUserNoticeData", func(ctx context.Context) {
+					_, err = NewGetUserNoticeDataLogic(ctx, l.svcCtx).GetUserNoticeData(&pb.GetUserNoticeDataReq{
+						CommonReq: &pb.CommonReq{
+							UserId: in.ConnParam.UserId,
+						},
+						UserId:   in.ConnParam.UserId,
+						ConvId:   convId,
+						DeviceId: utils.AnyPtr(in.ConnParam.DeviceId),
+					})
+				}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
+					"conv_id": convId,
+				}))
+				if err != nil {
+					l.Errorf("get user notice data error: %v", err)
+				}
+				return err
+			})
+		}
+		//err = mr.Finish(fs...)
+		for _, f := range fs {
+			e := f()
+			if e != nil {
+				err = e
 			}
-			return err
-		})
-	}
-	err = mr.Finish(fs...)
+		}
+	}, nil)
 	if err != nil {
 		return pb.NewRetryErrorResp(), err
 	}
@@ -71,9 +76,13 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 func (l *AfterConnectLogic) GetAllConv(in *pb.AfterConnectReq) ([]string, error) {
 	var userId = in.ConnParam.UserId
 	var convIds []string
-	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
-		UserId: userId,
-	})
+	var convIdOfUser *pb.GetAllConvIdOfUserResp
+	var err error
+	xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "noticeService/AfterConnect/GetAllConv", func(ctx context.Context) {
+		convIdOfUser, err = l.svcCtx.ImService().GetAllConvIdOfUser(ctx, &pb.GetAllConvIdOfUserReq{
+			UserId: userId,
+		})
+	}, nil)
 	if err != nil {
 		l.Errorf("get all conv id of user error: %v", err)
 		return convIds, err

@@ -61,7 +61,7 @@ func (l *GetUserNoticeDataLogic) getUserNoticeData(in *pb.GetUserNoticeDataReq) 
 	var maxSeq int64
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "GetMaxConvAutoId", func(ctx context.Context) {
-		maxSeq, err = noticemodel.GetMaxConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, 0)
+		maxSeq, err = noticemodel.GetMaxConvAutoId(l.ctx, l.svcCtx.Redis(), in.ConvId, 0)
 	})
 	if in.DeviceId == nil {
 		// 查询用户当前在线的设备
@@ -100,7 +100,7 @@ func (l *GetUserNoticeDataLogic) getDeviceNoticeData(in *pb.GetUserNoticeDataReq
 	var minSeq int64
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "GetMinConvAutoId", func(ctx context.Context) {
-		minSeq, err = noticemodel.GetMinConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, in.UserId, deviceId)
+		minSeq, err = noticemodel.GetMinConvAutoId(l.ctx, l.svcCtx.Redis(), in.ConvId, in.UserId, deviceId)
 	})
 	if err != nil {
 		l.Errorf("GetUserNoticeData failed, err: %v", err)

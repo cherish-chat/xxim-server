@@ -47,20 +47,24 @@ func (l *AfterConnectLogic) afterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 		DisconnectTime: 0,
 	}
 	// 判断是否存在 通过 ConnectTime
-	err := l.svcCtx.Mysql().Model(&immodel.UserConnectRecord{}).Where("user_id = ? and device_id = ? and connect_time = ?", in.ConnParam.UserId, in.ConnParam.DeviceId, utils.AnyToInt64(in.ConnectedAt)).First(connectRecord).Error
+	err := l.svcCtx.Mysql().Model(&immodel.UserConnectRecord{}).Where("userId = ? and deviceId = ? and connectTime = ?", in.ConnParam.UserId, in.ConnParam.DeviceId, utils.AnyToInt64(in.ConnectedAt)).First(connectRecord).Error
 	if xorm.RecordNotFound(err) {
 		err := xorm.InsertOne(l.svcCtx.Mysql(), connectRecord)
 		if err != nil {
 			l.Errorf("insert connect record failed, err: %v", err)
 			return pb.NewRetryErrorResp(), err
 		}
-	}
-	// 写入redis latest connect record
-	err = l.svcCtx.Redis().SetexCtx(l.ctx, rediskey.LatestConnectRecord(in.ConnParam.UserId), utils.AnyToString(connectRecord), rediskey.LatestConnectRecordExpire())
-	if err != nil {
-		l.Errorf("set latest connect record failed, err: %v", err)
+	} else if err != nil {
+		l.Errorf("connect record already exists, err: %v", err)
 		return pb.NewRetryErrorResp(), err
 	}
+	// 写入redis latest connect record
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "imServer/AfterConnect/SaveLatestConnectRecord", func(ctx context.Context) {
+		err = l.svcCtx.Redis().SetexCtx(ctx, rediskey.LatestConnectRecord(in.ConnParam.UserId), utils.AnyToString(connectRecord), rediskey.LatestConnectRecordExpire())
+		if err != nil {
+			l.Errorf("set latest connect record failed, err: %v", err)
+		}
+	}, nil)
 	return &pb.CommonResp{}, nil
 }
 

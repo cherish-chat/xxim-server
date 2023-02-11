@@ -73,6 +73,8 @@ type (
 	LoginResp                             = pb.LoginResp
 	MapUserByIdsReq                       = pb.MapUserByIdsReq
 	MapUserByIdsResp                      = pb.MapUserByIdsResp
+	RegisterReq                           = pb.RegisterReq
+	RegisterResp                          = pb.RegisterResp
 	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
 	SetUserSettingsReq                    = pb.SetUserSettingsReq
@@ -105,6 +107,7 @@ type (
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 		BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 		SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
@@ -165,6 +168,11 @@ func (m *defaultUserService) Login(ctx context.Context, in *LoginReq, opts ...gr
 func (m *defaultUserService) ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.ConfirmRegister(ctx, in, opts...)
+}
+
+func (m *defaultUserService) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
 }
 
 func (m *defaultUserService) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {

@@ -114,7 +114,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				Title:    "",
 				Ext:      nil,
 			}
-			err = notice.Insert(l.ctx, tx)
+			err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 			if err != nil {
 				l.Errorf("insert notice failed, err: %v", err)
 				return err
@@ -226,7 +226,7 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 			Title:    "",
 			Ext:      nil,
 		}
-		err = notice.Insert(l.ctx, tx)
+		err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 		if err != nil {
 			l.Errorf("insert notice failed, err: %v", err)
 			return err

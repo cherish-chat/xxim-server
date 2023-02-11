@@ -84,7 +84,7 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 					Title:    "",
 					Ext:      nil,
 				}
-				err := notice.Insert(l.ctx, tx)
+				err := notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 				if err != nil {
 					l.Errorf("insert notice failed, err: %v", err)
 					return err
