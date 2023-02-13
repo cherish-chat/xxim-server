@@ -69,6 +69,19 @@ func (m *ConfigMgr) GetCtx(ctx context.Context, k string) string {
 	return ""
 }
 
+func (m *ConfigMgr) GetByPlatformCtx(ctx context.Context, k string, platform string) string {
+	configs, err := m.GetAll(ctx)
+	if err != nil {
+		return ""
+	}
+	for _, config := range configs {
+		if (utils.InSlice(config.GetScopePlatforms(), platform) || config.ScopePlatforms == "") && config.K == k {
+			return config.V
+		}
+	}
+	return ""
+}
+
 func (m *ConfigMgr) GetOrDefaultCtx(ctx context.Context, k string, defaultValue string) string {
 	configs, err := m.GetAll(ctx)
 	if err != nil {
@@ -151,4 +164,8 @@ func (m *ConfigMgr) insertIfNotFound(k string, config *appmgmtmodel.Config) {
 			m.mysql.Create(config)
 		}
 	}
+}
+
+func (m *ConfigMgr) delete(id string) {
+	m.mysql.Where("id = ?", id).Delete(&appmgmtmodel.Config{})
 }
