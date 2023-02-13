@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	Enabled   bool `json:",default=true"`
 	AppKey    string
 	AppSecret string
 	// apns
@@ -35,6 +36,9 @@ func (p *Pusher) Push(
 	alert,
 	detailContent string,
 ) (resp string, err error) {
+	if !p.Enabled {
+		return
+	}
 	if len(aliasList) == 0 {
 		return "", nil
 	}
