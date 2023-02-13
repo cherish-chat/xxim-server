@@ -165,3 +165,15 @@ func (x *SetUserParamsResp) GetCommonResp() *CommonResp {
 func (x *RegisterReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *UpdateUserPasswordReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *SearchGroupsByKeywordReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *AppGetAllConfigReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

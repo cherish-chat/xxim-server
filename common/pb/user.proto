@@ -91,6 +91,11 @@ message RegisterReq {
   optional string nickname = 4;
   optional XB xb = 5;
   optional BirthdayInfo birthday = 6;
+  optional string invitationCode = 7;
+  optional string mobile = 8;
+  optional string mobileCountryCode = 9;
+  optional string smsCode = 10;
+  optional string avatar = 11;
 }
 
 message RegisterResp {
@@ -216,6 +221,17 @@ message UpdateUserInfoReq {
 }
 
 message UpdateUserInfoResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateUserPasswordReq 更新用户密码
+message UpdateUserPasswordReq {
+  CommonReq commonReq = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
+}
+
+message UpdateUserPasswordResp {
   CommonResp commonResp = 1;
 }
 
@@ -466,6 +482,7 @@ message UserDefaultConv {
   int32 filterType = 3;
   string invitationCode = 4;
   string convId = 5;
+  string textMsg = 6;
 
   int64 createdAt = 21;
   string createdAtStr = 22;
@@ -821,6 +838,7 @@ service userService {
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
   rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
   rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp) {}
+  rpc UpdateUserPassword(UpdateUserPasswordReq) returns (UpdateUserPasswordResp) {}
 
   rpc GetAllUserInvitationCode(GetAllUserInvitationCodeReq) returns (GetAllUserInvitationCodeResp) {}
   rpc GetUserInvitationCodeDetail(GetUserInvitationCodeDetailReq) returns (GetUserInvitationCodeDetailResp) {}
