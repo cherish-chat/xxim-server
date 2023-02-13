@@ -66,6 +66,10 @@ type GroupServiceClient interface {
 	UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
 	//DismissGroupModel 解散群组
 	DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
+	//SearchGroupsByKeyword 搜索群组
+	SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
+	//AddGroupMember 添加群成员
+	AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
 }
 
 type groupServiceClient struct {
@@ -274,6 +278,24 @@ func (c *groupServiceClient) DismissGroupModel(ctx context.Context, in *DismissG
 	return out, nil
 }
 
+func (c *groupServiceClient) SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error) {
+	out := new(SearchGroupsByKeywordResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/SearchGroupsByKeyword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error) {
+	out := new(AddGroupMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/AddGroupMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -322,6 +344,10 @@ type GroupServiceServer interface {
 	UpdateGroupModel(context.Context, *UpdateGroupModelReq) (*UpdateGroupModelResp, error)
 	//DismissGroupModel 解散群组
 	DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error)
+	//SearchGroupsByKeyword 搜索群组
+	SearchGroupsByKeyword(context.Context, *SearchGroupsByKeywordReq) (*SearchGroupsByKeywordResp, error)
+	//AddGroupMember 添加群成员
+	AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -394,6 +420,12 @@ func (UnimplementedGroupServiceServer) UpdateGroupModel(context.Context, *Update
 }
 func (UnimplementedGroupServiceServer) DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DismissGroupModel not implemented")
+}
+func (UnimplementedGroupServiceServer) SearchGroupsByKeyword(context.Context, *SearchGroupsByKeywordReq) (*SearchGroupsByKeywordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchGroupsByKeyword not implemented")
+}
+func (UnimplementedGroupServiceServer) AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddGroupMember not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -804,6 +836,42 @@ func _GroupService_DismissGroupModel_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_SearchGroupsByKeyword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchGroupsByKeywordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).SearchGroupsByKeyword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/SearchGroupsByKeyword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).SearchGroupsByKeyword(ctx, req.(*SearchGroupsByKeywordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_AddGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddGroupMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).AddGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/AddGroupMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).AddGroupMember(ctx, req.(*AddGroupMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -898,6 +966,14 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DismissGroupModel",
 			Handler:    _GroupService_DismissGroupModel_Handler,
+		},
+		{
+			MethodName: "SearchGroupsByKeyword",
+			Handler:    _GroupService_SearchGroupsByKeyword_Handler,
+		},
+		{
+			MethodName: "AddGroupMember",
+			Handler:    _GroupService_AddGroupMember_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

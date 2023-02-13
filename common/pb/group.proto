@@ -577,6 +577,29 @@ message DismissGroupModelResp {
   CommonResp commonResp = 1;
 }
 
+//SearchGroupsByKeywordReq 搜索群组
+message SearchGroupsByKeywordReq {
+  CommonReq commonReq = 1;
+  string keyword = 2;
+}
+
+message SearchGroupsByKeywordResp {
+  CommonResp commonResp = 1;
+  repeated GroupBaseInfo groups = 2;
+}
+
+//AddGroupMemberReq 添加群成员
+message AddGroupMemberReq {
+  CommonReq commonReq = 1;
+  string groupId = 2;
+  string userId = 3;
+}
+
+//AddGroupMemberResp 添加群成员
+message AddGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
 service groupService {
   //CreateGroup 创建群聊
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
@@ -624,4 +647,10 @@ service groupService {
   rpc UpdateGroupModel(UpdateGroupModelReq) returns (UpdateGroupModelResp) {}
   //DismissGroupModel 解散群组
   rpc DismissGroupModel(DismissGroupModelReq) returns (DismissGroupModelResp) {}
+
+  //SearchGroupsByKeyword 搜索群组
+  rpc SearchGroupsByKeyword(SearchGroupsByKeywordReq) returns (SearchGroupsByKeywordResp) {}
+
+  //AddGroupMember 添加群成员
+  rpc AddGroupMember(AddGroupMemberReq) returns (AddGroupMemberResp) {}
 }

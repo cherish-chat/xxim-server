@@ -4300,6 +4300,766 @@ func (x *DeleteAppMgmtNoticeResp) GetCommonResp() *CommonResp {
 	return nil
 }
 
+//AppMgmtLink app发现链接
+type AppMgmtLink struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           string `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Sort         int32  `protobuf:"varint,2,opt,name=sort,proto3" json:"sort"`
+	Name         string `protobuf:"bytes,3,opt,name=name,proto3" json:"name"`
+	Url          string `protobuf:"bytes,4,opt,name=url,proto3" json:"url"`
+	Icon         string `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon"`
+	IsEnable     bool   `protobuf:"varint,6,opt,name=isEnable,proto3" json:"isEnable"`
+	CreatedAt    int64  `protobuf:"varint,7,opt,name=createdAt,proto3" json:"createdAt"`
+	CreatedAtStr string `protobuf:"bytes,8,opt,name=createdAtStr,proto3" json:"createdAtStr"`
+}
+
+func (x *AppMgmtLink) Reset() {
+	*x = AppMgmtLink{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[71]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppMgmtLink) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppMgmtLink) ProtoMessage() {}
+
+func (x *AppMgmtLink) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[71]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppMgmtLink.ProtoReflect.Descriptor instead.
+func (*AppMgmtLink) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{71}
+}
+
+func (x *AppMgmtLink) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AppMgmtLink) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *AppMgmtLink) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AppMgmtLink) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *AppMgmtLink) GetIcon() string {
+	if x != nil {
+		return x.Icon
+	}
+	return ""
+}
+
+func (x *AppMgmtLink) GetIsEnable() bool {
+	if x != nil {
+		return x.IsEnable
+	}
+	return false
+}
+
+func (x *AppMgmtLink) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *AppMgmtLink) GetCreatedAtStr() string {
+	if x != nil {
+		return x.CreatedAtStr
+	}
+	return ""
+}
+
+//GetAllAppMgmtLinkReq 获取所有app发现链接
+type GetAllAppMgmtLinkReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq *CommonReq        `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	Page      *Page             `protobuf:"bytes,2,opt,name=page,proto3" json:"page"`
+	Filter    map[string]string `protobuf:"bytes,3,rep,name=filter,proto3" json:"filter" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (x *GetAllAppMgmtLinkReq) Reset() {
+	*x = GetAllAppMgmtLinkReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[72]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllAppMgmtLinkReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllAppMgmtLinkReq) ProtoMessage() {}
+
+func (x *GetAllAppMgmtLinkReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[72]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllAppMgmtLinkReq.ProtoReflect.Descriptor instead.
+func (*GetAllAppMgmtLinkReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *GetAllAppMgmtLinkReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *GetAllAppMgmtLinkReq) GetPage() *Page {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *GetAllAppMgmtLinkReq) GetFilter() map[string]string {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+//GetAllAppMgmtLinkResp 获取所有app发现链接
+type GetAllAppMgmtLinkResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp   *CommonResp    `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+	AppMgmtLinks []*AppMgmtLink `protobuf:"bytes,2,rep,name=appMgmtLinks,proto3" json:"appMgmtLinks"`
+	Total        int64          `protobuf:"varint,3,opt,name=total,proto3" json:"total"`
+}
+
+func (x *GetAllAppMgmtLinkResp) Reset() {
+	*x = GetAllAppMgmtLinkResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[73]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllAppMgmtLinkResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllAppMgmtLinkResp) ProtoMessage() {}
+
+func (x *GetAllAppMgmtLinkResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[73]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllAppMgmtLinkResp.ProtoReflect.Descriptor instead.
+func (*GetAllAppMgmtLinkResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *GetAllAppMgmtLinkResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+func (x *GetAllAppMgmtLinkResp) GetAppMgmtLinks() []*AppMgmtLink {
+	if x != nil {
+		return x.AppMgmtLinks
+	}
+	return nil
+}
+
+func (x *GetAllAppMgmtLinkResp) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+//GetAppMgmtLinkDetailReq 获取app发现链接详情
+type GetAppMgmtLinkDetailReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq *CommonReq `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	Id        string     `protobuf:"bytes,2,opt,name=id,proto3" json:"id"`
+}
+
+func (x *GetAppMgmtLinkDetailReq) Reset() {
+	*x = GetAppMgmtLinkDetailReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[74]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAppMgmtLinkDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAppMgmtLinkDetailReq) ProtoMessage() {}
+
+func (x *GetAppMgmtLinkDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[74]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAppMgmtLinkDetailReq.ProtoReflect.Descriptor instead.
+func (*GetAppMgmtLinkDetailReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *GetAppMgmtLinkDetailReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *GetAppMgmtLinkDetailReq) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+//GetAppMgmtLinkDetailResp 获取app发现链接详情
+type GetAppMgmtLinkDetailResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp  *CommonResp  `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+	AppMgmtLink *AppMgmtLink `protobuf:"bytes,2,opt,name=appMgmtLink,proto3" json:"appMgmtLink"`
+}
+
+func (x *GetAppMgmtLinkDetailResp) Reset() {
+	*x = GetAppMgmtLinkDetailResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[75]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAppMgmtLinkDetailResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAppMgmtLinkDetailResp) ProtoMessage() {}
+
+func (x *GetAppMgmtLinkDetailResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[75]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAppMgmtLinkDetailResp.ProtoReflect.Descriptor instead.
+func (*GetAppMgmtLinkDetailResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *GetAppMgmtLinkDetailResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+func (x *GetAppMgmtLinkDetailResp) GetAppMgmtLink() *AppMgmtLink {
+	if x != nil {
+		return x.AppMgmtLink
+	}
+	return nil
+}
+
+//AddAppMgmtLinkReq 添加app发现链接
+type AddAppMgmtLinkReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq   *CommonReq   `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	AppMgmtLink *AppMgmtLink `protobuf:"bytes,2,opt,name=appMgmtLink,proto3" json:"appMgmtLink"`
+}
+
+func (x *AddAppMgmtLinkReq) Reset() {
+	*x = AddAppMgmtLinkReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[76]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddAppMgmtLinkReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddAppMgmtLinkReq) ProtoMessage() {}
+
+func (x *AddAppMgmtLinkReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[76]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddAppMgmtLinkReq.ProtoReflect.Descriptor instead.
+func (*AddAppMgmtLinkReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *AddAppMgmtLinkReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *AddAppMgmtLinkReq) GetAppMgmtLink() *AppMgmtLink {
+	if x != nil {
+		return x.AppMgmtLink
+	}
+	return nil
+}
+
+//AddAppMgmtLinkResp 添加app发现链接
+type AddAppMgmtLinkResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *AddAppMgmtLinkResp) Reset() {
+	*x = AddAppMgmtLinkResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[77]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddAppMgmtLinkResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddAppMgmtLinkResp) ProtoMessage() {}
+
+func (x *AddAppMgmtLinkResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[77]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddAppMgmtLinkResp.ProtoReflect.Descriptor instead.
+func (*AddAppMgmtLinkResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *AddAppMgmtLinkResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//UpdateAppMgmtLinkReq 更新app发现链接
+type UpdateAppMgmtLinkReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq   *CommonReq   `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	AppMgmtLink *AppMgmtLink `protobuf:"bytes,2,opt,name=appMgmtLink,proto3" json:"appMgmtLink"`
+}
+
+func (x *UpdateAppMgmtLinkReq) Reset() {
+	*x = UpdateAppMgmtLinkReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[78]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateAppMgmtLinkReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAppMgmtLinkReq) ProtoMessage() {}
+
+func (x *UpdateAppMgmtLinkReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[78]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAppMgmtLinkReq.ProtoReflect.Descriptor instead.
+func (*UpdateAppMgmtLinkReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *UpdateAppMgmtLinkReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *UpdateAppMgmtLinkReq) GetAppMgmtLink() *AppMgmtLink {
+	if x != nil {
+		return x.AppMgmtLink
+	}
+	return nil
+}
+
+//UpdateAppMgmtLinkResp 更新app发现链接
+type UpdateAppMgmtLinkResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *UpdateAppMgmtLinkResp) Reset() {
+	*x = UpdateAppMgmtLinkResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[79]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateAppMgmtLinkResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAppMgmtLinkResp) ProtoMessage() {}
+
+func (x *UpdateAppMgmtLinkResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[79]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAppMgmtLinkResp.ProtoReflect.Descriptor instead.
+func (*UpdateAppMgmtLinkResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *UpdateAppMgmtLinkResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//DeleteAppMgmtLinkReq 删除app发现链接
+type DeleteAppMgmtLinkReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq *CommonReq `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	Ids       []string   `protobuf:"bytes,2,rep,name=ids,proto3" json:"ids"`
+}
+
+func (x *DeleteAppMgmtLinkReq) Reset() {
+	*x = DeleteAppMgmtLinkReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[80]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAppMgmtLinkReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAppMgmtLinkReq) ProtoMessage() {}
+
+func (x *DeleteAppMgmtLinkReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[80]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAppMgmtLinkReq.ProtoReflect.Descriptor instead.
+func (*DeleteAppMgmtLinkReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *DeleteAppMgmtLinkReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *DeleteAppMgmtLinkReq) GetIds() []string {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+//DeleteAppMgmtLinkResp 删除app发现链接
+type DeleteAppMgmtLinkResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *DeleteAppMgmtLinkResp) Reset() {
+	*x = DeleteAppMgmtLinkResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[81]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteAppMgmtLinkResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAppMgmtLinkResp) ProtoMessage() {}
+
+func (x *DeleteAppMgmtLinkResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[81]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAppMgmtLinkResp.ProtoReflect.Descriptor instead.
+func (*DeleteAppMgmtLinkResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *DeleteAppMgmtLinkResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+//AppGetAllConfigReq 获取所有配置
+type AppGetAllConfigReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq *CommonReq `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+}
+
+func (x *AppGetAllConfigReq) Reset() {
+	*x = AppGetAllConfigReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[82]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppGetAllConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppGetAllConfigReq) ProtoMessage() {}
+
+func (x *AppGetAllConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[82]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppGetAllConfigReq.ProtoReflect.Descriptor instead.
+func (*AppGetAllConfigReq) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{82}
+}
+
+func (x *AppGetAllConfigReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+//AppGetAllConfigResp 获取所有配置
+type AppGetAllConfigResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp       `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+	ConfigMap  map[string]string `protobuf:"bytes,2,rep,name=configMap,proto3" json:"configMap" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (x *AppGetAllConfigResp) Reset() {
+	*x = AppGetAllConfigResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_appmgmt_proto_msgTypes[83]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AppGetAllConfigResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppGetAllConfigResp) ProtoMessage() {}
+
+func (x *AppGetAllConfigResp) ProtoReflect() protoreflect.Message {
+	mi := &file_appmgmt_proto_msgTypes[83]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppGetAllConfigResp.ProtoReflect.Descriptor instead.
+func (*AppGetAllConfigResp) Descriptor() ([]byte, []int) {
+	return file_appmgmt_proto_rawDescGZIP(), []int{83}
+}
+
+func (x *AppGetAllConfigResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
+func (x *AppGetAllConfigResp) GetConfigMap() map[string]string {
+	if x != nil {
+		return x.ConfigMap
+	}
+	return nil
+}
+
 var File_appmgmt_proto protoreflect.FileDescriptor
 
 var file_appmgmt_proto_rawDesc = []byte{
@@ -4881,7 +5641,107 @@ var file_appmgmt_proto_rawDesc = []byte{
 	0x74, 0x69, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d,
 	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70,
 	0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f,
-	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x32, 0xdb, 0x14, 0x0a, 0x0e, 0x61, 0x70, 0x70,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0xc9, 0x01, 0x0a, 0x0b, 0x41, 0x70, 0x70,
+	0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x6f, 0x72, 0x74,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x73, 0x6f, 0x72, 0x74, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75,
+	0x72, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x69, 0x63, 0x6f, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x73, 0x45, 0x6e, 0x61, 0x62,
+	0x6c, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08, 0x52, 0x08, 0x69, 0x73, 0x45, 0x6e, 0x61, 0x62,
+	0x6c, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74,
+	0x12, 0x22, 0x0a, 0x0c, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x53, 0x74, 0x72,
+	0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41,
+	0x74, 0x53, 0x74, 0x72, 0x22, 0xda, 0x01, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41,
+	0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a,
+	0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52,
+	0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x1c, 0x0a, 0x04, 0x70, 0x61,
+	0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x08, 0x2e, 0x70, 0x62, 0x2e, 0x50, 0x61,
+	0x67, 0x65, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x3c, 0x0a, 0x06, 0x66, 0x69, 0x6c, 0x74,
+	0x65, 0x72, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x24, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65,
+	0x74, 0x41, 0x6c, 0x6c, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52,
+	0x65, 0x71, 0x2e, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x06,
+	0x66, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x1a, 0x39, 0x0a, 0x0b, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72,
+	0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38,
+	0x01, 0x22, 0x92, 0x01, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x70, 0x70, 0x4d,
+	0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52,
+	0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x33, 0x0a, 0x0c, 0x61,
+	0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69,
+	0x6e, 0x6b, 0x52, 0x0c, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x73,
+	0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x22, 0x56, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70,
+	0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x52, 0x65,
+	0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x7d,
+	0x0a, 0x18, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b,
+	0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x12, 0x31, 0x0a, 0x0b, 0x61, 0x70,
+	0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b,
+	0x52, 0x0b, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x22, 0x73, 0x0a,
+	0x11, 0x41, 0x64, 0x64, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52,
+	0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f,
+	0x6e, 0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12,
+	0x31, 0x0a, 0x0b, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d,
+	0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x0b, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69,
+	0x6e, 0x6b, 0x22, 0x44, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74,
+	0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d,
+	0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70,
+	0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x76, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x71,
+	0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52,
+	0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x31, 0x0a,
+	0x0b, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c,
+	0x69, 0x6e, 0x6b, 0x52, 0x0b, 0x61, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b,
+	0x22, 0x47, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d,
+	0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
+	0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x55, 0x0a, 0x14, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65,
+	0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
+	0x52, 0x65, 0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x10,
+	0x0a, 0x03, 0x69, 0x64, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x03, 0x69, 0x64, 0x73,
+	0x22, 0x47, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d,
+	0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
+	0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x41, 0x0a, 0x12, 0x41, 0x70, 0x70,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x71, 0x12,
+	0x2b, 0x0a, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
+	0x71, 0x52, 0x09, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x22, 0xc9, 0x01, 0x0a,
+	0x13, 0x41, 0x70, 0x70, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e,
+	0x52, 0x65, 0x73, 0x70, 0x12, 0x44, 0x0a, 0x09, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x4d, 0x61,
+	0x70, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70,
+	0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52,
+	0x09, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x4d, 0x61, 0x70, 0x1a, 0x3c, 0x0a, 0x0e, 0x43, 0x6f,
+	0x6e, 0x66, 0x69, 0x67, 0x4d, 0x61, 0x70, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03,
+	0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14,
+	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x32, 0x91, 0x18, 0x0a, 0x0e, 0x61, 0x70, 0x70,
 	0x4d, 0x67, 0x6d, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x4e, 0x0a, 0x13, 0x47,
 	0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x43, 0x6f, 0x6e, 0x66,
 	0x69, 0x67, 0x12, 0x1a, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x70,
@@ -5047,8 +5907,35 @@ var file_appmgmt_proto_rawDesc = []byte{
 	0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74,
 	0x4e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x1b, 0x2e, 0x70, 0x62, 0x2e, 0x44,
 	0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4e, 0x6f, 0x74, 0x69,
-	0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x48, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c,
+	0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x12, 0x18, 0x2e, 0x70, 0x62,
+	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69,
+	0x6e, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c,
+	0x6c, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x51, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69,
+	0x6e, 0x6b, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x12, 0x1b, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65,
+	0x74, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x44, 0x65, 0x74, 0x61,
+	0x69, 0x6c, 0x52, 0x65, 0x71, 0x1a, 0x1c, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x70,
+	0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x52,
+	0x65, 0x73, 0x70, 0x12, 0x3f, 0x0a, 0x0e, 0x41, 0x64, 0x64, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d,
+	0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x12, 0x15, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x70,
+	0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x16, 0x2e, 0x70,
+	0x62, 0x2e, 0x41, 0x64, 0x64, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b,
+	0x52, 0x65, 0x73, 0x70, 0x12, 0x48, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x70,
+	0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x12, 0x18, 0x2e, 0x70, 0x62, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b,
+	0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41,
+	0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x48,
+	0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c,
+	0x69, 0x6e, 0x6b, 0x12, 0x18, 0x2e, 0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41,
+	0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74, 0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x71, 0x1a, 0x19, 0x2e,
+	0x70, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x70, 0x70, 0x4d, 0x67, 0x6d, 0x74,
+	0x4c, 0x69, 0x6e, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x12, 0x42, 0x0a, 0x0f, 0x41, 0x70, 0x70, 0x47,
+	0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x16, 0x2e, 0x70, 0x62,
+	0x2e, 0x41, 0x70, 0x70, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67,
+	0x52, 0x65, 0x71, 0x1a, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x41, 0x70, 0x70, 0x47, 0x65, 0x74, 0x41,
+	0x6c, 0x6c, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x52, 0x65, 0x73, 0x70, 0x42, 0x06, 0x5a, 0x04,
+	0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -5063,7 +5950,7 @@ func file_appmgmt_proto_rawDescGZIP() []byte {
 	return file_appmgmt_proto_rawDescData
 }
 
-var file_appmgmt_proto_msgTypes = make([]protoimpl.MessageInfo, 77)
+var file_appmgmt_proto_msgTypes = make([]protoimpl.MessageInfo, 92)
 var file_appmgmt_proto_goTypes = []interface{}{
 	(*AppMgmtConfig)(nil),                  // 0: pb.AppMgmtConfig
 	(*GetAllAppMgmtConfigReq)(nil),         // 1: pb.GetAllAppMgmtConfigReq
@@ -5136,188 +6023,234 @@ var file_appmgmt_proto_goTypes = []interface{}{
 	(*UpdateAppMgmtNoticeResp)(nil),        // 68: pb.UpdateAppMgmtNoticeResp
 	(*DeleteAppMgmtNoticeReq)(nil),         // 69: pb.DeleteAppMgmtNoticeReq
 	(*DeleteAppMgmtNoticeResp)(nil),        // 70: pb.DeleteAppMgmtNoticeResp
-	nil,                                    // 71: pb.GetAllAppMgmtVersionReq.FilterEntry
-	nil,                                    // 72: pb.GetAllAppMgmtShieldWordReq.FilterEntry
-	nil,                                    // 73: pb.GetAllAppMgmtVpnReq.FilterEntry
-	nil,                                    // 74: pb.GetAllAppMgmtEmojiReq.FilterEntry
-	nil,                                    // 75: pb.GetAllAppMgmtEmojiGroupReq.FilterEntry
-	nil,                                    // 76: pb.GetAllAppMgmtNoticeReq.FilterEntry
-	(*CommonReq)(nil),                      // 77: pb.CommonReq
-	(*CommonResp)(nil),                     // 78: pb.CommonResp
-	(*Page)(nil),                           // 79: pb.Page
+	(*AppMgmtLink)(nil),                    // 71: pb.AppMgmtLink
+	(*GetAllAppMgmtLinkReq)(nil),           // 72: pb.GetAllAppMgmtLinkReq
+	(*GetAllAppMgmtLinkResp)(nil),          // 73: pb.GetAllAppMgmtLinkResp
+	(*GetAppMgmtLinkDetailReq)(nil),        // 74: pb.GetAppMgmtLinkDetailReq
+	(*GetAppMgmtLinkDetailResp)(nil),       // 75: pb.GetAppMgmtLinkDetailResp
+	(*AddAppMgmtLinkReq)(nil),              // 76: pb.AddAppMgmtLinkReq
+	(*AddAppMgmtLinkResp)(nil),             // 77: pb.AddAppMgmtLinkResp
+	(*UpdateAppMgmtLinkReq)(nil),           // 78: pb.UpdateAppMgmtLinkReq
+	(*UpdateAppMgmtLinkResp)(nil),          // 79: pb.UpdateAppMgmtLinkResp
+	(*DeleteAppMgmtLinkReq)(nil),           // 80: pb.DeleteAppMgmtLinkReq
+	(*DeleteAppMgmtLinkResp)(nil),          // 81: pb.DeleteAppMgmtLinkResp
+	(*AppGetAllConfigReq)(nil),             // 82: pb.AppGetAllConfigReq
+	(*AppGetAllConfigResp)(nil),            // 83: pb.AppGetAllConfigResp
+	nil,                                    // 84: pb.GetAllAppMgmtVersionReq.FilterEntry
+	nil,                                    // 85: pb.GetAllAppMgmtShieldWordReq.FilterEntry
+	nil,                                    // 86: pb.GetAllAppMgmtVpnReq.FilterEntry
+	nil,                                    // 87: pb.GetAllAppMgmtEmojiReq.FilterEntry
+	nil,                                    // 88: pb.GetAllAppMgmtEmojiGroupReq.FilterEntry
+	nil,                                    // 89: pb.GetAllAppMgmtNoticeReq.FilterEntry
+	nil,                                    // 90: pb.GetAllAppMgmtLinkReq.FilterEntry
+	nil,                                    // 91: pb.AppGetAllConfigResp.ConfigMapEntry
+	(*CommonReq)(nil),                      // 92: pb.CommonReq
+	(*CommonResp)(nil),                     // 93: pb.CommonResp
+	(*Page)(nil),                           // 94: pb.Page
 }
 var file_appmgmt_proto_depIdxs = []int32{
-	77,  // 0: pb.GetAllAppMgmtConfigReq.commonReq:type_name -> pb.CommonReq
-	78,  // 1: pb.GetAllAppMgmtConfigResp.commonResp:type_name -> pb.CommonResp
+	92,  // 0: pb.GetAllAppMgmtConfigReq.commonReq:type_name -> pb.CommonReq
+	93,  // 1: pb.GetAllAppMgmtConfigResp.commonResp:type_name -> pb.CommonResp
 	0,   // 2: pb.GetAllAppMgmtConfigResp.appMgmtConfigs:type_name -> pb.AppMgmtConfig
-	77,  // 3: pb.UpdateAppMgmtConfigReq.commonReq:type_name -> pb.CommonReq
+	92,  // 3: pb.UpdateAppMgmtConfigReq.commonReq:type_name -> pb.CommonReq
 	0,   // 4: pb.UpdateAppMgmtConfigReq.appMgmtConfigs:type_name -> pb.AppMgmtConfig
-	78,  // 5: pb.UpdateAppMgmtConfigResp.commonResp:type_name -> pb.CommonResp
-	77,  // 6: pb.GetAllAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
-	79,  // 7: pb.GetAllAppMgmtVersionReq.page:type_name -> pb.Page
-	71,  // 8: pb.GetAllAppMgmtVersionReq.filter:type_name -> pb.GetAllAppMgmtVersionReq.FilterEntry
-	78,  // 9: pb.GetAllAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
+	93,  // 5: pb.UpdateAppMgmtConfigResp.commonResp:type_name -> pb.CommonResp
+	92,  // 6: pb.GetAllAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
+	94,  // 7: pb.GetAllAppMgmtVersionReq.page:type_name -> pb.Page
+	84,  // 8: pb.GetAllAppMgmtVersionReq.filter:type_name -> pb.GetAllAppMgmtVersionReq.FilterEntry
+	93,  // 9: pb.GetAllAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
 	5,   // 10: pb.GetAllAppMgmtVersionResp.appMgmtVersions:type_name -> pb.AppMgmtVersion
-	77,  // 11: pb.GetAppMgmtVersionDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 12: pb.GetAppMgmtVersionDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 11: pb.GetAppMgmtVersionDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 12: pb.GetAppMgmtVersionDetailResp.commonResp:type_name -> pb.CommonResp
 	5,   // 13: pb.GetAppMgmtVersionDetailResp.appMgmtVersion:type_name -> pb.AppMgmtVersion
-	77,  // 14: pb.AddAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
+	92,  // 14: pb.AddAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
 	5,   // 15: pb.AddAppMgmtVersionReq.appMgmtVersion:type_name -> pb.AppMgmtVersion
-	78,  // 16: pb.AddAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
-	77,  // 17: pb.UpdateAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
+	93,  // 16: pb.AddAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
+	92,  // 17: pb.UpdateAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
 	5,   // 18: pb.UpdateAppMgmtVersionReq.appMgmtVersion:type_name -> pb.AppMgmtVersion
-	78,  // 19: pb.UpdateAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
-	77,  // 20: pb.DeleteAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
-	78,  // 21: pb.DeleteAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
-	77,  // 22: pb.GetAllAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
-	79,  // 23: pb.GetAllAppMgmtShieldWordReq.page:type_name -> pb.Page
-	72,  // 24: pb.GetAllAppMgmtShieldWordReq.filter:type_name -> pb.GetAllAppMgmtShieldWordReq.FilterEntry
-	78,  // 25: pb.GetAllAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
+	93,  // 19: pb.UpdateAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
+	92,  // 20: pb.DeleteAppMgmtVersionReq.commonReq:type_name -> pb.CommonReq
+	93,  // 21: pb.DeleteAppMgmtVersionResp.commonResp:type_name -> pb.CommonResp
+	92,  // 22: pb.GetAllAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
+	94,  // 23: pb.GetAllAppMgmtShieldWordReq.page:type_name -> pb.Page
+	85,  // 24: pb.GetAllAppMgmtShieldWordReq.filter:type_name -> pb.GetAllAppMgmtShieldWordReq.FilterEntry
+	93,  // 25: pb.GetAllAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
 	16,  // 26: pb.GetAllAppMgmtShieldWordResp.appMgmtShieldWords:type_name -> pb.AppMgmtShieldWord
-	77,  // 27: pb.GetAppMgmtShieldWordDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 28: pb.GetAppMgmtShieldWordDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 27: pb.GetAppMgmtShieldWordDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 28: pb.GetAppMgmtShieldWordDetailResp.commonResp:type_name -> pb.CommonResp
 	16,  // 29: pb.GetAppMgmtShieldWordDetailResp.appMgmtShieldWord:type_name -> pb.AppMgmtShieldWord
-	77,  // 30: pb.AddAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
-	78,  // 31: pb.AddAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
-	77,  // 32: pb.UpdateAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
+	92,  // 30: pb.AddAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
+	93,  // 31: pb.AddAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
+	92,  // 32: pb.UpdateAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
 	16,  // 33: pb.UpdateAppMgmtShieldWordReq.appMgmtShieldWord:type_name -> pb.AppMgmtShieldWord
-	78,  // 34: pb.UpdateAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
-	77,  // 35: pb.DeleteAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
-	78,  // 36: pb.DeleteAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
-	77,  // 37: pb.GetAllAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
-	79,  // 38: pb.GetAllAppMgmtVpnReq.page:type_name -> pb.Page
-	73,  // 39: pb.GetAllAppMgmtVpnReq.filter:type_name -> pb.GetAllAppMgmtVpnReq.FilterEntry
-	78,  // 40: pb.GetAllAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
+	93,  // 34: pb.UpdateAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
+	92,  // 35: pb.DeleteAppMgmtShieldWordReq.commonReq:type_name -> pb.CommonReq
+	93,  // 36: pb.DeleteAppMgmtShieldWordResp.commonResp:type_name -> pb.CommonResp
+	92,  // 37: pb.GetAllAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
+	94,  // 38: pb.GetAllAppMgmtVpnReq.page:type_name -> pb.Page
+	86,  // 39: pb.GetAllAppMgmtVpnReq.filter:type_name -> pb.GetAllAppMgmtVpnReq.FilterEntry
+	93,  // 40: pb.GetAllAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
 	27,  // 41: pb.GetAllAppMgmtVpnResp.appMgmtVpns:type_name -> pb.AppMgmtVpn
-	77,  // 42: pb.GetAppMgmtVpnDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 43: pb.GetAppMgmtVpnDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 42: pb.GetAppMgmtVpnDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 43: pb.GetAppMgmtVpnDetailResp.commonResp:type_name -> pb.CommonResp
 	27,  // 44: pb.GetAppMgmtVpnDetailResp.appMgmtVpn:type_name -> pb.AppMgmtVpn
-	77,  // 45: pb.AddAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
+	92,  // 45: pb.AddAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
 	27,  // 46: pb.AddAppMgmtVpnReq.appMgmtVpn:type_name -> pb.AppMgmtVpn
-	78,  // 47: pb.AddAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
-	77,  // 48: pb.UpdateAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
+	93,  // 47: pb.AddAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
+	92,  // 48: pb.UpdateAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
 	27,  // 49: pb.UpdateAppMgmtVpnReq.appMgmtVpn:type_name -> pb.AppMgmtVpn
-	78,  // 50: pb.UpdateAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
-	77,  // 51: pb.DeleteAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
-	78,  // 52: pb.DeleteAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
-	77,  // 53: pb.GetAllAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
-	79,  // 54: pb.GetAllAppMgmtEmojiReq.page:type_name -> pb.Page
-	74,  // 55: pb.GetAllAppMgmtEmojiReq.filter:type_name -> pb.GetAllAppMgmtEmojiReq.FilterEntry
-	78,  // 56: pb.GetAllAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
+	93,  // 50: pb.UpdateAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
+	92,  // 51: pb.DeleteAppMgmtVpnReq.commonReq:type_name -> pb.CommonReq
+	93,  // 52: pb.DeleteAppMgmtVpnResp.commonResp:type_name -> pb.CommonResp
+	92,  // 53: pb.GetAllAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
+	94,  // 54: pb.GetAllAppMgmtEmojiReq.page:type_name -> pb.Page
+	87,  // 55: pb.GetAllAppMgmtEmojiReq.filter:type_name -> pb.GetAllAppMgmtEmojiReq.FilterEntry
+	93,  // 56: pb.GetAllAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
 	38,  // 57: pb.GetAllAppMgmtEmojiResp.appMgmtEmojis:type_name -> pb.AppMgmtEmoji
-	77,  // 58: pb.GetAppMgmtEmojiDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 59: pb.GetAppMgmtEmojiDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 58: pb.GetAppMgmtEmojiDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 59: pb.GetAppMgmtEmojiDetailResp.commonResp:type_name -> pb.CommonResp
 	38,  // 60: pb.GetAppMgmtEmojiDetailResp.appMgmtEmoji:type_name -> pb.AppMgmtEmoji
-	77,  // 61: pb.AddAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
+	92,  // 61: pb.AddAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
 	38,  // 62: pb.AddAppMgmtEmojiReq.appMgmtEmoji:type_name -> pb.AppMgmtEmoji
-	78,  // 63: pb.AddAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
-	77,  // 64: pb.UpdateAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
+	93,  // 63: pb.AddAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
+	92,  // 64: pb.UpdateAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
 	38,  // 65: pb.UpdateAppMgmtEmojiReq.appMgmtEmoji:type_name -> pb.AppMgmtEmoji
-	78,  // 66: pb.UpdateAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
-	77,  // 67: pb.DeleteAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
-	78,  // 68: pb.DeleteAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
+	93,  // 66: pb.UpdateAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
+	92,  // 67: pb.DeleteAppMgmtEmojiReq.commonReq:type_name -> pb.CommonReq
+	93,  // 68: pb.DeleteAppMgmtEmojiResp.commonResp:type_name -> pb.CommonResp
 	38,  // 69: pb.AppMgmtEmojiGroup.cover:type_name -> pb.AppMgmtEmoji
-	77,  // 70: pb.GetAllAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
-	79,  // 71: pb.GetAllAppMgmtEmojiGroupReq.page:type_name -> pb.Page
-	75,  // 72: pb.GetAllAppMgmtEmojiGroupReq.filter:type_name -> pb.GetAllAppMgmtEmojiGroupReq.FilterEntry
-	78,  // 73: pb.GetAllAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
+	92,  // 70: pb.GetAllAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
+	94,  // 71: pb.GetAllAppMgmtEmojiGroupReq.page:type_name -> pb.Page
+	88,  // 72: pb.GetAllAppMgmtEmojiGroupReq.filter:type_name -> pb.GetAllAppMgmtEmojiGroupReq.FilterEntry
+	93,  // 73: pb.GetAllAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
 	49,  // 74: pb.GetAllAppMgmtEmojiGroupResp.appMgmtEmojiGroups:type_name -> pb.AppMgmtEmojiGroup
-	77,  // 75: pb.GetAppMgmtEmojiGroupDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 76: pb.GetAppMgmtEmojiGroupDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 75: pb.GetAppMgmtEmojiGroupDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 76: pb.GetAppMgmtEmojiGroupDetailResp.commonResp:type_name -> pb.CommonResp
 	49,  // 77: pb.GetAppMgmtEmojiGroupDetailResp.appMgmtEmojiGroup:type_name -> pb.AppMgmtEmojiGroup
-	77,  // 78: pb.AddAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
+	92,  // 78: pb.AddAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
 	49,  // 79: pb.AddAppMgmtEmojiGroupReq.appMgmtEmojiGroup:type_name -> pb.AppMgmtEmojiGroup
-	78,  // 80: pb.AddAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
-	77,  // 81: pb.UpdateAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
+	93,  // 80: pb.AddAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
+	92,  // 81: pb.UpdateAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
 	49,  // 82: pb.UpdateAppMgmtEmojiGroupReq.appMgmtEmojiGroup:type_name -> pb.AppMgmtEmojiGroup
-	78,  // 83: pb.UpdateAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
-	77,  // 84: pb.DeleteAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
-	78,  // 85: pb.DeleteAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
-	77,  // 86: pb.GetAllAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
-	79,  // 87: pb.GetAllAppMgmtNoticeReq.page:type_name -> pb.Page
-	76,  // 88: pb.GetAllAppMgmtNoticeReq.filter:type_name -> pb.GetAllAppMgmtNoticeReq.FilterEntry
-	78,  // 89: pb.GetAllAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
+	93,  // 83: pb.UpdateAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
+	92,  // 84: pb.DeleteAppMgmtEmojiGroupReq.commonReq:type_name -> pb.CommonReq
+	93,  // 85: pb.DeleteAppMgmtEmojiGroupResp.commonResp:type_name -> pb.CommonResp
+	92,  // 86: pb.GetAllAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
+	94,  // 87: pb.GetAllAppMgmtNoticeReq.page:type_name -> pb.Page
+	89,  // 88: pb.GetAllAppMgmtNoticeReq.filter:type_name -> pb.GetAllAppMgmtNoticeReq.FilterEntry
+	93,  // 89: pb.GetAllAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
 	60,  // 90: pb.GetAllAppMgmtNoticeResp.appMgmtNotices:type_name -> pb.AppMgmtNotice
-	77,  // 91: pb.GetAppMgmtNoticeDetailReq.commonReq:type_name -> pb.CommonReq
-	78,  // 92: pb.GetAppMgmtNoticeDetailResp.commonResp:type_name -> pb.CommonResp
+	92,  // 91: pb.GetAppMgmtNoticeDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 92: pb.GetAppMgmtNoticeDetailResp.commonResp:type_name -> pb.CommonResp
 	60,  // 93: pb.GetAppMgmtNoticeDetailResp.appMgmtNotice:type_name -> pb.AppMgmtNotice
-	77,  // 94: pb.AddAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
+	92,  // 94: pb.AddAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
 	60,  // 95: pb.AddAppMgmtNoticeReq.appMgmtNotice:type_name -> pb.AppMgmtNotice
-	78,  // 96: pb.AddAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
-	77,  // 97: pb.UpdateAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
+	93,  // 96: pb.AddAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
+	92,  // 97: pb.UpdateAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
 	60,  // 98: pb.UpdateAppMgmtNoticeReq.appMgmtNotice:type_name -> pb.AppMgmtNotice
-	78,  // 99: pb.UpdateAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
-	77,  // 100: pb.DeleteAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
-	78,  // 101: pb.DeleteAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
-	1,   // 102: pb.appMgmtService.GetAllAppMgmtConfig:input_type -> pb.GetAllAppMgmtConfigReq
-	3,   // 103: pb.appMgmtService.UpdateAppMgmtConfig:input_type -> pb.UpdateAppMgmtConfigReq
-	6,   // 104: pb.appMgmtService.GetAllAppMgmtVersion:input_type -> pb.GetAllAppMgmtVersionReq
-	8,   // 105: pb.appMgmtService.GetAppMgmtVersionDetail:input_type -> pb.GetAppMgmtVersionDetailReq
-	10,  // 106: pb.appMgmtService.AddAppMgmtVersion:input_type -> pb.AddAppMgmtVersionReq
-	12,  // 107: pb.appMgmtService.UpdateAppMgmtVersion:input_type -> pb.UpdateAppMgmtVersionReq
-	14,  // 108: pb.appMgmtService.DeleteAppMgmtVersion:input_type -> pb.DeleteAppMgmtVersionReq
-	17,  // 109: pb.appMgmtService.GetAllAppMgmtShieldWord:input_type -> pb.GetAllAppMgmtShieldWordReq
-	19,  // 110: pb.appMgmtService.GetAppMgmtShieldWordDetail:input_type -> pb.GetAppMgmtShieldWordDetailReq
-	21,  // 111: pb.appMgmtService.AddAppMgmtShieldWord:input_type -> pb.AddAppMgmtShieldWordReq
-	23,  // 112: pb.appMgmtService.UpdateAppMgmtShieldWord:input_type -> pb.UpdateAppMgmtShieldWordReq
-	25,  // 113: pb.appMgmtService.DeleteAppMgmtShieldWord:input_type -> pb.DeleteAppMgmtShieldWordReq
-	28,  // 114: pb.appMgmtService.GetAllAppMgmtVpn:input_type -> pb.GetAllAppMgmtVpnReq
-	30,  // 115: pb.appMgmtService.GetAppMgmtVpnDetail:input_type -> pb.GetAppMgmtVpnDetailReq
-	32,  // 116: pb.appMgmtService.AddAppMgmtVpn:input_type -> pb.AddAppMgmtVpnReq
-	34,  // 117: pb.appMgmtService.UpdateAppMgmtVpn:input_type -> pb.UpdateAppMgmtVpnReq
-	36,  // 118: pb.appMgmtService.DeleteAppMgmtVpn:input_type -> pb.DeleteAppMgmtVpnReq
-	39,  // 119: pb.appMgmtService.GetAllAppMgmtEmoji:input_type -> pb.GetAllAppMgmtEmojiReq
-	41,  // 120: pb.appMgmtService.GetAppMgmtEmojiDetail:input_type -> pb.GetAppMgmtEmojiDetailReq
-	43,  // 121: pb.appMgmtService.AddAppMgmtEmoji:input_type -> pb.AddAppMgmtEmojiReq
-	45,  // 122: pb.appMgmtService.UpdateAppMgmtEmoji:input_type -> pb.UpdateAppMgmtEmojiReq
-	47,  // 123: pb.appMgmtService.DeleteAppMgmtEmoji:input_type -> pb.DeleteAppMgmtEmojiReq
-	50,  // 124: pb.appMgmtService.GetAllAppMgmtEmojiGroup:input_type -> pb.GetAllAppMgmtEmojiGroupReq
-	52,  // 125: pb.appMgmtService.GetAppMgmtEmojiGroupDetail:input_type -> pb.GetAppMgmtEmojiGroupDetailReq
-	54,  // 126: pb.appMgmtService.AddAppMgmtEmojiGroup:input_type -> pb.AddAppMgmtEmojiGroupReq
-	56,  // 127: pb.appMgmtService.UpdateAppMgmtEmojiGroup:input_type -> pb.UpdateAppMgmtEmojiGroupReq
-	58,  // 128: pb.appMgmtService.DeleteAppMgmtEmojiGroup:input_type -> pb.DeleteAppMgmtEmojiGroupReq
-	61,  // 129: pb.appMgmtService.GetAllAppMgmtNotice:input_type -> pb.GetAllAppMgmtNoticeReq
-	63,  // 130: pb.appMgmtService.GetAppMgmtNoticeDetail:input_type -> pb.GetAppMgmtNoticeDetailReq
-	65,  // 131: pb.appMgmtService.AddAppMgmtNotice:input_type -> pb.AddAppMgmtNoticeReq
-	67,  // 132: pb.appMgmtService.UpdateAppMgmtNotice:input_type -> pb.UpdateAppMgmtNoticeReq
-	69,  // 133: pb.appMgmtService.DeleteAppMgmtNotice:input_type -> pb.DeleteAppMgmtNoticeReq
-	2,   // 134: pb.appMgmtService.GetAllAppMgmtConfig:output_type -> pb.GetAllAppMgmtConfigResp
-	4,   // 135: pb.appMgmtService.UpdateAppMgmtConfig:output_type -> pb.UpdateAppMgmtConfigResp
-	7,   // 136: pb.appMgmtService.GetAllAppMgmtVersion:output_type -> pb.GetAllAppMgmtVersionResp
-	9,   // 137: pb.appMgmtService.GetAppMgmtVersionDetail:output_type -> pb.GetAppMgmtVersionDetailResp
-	11,  // 138: pb.appMgmtService.AddAppMgmtVersion:output_type -> pb.AddAppMgmtVersionResp
-	13,  // 139: pb.appMgmtService.UpdateAppMgmtVersion:output_type -> pb.UpdateAppMgmtVersionResp
-	15,  // 140: pb.appMgmtService.DeleteAppMgmtVersion:output_type -> pb.DeleteAppMgmtVersionResp
-	18,  // 141: pb.appMgmtService.GetAllAppMgmtShieldWord:output_type -> pb.GetAllAppMgmtShieldWordResp
-	20,  // 142: pb.appMgmtService.GetAppMgmtShieldWordDetail:output_type -> pb.GetAppMgmtShieldWordDetailResp
-	22,  // 143: pb.appMgmtService.AddAppMgmtShieldWord:output_type -> pb.AddAppMgmtShieldWordResp
-	24,  // 144: pb.appMgmtService.UpdateAppMgmtShieldWord:output_type -> pb.UpdateAppMgmtShieldWordResp
-	26,  // 145: pb.appMgmtService.DeleteAppMgmtShieldWord:output_type -> pb.DeleteAppMgmtShieldWordResp
-	29,  // 146: pb.appMgmtService.GetAllAppMgmtVpn:output_type -> pb.GetAllAppMgmtVpnResp
-	31,  // 147: pb.appMgmtService.GetAppMgmtVpnDetail:output_type -> pb.GetAppMgmtVpnDetailResp
-	33,  // 148: pb.appMgmtService.AddAppMgmtVpn:output_type -> pb.AddAppMgmtVpnResp
-	35,  // 149: pb.appMgmtService.UpdateAppMgmtVpn:output_type -> pb.UpdateAppMgmtVpnResp
-	37,  // 150: pb.appMgmtService.DeleteAppMgmtVpn:output_type -> pb.DeleteAppMgmtVpnResp
-	40,  // 151: pb.appMgmtService.GetAllAppMgmtEmoji:output_type -> pb.GetAllAppMgmtEmojiResp
-	42,  // 152: pb.appMgmtService.GetAppMgmtEmojiDetail:output_type -> pb.GetAppMgmtEmojiDetailResp
-	44,  // 153: pb.appMgmtService.AddAppMgmtEmoji:output_type -> pb.AddAppMgmtEmojiResp
-	46,  // 154: pb.appMgmtService.UpdateAppMgmtEmoji:output_type -> pb.UpdateAppMgmtEmojiResp
-	48,  // 155: pb.appMgmtService.DeleteAppMgmtEmoji:output_type -> pb.DeleteAppMgmtEmojiResp
-	51,  // 156: pb.appMgmtService.GetAllAppMgmtEmojiGroup:output_type -> pb.GetAllAppMgmtEmojiGroupResp
-	53,  // 157: pb.appMgmtService.GetAppMgmtEmojiGroupDetail:output_type -> pb.GetAppMgmtEmojiGroupDetailResp
-	55,  // 158: pb.appMgmtService.AddAppMgmtEmojiGroup:output_type -> pb.AddAppMgmtEmojiGroupResp
-	57,  // 159: pb.appMgmtService.UpdateAppMgmtEmojiGroup:output_type -> pb.UpdateAppMgmtEmojiGroupResp
-	59,  // 160: pb.appMgmtService.DeleteAppMgmtEmojiGroup:output_type -> pb.DeleteAppMgmtEmojiGroupResp
-	62,  // 161: pb.appMgmtService.GetAllAppMgmtNotice:output_type -> pb.GetAllAppMgmtNoticeResp
-	64,  // 162: pb.appMgmtService.GetAppMgmtNoticeDetail:output_type -> pb.GetAppMgmtNoticeDetailResp
-	66,  // 163: pb.appMgmtService.AddAppMgmtNotice:output_type -> pb.AddAppMgmtNoticeResp
-	68,  // 164: pb.appMgmtService.UpdateAppMgmtNotice:output_type -> pb.UpdateAppMgmtNoticeResp
-	70,  // 165: pb.appMgmtService.DeleteAppMgmtNotice:output_type -> pb.DeleteAppMgmtNoticeResp
-	134, // [134:166] is the sub-list for method output_type
-	102, // [102:134] is the sub-list for method input_type
-	102, // [102:102] is the sub-list for extension type_name
-	102, // [102:102] is the sub-list for extension extendee
-	0,   // [0:102] is the sub-list for field type_name
+	93,  // 99: pb.UpdateAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
+	92,  // 100: pb.DeleteAppMgmtNoticeReq.commonReq:type_name -> pb.CommonReq
+	93,  // 101: pb.DeleteAppMgmtNoticeResp.commonResp:type_name -> pb.CommonResp
+	92,  // 102: pb.GetAllAppMgmtLinkReq.commonReq:type_name -> pb.CommonReq
+	94,  // 103: pb.GetAllAppMgmtLinkReq.page:type_name -> pb.Page
+	90,  // 104: pb.GetAllAppMgmtLinkReq.filter:type_name -> pb.GetAllAppMgmtLinkReq.FilterEntry
+	93,  // 105: pb.GetAllAppMgmtLinkResp.commonResp:type_name -> pb.CommonResp
+	71,  // 106: pb.GetAllAppMgmtLinkResp.appMgmtLinks:type_name -> pb.AppMgmtLink
+	92,  // 107: pb.GetAppMgmtLinkDetailReq.commonReq:type_name -> pb.CommonReq
+	93,  // 108: pb.GetAppMgmtLinkDetailResp.commonResp:type_name -> pb.CommonResp
+	71,  // 109: pb.GetAppMgmtLinkDetailResp.appMgmtLink:type_name -> pb.AppMgmtLink
+	92,  // 110: pb.AddAppMgmtLinkReq.commonReq:type_name -> pb.CommonReq
+	71,  // 111: pb.AddAppMgmtLinkReq.appMgmtLink:type_name -> pb.AppMgmtLink
+	93,  // 112: pb.AddAppMgmtLinkResp.commonResp:type_name -> pb.CommonResp
+	92,  // 113: pb.UpdateAppMgmtLinkReq.commonReq:type_name -> pb.CommonReq
+	71,  // 114: pb.UpdateAppMgmtLinkReq.appMgmtLink:type_name -> pb.AppMgmtLink
+	93,  // 115: pb.UpdateAppMgmtLinkResp.commonResp:type_name -> pb.CommonResp
+	92,  // 116: pb.DeleteAppMgmtLinkReq.commonReq:type_name -> pb.CommonReq
+	93,  // 117: pb.DeleteAppMgmtLinkResp.commonResp:type_name -> pb.CommonResp
+	92,  // 118: pb.AppGetAllConfigReq.commonReq:type_name -> pb.CommonReq
+	93,  // 119: pb.AppGetAllConfigResp.commonResp:type_name -> pb.CommonResp
+	91,  // 120: pb.AppGetAllConfigResp.configMap:type_name -> pb.AppGetAllConfigResp.ConfigMapEntry
+	1,   // 121: pb.appMgmtService.GetAllAppMgmtConfig:input_type -> pb.GetAllAppMgmtConfigReq
+	3,   // 122: pb.appMgmtService.UpdateAppMgmtConfig:input_type -> pb.UpdateAppMgmtConfigReq
+	6,   // 123: pb.appMgmtService.GetAllAppMgmtVersion:input_type -> pb.GetAllAppMgmtVersionReq
+	8,   // 124: pb.appMgmtService.GetAppMgmtVersionDetail:input_type -> pb.GetAppMgmtVersionDetailReq
+	10,  // 125: pb.appMgmtService.AddAppMgmtVersion:input_type -> pb.AddAppMgmtVersionReq
+	12,  // 126: pb.appMgmtService.UpdateAppMgmtVersion:input_type -> pb.UpdateAppMgmtVersionReq
+	14,  // 127: pb.appMgmtService.DeleteAppMgmtVersion:input_type -> pb.DeleteAppMgmtVersionReq
+	17,  // 128: pb.appMgmtService.GetAllAppMgmtShieldWord:input_type -> pb.GetAllAppMgmtShieldWordReq
+	19,  // 129: pb.appMgmtService.GetAppMgmtShieldWordDetail:input_type -> pb.GetAppMgmtShieldWordDetailReq
+	21,  // 130: pb.appMgmtService.AddAppMgmtShieldWord:input_type -> pb.AddAppMgmtShieldWordReq
+	23,  // 131: pb.appMgmtService.UpdateAppMgmtShieldWord:input_type -> pb.UpdateAppMgmtShieldWordReq
+	25,  // 132: pb.appMgmtService.DeleteAppMgmtShieldWord:input_type -> pb.DeleteAppMgmtShieldWordReq
+	28,  // 133: pb.appMgmtService.GetAllAppMgmtVpn:input_type -> pb.GetAllAppMgmtVpnReq
+	30,  // 134: pb.appMgmtService.GetAppMgmtVpnDetail:input_type -> pb.GetAppMgmtVpnDetailReq
+	32,  // 135: pb.appMgmtService.AddAppMgmtVpn:input_type -> pb.AddAppMgmtVpnReq
+	34,  // 136: pb.appMgmtService.UpdateAppMgmtVpn:input_type -> pb.UpdateAppMgmtVpnReq
+	36,  // 137: pb.appMgmtService.DeleteAppMgmtVpn:input_type -> pb.DeleteAppMgmtVpnReq
+	39,  // 138: pb.appMgmtService.GetAllAppMgmtEmoji:input_type -> pb.GetAllAppMgmtEmojiReq
+	41,  // 139: pb.appMgmtService.GetAppMgmtEmojiDetail:input_type -> pb.GetAppMgmtEmojiDetailReq
+	43,  // 140: pb.appMgmtService.AddAppMgmtEmoji:input_type -> pb.AddAppMgmtEmojiReq
+	45,  // 141: pb.appMgmtService.UpdateAppMgmtEmoji:input_type -> pb.UpdateAppMgmtEmojiReq
+	47,  // 142: pb.appMgmtService.DeleteAppMgmtEmoji:input_type -> pb.DeleteAppMgmtEmojiReq
+	50,  // 143: pb.appMgmtService.GetAllAppMgmtEmojiGroup:input_type -> pb.GetAllAppMgmtEmojiGroupReq
+	52,  // 144: pb.appMgmtService.GetAppMgmtEmojiGroupDetail:input_type -> pb.GetAppMgmtEmojiGroupDetailReq
+	54,  // 145: pb.appMgmtService.AddAppMgmtEmojiGroup:input_type -> pb.AddAppMgmtEmojiGroupReq
+	56,  // 146: pb.appMgmtService.UpdateAppMgmtEmojiGroup:input_type -> pb.UpdateAppMgmtEmojiGroupReq
+	58,  // 147: pb.appMgmtService.DeleteAppMgmtEmojiGroup:input_type -> pb.DeleteAppMgmtEmojiGroupReq
+	61,  // 148: pb.appMgmtService.GetAllAppMgmtNotice:input_type -> pb.GetAllAppMgmtNoticeReq
+	63,  // 149: pb.appMgmtService.GetAppMgmtNoticeDetail:input_type -> pb.GetAppMgmtNoticeDetailReq
+	65,  // 150: pb.appMgmtService.AddAppMgmtNotice:input_type -> pb.AddAppMgmtNoticeReq
+	67,  // 151: pb.appMgmtService.UpdateAppMgmtNotice:input_type -> pb.UpdateAppMgmtNoticeReq
+	69,  // 152: pb.appMgmtService.DeleteAppMgmtNotice:input_type -> pb.DeleteAppMgmtNoticeReq
+	72,  // 153: pb.appMgmtService.GetAllAppMgmtLink:input_type -> pb.GetAllAppMgmtLinkReq
+	74,  // 154: pb.appMgmtService.GetAppMgmtLinkDetail:input_type -> pb.GetAppMgmtLinkDetailReq
+	76,  // 155: pb.appMgmtService.AddAppMgmtLink:input_type -> pb.AddAppMgmtLinkReq
+	78,  // 156: pb.appMgmtService.UpdateAppMgmtLink:input_type -> pb.UpdateAppMgmtLinkReq
+	80,  // 157: pb.appMgmtService.DeleteAppMgmtLink:input_type -> pb.DeleteAppMgmtLinkReq
+	82,  // 158: pb.appMgmtService.AppGetAllConfig:input_type -> pb.AppGetAllConfigReq
+	2,   // 159: pb.appMgmtService.GetAllAppMgmtConfig:output_type -> pb.GetAllAppMgmtConfigResp
+	4,   // 160: pb.appMgmtService.UpdateAppMgmtConfig:output_type -> pb.UpdateAppMgmtConfigResp
+	7,   // 161: pb.appMgmtService.GetAllAppMgmtVersion:output_type -> pb.GetAllAppMgmtVersionResp
+	9,   // 162: pb.appMgmtService.GetAppMgmtVersionDetail:output_type -> pb.GetAppMgmtVersionDetailResp
+	11,  // 163: pb.appMgmtService.AddAppMgmtVersion:output_type -> pb.AddAppMgmtVersionResp
+	13,  // 164: pb.appMgmtService.UpdateAppMgmtVersion:output_type -> pb.UpdateAppMgmtVersionResp
+	15,  // 165: pb.appMgmtService.DeleteAppMgmtVersion:output_type -> pb.DeleteAppMgmtVersionResp
+	18,  // 166: pb.appMgmtService.GetAllAppMgmtShieldWord:output_type -> pb.GetAllAppMgmtShieldWordResp
+	20,  // 167: pb.appMgmtService.GetAppMgmtShieldWordDetail:output_type -> pb.GetAppMgmtShieldWordDetailResp
+	22,  // 168: pb.appMgmtService.AddAppMgmtShieldWord:output_type -> pb.AddAppMgmtShieldWordResp
+	24,  // 169: pb.appMgmtService.UpdateAppMgmtShieldWord:output_type -> pb.UpdateAppMgmtShieldWordResp
+	26,  // 170: pb.appMgmtService.DeleteAppMgmtShieldWord:output_type -> pb.DeleteAppMgmtShieldWordResp
+	29,  // 171: pb.appMgmtService.GetAllAppMgmtVpn:output_type -> pb.GetAllAppMgmtVpnResp
+	31,  // 172: pb.appMgmtService.GetAppMgmtVpnDetail:output_type -> pb.GetAppMgmtVpnDetailResp
+	33,  // 173: pb.appMgmtService.AddAppMgmtVpn:output_type -> pb.AddAppMgmtVpnResp
+	35,  // 174: pb.appMgmtService.UpdateAppMgmtVpn:output_type -> pb.UpdateAppMgmtVpnResp
+	37,  // 175: pb.appMgmtService.DeleteAppMgmtVpn:output_type -> pb.DeleteAppMgmtVpnResp
+	40,  // 176: pb.appMgmtService.GetAllAppMgmtEmoji:output_type -> pb.GetAllAppMgmtEmojiResp
+	42,  // 177: pb.appMgmtService.GetAppMgmtEmojiDetail:output_type -> pb.GetAppMgmtEmojiDetailResp
+	44,  // 178: pb.appMgmtService.AddAppMgmtEmoji:output_type -> pb.AddAppMgmtEmojiResp
+	46,  // 179: pb.appMgmtService.UpdateAppMgmtEmoji:output_type -> pb.UpdateAppMgmtEmojiResp
+	48,  // 180: pb.appMgmtService.DeleteAppMgmtEmoji:output_type -> pb.DeleteAppMgmtEmojiResp
+	51,  // 181: pb.appMgmtService.GetAllAppMgmtEmojiGroup:output_type -> pb.GetAllAppMgmtEmojiGroupResp
+	53,  // 182: pb.appMgmtService.GetAppMgmtEmojiGroupDetail:output_type -> pb.GetAppMgmtEmojiGroupDetailResp
+	55,  // 183: pb.appMgmtService.AddAppMgmtEmojiGroup:output_type -> pb.AddAppMgmtEmojiGroupResp
+	57,  // 184: pb.appMgmtService.UpdateAppMgmtEmojiGroup:output_type -> pb.UpdateAppMgmtEmojiGroupResp
+	59,  // 185: pb.appMgmtService.DeleteAppMgmtEmojiGroup:output_type -> pb.DeleteAppMgmtEmojiGroupResp
+	62,  // 186: pb.appMgmtService.GetAllAppMgmtNotice:output_type -> pb.GetAllAppMgmtNoticeResp
+	64,  // 187: pb.appMgmtService.GetAppMgmtNoticeDetail:output_type -> pb.GetAppMgmtNoticeDetailResp
+	66,  // 188: pb.appMgmtService.AddAppMgmtNotice:output_type -> pb.AddAppMgmtNoticeResp
+	68,  // 189: pb.appMgmtService.UpdateAppMgmtNotice:output_type -> pb.UpdateAppMgmtNoticeResp
+	70,  // 190: pb.appMgmtService.DeleteAppMgmtNotice:output_type -> pb.DeleteAppMgmtNoticeResp
+	73,  // 191: pb.appMgmtService.GetAllAppMgmtLink:output_type -> pb.GetAllAppMgmtLinkResp
+	75,  // 192: pb.appMgmtService.GetAppMgmtLinkDetail:output_type -> pb.GetAppMgmtLinkDetailResp
+	77,  // 193: pb.appMgmtService.AddAppMgmtLink:output_type -> pb.AddAppMgmtLinkResp
+	79,  // 194: pb.appMgmtService.UpdateAppMgmtLink:output_type -> pb.UpdateAppMgmtLinkResp
+	81,  // 195: pb.appMgmtService.DeleteAppMgmtLink:output_type -> pb.DeleteAppMgmtLinkResp
+	83,  // 196: pb.appMgmtService.AppGetAllConfig:output_type -> pb.AppGetAllConfigResp
+	159, // [159:197] is the sub-list for method output_type
+	121, // [121:159] is the sub-list for method input_type
+	121, // [121:121] is the sub-list for extension type_name
+	121, // [121:121] is the sub-list for extension extendee
+	0,   // [0:121] is the sub-list for field type_name
 }
 
 func init() { file_appmgmt_proto_init() }
@@ -6180,6 +7113,162 @@ func file_appmgmt_proto_init() {
 				return nil
 			}
 		}
+		file_appmgmt_proto_msgTypes[71].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AppMgmtLink); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[72].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllAppMgmtLinkReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[73].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllAppMgmtLinkResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[74].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAppMgmtLinkDetailReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[75].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAppMgmtLinkDetailResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[76].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddAppMgmtLinkReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[77].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddAppMgmtLinkResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[78].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateAppMgmtLinkReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[79].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateAppMgmtLinkResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[80].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAppMgmtLinkReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[81].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteAppMgmtLinkResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[82].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AppGetAllConfigReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_appmgmt_proto_msgTypes[83].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AppGetAllConfigResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -6187,7 +7276,7 @@ func file_appmgmt_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_appmgmt_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   77,
+			NumMessages:   92,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

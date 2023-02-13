@@ -515,6 +515,99 @@ message DeleteAppMgmtNoticeResp {
   CommonResp commonResp = 1;
 }
 
+/*
+type Link struct {
+	Id         string `json:"id" gorm:"column:id;type:varchar(32);primary_key;not null"`
+	Sort       int32  `json:"sort" gorm:"column:sort;type:int(11);not null;default:0"`
+	Name       string `json:"name" gorm:"column:name;type:varchar(255);not null"`
+	Url        string `json:"url" gorm:"column:url;type:varchar(255);not null"`
+	Icon       string `json:"icon" gorm:"column:icon;type:varchar(255);not null"`
+	IsEnable   bool   `json:"isEnable" gorm:"column:isEnable;type:tinyint(1);not null;default:1"`
+	CreateTime int64  `json:"createTime" gorm:"column:createTime;type:bigint(20);not null;default:0"`
+}
+ */
+//AppMgmtLink app发现链接
+message AppMgmtLink {
+  string id = 1;
+  int32 sort = 2;
+  string name = 3;
+  string url = 4;
+  string icon = 5;
+  bool isEnable = 6;
+  int64 createdAt = 7;
+  string createdAtStr = 8;
+}
+
+//GetAllAppMgmtLinkReq 获取所有app发现链接
+message GetAllAppMgmtLinkReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllAppMgmtLinkResp 获取所有app发现链接
+message GetAllAppMgmtLinkResp {
+  CommonResp commonResp = 1;
+  repeated AppMgmtLink appMgmtLinks = 2;
+  int64 total = 3;
+}
+
+//GetAppMgmtLinkDetailReq 获取app发现链接详情
+message GetAppMgmtLinkDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetAppMgmtLinkDetailResp 获取app发现链接详情
+message GetAppMgmtLinkDetailResp {
+  CommonResp commonResp = 1;
+  AppMgmtLink appMgmtLink = 2;
+}
+
+//AddAppMgmtLinkReq 添加app发现链接
+message AddAppMgmtLinkReq {
+  CommonReq commonReq = 1;
+  AppMgmtLink appMgmtLink = 2;
+}
+
+//AddAppMgmtLinkResp 添加app发现链接
+message AddAppMgmtLinkResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateAppMgmtLinkReq 更新app发现链接
+message UpdateAppMgmtLinkReq {
+  CommonReq commonReq = 1;
+  AppMgmtLink appMgmtLink = 2;
+}
+
+//UpdateAppMgmtLinkResp 更新app发现链接
+message UpdateAppMgmtLinkResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteAppMgmtLinkReq 删除app发现链接
+message DeleteAppMgmtLinkReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteAppMgmtLinkResp 删除app发现链接
+message DeleteAppMgmtLinkResp {
+  CommonResp commonResp = 1;
+}
+
+//AppGetAllConfigReq 获取所有配置
+message AppGetAllConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//AppGetAllConfigResp 获取所有配置
+message AppGetAllConfigResp {
+  CommonResp commonResp = 1;
+  map<string, string> configMap = 2;
+}
+
 service appMgmtService {
   rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
   rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
@@ -555,4 +648,11 @@ service appMgmtService {
   rpc UpdateAppMgmtNotice(UpdateAppMgmtNoticeReq) returns (UpdateAppMgmtNoticeResp);
   rpc DeleteAppMgmtNotice(DeleteAppMgmtNoticeReq) returns (DeleteAppMgmtNoticeResp);
 
+  rpc GetAllAppMgmtLink(GetAllAppMgmtLinkReq) returns (GetAllAppMgmtLinkResp);
+  rpc GetAppMgmtLinkDetail(GetAppMgmtLinkDetailReq) returns (GetAppMgmtLinkDetailResp);
+  rpc AddAppMgmtLink(AddAppMgmtLinkReq) returns (AddAppMgmtLinkResp);
+  rpc UpdateAppMgmtLink(UpdateAppMgmtLinkReq) returns (UpdateAppMgmtLinkResp);
+  rpc DeleteAppMgmtLink(DeleteAppMgmtLinkReq) returns (DeleteAppMgmtLinkResp);
+
+  rpc AppGetAllConfig(AppGetAllConfigReq) returns (AppGetAllConfigResp);
 }
