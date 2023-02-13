@@ -3,8 +3,11 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/mr"
+	"strings"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -34,12 +37,34 @@ func (l *GetAllUserModelLogic) GetAllUserModel(in *pb.GetAllUserModelReq) (*pb.G
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
 		for k, v := range in.Filter {
+			v = strings.TrimSpace(v)
 			if v == "" {
 				continue
 			}
 			switch k {
 			case "id":
-				wheres = append(wheres, xorm.Where("id LIKE ?", v+"%"))
+				wheres = append(wheres, xorm.Where("id = ?", v))
+			case "nickname":
+				wheres = append(wheres, xorm.Where("nickname LIKE ?", v+"%"))
+			case "role":
+				role := int32(utils.AnyToInt64(v))
+				if role > 0 {
+					wheres = append(wheres, xorm.Where("role = ?", role))
+				}
+			case "invitationCode":
+				wheres = append(wheres, xorm.Where("invitation_code = ?", v))
+			case "status":
+				if v == "normal" {
+					wheres = append(wheres, xorm.Where("unblockTime < ?", time.Now().UnixMilli()))
+				} else if v == "block" {
+					wheres = append(wheres, xorm.Where("unblockTime > ?", time.Now().UnixMilli()))
+				}
+			case "createTime_gte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime >= ?", val))
+			case "createTime_lte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime <= ?", val))
 			}
 		}
 	}
@@ -49,6 +74,7 @@ func (l *GetAllUserModelLogic) GetAllUserModel(in *pb.GetAllUserModelReq) (*pb.G
 		return &pb.GetAllUserModelResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	var lastLoginRecordMap = make(map[string]*usermodel.LoginRecord)
+	var lastLoginRecords []*usermodel.LoginRecord
 	{
 		var getLoginRecordFunc []func()
 		for _, model := range models {
@@ -56,10 +82,13 @@ func (l *GetAllUserModelLogic) GetAllUserModel(in *pb.GetAllUserModelReq) (*pb.G
 			getLoginRecordFunc = append(getLoginRecordFunc, func() {
 				var lastLoginRecord usermodel.LoginRecord
 				l.svcCtx.Mysql().Where("userId = ?", m.Id).Order("time DESC").First(&lastLoginRecord)
-				lastLoginRecordMap[m.Id] = &lastLoginRecord
+				lastLoginRecords = append(lastLoginRecords, &lastLoginRecord)
 			})
 		}
 		mr.FinishVoid(getLoginRecordFunc...)
+		for _, record := range lastLoginRecords {
+			lastLoginRecordMap[record.UserId] = record
+		}
 	}
 	var resp []*pb.UserModel
 	for _, model := range models {

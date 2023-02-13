@@ -1,8 +1,10 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
+	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/config"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
@@ -15,12 +17,14 @@ import (
 )
 
 type ServiceContext struct {
-	Config        config.Config
-	zedis         *redis.Redis
-	mysql         *gorm.DB
-	imService     imservice.ImService
-	noticeService noticeservice.NoticeService
-	ConfigMgr     *xconf.ConfigMgr
+	Config          config.Config
+	zedis           *redis.Redis
+	mysql           *gorm.DB
+	imService       imservice.ImService
+	noticeService   noticeservice.NoticeService
+	relationService relationservice.RelationService
+	groupService    groupservice.GroupService
+	ConfigMgr       *xconf.ConfigMgr
 	*i18n.I18N
 }
 
@@ -74,4 +78,18 @@ func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
 		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
 	}
 	return s.noticeService
+}
+
+func (s *ServiceContext) RelationService() relationservice.RelationService {
+	if s.relationService == nil {
+		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc))
+	}
+	return s.relationService
+}
+
+func (s *ServiceContext) GroupService() groupservice.GroupService {
+	if s.groupService == nil {
+		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
+	}
+	return s.groupService
 }

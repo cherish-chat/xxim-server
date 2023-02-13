@@ -9,6 +9,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xjwt"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
+	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"regexp"
@@ -47,9 +48,69 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 			return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
+	// 用户密码输入错误次数是否超过限制
+	// 获取用户密码输入错误次数
+	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
+	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx) {
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，密码输入错误次数超过限制")}, nil
+	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
+		// 记录用户密码输入错误次数
+		_, _ = l.svcCtx.Redis().IncrbyCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id), 1)
 		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "密码错误"))}, nil
+	}
+	// 判断用户角色
+	{
+		if user.Role == usermodel.RoleUser {
+			// 用户能否在该平台功能
+			if !l.svcCtx.ConfigMgr.LoginUserOnPlatform(l.ctx, in.CommonReq.Platform) {
+				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户不能在"+in.CommonReq.Platform+"登录"))}, nil
+			}
+			// 用户登录时是否需要ip在白名单
+			if l.svcCtx.ConfigMgr.LoginUserNeedIpWhiteList(l.ctx) {
+				resp, err := l.checkIpWhiteList(in)
+				if err != nil {
+					return resp, err
+				}
+				if resp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+					return resp, nil
+				}
+			}
+		} else if user.Role == usermodel.RoleService {
+			// 客服能否在该平台功能
+			if !l.svcCtx.ConfigMgr.LoginServiceOnPlatform(l.ctx, in.CommonReq.Platform) {
+				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "客服不能在"+in.CommonReq.Platform+"登录"))}, nil
+			}
+			// 客服登录时是否需要ip在白名单
+			if l.svcCtx.ConfigMgr.LoginServiceNeedIpWhiteList(l.ctx) {
+				resp, err := l.checkIpWhiteList(in)
+				if err != nil {
+					return resp, err
+				}
+				if resp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+					return resp, nil
+				}
+			}
+		} else if user.Role == usermodel.RoleGuest {
+			// 游客能否在该平台功能
+			if !l.svcCtx.ConfigMgr.LoginGuestOnPlatform(l.ctx, in.CommonReq.Platform) {
+				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "游客不能在"+in.CommonReq.Platform+"登录"))}, nil
+			}
+			// 游客登录时是否需要ip在白名单
+			if l.svcCtx.ConfigMgr.LoginGuestNeedIpWhiteList(l.ctx) {
+				resp, err := l.checkIpWhiteList(in)
+				if err != nil {
+					return resp, err
+				}
+				if resp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+					return resp, nil
+				}
+			}
+		} else {
+			// 未知角色
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "账号角色异常"))}, nil
+		}
 	}
 	// 密码正确
 	// 生成token
@@ -133,4 +194,21 @@ func (l *LoginLogic) register(in *pb.LoginReq) (*pb.LoginResp, error) {
 		Token:      "",
 		UserId:     in.Id,
 	}, nil
+}
+
+func (l *LoginLogic) checkIpWhiteList(in *pb.LoginReq) (*pb.LoginResp, error) {
+	var count int64
+	err := l.svcCtx.Mysql().Model(&usermodel.IpWhiteList{}).
+		Where("isEnable = ?", true).
+		Where("startIp <= ? and endIp >= ?", in.CommonReq.Ip, in.CommonReq.Ip).
+		Count(&count).Error
+	if err != nil {
+		l.Errorf("check ip in whitelist err: %v", err)
+		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	if count == 0 {
+		l.Errorf("ip not in whitelist: %v", in.CommonReq.Ip)
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，ip不在白名单中")}, nil
+	}
+	return nil, nil
 }

@@ -7,6 +7,8 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 	"time"
 
@@ -86,5 +88,13 @@ func (l *AddUserModelLogic) AddUserModel(in *pb.AddUserModelReq) (*pb.AddUserMod
 			CommonResp: pb.NewRetryErrorResp(),
 		}, err
 	}
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterRegister", func(ctx context.Context) {
+		NewRegisterLogic(l.ctx, l.svcCtx).afterRegister(ctx, &pb.RegisterReq{
+			CommonReq: in.CommonReq,
+			Id:        in.UserModel.Id,
+		}, model, nil)
+	}, propagation.MapCarrier{
+		"user_id": model.Id,
+	})
 	return &pb.AddUserModelResp{}, nil
 }

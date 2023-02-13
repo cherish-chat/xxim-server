@@ -10,6 +10,8 @@ type Config struct {
 	Mysql                  xorm.MysqlConfig
 	ImRpc                  zrpc.RpcClientConf
 	NoticeRpc              zrpc.RpcClientConf
+	RelationRpc            zrpc.RpcClientConf
+	GroupRpc               zrpc.RpcClientConf
 	Ip2RegionUrl           string `json:",default=https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb"`
 	EnableMultiDeviceLogin bool   `json:",default=true"`
 }

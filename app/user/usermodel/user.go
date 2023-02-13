@@ -19,7 +19,7 @@ import (
 const (
 	RoleUser    Role = 0 // 普通用户
 	RoleService Role = 1 //客服
-	RoleGuest   Role = 3 // 游客
+	RoleGuest   Role = 2 // 游客
 )
 
 func (r Role) String() string {
@@ -44,9 +44,9 @@ type (
 		// 邀请码
 		InvitationCode string `bson:"invitationCode" json:"invitationCode" gorm:"column:invitationCode;type:char(32);index;"`
 		// 手机号
-		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;"`
+		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;index:mobile_mobilecountrycode;"`
 		// 手机号国家码
-		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';"`
+		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';index:mobile_mobilecountrycode;"`
 
 		// 基本信息
 		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`

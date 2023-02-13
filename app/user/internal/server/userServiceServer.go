@@ -89,6 +89,11 @@ func (s *UserServiceServer) UpdateUserInfo(ctx context.Context, in *pb.UpdateUse
 	return l.UpdateUserInfo(in)
 }
 
+func (s *UserServiceServer) UpdateUserPassword(ctx context.Context, in *pb.UpdateUserPasswordReq) (*pb.UpdateUserPasswordResp, error) {
+	l := logic.NewUpdateUserPasswordLogic(ctx, s.svcCtx)
+	return l.UpdateUserPassword(in)
+}
+
 func (s *UserServiceServer) GetAllUserInvitationCode(ctx context.Context, in *pb.GetAllUserInvitationCodeReq) (*pb.GetAllUserInvitationCodeResp, error) {
 	l := logic.NewGetAllUserInvitationCodeLogic(ctx, s.svcCtx)
 	return l.GetAllUserInvitationCode(in)

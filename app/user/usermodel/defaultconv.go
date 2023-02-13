@@ -16,7 +16,8 @@ type DefaultConv struct {
 
 	ConvId string `gorm:"column:convId;type:varchar(32);not null" json:"convId"` // 会话id
 
-	CreateTime int64 `gorm:"column:createTime;type:bigint(20);not null" json:"createTime"`
+	CreateTime int64  `gorm:"column:createTime;type:bigint(20);not null" json:"createTime"`
+	TextMsg    string `gorm:"column:textMsg;type:varchar(255);not null;default:''" json:"textMsg"` // 文本消息
 }
 
 func (m *DefaultConv) TableName() string {
@@ -34,6 +35,7 @@ func (m *DefaultConv) ToPB() *pb.UserDefaultConv {
 		FilterType:     m.FilterType,
 		InvitationCode: m.InvitationCode,
 		ConvId:         m.ConvId,
+		TextMsg:        m.TextMsg,
 		CreatedAt:      m.CreateTime,
 		CreatedAtStr:   utils.TimeFormat(m.CreateTime),
 	}

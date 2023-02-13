@@ -93,6 +93,8 @@ type (
 	UpdateUserIpWhiteListResp             = pb.UpdateUserIpWhiteListResp
 	UpdateUserModelReq                    = pb.UpdateUserModelReq
 	UpdateUserModelResp                   = pb.UpdateUserModelResp
+	UpdateUserPasswordReq                 = pb.UpdateUserPasswordReq
+	UpdateUserPasswordResp                = pb.UpdateUserPasswordResp
 	UserBaseInfo                          = pb.UserBaseInfo
 	UserBirthdayInfo                      = pb.UserBirthdayInfo
 	UserDefaultConv                       = pb.UserDefaultConv
@@ -120,6 +122,7 @@ type (
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
+		UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error)
 		GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
 		GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
 		AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
@@ -225,6 +228,11 @@ func (m *defaultUserService) BatchGetUserAllDevices(ctx context.Context, in *Bat
 func (m *defaultUserService) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UpdateUserInfo(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserPassword(ctx, in, opts...)
 }
 
 func (m *defaultUserService) GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error) {
