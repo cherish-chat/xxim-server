@@ -68,7 +68,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 		Description:              l.svcCtx.ConfigMgr.DefaultGroupDescription(l.ctx),
 		AllMute:                  false,
 		SpeakLimit:               0,
-		MaxMember:                int32(l.svcCtx.ConfigMgr.DefaultGroupMaxMember(l.ctx)),
+		MaxMember:                int32(l.svcCtx.Config.GroupConfig.MaxGroupMemberCount),
 		MemberCanStartTempChat:   true,
 		MemberCanInviteFriend:    true,
 		NewMemberHistoryMsgCount: int32(l.svcCtx.ConfigMgr.DefaultGroupNewMemberHistoryMsgCount(l.ctx)),

@@ -153,3 +153,15 @@ func (s *GroupServiceServer) DismissGroupModel(ctx context.Context, in *pb.Dismi
 	l := logic.NewDismissGroupModelLogic(ctx, s.svcCtx)
 	return l.DismissGroupModel(in)
 }
+
+// SearchGroupsByKeyword 搜索群组
+func (s *GroupServiceServer) SearchGroupsByKeyword(ctx context.Context, in *pb.SearchGroupsByKeywordReq) (*pb.SearchGroupsByKeywordResp, error) {
+	l := logic.NewSearchGroupsByKeywordLogic(ctx, s.svcCtx)
+	return l.SearchGroupsByKeyword(in)
+}
+
+// AddGroupMember 添加群成员
+func (s *GroupServiceServer) AddGroupMember(ctx context.Context, in *pb.AddGroupMemberReq) (*pb.AddGroupMemberResp, error) {
+	l := logic.NewAddGroupMemberLogic(ctx, s.svcCtx)
+	return l.AddGroupMember(in)
+}

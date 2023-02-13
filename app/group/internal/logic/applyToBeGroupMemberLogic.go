@@ -33,6 +33,50 @@ func NewApplyToBeGroupMemberLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // ApplyToBeGroupMember 申请加入群聊
 func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMemberReq) (*pb.ApplyToBeGroupMemberResp, error) {
+	// 获取群信息
+	group := &groupmodel.Group{}
+	{
+		var mapGroupByIdResp *pb.MapGroupByIdsResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "MapGroupByIds", func(ctx context.Context) {
+			mapGroupByIdResp, err = NewMapGroupByIdsLogic(ctx, l.svcCtx).MapGroupByIds(&pb.MapGroupByIdsReq{Ids: []string{in.GroupId}})
+		})
+		if err != nil {
+			l.Errorf("MapGroupByIds error: %v", err)
+			return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if len(mapGroupByIdResp.GroupMap) == 0 {
+			l.Errorf("MapGroupByIds error: %v", err)
+			return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		group = groupmodel.GroupFromBytes(mapGroupByIdResp.GroupMap[in.GroupId])
+	}
+	// 判断群人数是否达到上限
+	if int32(group.MemberCount) >= group.MaxMember {
+		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp("操作失败", "群人数已达上限")}, nil
+	}
+	// 查询自己加了多少群
+	var groupCount int64
+	{
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "GetMyGroupList", func(ctx context.Context) {
+			list, e := NewGetMyGroupListLogic(ctx, l.svcCtx).GetMyGroupList(&pb.GetMyGroupListReq{
+				CommonReq: in.GetCommonReq(),
+				Opt:       pb.GetMyGroupListReq_ONLY_ID,
+			})
+			if e != nil {
+				l.Errorf("GetMyGroupList error: %v", e)
+				err = e
+			}
+			groupCount = int64(len(list.GroupMap))
+		})
+		if err != nil {
+			return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+	}
+	if int64(l.svcCtx.Config.GroupConfig.MaxGroupCount) <= groupCount {
+		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp("操作失败", "您已加入了太多的群聊")}, nil
+	}
 	apply := &groupmodel.GroupApply{
 		Id:         utils.GenId(),
 		GroupId:    in.GroupId,

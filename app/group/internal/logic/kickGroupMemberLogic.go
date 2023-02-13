@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -47,6 +48,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			break
 		}
 	}
+	var self *usermodel.User
 	if !isManager {
 		// 如果要踢自己，可以直接踢
 		if in.MemberId != in.CommonReq.UserId {
@@ -54,6 +56,33 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				l.svcCtx.T(in.CommonReq.Language, "操作失败"),
 				l.svcCtx.T(in.CommonReq.Language, "您不是群管理员"),
 			)}, nil
+		} else {
+			// 说明是退群
+			// 判断是否是普通用户
+			userByIds, err := l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
+				CommonReq: in.CommonReq,
+				Ids:       []string{in.MemberId},
+			})
+			if err != nil {
+				l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
+				return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+			userBuf, ok := userByIds.Users[in.MemberId]
+			if !ok {
+				l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
+				return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+			self = usermodel.UserFromBytes(userBuf)
+
+			if self.Role == usermodel.RoleUser {
+				// 普通用户是否允许退群
+				if !l.svcCtx.ConfigMgr.GroupAllowUserQuit(l.ctx) {
+					return &pb.KickGroupMemberResp{CommonResp: pb.NewAlertErrorResp(
+						"操作失败",
+						"普通用户不允许退群",
+					)}, err
+				}
+			}
 		}
 	} else {
 		// 判断是不是群主

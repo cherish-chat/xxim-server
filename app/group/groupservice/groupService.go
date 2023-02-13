@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	AddGroupMemberReq                              = pb.AddGroupMemberReq
+	AddGroupMemberResp                             = pb.AddGroupMemberResp
 	ApplyToBeGroupMemberReq                        = pb.ApplyToBeGroupMemberReq
 	ApplyToBeGroupMemberResp                       = pb.ApplyToBeGroupMemberResp
 	CreateGroupNoticeReq                           = pb.CreateGroupNoticeReq
@@ -62,6 +64,8 @@ type (
 	KickGroupMemberResp                            = pb.KickGroupMemberResp
 	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
+	SearchGroupsByKeywordReq                       = pb.SearchGroupsByKeywordReq
+	SearchGroupsByKeywordResp                      = pb.SearchGroupsByKeywordResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
 	SetGroupMemberInfoResp                         = pb.SetGroupMemberInfoResp
 	SyncGroupMemberCountReq                        = pb.SyncGroupMemberCountReq
@@ -116,6 +120,10 @@ type (
 		UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
 		// DismissGroupModel 解散群组
 		DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
+		// SearchGroupsByKeyword 搜索群组
+		SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
+		// AddGroupMember 添加群成员
+		AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
 	}
 
 	defaultGroupService struct {
@@ -259,4 +267,16 @@ func (m *defaultGroupService) UpdateGroupModel(ctx context.Context, in *UpdateGr
 func (m *defaultGroupService) DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.DismissGroupModel(ctx, in, opts...)
+}
+
+// SearchGroupsByKeyword 搜索群组
+func (m *defaultGroupService) SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.SearchGroupsByKeyword(ctx, in, opts...)
+}
+
+// AddGroupMember 添加群成员
+func (m *defaultGroupService) AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.AddGroupMember(ctx, in, opts...)
 }

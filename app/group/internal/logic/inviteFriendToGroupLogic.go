@@ -51,6 +51,6 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 }
 
 func (l *InviteFriendToGroupLogic) inviteFriendToGroup(in *pb.InviteFriendToGroupReq) (*pb.InviteFriendToGroupResp, error) {
-	// TODO implement the business logic of InviteFriendToGroup
+	//TODO implement the business logic of InviteFriendToGroup
 	return &pb.InviteFriendToGroupResp{}, nil
 }
