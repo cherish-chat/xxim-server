@@ -7,6 +7,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/propagation"
 	oteltrace "go.opentelemetry.io/otel/trace"
+	"runtime"
 )
 
 type StartFuncSpanOpt struct {
@@ -87,4 +88,11 @@ func TraceIdFromContext(ctx context.Context) string {
 		return traceId
 	}
 	return ""
+}
+
+func GetStackInfo() string {
+	// 打印堆栈信息
+	buf := make([]byte, 1<<16)
+	n := runtime.Stack(buf, true)
+	return string(buf[:n])
 }
