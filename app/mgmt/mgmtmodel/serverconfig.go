@@ -98,9 +98,12 @@ type (
 		Port int64 // default: 6702
 	}
 	MsgRpcConfig struct {
-		Port    int64 // default: 6703
-		MobPush MobPushConfig
-		Pulsar  MsgPulsarConfig
+		DiscovType   string // default: endpoints, options: k8s|endpoints
+		K8sNamespace string // default: xxim
+		Endpoints    []string
+		Port         int64 // default: 6703
+		MobPush      MobPushConfig
+		Pulsar       MsgPulsarConfig
 	}
 	MobPushConfig struct {
 		Enabled        bool // default: false
@@ -126,7 +129,9 @@ type (
 		Port int64 // default: 6705
 	}
 	GroupRpcConfig struct {
-		Port int64 // default: 6706
+		Port                int64 // default: 6706
+		MaxGroupCount       int64 // default: 100
+		MaxGroupMemberCount int64 // default: 1000
 	}
 	NoticeRpcConfig struct {
 		Port int64 // default: 6707
@@ -172,6 +177,11 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			Port: 6702,
 		},
 		MsgRpc: MsgRpcConfig{
+			DiscovType:   "endpoints",
+			K8sNamespace: "xxim",
+			Endpoints: []string{
+				"127.0.0.1:6703",
+			},
 			Port: 6703,
 			MobPush: MobPushConfig{
 				Enabled:        false,
@@ -198,7 +208,9 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			Port: 6705,
 		},
 		GroupRpc: GroupRpcConfig{
-			Port: 6706,
+			Port:                6706,
+			MaxGroupCount:       2000,
+			MaxGroupMemberCount: 200000,
 		},
 		NoticeRpc: NoticeRpcConfig{
 			Port: 6707,

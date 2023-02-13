@@ -63,7 +63,10 @@ func (l *UpdateServerConfigLogic) UpdateServerConfig(in *pb.UpdateServerConfigRe
 		},
 		ImRpc: mgmtmodel.ImRpcConfig{Port: in.Config.ImRpc.Port},
 		MsgRpc: mgmtmodel.MsgRpcConfig{
-			Port: in.Config.MsgRpc.Port,
+			DiscovType:   in.Config.MsgRpc.DiscovType,
+			K8sNamespace: in.Config.MsgRpc.K8SNamespace,
+			Endpoints:    in.Config.MsgRpc.Endpoints,
+			Port:         in.Config.MsgRpc.Port,
 			MobPush: mgmtmodel.MobPushConfig{
 				Enabled:        in.Config.MsgRpc.MobPush.Enabled,
 				AppKey:         in.Config.MsgRpc.MobPush.AppKey,
@@ -84,9 +87,13 @@ func (l *UpdateServerConfigLogic) UpdateServerConfig(in *pb.UpdateServerConfigRe
 		},
 		UserRpc:     mgmtmodel.UserRpcConfig{Port: in.Config.UserRpc.Port},
 		RelationRpc: mgmtmodel.RelationRpcConfig{Port: in.Config.RelationRpc.Port},
-		GroupRpc:    mgmtmodel.GroupRpcConfig{Port: in.Config.GroupRpc.Port},
-		NoticeRpc:   mgmtmodel.NoticeRpcConfig{Port: in.Config.NoticeRpc.Port},
-		AppMgmtRpc:  mgmtmodel.AppMgmtRpcConfig{Port: in.Config.AppMgmtRpc.Port},
+		GroupRpc: mgmtmodel.GroupRpcConfig{
+			Port:                in.Config.GroupRpc.Port,
+			MaxGroupCount:       in.Config.GroupRpc.MaxGroupCount,
+			MaxGroupMemberCount: in.Config.GroupRpc.MaxGroupMemberCount,
+		},
+		NoticeRpc:  mgmtmodel.NoticeRpcConfig{Port: in.Config.NoticeRpc.Port},
+		AppMgmtRpc: mgmtmodel.AppMgmtRpcConfig{Port: in.Config.AppMgmtRpc.Port},
 		Mgmt: mgmtmodel.MgmtConfig{
 			RpcPort:        in.Config.Mgmt.RpcPort,
 			HttpPort:       in.Config.Mgmt.HttpPort,

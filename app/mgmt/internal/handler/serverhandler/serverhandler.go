@@ -20,6 +20,11 @@ func (r *ServerHandler) Register(g *gin.RouterGroup) {
 		group.POST("/get/config/all", r.configAll)
 		group.POST("/update/config", r.updateConfig)
 	}
+	// app线路配置
+	{
+		group.POST("/get/app/line", r.appLine)
+		group.POST("/update/app/line", r.updateAppLine)
+	}
 	// 其他
 	{
 		// 全服在线人数

@@ -93,6 +93,14 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 				"Port":      serverConfig.ConnRpc.Port,
 			},
 		},
+		"MsgRpcPod": map[string]any{
+			"DiscovType": serverConfig.MsgRpc.DiscovType,
+			"Endpoints":  serverConfig.MsgRpc.Endpoints,
+			"K8s": map[string]any{
+				"Namespace": serverConfig.MsgRpc.K8sNamespace,
+				"Port":      serverConfig.MsgRpc.Port,
+			},
+		},
 	}
 	if serverConfig.ConnRpc.DiscovType == "endpoints" {
 		c["ImRpc"] = map[string]any{
@@ -190,6 +198,10 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.AppMgmtRpc.Port)
 	case "group":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.GroupRpc.Port)
+		c["GroupConfig"] = map[string]any{
+			"MaxGroupCount":       serverConfig.GroupRpc.MaxGroupCount,
+			"MaxGroupMemberCount": serverConfig.GroupRpc.MaxGroupMemberCount,
+		}
 	case "notice":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.NoticeRpc.Port)
 	case "relation":

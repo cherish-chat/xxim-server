@@ -23,6 +23,12 @@ type (
 	AddMSRoleResp                            = pb.AddMSRoleResp
 	AddMSUserReq                             = pb.AddMSUserReq
 	AddMSUserResp                            = pb.AddMSUserResp
+	AppLineConfig                            = pb.AppLineConfig
+	AppLineConfig_Storage                    = pb.AppLineConfig_Storage
+	AppLineConfig_Storage_Cos                = pb.AppLineConfig_Storage_Cos
+	AppLineConfig_Storage_Kodo               = pb.AppLineConfig_Storage_Kodo
+	AppLineConfig_Storage_Minio              = pb.AppLineConfig_Storage_Minio
+	AppLineConfig_Storage_Oss                = pb.AppLineConfig_Storage_Oss
 	ConfigMSResp                             = pb.ConfigMSResp
 	DeleteMSApiPathReq                       = pb.DeleteMSApiPathReq
 	DeleteMSApiPathResp                      = pb.DeleteMSApiPathResp
@@ -50,6 +56,8 @@ type (
 	GetAllMSRoleListResp                     = pb.GetAllMSRoleListResp
 	GetAllMSUserListReq                      = pb.GetAllMSUserListReq
 	GetAllMSUserListResp                     = pb.GetAllMSUserListResp
+	GetAppLineConfigReq                      = pb.GetAppLineConfigReq
+	GetAppLineConfigResp                     = pb.GetAppLineConfigResp
 	GetMSApiPathDetailReq                    = pb.GetMSApiPathDetailReq
 	GetMSApiPathDetailResp                   = pb.GetMSApiPathDetailResp
 	GetMSIpWhiteListDetailReq                = pb.GetMSIpWhiteListDetailReq
@@ -99,6 +107,8 @@ type (
 	MSUser                                   = pb.MSUser
 	SwitchMSUserStatusReq                    = pb.SwitchMSUserStatusReq
 	SwitchMSUserStatusResp                   = pb.SwitchMSUserStatusResp
+	UpdateAppLineConfigReq                   = pb.UpdateAppLineConfigReq
+	UpdateAppLineConfigResp                  = pb.UpdateAppLineConfigResp
 	UpdateMSApiPathReq                       = pb.UpdateMSApiPathReq
 	UpdateMSApiPathResp                      = pb.UpdateMSApiPathResp
 	UpdateMSIpWhiteListReq                   = pb.UpdateMSIpWhiteListReq
@@ -118,6 +128,8 @@ type (
 		GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 		GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 		UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
+		GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error)
+		UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error)
 		LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 		HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 		ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -190,6 +202,16 @@ func (m *defaultMgmtService) GetServerAllConfig(ctx context.Context, in *GetServ
 func (m *defaultMgmtService) UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.UpdateServerConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAppLineConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppLineConfig(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error) {

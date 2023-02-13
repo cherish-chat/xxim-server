@@ -47,6 +47,16 @@ func (s *MgmtServiceServer) UpdateServerConfig(ctx context.Context, in *pb.Updat
 	return l.UpdateServerConfig(in)
 }
 
+func (s *MgmtServiceServer) GetAppLineConfig(ctx context.Context, in *pb.GetAppLineConfigReq) (*pb.GetAppLineConfigResp, error) {
+	l := logic.NewGetAppLineConfigLogic(ctx, s.svcCtx)
+	return l.GetAppLineConfig(in)
+}
+
+func (s *MgmtServiceServer) UpdateAppLineConfig(ctx context.Context, in *pb.UpdateAppLineConfigReq) (*pb.UpdateAppLineConfigResp, error) {
+	l := logic.NewUpdateAppLineConfigLogic(ctx, s.svcCtx)
+	return l.UpdateAppLineConfig(in)
+}
+
 func (s *MgmtServiceServer) LoginMS(ctx context.Context, in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	l := logic.NewLoginMSLogic(ctx, s.svcCtx)
 	return l.LoginMS(in)
