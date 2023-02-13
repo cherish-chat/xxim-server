@@ -63,6 +63,7 @@ message AcceptAddFriendReq {
   CommonReq commonReq = 1;
   string applyUserId = 2; // 申请人id
   optional string requestId = 3; // 申请id
+  optional string sendTextMsg = 4; // 发送的文本消息
 }
 
 message AcceptAddFriendResp {
