@@ -52,6 +52,8 @@ type MsgServiceClient interface {
 	ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error)
 	//EditMsg 编辑消息
 	EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error)
+	//FlushShieldWordTireTree 刷新屏蔽词
+	FlushShieldWordTireTree(ctx context.Context, in *FlushShieldWordTireTreeReq, opts ...grpc.CallOption) (*FlushShieldWordTireTreeResp, error)
 }
 
 type msgServiceClient struct {
@@ -224,6 +226,15 @@ func (c *msgServiceClient) EditMsg(ctx context.Context, in *EditMsgReq, opts ...
 	return out, nil
 }
 
+func (c *msgServiceClient) FlushShieldWordTireTree(ctx context.Context, in *FlushShieldWordTireTreeReq, opts ...grpc.CallOption) (*FlushShieldWordTireTreeResp, error) {
+	out := new(FlushShieldWordTireTreeResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/FlushShieldWordTireTree", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -258,6 +269,8 @@ type MsgServiceServer interface {
 	ReadMsg(context.Context, *ReadMsgReq) (*ReadMsgResp, error)
 	//EditMsg 编辑消息
 	EditMsg(context.Context, *EditMsgReq) (*EditMsgResp, error)
+	//FlushShieldWordTireTree 刷新屏蔽词
+	FlushShieldWordTireTree(context.Context, *FlushShieldWordTireTreeReq) (*FlushShieldWordTireTreeResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -318,6 +331,9 @@ func (UnimplementedMsgServiceServer) ReadMsg(context.Context, *ReadMsgReq) (*Rea
 }
 func (UnimplementedMsgServiceServer) EditMsg(context.Context, *EditMsgReq) (*EditMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditMsg not implemented")
+}
+func (UnimplementedMsgServiceServer) FlushShieldWordTireTree(context.Context, *FlushShieldWordTireTreeReq) (*FlushShieldWordTireTreeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FlushShieldWordTireTree not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -656,6 +672,24 @@ func _MsgService_EditMsg_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_FlushShieldWordTireTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FlushShieldWordTireTreeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).FlushShieldWordTireTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/FlushShieldWordTireTree",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).FlushShieldWordTireTree(ctx, req.(*FlushShieldWordTireTreeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -734,6 +768,10 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditMsg",
 			Handler:    _MsgService_EditMsg_Handler,
+		},
+		{
+			MethodName: "FlushShieldWordTireTree",
+			Handler:    _MsgService_FlushShieldWordTireTree_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
