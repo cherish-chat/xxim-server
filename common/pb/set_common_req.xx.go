@@ -177,3 +177,7 @@ func (x *SearchGroupsByKeywordReq) SetCommonReq(r *CommonReq) {
 func (x *AppGetAllConfigReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *SendSmsReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

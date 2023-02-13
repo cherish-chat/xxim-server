@@ -69,6 +69,16 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/getUserHome", route)
 		}
+		// SendSmsReq SendSmsResp
+		{
+			route := conngateway.Route[*pb.SendSmsReq, *pb.SendSmsResp]{
+				NewRequest: func() *pb.SendSmsReq {
+					return &pb.SendSmsReq{}
+				},
+				Do: svcCtx.UserService().SendSms,
+			}
+			conngateway.AddRoute("/v1/user/sendSms", route)
+		}
 	}
 	// 白名单
 	{
