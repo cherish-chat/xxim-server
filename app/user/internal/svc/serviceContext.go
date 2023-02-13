@@ -96,5 +96,5 @@ func (s *ServiceContext) GroupService() groupservice.GroupService {
 }
 
 func (s *ServiceContext) SmsSender() (xsms.SmsSender, error) {
-	return xsms.NewSmsSender(s.Config.Sms)
+	return xsms.NewSmsSender(s.Config.Sms.ToPb())
 }
