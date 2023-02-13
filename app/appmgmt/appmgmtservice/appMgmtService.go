@@ -17,6 +17,8 @@ type (
 	AddAppMgmtEmojiGroupResp       = pb.AddAppMgmtEmojiGroupResp
 	AddAppMgmtEmojiReq             = pb.AddAppMgmtEmojiReq
 	AddAppMgmtEmojiResp            = pb.AddAppMgmtEmojiResp
+	AddAppMgmtLinkReq              = pb.AddAppMgmtLinkReq
+	AddAppMgmtLinkResp             = pb.AddAppMgmtLinkResp
 	AddAppMgmtNoticeReq            = pb.AddAppMgmtNoticeReq
 	AddAppMgmtNoticeResp           = pb.AddAppMgmtNoticeResp
 	AddAppMgmtShieldWordReq        = pb.AddAppMgmtShieldWordReq
@@ -25,9 +27,12 @@ type (
 	AddAppMgmtVersionResp          = pb.AddAppMgmtVersionResp
 	AddAppMgmtVpnReq               = pb.AddAppMgmtVpnReq
 	AddAppMgmtVpnResp              = pb.AddAppMgmtVpnResp
+	AppGetAllConfigReq             = pb.AppGetAllConfigReq
+	AppGetAllConfigResp            = pb.AppGetAllConfigResp
 	AppMgmtConfig                  = pb.AppMgmtConfig
 	AppMgmtEmoji                   = pb.AppMgmtEmoji
 	AppMgmtEmojiGroup              = pb.AppMgmtEmojiGroup
+	AppMgmtLink                    = pb.AppMgmtLink
 	AppMgmtNotice                  = pb.AppMgmtNotice
 	AppMgmtShieldWord              = pb.AppMgmtShieldWord
 	AppMgmtVersion                 = pb.AppMgmtVersion
@@ -36,6 +41,8 @@ type (
 	DeleteAppMgmtEmojiGroupResp    = pb.DeleteAppMgmtEmojiGroupResp
 	DeleteAppMgmtEmojiReq          = pb.DeleteAppMgmtEmojiReq
 	DeleteAppMgmtEmojiResp         = pb.DeleteAppMgmtEmojiResp
+	DeleteAppMgmtLinkReq           = pb.DeleteAppMgmtLinkReq
+	DeleteAppMgmtLinkResp          = pb.DeleteAppMgmtLinkResp
 	DeleteAppMgmtNoticeReq         = pb.DeleteAppMgmtNoticeReq
 	DeleteAppMgmtNoticeResp        = pb.DeleteAppMgmtNoticeResp
 	DeleteAppMgmtShieldWordReq     = pb.DeleteAppMgmtShieldWordReq
@@ -50,6 +57,8 @@ type (
 	GetAllAppMgmtEmojiGroupResp    = pb.GetAllAppMgmtEmojiGroupResp
 	GetAllAppMgmtEmojiReq          = pb.GetAllAppMgmtEmojiReq
 	GetAllAppMgmtEmojiResp         = pb.GetAllAppMgmtEmojiResp
+	GetAllAppMgmtLinkReq           = pb.GetAllAppMgmtLinkReq
+	GetAllAppMgmtLinkResp          = pb.GetAllAppMgmtLinkResp
 	GetAllAppMgmtNoticeReq         = pb.GetAllAppMgmtNoticeReq
 	GetAllAppMgmtNoticeResp        = pb.GetAllAppMgmtNoticeResp
 	GetAllAppMgmtShieldWordReq     = pb.GetAllAppMgmtShieldWordReq
@@ -62,6 +71,8 @@ type (
 	GetAppMgmtEmojiDetailResp      = pb.GetAppMgmtEmojiDetailResp
 	GetAppMgmtEmojiGroupDetailReq  = pb.GetAppMgmtEmojiGroupDetailReq
 	GetAppMgmtEmojiGroupDetailResp = pb.GetAppMgmtEmojiGroupDetailResp
+	GetAppMgmtLinkDetailReq        = pb.GetAppMgmtLinkDetailReq
+	GetAppMgmtLinkDetailResp       = pb.GetAppMgmtLinkDetailResp
 	GetAppMgmtNoticeDetailReq      = pb.GetAppMgmtNoticeDetailReq
 	GetAppMgmtNoticeDetailResp     = pb.GetAppMgmtNoticeDetailResp
 	GetAppMgmtShieldWordDetailReq  = pb.GetAppMgmtShieldWordDetailReq
@@ -76,6 +87,8 @@ type (
 	UpdateAppMgmtEmojiGroupResp    = pb.UpdateAppMgmtEmojiGroupResp
 	UpdateAppMgmtEmojiReq          = pb.UpdateAppMgmtEmojiReq
 	UpdateAppMgmtEmojiResp         = pb.UpdateAppMgmtEmojiResp
+	UpdateAppMgmtLinkReq           = pb.UpdateAppMgmtLinkReq
+	UpdateAppMgmtLinkResp          = pb.UpdateAppMgmtLinkResp
 	UpdateAppMgmtNoticeReq         = pb.UpdateAppMgmtNoticeReq
 	UpdateAppMgmtNoticeResp        = pb.UpdateAppMgmtNoticeResp
 	UpdateAppMgmtShieldWordReq     = pb.UpdateAppMgmtShieldWordReq
@@ -118,6 +131,12 @@ type (
 		AddAppMgmtNotice(ctx context.Context, in *AddAppMgmtNoticeReq, opts ...grpc.CallOption) (*AddAppMgmtNoticeResp, error)
 		UpdateAppMgmtNotice(ctx context.Context, in *UpdateAppMgmtNoticeReq, opts ...grpc.CallOption) (*UpdateAppMgmtNoticeResp, error)
 		DeleteAppMgmtNotice(ctx context.Context, in *DeleteAppMgmtNoticeReq, opts ...grpc.CallOption) (*DeleteAppMgmtNoticeResp, error)
+		GetAllAppMgmtLink(ctx context.Context, in *GetAllAppMgmtLinkReq, opts ...grpc.CallOption) (*GetAllAppMgmtLinkResp, error)
+		GetAppMgmtLinkDetail(ctx context.Context, in *GetAppMgmtLinkDetailReq, opts ...grpc.CallOption) (*GetAppMgmtLinkDetailResp, error)
+		AddAppMgmtLink(ctx context.Context, in *AddAppMgmtLinkReq, opts ...grpc.CallOption) (*AddAppMgmtLinkResp, error)
+		UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error)
+		DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
+		AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -289,4 +308,34 @@ func (m *defaultAppMgmtService) UpdateAppMgmtNotice(ctx context.Context, in *Upd
 func (m *defaultAppMgmtService) DeleteAppMgmtNotice(ctx context.Context, in *DeleteAppMgmtNoticeReq, opts ...grpc.CallOption) (*DeleteAppMgmtNoticeResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.DeleteAppMgmtNotice(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtLink(ctx context.Context, in *GetAllAppMgmtLinkReq, opts ...grpc.CallOption) (*GetAllAppMgmtLinkResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtLink(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtLinkDetail(ctx context.Context, in *GetAppMgmtLinkDetailReq, opts ...grpc.CallOption) (*GetAppMgmtLinkDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtLinkDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtLink(ctx context.Context, in *AddAppMgmtLinkReq, opts ...grpc.CallOption) (*AddAppMgmtLinkResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtLink(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtLink(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtLink(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AppGetAllConfig(ctx, in, opts...)
 }
