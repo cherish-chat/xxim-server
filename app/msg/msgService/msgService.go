@@ -22,6 +22,8 @@ type (
 	BatchSetMinSeqResp              = pb.BatchSetMinSeqResp
 	EditMsgReq                      = pb.EditMsgReq
 	EditMsgResp                     = pb.EditMsgResp
+	FlushShieldWordTireTreeReq      = pb.FlushShieldWordTireTreeReq
+	FlushShieldWordTireTreeResp     = pb.FlushShieldWordTireTreeResp
 	FlushUsersSubConvReq            = pb.FlushUsersSubConvReq
 	GetAllMsgListReq                = pb.GetAllMsgListReq
 	GetAllMsgListResp               = pb.GetAllMsgListResp
@@ -76,6 +78,8 @@ type (
 		ReadMsg(ctx context.Context, in *ReadMsgReq, opts ...grpc.CallOption) (*ReadMsgResp, error)
 		// EditMsg 编辑消息
 		EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error)
+		// FlushShieldWordTireTree 刷新屏蔽词
+		FlushShieldWordTireTree(ctx context.Context, in *FlushShieldWordTireTreeReq, opts ...grpc.CallOption) (*FlushShieldWordTireTreeResp, error)
 	}
 
 	defaultMsgService struct {
@@ -189,4 +193,10 @@ func (m *defaultMsgService) ReadMsg(ctx context.Context, in *ReadMsgReq, opts ..
 func (m *defaultMsgService) EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error) {
 	client := pb.NewMsgServiceClient(m.cli.Conn())
 	return client.EditMsg(ctx, in, opts...)
+}
+
+// FlushShieldWordTireTree 刷新屏蔽词
+func (m *defaultMsgService) FlushShieldWordTireTree(ctx context.Context, in *FlushShieldWordTireTreeReq, opts ...grpc.CallOption) (*FlushShieldWordTireTreeResp, error) {
+	client := pb.NewMsgServiceClient(m.cli.Conn())
+	return client.FlushShieldWordTireTree(ctx, in, opts...)
 }

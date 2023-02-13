@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -32,18 +33,33 @@ func (l *GetAllMsgListLogic) GetAllMsgList(in *pb.GetAllMsgListReq) (*pb.GetAllM
 		in.Page = &pb.Page{Page: 1, Size: 15}
 	}
 	var models []*msgmodel.Msg
-	wheres := xorm.NewGormWhere()
-	if in.Filter != nil {
-		for k, v := range in.Filter {
-			if v == "" {
-				continue
-			}
-			switch k {
-			case "convId":
-				wheres = append(wheres, xorm.Where("convId = ?", v))
-			}
-		}
+	// 查询会话maxSeq
+	var convMaxSeq map[string]*convSeq
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "BatchGetConvSeq", func(ctx context.Context) {
+		convMaxSeq, err = BatchGetConvMaxSeq(l.svcCtx.Redis(), l.ctx, "", []string{in.ConvId})
+
+	})
+	if err != nil {
+		l.Errorf("BatchGetConvSeq err: %v", err)
+		return &pb.GetAllMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
+	maxSeq, ok := convMaxSeq[in.ConvId]
+	if !ok {
+		return &pb.GetAllMsgListResp{CommonResp: pb.NewSuccessResp()}, nil
+	}
+	if maxSeq.maxSeq < 1 {
+		return &pb.GetAllMsgListResp{CommonResp: pb.NewSuccessResp()}, nil
+	}
+	var idList []string
+	for i := maxSeq.maxSeq - int64((in.Page.Page-1)*in.Page.Size); i > 0; i-- {
+		if len(idList) >= int(in.Page.Size) {
+			break
+		}
+		idList = append(idList, pb.ServerMsgId(in.ConvId, i))
+	}
+	wheres := xorm.NewGormWhere()
+	wheres = append(wheres, xorm.Where("id in (?)", idList))
 	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &msgmodel.Msg{}, in.Page.Page, in.Page.Size, "serverTime DESC", wheres...)
 	if err != nil {
 		l.Errorf("GetList err: %v", err)

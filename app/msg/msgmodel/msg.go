@@ -21,13 +21,13 @@ type (
 		// 服务端生成的消息id convId+seq
 		ServerMsgId string `bson:"_id" gorm:"column:id;primary_key;type:char(128);"`
 		// 会话id // 单聊：sender_id + receiver_id // 群聊：group_id
-		ConvId string `bson:"convId" gorm:"column:convId;type:char(96);index;"`
+		ConvId string `bson:"convId" gorm:"column:convId;type:char(96);index;index:servertime_convid;"`
 		// 客户端生成的消息id
 		ClientMsgId string `bson:"clientMsgId" gorm:"column:clientMsgId;type:char(128);index;"`
 		// 客户端发送消息的时间 13位时间戳
-		ClientTime int64 `bson:"clientTime" gorm:"column:clientTime;type:bigint;index;"`
-		// 服务端接收到消息的时间 13位时间戳
-		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index;"`
+		ClientTime int64 `bson:"clientTime" gorm:"column:clientTime;type:bigint;index,sort:desc;;"`
+		// 服务端接收到消息的时间 13位时间戳 index DESC
+		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index,sort:desc;index:servertime_convid;"`
 		// 发送者id
 		SenderId string `bson:"senderId" gorm:"column:senderId;type:char(32);index;"`
 		// 发送者信息

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -88,6 +89,56 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		}
 		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx) {
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
+		}
+	}
+	// 我和他的信息
+	var self *usermodel.User
+	var to *usermodel.User
+	{
+		var mapUserResp *pb.MapUserByIdsResp
+		var err error
+		mapUserResp, err = l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
+			CommonReq: in.CommonReq,
+			Ids:       []string{in.CommonReq.UserId, in.To},
+		})
+		if err != nil {
+			l.Errorf("MapUserByIds failed, err: %v", err)
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		selfBuf, ok := mapUserResp.Users[in.CommonReq.UserId]
+		if !ok {
+			l.Errorf("MapUserByIds failed, err: %v", err)
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		self = usermodel.UserFromBytes(selfBuf)
+		toBuf, ok := mapUserResp.Users[in.To]
+		if !ok {
+			l.Errorf("MapUserByIds failed, err: %v", err)
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		to = usermodel.UserFromBytes(toBuf)
+	}
+	// 如果我的角色是用户
+	if self.Role == usermodel.RoleUser || self.Role == usermodel.RoleGuest {
+		// 如果对方的角色是用户
+		if to.Role == usermodel.RoleUser {
+			// 用户能否添加用户为好友
+			if !l.svcCtx.ConfigMgr.UserCanAddUserAsFriend(l.ctx) {
+				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加用户为好友"))}, nil
+			}
+		} else if to.Role == usermodel.RoleGuest {
+			// 用户能否添加游客为好友
+			if !l.svcCtx.ConfigMgr.UserCanAddGuestAsFriend(l.ctx) {
+				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加游客为好友"))}, nil
+			}
+		} else if to.Role == usermodel.RoleService {
+			// 用户能否添加客服为好友
+			if !l.svcCtx.ConfigMgr.UserCanAddServiceAsFriend(l.ctx) {
+				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加客服为好友"))}, nil
+			}
+		} else {
+			l.Errorf("unknown role: %v", to.Role)
+			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "对方角色异常"))}, nil
 		}
 	}
 	// 对方的加好友设置

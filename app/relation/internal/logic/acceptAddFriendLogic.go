@@ -163,6 +163,10 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 			selfInfo, ok := userByIds.Users[in.CommonReq.UserId]
 			if ok {
 				self := usermodel.UserFromBytes(selfInfo)
+				text := "我们已经是好友了，快来聊天吧"
+				if in.SendTextMsg != nil && *in.SendTextMsg != "" {
+					text = *in.SendTextMsg
+				}
 				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
 					msgmodel.CreateTextMsgToUser(
 						&pb.UserBaseInfo{
@@ -173,18 +177,18 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 							Birthday: self.Birthday,
 						},
 						in.ApplyUserId,
-						l.svcCtx.T(in.CommonReq.Language, "我们已经是好友了，快来聊天吧"),
+						l.svcCtx.T(in.CommonReq.Language, text),
 						msgmodel.MsgOptions{
 							OfflinePush:       true,
 							StorageForServer:  true,
 							StorageForClient:  true,
-							UpdateUnreadCount: false,
+							UpdateUnreadCount: true,
 							NeedDecrypt:       false,
 							UpdateConvMsg:     true,
 						},
 						&msgmodel.MsgOfflinePush{
 							Title:   self.Nickname,
-							Content: "我们已经是好友了，快来聊天吧",
+							Content: text,
 							Payload: "",
 						},
 						nil,

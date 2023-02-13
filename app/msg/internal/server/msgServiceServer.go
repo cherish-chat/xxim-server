@@ -123,3 +123,9 @@ func (s *MsgServiceServer) EditMsg(ctx context.Context, in *pb.EditMsgReq) (*pb.
 	l := logic.NewEditMsgLogic(ctx, s.svcCtx)
 	return l.EditMsg(in)
 }
+
+// FlushShieldWordTireTree 刷新屏蔽词
+func (s *MsgServiceServer) FlushShieldWordTireTree(ctx context.Context, in *pb.FlushShieldWordTireTreeReq) (*pb.FlushShieldWordTireTreeResp, error) {
+	l := logic.NewFlushShieldWordTireTreeLogic(ctx, s.svcCtx)
+	return l.FlushShieldWordTireTree(in)
+}

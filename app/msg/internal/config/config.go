@@ -10,6 +10,7 @@ import (
 type Config struct {
 	zrpc.RpcServerConf
 	TDMQ struct {
+		Enabled bool `json:",default=true"`
 		xtdmq.TDMQConfig
 		xtdmq.TDMQConsumerConfig
 		Producer                xtdmq.TDMQProducerConfig
