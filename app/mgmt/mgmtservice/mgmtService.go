@@ -91,7 +91,9 @@ type (
 	GetServerAllConfigResp_NoticeRpcConfig   = pb.GetServerAllConfigResp_NoticeRpcConfig
 	GetServerAllConfigResp_RedisConfig       = pb.GetServerAllConfigResp_RedisConfig
 	GetServerAllConfigResp_RelationRpcConfig = pb.GetServerAllConfigResp_RelationRpcConfig
+	GetServerAllConfigResp_SmsConfig         = pb.GetServerAllConfigResp_SmsConfig
 	GetServerAllConfigResp_TelemetryConfig   = pb.GetServerAllConfigResp_TelemetryConfig
+	GetServerAllConfigResp_TencentSmsConfig  = pb.GetServerAllConfigResp_TencentSmsConfig
 	GetServerAllConfigResp_UserRpcConfig     = pb.GetServerAllConfigResp_UserRpcConfig
 	GetServerConfigReq                       = pb.GetServerConfigReq
 	GetServerConfigResp                      = pb.GetServerConfigResp

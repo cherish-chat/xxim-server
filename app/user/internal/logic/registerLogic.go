@@ -142,7 +142,24 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		if *in.SmsCode == "" {
 			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，短信验证码为空")}, nil
 		}
-		//TODO: 验证smsCode
+		var verifySmsResp *pb.VerifySmsResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "checkSmsCode", func(ctx context.Context) {
+			verifySmsResp, err = NewVerifySmsLogic(ctx, l.svcCtx).VerifySms(&pb.VerifySmsReq{
+				Phone:       mobile,
+				CountryCode: in.MobileCountryCode,
+				Scene:       "register",
+				Code:        *in.SmsCode,
+				Delete:      true,
+			})
+		})
+		if err != nil {
+			l.Errorf("check sms code err: %v", err)
+			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if verifySmsResp.GetCommonResp().Code != pb.CommonResp_Success {
+			return &pb.RegisterResp{CommonResp: verifySmsResp.GetCommonResp()}, nil
+		}
 	}
 	// 是否必填头像
 	var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(l.ctx), "")

@@ -124,6 +124,20 @@ type (
 	}
 	UserRpcConfig struct {
 		Port int64 // default: 6704
+		Sms  SmsConfig
+	}
+	SmsConfig struct {
+		Enabled    bool   // default: false
+		Type       string // default: tencent, options: tencent
+		TencentSms TencentSmsConfig
+	}
+	TencentSmsConfig struct {
+		AppId      string
+		SecretId   string
+		SecretKey  string
+		Region     string // default: ap-guangzhou
+		Sign       string
+		TemplateId string
 	}
 	RelationRpcConfig struct {
 		Port int64 // default: 6705
@@ -203,6 +217,11 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 		},
 		UserRpc: UserRpcConfig{
 			Port: 6704,
+			Sms: SmsConfig{
+				Enabled:    false,
+				Type:       "tencent",
+				TencentSms: TencentSmsConfig{},
+			},
 		},
 		RelationRpc: RelationRpcConfig{
 			Port: 6705,

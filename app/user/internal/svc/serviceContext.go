@@ -9,6 +9,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/utils/xsms"
 	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -92,4 +93,8 @@ func (s *ServiceContext) GroupService() groupservice.GroupService {
 		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
 	}
 	return s.groupService
+}
+
+func (s *ServiceContext) SmsSender() (xsms.SmsSender, error) {
+	return xsms.NewSmsSender(s.Config.Sms)
 }

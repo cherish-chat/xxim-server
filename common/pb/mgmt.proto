@@ -88,6 +88,20 @@ message GetServerAllConfigResp {
   }
   message UserRpcConfig {
     int64 port = 1;
+    SmsConfig sms = 2;
+  }
+  message SmsConfig {
+    bool enabled = 1;
+    string type = 2;
+    TencentSmsConfig tencentSms = 3;
+  }
+  message TencentSmsConfig {
+    string appId = 1;
+    string secretId = 2;
+    string secretKey = 3;
+    string region = 4;
+    string sign = 5;
+    string templateId = 6;
   }
   message RelationRpcConfig {
     int64 port = 1;

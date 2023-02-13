@@ -65,6 +65,8 @@ type UserServiceClient interface {
 	DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
 	SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
 	GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
+	SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
+	VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 }
 
 type userServiceClient struct {
@@ -444,6 +446,24 @@ func (c *userServiceClient) GetAllLoginRecord(ctx context.Context, in *GetAllLog
 	return out, nil
 }
 
+func (c *userServiceClient) SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error) {
+	out := new(SendSmsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/SendSms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
+	out := new(VerifySmsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/VerifySms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -491,6 +511,8 @@ type UserServiceServer interface {
 	DeleteUserModel(context.Context, *DeleteUserModelReq) (*DeleteUserModelResp, error)
 	SwitchUserModel(context.Context, *SwitchUserModelReq) (*SwitchUserModelResp, error)
 	GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error)
+	SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error)
+	VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -620,6 +642,12 @@ func (UnimplementedUserServiceServer) SwitchUserModel(context.Context, *SwitchUs
 }
 func (UnimplementedUserServiceServer) GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllLoginRecord not implemented")
+}
+func (UnimplementedUserServiceServer) SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendSms not implemented")
+}
+func (UnimplementedUserServiceServer) VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifySms not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -1372,6 +1400,42 @@ func _UserService_GetAllLoginRecord_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SendSms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendSmsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendSms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/SendSms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendSms(ctx, req.(*SendSmsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_VerifySms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifySmsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).VerifySms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/VerifySms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).VerifySms(ctx, req.(*VerifySmsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1542,6 +1606,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllLoginRecord",
 			Handler:    _UserService_GetAllLoginRecord_Handler,
+		},
+		{
+			MethodName: "SendSms",
+			Handler:    _UserService_SendSms_Handler,
+		},
+		{
+			MethodName: "VerifySms",
+			Handler:    _UserService_VerifySms_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

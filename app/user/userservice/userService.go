@@ -77,6 +77,8 @@ type (
 	RegisterResp                          = pb.RegisterResp
 	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
+	SendSmsReq                            = pb.SendSmsReq
+	SendSmsResp                           = pb.SendSmsResp
 	SetUserSettingsReq                    = pb.SetUserSettingsReq
 	SetUserSettingsResp                   = pb.SetUserSettingsResp
 	SwitchUserModelReq                    = pb.SwitchUserModelReq
@@ -105,6 +107,8 @@ type (
 	UserLoginRecord                       = pb.UserLoginRecord
 	UserModel                             = pb.UserModel
 	UserSetting                           = pb.UserSetting
+	VerifySmsReq                          = pb.VerifySmsReq
+	VerifySmsResp                         = pb.VerifySmsResp
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -150,6 +154,8 @@ type (
 		DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
 		SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
 		GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
+		SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
+		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 	}
 
 	defaultUserService struct {
@@ -368,4 +374,14 @@ func (m *defaultUserService) SwitchUserModel(ctx context.Context, in *SwitchUser
 func (m *defaultUserService) GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.GetAllLoginRecord(ctx, in, opts...)
+}
+
+func (m *defaultUserService) SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.SendSms(ctx, in, opts...)
+}
+
+func (m *defaultUserService) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.VerifySms(ctx, in, opts...)
 }

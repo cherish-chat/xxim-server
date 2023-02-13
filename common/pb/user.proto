@@ -821,6 +821,40 @@ message GetAllLoginRecordResp {
   int64 total = 3;
 }
 
+//SendSmsReq 发送短信请求
+message SendSmsReq {
+  CommonReq commonReq = 1;
+  string phone = 2;
+  optional string countryCode = 3;
+  // 业务场景
+  string scene = 4;
+  // 失效时间 分钟 默认5
+  optional int32 expireMinute = 5;
+}
+
+//SendSmsResp 发送短信响应
+message SendSmsResp {
+  CommonResp commonResp = 1;
+}
+
+//VerifySmsReq 验证短信请求
+message VerifySmsReq {
+  CommonReq commonReq = 1;
+  string phone = 2;
+  optional string countryCode = 3;
+  // 业务场景
+  string scene = 4;
+  // 验证码
+  string code = 5;
+  // 验证后是否删除
+  bool delete = 6;
+}
+
+//VerifySmsResp 验证短信响应
+message VerifySmsResp {
+  CommonResp commonResp = 1;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -872,4 +906,7 @@ service userService {
   rpc SwitchUserModel(SwitchUserModelReq) returns (SwitchUserModelResp) {}
 
   rpc GetAllLoginRecord(GetAllLoginRecordReq) returns (GetAllLoginRecordResp) {}
+
+  rpc SendSms(SendSmsReq) returns (SendSmsResp) {}
+  rpc VerifySms(VerifySmsReq) returns (VerifySmsResp) {}
 }

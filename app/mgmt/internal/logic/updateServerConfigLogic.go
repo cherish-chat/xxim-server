@@ -85,7 +85,18 @@ func (l *UpdateServerConfigLogic) UpdateServerConfig(in *pb.UpdateServerConfigRe
 				ProducerTimeout:   in.Config.MsgRpc.Pulsar.ProducerTimeout,
 			},
 		},
-		UserRpc:     mgmtmodel.UserRpcConfig{Port: in.Config.UserRpc.Port},
+		UserRpc: mgmtmodel.UserRpcConfig{Port: in.Config.UserRpc.Port, Sms: mgmtmodel.SmsConfig{
+			Enabled: in.Config.UserRpc.Sms.Enabled,
+			Type:    in.Config.UserRpc.Sms.Type,
+			TencentSms: mgmtmodel.TencentSmsConfig{
+				AppId:      in.Config.UserRpc.Sms.TencentSms.AppId,
+				SecretId:   in.Config.UserRpc.Sms.TencentSms.SecretId,
+				SecretKey:  in.Config.UserRpc.Sms.TencentSms.SecretKey,
+				Region:     in.Config.UserRpc.Sms.TencentSms.Region,
+				Sign:       in.Config.UserRpc.Sms.TencentSms.Sign,
+				TemplateId: in.Config.UserRpc.Sms.TencentSms.TemplateId,
+			},
+		}},
 		RelationRpc: mgmtmodel.RelationRpcConfig{Port: in.Config.RelationRpc.Port},
 		GroupRpc: mgmtmodel.GroupRpcConfig{
 			Port:                in.Config.GroupRpc.Port,

@@ -82,7 +82,18 @@ func (l *GetServerAllConfigLogic) GetServerAllConfig(in *pb.GetServerAllConfigRe
 			K8SNamespace: config.MsgRpc.K8sNamespace,
 			Endpoints:    config.MsgRpc.Endpoints,
 		},
-		UserRpc:     &pb.GetServerAllConfigResp_UserRpcConfig{Port: config.UserRpc.Port},
+		UserRpc: &pb.GetServerAllConfigResp_UserRpcConfig{Port: config.UserRpc.Port, Sms: &pb.GetServerAllConfigResp_SmsConfig{
+			Enabled: config.UserRpc.Sms.Enabled,
+			Type:    config.UserRpc.Sms.Type,
+			TencentSms: &pb.GetServerAllConfigResp_TencentSmsConfig{
+				AppId:      config.UserRpc.Sms.TencentSms.AppId,
+				SecretId:   config.UserRpc.Sms.TencentSms.SecretId,
+				SecretKey:  config.UserRpc.Sms.TencentSms.SecretKey,
+				Region:     config.UserRpc.Sms.TencentSms.Region,
+				Sign:       config.UserRpc.Sms.TencentSms.Sign,
+				TemplateId: config.UserRpc.Sms.TencentSms.TemplateId,
+			},
+		}},
 		RelationRpc: &pb.GetServerAllConfigResp_RelationRpcConfig{Port: config.RelationRpc.Port},
 		GroupRpc: &pb.GetServerAllConfigResp_GroupRpcConfig{
 			Port:                config.GroupRpc.Port,

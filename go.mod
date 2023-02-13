@@ -18,7 +18,8 @@ require (
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.10
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.593
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.593
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.41
 	github.com/zeromicro/go-zero v1.4.2

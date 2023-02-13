@@ -96,6 +96,10 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("signature_if_not_set", str("用户", "signature_if_not_set", "这个人很懒，什么都没留下", "用户未设置签名时的签名"))
 	// avatars_default 用户默认头像
 	m.insertIfNotFound("avatars_default", arrayStr("用户", "avatars_default", []string{}, "用户默认头像"))
+	// sms_error_limit.quota 短信错误限制次数
+	m.insertIfNotFound("sms_error_limit.quota", num("用户", "sms_error_limit.quota", 5, "短信错误限制次数"))
+	// sms_error_limit.period 短信错误限制周期
+	m.insertIfNotFound("sms_error_limit.period", num("用户", "sms_error_limit.period", 60, "短信错误限制周期"))
 
 	// 注册
 	// register.ip_limit.period 注册ip限制周期 单位秒
@@ -419,6 +423,16 @@ func (m *ConfigMgr) UserCanAddGuestAsFriend(ctx context.Context) bool {
 // UserPasswordErrorMaxCount login.password_error_limit
 func (m *ConfigMgr) UserPasswordErrorMaxCount(ctx context.Context) int64 {
 	return utils.AnyToInt64(m.GetCtx(ctx, "login.password_error_limit"))
+}
+
+// SmsErrorMaxCount sms_error_limit.quota
+func (m *ConfigMgr) SmsErrorMaxCount(ctx context.Context) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.quota"))
+}
+
+// SmsErrorPeriod sms_error_limit.period
+func (m *ConfigMgr) SmsErrorPeriod(ctx context.Context) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.period"))
 }
 
 // MessageShieldWordCheck message.shield_word.check

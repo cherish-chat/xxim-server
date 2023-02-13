@@ -692,9 +692,12 @@ github.com/swaggo/swag v1.8.1/go.mod h1:ugemnJsPZm/kRwFUnzBlbHRd0JY9zE1M4F+uy2pA
 github.com/swaggo/swag v1.8.10 h1:eExW4bFa52WOjqRzRD58bgWsWfdFJso50lpbeTcmTfo=
 github.com/swaggo/swag v1.8.10/go.mod h1:ezQVUUhly8dludpVk+/PuwJWvLLanB13ygV5Pr9enSk=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.194/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519 h1:EuhhXQDmc2zTZmFMmZPWp6PaPIM/gnRcqqbRyFA6UGw=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.519/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.593 h1:VjzQDGDVnKJDKtt/tzD4gAvzulnY3lDZqH+gOIggbu8=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.593/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/kms v1.0.194/go.mod h1:yrBKWhChnDqNz1xuXdSbWXG56XawEq0G5j1lg4VwBD4=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.593 h1:IbZOKY22QMNd5oZSTFnI6UPyS8b1fwK2JbNnHnP2sOQ=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.593/go.mod h1:j2ahY188kA//yiWIFkbnohJ8nB1qsiw3+cXMRAfW7fg=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519 h1:XEDNxjgjSGe6hcLuCURQZBFnD4WgFe+FOUHu1fkemZ4=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519/go.mod h1:JaFyZeXfmuG0ZG1kiOCqT5HqNn6CK8PUTlvwYZ2YSfc=
 github.com/tencentyun/cos-go-sdk-v5 v0.7.41 h1:iU0Li/Np78H4SBna0ECQoF3mpgi6ImLXU+doGzPFXGc=

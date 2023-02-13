@@ -228,3 +228,13 @@ func (s *UserServiceServer) GetAllLoginRecord(ctx context.Context, in *pb.GetAll
 	l := logic.NewGetAllLoginRecordLogic(ctx, s.svcCtx)
 	return l.GetAllLoginRecord(in)
 }
+
+func (s *UserServiceServer) SendSms(ctx context.Context, in *pb.SendSmsReq) (*pb.SendSmsResp, error) {
+	l := logic.NewSendSmsLogic(ctx, s.svcCtx)
+	return l.SendSms(in)
+}
+
+func (s *UserServiceServer) VerifySms(ctx context.Context, in *pb.VerifySmsReq) (*pb.VerifySmsResp, error) {
+	l := logic.NewVerifySmsLogic(ctx, s.svcCtx)
+	return l.VerifySms(in)
+}
