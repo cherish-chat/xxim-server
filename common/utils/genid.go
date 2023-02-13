@@ -40,3 +40,8 @@ func Md5(s string) string {
 	cipher := h.Sum(nil)
 	return hex.EncodeToString(cipher)
 }
+
+func Md516(s string) string {
+	// 将中间的第9位到第24位提取出来
+	return Md5(s)[8:24]
+}

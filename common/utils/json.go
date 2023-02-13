@@ -32,6 +32,8 @@ func AnyToString(t any) string {
 		return strconv.FormatUint(uint64(v), 10)
 	case uint:
 		return strconv.FormatUint(uint64(v), 10)
+	case bool:
+		return strconv.FormatBool(v)
 	default:
 		buf, _ := json.Marshal(v)
 		return string(buf)
