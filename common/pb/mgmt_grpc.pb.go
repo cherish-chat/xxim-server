@@ -27,6 +27,8 @@ type MgmtServiceClient interface {
 	GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 	GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 	UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
+	GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error)
+	UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error)
 	LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 	HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 	ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -112,6 +114,24 @@ func (c *mgmtServiceClient) GetServerAllConfig(ctx context.Context, in *GetServe
 func (c *mgmtServiceClient) UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error) {
 	out := new(UpdateServerConfigResp)
 	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateServerConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error) {
+	out := new(GetAppLineConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAppLineConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error) {
+	out := new(UpdateAppLineConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateAppLineConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -451,6 +471,8 @@ type MgmtServiceServer interface {
 	GetServerConfig(context.Context, *GetServerConfigReq) (*GetServerConfigResp, error)
 	GetServerAllConfig(context.Context, *GetServerAllConfigReq) (*GetServerAllConfigResp, error)
 	UpdateServerConfig(context.Context, *UpdateServerConfigReq) (*UpdateServerConfigResp, error)
+	GetAppLineConfig(context.Context, *GetAppLineConfigReq) (*GetAppLineConfigResp, error)
+	UpdateAppLineConfig(context.Context, *UpdateAppLineConfigReq) (*UpdateAppLineConfigResp, error)
 	LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error)
 	HealthMS(context.Context, *CommonReq) (*HealthMSResp, error)
 	ConfigMS(context.Context, *CommonReq) (*ConfigMSResp, error)
@@ -508,6 +530,12 @@ func (UnimplementedMgmtServiceServer) GetServerAllConfig(context.Context, *GetSe
 }
 func (UnimplementedMgmtServiceServer) UpdateServerConfig(context.Context, *UpdateServerConfigReq) (*UpdateServerConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateServerConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAppLineConfig(context.Context, *GetAppLineConfigReq) (*GetAppLineConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppLineConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateAppLineConfig(context.Context, *UpdateAppLineConfigReq) (*UpdateAppLineConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAppLineConfig not implemented")
 }
 func (UnimplementedMgmtServiceServer) LoginMS(context.Context, *LoginMSReq) (*LoginMSResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginMS not implemented")
@@ -716,6 +744,42 @@ func _MgmtService_UpdateServerConfig_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MgmtServiceServer).UpdateServerConfig(ctx, req.(*UpdateServerConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAppLineConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppLineConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAppLineConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAppLineConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAppLineConfig(ctx, req.(*GetAppLineConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateAppLineConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAppLineConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateAppLineConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateAppLineConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateAppLineConfig(ctx, req.(*UpdateAppLineConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1394,6 +1458,14 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateServerConfig",
 			Handler:    _MgmtService_UpdateServerConfig_Handler,
+		},
+		{
+			MethodName: "GetAppLineConfig",
+			Handler:    _MgmtService_GetAppLineConfig_Handler,
+		},
+		{
+			MethodName: "UpdateAppLineConfig",
+			Handler:    _MgmtService_UpdateAppLineConfig_Handler,
 		},
 		{
 			MethodName: "LoginMS",

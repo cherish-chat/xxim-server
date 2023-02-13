@@ -82,6 +82,9 @@ message GetServerAllConfigResp {
     int64 port = 1;
     MobPushConfig mobPush = 2;
     MsgPulsarConfig pulsar = 3;
+    string discovType = 4;
+    string k8sNamespace = 5;
+    repeated string endpoints = 6;
   }
   message UserRpcConfig {
     int64 port = 1;
@@ -91,6 +94,8 @@ message GetServerAllConfigResp {
   }
   message GroupRpcConfig {
     int64 port = 1;
+    int64 maxGroupCount = 2;
+    int64 maxGroupMemberCount = 3;
   }
   message NoticeRpcConfig {
     int64 port = 1;
@@ -124,6 +129,76 @@ message UpdateServerConfigReq {
 
 //UpdateServerConfigResp 更新服务器配置响应
 message UpdateServerConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//AppLineConfig
+message AppLineConfig {
+  string config = 1;
+  string aesIv = 2;
+  string aesKey = 3;
+  message Storage {
+    string type = 1;
+    string objectId = 2;
+    message Cos {
+      string appId = 1;
+      string secretId = 2;
+      string secretKey = 3;
+      string bucketName = 4;
+      string region = 5;
+      string bucketUrl = 6;
+    }
+    message Oss {
+      string endpoint = 1;
+      string accessKeyId = 2;
+      string accessKeySecret = 3;
+      string bucketName = 4;
+      string bucketUrl = 5;
+    }
+    message Minio {
+      string endpoint = 1;
+      string accessKeyId = 2;
+      string secretAccessKey = 3;
+      string bucketName = 4;
+      bool ssl = 5;
+      string bucketUrl = 6;
+      string region = 7;
+    }
+    message Kodo {
+      string accessKey = 1;
+      string secretKey = 2;
+      string bucketName = 3;
+      string region = 4;
+      string bucketUrl = 5;
+      bool useHTTPS = 6;
+    }
+    Cos cos = 4;
+    Oss oss = 5;
+    Minio minio = 6;
+    Kodo kodo = 7;
+  }
+  Storage storage = 4;
+}
+
+//GetAppLineConfigReq 获取应用线路配置请求
+message GetAppLineConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppLineConfigResp 获取应用线路配置响应
+message GetAppLineConfigResp {
+  CommonResp commonResp = 1;
+  AppLineConfig appLineConfig = 2;
+}
+
+//UpdateAppLineConfigReq 更新应用线路配置请求
+message UpdateAppLineConfigReq {
+  CommonReq commonReq = 1;
+  AppLineConfig appLineConfig = 2;
+}
+
+//UpdateAppLineConfigResp 更新应用线路配置响应
+message UpdateAppLineConfigResp {
   CommonResp commonResp = 1;
 }
 
@@ -691,6 +766,8 @@ service mgmtService {
   rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
   rpc GetServerAllConfig(GetServerAllConfigReq) returns (GetServerAllConfigResp);
   rpc UpdateServerConfig(UpdateServerConfigReq) returns (UpdateServerConfigResp);
+  rpc GetAppLineConfig(GetAppLineConfigReq) returns (GetAppLineConfigResp);
+  rpc UpdateAppLineConfig(UpdateAppLineConfigReq) returns (UpdateAppLineConfigResp);
 
   rpc LoginMS(LoginMSReq) returns (LoginMSResp);
   rpc HealthMS(CommonReq) returns (HealthMSResp);
