@@ -66,7 +66,8 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
-	l.Debugf("user %s connected", utils.AnyToString(param))
+	// 打印堆栈
+	l.Debugf("user %s connected", utils.AnyToString(param.UserId))
 	// 是否未认证的连接
 	if param.UserId == "" || param.Token == "" {
 		l.unknownConnMap.Store(c, struct{}{})
@@ -130,9 +131,6 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	}
 	// 删除用户连接
 	{
-		if _, ok := singletonUserConnStorage.LoadDeviceOk(c.ConnParam.UserId, c.ConnParam.Platform, c.ConnParam.DeviceId); !ok {
-			return
-		}
 		singletonUserConnStorage.DeleteDevice(c.ConnParam.UserId, c.ConnParam.Platform, c.ConnParam.DeviceId)
 	}
 	l.stats()
@@ -183,7 +181,7 @@ func (l *ConnLogic) stats() {
 	onlineDeviceCount := 0
 	var onlineUserIds []string
 	var onlineDeviceIds []string
-	singletonUserConnStorage.Range(func(id uint32, conn *types.UserConn) bool {
+	singletonUserConnStorage.Range(func(id string, conn *types.UserConn) bool {
 		onlineUserIds = append(onlineUserIds, conn.ConnParam.UserId)
 		onlineDeviceIds = append(onlineDeviceIds, conn.ConnParam.DeviceId)
 		return true
@@ -264,7 +262,7 @@ func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {
 func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*types.UserConn {
 	conns := make([]*types.UserConn, 0)
 	{
-		singletonUserConnStorage.Range(func(id uint32, conn *types.UserConn) bool {
+		singletonUserConnStorage.Range(func(id string, conn *types.UserConn) bool {
 			if filter(conn) {
 				conns = append(conns, conn)
 			}

@@ -8,6 +8,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -48,6 +50,13 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		xtrace.StartFuncSpan(ctx, method+"/BeforeRequest", func(ctx context.Context) {
 			beforeRequestResp, err = svcCtx.ImService().BeforeRequest(ctx, &pb.BeforeRequestReq{CommonReq: commonReq, Method: method})
 			if err != nil {
+				// 判断是不是 status.Error(codes.Unauthenticated, "ip被封禁")
+				statusError, ok := status.FromError(err)
+				if ok && statusError.Code() == codes.Unauthenticated {
+					// 被封禁
+					c.Conn.Close(types.WebsocketStatusCodeAuthFailed(3000), statusError.Message())
+					return
+				}
 				logger.Errorf("BeforeRequest err: %v", err)
 				return
 			}

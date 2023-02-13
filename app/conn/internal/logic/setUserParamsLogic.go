@@ -8,6 +8,8 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type SetUserParamsLogic struct {
@@ -54,6 +56,12 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("BeforeConnect err: %v", err)
+		statusError, ok := status.FromError(err)
+		if ok && statusError.Code() == codes.Unauthenticated {
+			// 被封禁
+			c.Conn.Close(types.WebsocketStatusCodeAuthFailed(3000), statusError.Message())
+			return
+		}
 		// 断开连接
 		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(1), "认证失败，请重新登录")
 		return

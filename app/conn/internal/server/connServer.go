@@ -2,6 +2,8 @@ package server
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic"
+	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
+	"github.com/cherish-chat/xxim-server/app/conn/internal/server/route"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/server/tcp"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/server/ws"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
@@ -28,7 +30,17 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 		server.SetOnReceive(l.OnReceive)
 	}
 	s.Servers = servers
-	s.registerGateway()
+	{
+		conngateway.Init(s.svcCtx)
+		route.RegisterAppMgmt(s.svcCtx)
+		route.RegisterConn(s.svcCtx)
+		route.RegisterGroup(s.svcCtx)
+		route.RegisterMsg(s.svcCtx)
+		route.RegisterNotice(s.svcCtx)
+		route.RegisterRelation(s.svcCtx)
+		route.RegisterUser(s.svcCtx)
+		conngateway.PrintRoutes()
+	}
 	go l.Stats()
 	return s
 }

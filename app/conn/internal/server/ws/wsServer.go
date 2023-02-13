@@ -219,6 +219,9 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 			} else if strings.Contains(err.Error(), "connection reset by peer") {
 				// 网络断开
 				logx.Infof("websocket closed: %v", err)
+			} else if strings.Contains(err.Error(), "corrupt input") {
+				// 输入数据错误
+				logx.Infof("websocket closed: %v", err)
 			} else {
 				logx.Errorf("failed to read message: %v", err)
 			}

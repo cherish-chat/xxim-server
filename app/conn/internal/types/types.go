@@ -13,7 +13,7 @@ type (
 		Read(ctx context.Context) (int, []byte, error)
 	}
 	UserConn struct {
-		Id          uint32
+		Pointer     string
 		Conn        IConn
 		ConnParam   ConnParam
 		Ctx         context.Context

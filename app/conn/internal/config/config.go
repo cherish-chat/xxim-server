@@ -17,5 +17,6 @@ type Config struct {
 	RelationRpc zrpc.RpcClientConf
 	UserRpc     zrpc.RpcClientConf
 	GroupRpc    zrpc.RpcClientConf
+	AppMgmtRpc  zrpc.RpcClientConf
 	NoticeRpc   zrpc.RpcClientConf
 }

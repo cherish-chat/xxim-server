@@ -2,11 +2,13 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
+	"nhooyr.io/websocket"
 	"sync"
 )
 
@@ -26,10 +28,10 @@ type UserConnStorage struct {
 	maxId      uint32
 }
 type connValue struct {
-	Id       uint32
 	UserId   string
 	Platform string
 	DeviceId string
+	Pointer  string // 指针
 }
 
 var singletonUserConnStorage *UserConnStorage
@@ -61,7 +63,7 @@ func (l *UserConnStorage) LoadOk(userId string) (map[string]map[string]*types.Us
 		if _, ok := connMap[cv.Platform]; !ok {
 			connMap[cv.Platform] = make(map[string]*types.UserConn)
 		}
-		conn, ok := l.getConn(cv.Id)
+		conn, ok := l.getConn(cv.Pointer)
 		if !ok {
 			continue
 		}
@@ -103,22 +105,22 @@ func (l *UserConnStorage) LoadPlatformOk(userId, platform string) (map[string]*t
 func (l *UserConnStorage) UpdateDevice(userId, platform, deviceId string, conn *types.UserConn) error {
 	// hset
 	cv := &connValue{
-		Id:       l.incId(),
 		UserId:   userId,
 		Platform: platform,
 		DeviceId: deviceId,
+		Pointer:  fmt.Sprintf("%p", conn),
 	}
-	conn.Id = cv.Id
+	conn.Pointer = cv.Pointer
 	cvBytes, _ := json.Marshal(cv)
-	l.connMap.Store(cv.Id, conn)
+	l.connMap.Store(cv.Pointer, conn)
 	l.connLength++
-	err := l.svcCtx.Redis().Hset(l.redisKey, utils.AnyToString(cv.Id), string(cvBytes))
+	err := l.svcCtx.Redis().Hset(l.redisKey, utils.AnyToString(cv.Pointer), string(cvBytes))
 	if err != nil {
 		logx.Errorf("UpdateDevice Hset error: %v", err)
 	}
 	go func() {
-		// Expire 2小时
-		err := l.svcCtx.Redis().Expire(l.redisKey, 2*60*60)
+		// Expire 7天
+		err := l.svcCtx.Redis().Expire(l.redisKey, 24*60*60*7)
 		if err != nil {
 			logx.Errorf("UpdateDevice Expire error: %v", err)
 		}
@@ -129,13 +131,15 @@ func (l *UserConnStorage) UpdateDevice(userId, platform, deviceId string, conn *
 // DeleteDevice 删除用户设备的连接
 func (l *UserConnStorage) DeleteDevice(userId, platform, deviceId string) error {
 	conn, ok := l.LoadDeviceOk(userId, platform, deviceId)
+	logx.Debugf("DeleteDevice LoadDeviceOk: %v %v %v %v", userId, platform, deviceId, ok)
 	if !ok {
 		return nil
 	}
-	l.connMap.Delete(conn.Id)
+	l.connMap.Delete(conn.Pointer)
 	l.connLength--
 	// hdel
-	_, err := l.svcCtx.Redis().Hdel(l.redisKey, utils.AnyToString(conn.Id))
+	_, err := l.svcCtx.Redis().Hdel(l.redisKey, utils.AnyToString(conn.Pointer))
+	logx.Debugf("DeleteDevice Hdel: %v %v", conn.Pointer, err)
 	if err != nil {
 		logx.Errorf("DeleteDevice Hdel error: %v", err)
 		return err
@@ -143,37 +147,48 @@ func (l *UserConnStorage) DeleteDevice(userId, platform, deviceId string) error 
 	return nil
 }
 
-func (l *UserConnStorage) Range(f func(id uint32, conn *types.UserConn) bool) {
+func (l *UserConnStorage) Range(f func(id string, conn *types.UserConn) bool) {
 	// hgetall
 	hgetall, err := l.svcCtx.Redis().Hgetall(l.redisKey)
 	if err != nil {
 		return
 	}
+	var userDeviceMap = make(map[string]map[string]*types.UserConn)
 	// hgetall -> key: id value: connValue
-	for k, v := range hgetall {
-		id := uint32(utils.AnyToInt64(k))
-		cv := &connValue{}
-		_ = json.Unmarshal([]byte(v), cv)
-		conn, ok := l.getConn(id)
+	for pointer := range hgetall {
+		conn, ok := l.getConn(pointer)
 		if !ok {
 			continue
 		}
-		if !f(id, conn) {
+		if _, ok := userDeviceMap[conn.ConnParam.UserId]; !ok {
+			userDeviceMap[conn.ConnParam.UserId] = make(map[string]*types.UserConn)
+		}
+		if found, ok := userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId]; !ok {
+			userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId] = conn
+		} else {
+			// 删除旧的连接
+			if found.Pointer != conn.Pointer {
+				if found.ConnectedAt.Sub(conn.ConnectedAt) < 0 {
+					found.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+					l.svcCtx.Redis().Hdel(l.redisKey, found.Pointer)
+					userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId] = conn
+				} else {
+					conn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+					l.svcCtx.Redis().Hdel(l.redisKey, conn.Pointer)
+				}
+			}
+		}
+		if !f(pointer, conn) {
 			break
 		}
 	}
 }
 
-func (l *UserConnStorage) getConn(id uint32) (*types.UserConn, bool) {
+func (l *UserConnStorage) getConn(id string) (*types.UserConn, bool) {
 	if v, ok := l.connMap.Load(id); ok {
 		return v.(*types.UserConn), true
 	}
 	// redis del
 	_, _ = l.svcCtx.Redis().Hdel(l.redisKey, utils.AnyToString(id))
 	return nil, false
-}
-
-func (l *UserConnStorage) incId() uint32 {
-	l.maxId++
-	return l.maxId
 }
