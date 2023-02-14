@@ -69,16 +69,6 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/getUserHome", route)
 		}
-		// SendSmsReq SendSmsResp
-		{
-			route := conngateway.Route[*pb.SendSmsReq, *pb.SendSmsResp]{
-				NewRequest: func() *pb.SendSmsReq {
-					return &pb.SendSmsReq{}
-				},
-				Do: svcCtx.UserService().SendSms,
-			}
-			conngateway.AddRoute("/v1/user/sendSms", route)
-		}
 	}
 	// 白名单
 	{
@@ -111,6 +101,26 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 				Do: svcCtx.UserService().Register,
 			}
 			conngateway.AddRoute("/v1/user/white/register", route)
+		}
+		// SendSmsReq SendSmsResp
+		{
+			route := conngateway.Route[*pb.SendSmsReq, *pb.SendSmsResp]{
+				NewRequest: func() *pb.SendSmsReq {
+					return &pb.SendSmsReq{}
+				},
+				Do: svcCtx.UserService().SendSms,
+			}
+			conngateway.AddRoute("/v1/user/white/sendSms", route)
+		}
+		// VerifySmsReq VerifySmsResp
+		{
+			route := conngateway.Route[*pb.VerifySmsReq, *pb.VerifySmsResp]{
+				NewRequest: func() *pb.VerifySmsReq {
+					return &pb.VerifySmsReq{}
+				},
+				Do: svcCtx.UserService().VerifySms,
+			}
+			conngateway.AddRoute("/v1/user/white/verifySms", route)
 		}
 	}
 }

@@ -51,3 +51,19 @@ func SmsCodeErrorKey(scene string, mobile string) string {
 	s = url.QueryEscape(s)
 	return s
 }
+
+// SmsSendLimitKey 短信发送限制
+func SmsSendLimitKey(scene string, mobile string) string {
+	s := "sms_send_limit:" + scene + ":" + mobile
+	// url编码
+	s = url.QueryEscape(s)
+	return s
+}
+
+// SmsSendLimitEverydayKey 每天短信发送限制
+func SmsSendLimitEverydayKey(scene string, mobile string) string {
+	s := "sms_send_limit_everyday:" + scene + ":" + mobile
+	// url编码
+	s = url.QueryEscape(s)
+	return s
+}

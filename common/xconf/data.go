@@ -100,6 +100,10 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("sms_error_limit.quota", num("用户", "sms_error_limit.quota", 5, "短信错误限制次数"))
 	// sms_error_limit.period 短信错误限制周期
 	m.insertIfNotFound("sms_error_limit.period", num("用户", "sms_error_limit.period", 60, "短信错误限制周期"))
+	// sms.send_limit.interval 短信发送间隔
+	m.insertIfNotFound("sms.send_limit.interval", num("用户", "sms.send_limit.interval", 60, "短信发送间隔"))
+	// sms.send_limit.everyday 每天短信发送次数
+	m.insertIfNotFound("sms.send_limit.everyday", num("用户", "sms.send_limit.everyday", 10, "每天短信发送次数"))
 
 	// 注册
 	// register.ip_limit.period 注册ip限制周期 单位秒
@@ -468,4 +472,14 @@ func (m *ConfigMgr) MessageShieldWordReplace(ctx context.Context) rune {
 // GroupAllowUserQuit group.quit_user.allow
 func (m *ConfigMgr) GroupAllowUserQuit(ctx context.Context) bool {
 	return m.GetCtx(ctx, "group.quit_user.allow") == "1"
+}
+
+// SmsSendLimitInterval sms.send_limit.interval
+func (m *ConfigMgr) SmsSendLimitInterval(ctx context.Context) int {
+	return int(utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.interval")))
+}
+
+// SmsSendLimitEveryday sms.send_limit.everyday
+func (m *ConfigMgr) SmsSendLimitEveryday(ctx context.Context) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.everyday"))
 }
