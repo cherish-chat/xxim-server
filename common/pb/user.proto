@@ -254,6 +254,7 @@ message UserInvitationCode {
   bool isEnable = 5;
   int32 defaultConvMode = 6; // 默认会话模式 0:添加所有预设会话 1:只添加一个会话(轮询) 2:只添加一个会话(随机) 3:不添加会话
   int64 createTime = 7;
+  int64 successUserCount = 8;
 
   int64 createdAt = 21;
   string createdAtStr = 22;

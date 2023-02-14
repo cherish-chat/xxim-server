@@ -267,6 +267,8 @@ func (l *RegisterLogic) afterRegister(ctx context.Context, in *pb.RegisterReq, u
 		tx = tx.Where("filterType = ?", 0)
 	}
 	if invitationCode != nil {
+		// 统计该注册码的用户数量
+		l.statisticInvitationCodeUserCount(ctx, invitationCode)
 		if invitationCode.DefaultConvMode == 0 {
 			// 添加所有预设会话
 		} else if invitationCode.DefaultConvMode == 1 {
@@ -344,5 +346,16 @@ func (l *RegisterLogic) afterRegister(ctx context.Context, in *pb.RegisterReq, u
 				l.Errorf("自动加入群组失败: %s", err.Error())
 			}
 		}
+	}
+}
+
+func (l *RegisterLogic) statisticInvitationCodeUserCount(ctx context.Context, code *usermodel.InvitationCode) {
+	// 统计该注册码的用户数量
+	var count int64
+	l.svcCtx.Mysql().Model(&usermodel.User{}).Where("invitationCode = ?", code.Code).Count(&count)
+	// 更新该注册码的用户数量
+	err := l.svcCtx.Mysql().Model(&usermodel.InvitationCode{}).Where("code = ?", code.Code).Update("successUserCount", count).Error
+	if err != nil {
+		l.Errorf("更新邀请码用户数量失败: %s", err.Error())
 	}
 }
