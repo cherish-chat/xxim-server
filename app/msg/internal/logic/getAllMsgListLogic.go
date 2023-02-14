@@ -58,9 +58,10 @@ func (l *GetAllMsgListLogic) GetAllMsgList(in *pb.GetAllMsgListReq) (*pb.GetAllM
 		}
 		idList = append(idList, pb.ServerMsgId(in.ConvId, i))
 	}
-	wheres := xorm.NewGormWhere()
-	wheres = append(wheres, xorm.Where("id in (?)", idList))
-	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &msgmodel.Msg{}, in.Page.Page, in.Page.Size, "serverTime DESC", wheres...)
+	err = l.svcCtx.Mysql().Model(&msgmodel.Msg{}).
+		Where("id in (?)", idList).
+		Order("serverTime DESC").
+		Limit(int(in.Page.Size)).Find(&models).Error
 	if err != nil {
 		l.Errorf("GetList err: %v", err)
 		return &pb.GetAllMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -105,7 +106,7 @@ func (l *GetAllMsgListLogic) GetAllMsgList(in *pb.GetAllMsgListReq) (*pb.GetAllM
 	}
 	return &pb.GetAllMsgListResp{
 		MsgDataList: resp,
-		Total:       count,
+		Total:       maxSeq.maxSeq,
 		UserMap:     userMap,
 	}, nil
 }
