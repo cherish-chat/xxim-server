@@ -70,6 +70,12 @@ func (s *GroupServiceServer) GetGroupMemberInfo(ctx context.Context, in *pb.GetG
 	return l.GetGroupMemberInfo(in)
 }
 
+//  MapGroupMemberInfoByIds 批量获取群成员信息
+func (s *GroupServiceServer) MapGroupMemberInfoByIds(ctx context.Context, in *pb.MapGroupMemberInfoByIdsReq) (*pb.MapGroupMemberInfoByIdsResp, error) {
+	l := logic.NewMapGroupMemberInfoByIdsLogic(ctx, s.svcCtx)
+	return l.MapGroupMemberInfoByIds(in)
+}
+
 // EditGroupInfo 编辑群信息
 func (s *GroupServiceServer) EditGroupInfo(ctx context.Context, in *pb.EditGroupInfoReq) (*pb.EditGroupInfoResp, error) {
 	l := logic.NewEditGroupInfoLogic(ctx, s.svcCtx)

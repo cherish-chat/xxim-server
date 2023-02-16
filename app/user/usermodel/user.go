@@ -258,6 +258,9 @@ func userFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.DB, ids []stri
 }
 
 func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) ([]*User, error) {
+	if len(ids) == 0 {
+		return make([]*User, 0), nil
+	}
 	users := make([]*User, 0)
 	vals, err := rc.MgetCtx(ctx, utils.UpdateSlice(ids, func(id string) string {
 		return rediskey.UserKey(id)

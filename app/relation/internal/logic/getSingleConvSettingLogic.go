@@ -106,7 +106,12 @@ func (l *GetSingleConvSettingLogic) notFound(in *pb.GetSingleConvSettingReq) (*p
 		IsShield:          utils.String2Bool(config["singleConvSetting_isShield_Default"]),
 		ChatBg:            config["singleConvSetting_chatBg_Default"],
 	}
-	err := l.svcCtx.Mysql().Model(dest).Create(dest).Error
+	err := relationmodel.FlushSingleConvSetting(l.ctx, l.svcCtx.Redis(), dest)
+	if err != nil {
+		l.Errorf("SetSingleConvSetting: %v", err)
+		return &pb.GetSingleConvSettingResp{CommonResp: pb.NewRetryErrorResp()}, nil
+	}
+	err = l.svcCtx.Mysql().Model(dest).Create(dest).Error
 	if err != nil {
 		l.Errorf("SetSingleConvSetting: %v", err)
 		return &pb.GetSingleConvSettingResp{CommonResp: pb.NewRetryErrorResp()}, nil

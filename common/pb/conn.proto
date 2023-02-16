@@ -152,6 +152,7 @@ message AfterDisconnectReq {
 //KeepAliveReq 心跳
 message KeepAliveReq {
   CommonReq commonReq = 1;
+  repeated string convIdList = 2;
 }
 
 message KeepAliveResp {

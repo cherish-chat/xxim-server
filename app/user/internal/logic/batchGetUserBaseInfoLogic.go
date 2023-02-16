@@ -41,6 +41,9 @@ func (l *BatchGetUserBaseInfoLogic) BatchGetUserBaseInfo(in *pb.BatchGetUserBase
 		userConnMap[conn.UserId] = conn
 	}
 	for _, user := range usersByIds {
+		if user.Id == "" {
+			continue
+		}
 		userConn, ok := userConnMap[user.Id]
 		if !ok {
 			userConn = &pb.GetUserLatestConnResp{}

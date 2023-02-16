@@ -152,6 +152,7 @@ func PageIndex(pageIndex string) int64 {
 const (
 	Platform_Android = "android"
 	Platform_IOS     = "ios"
+	Platfrom_Ipad    = "ipad"
 	Platform_Windows = "windows"
 	Platform_Mac     = "macos"
 	Platform_Linux   = "linux"
@@ -161,6 +162,7 @@ const (
 var PlatformMap = map[string]string{
 	Platform_Android: "安卓",
 	Platform_IOS:     "苹果",
+	Platfrom_Ipad:    "苹果平板",
 	Platform_Windows: "Windows",
 	Platform_Mac:     "MacOS",
 	Platform_Linux:   "Linux",

@@ -177,8 +177,7 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 					},
 					Filter: &pb.GetGroupMemberListReq_GetGroupMemberListFilter{NoDisturb: utils.AnyPtr(false)},
 					Opt: &pb.GetGroupMemberListReq_GetGroupMemberListOpt{
-						OnlyId:       utils.AnyPtr(true),
-						GetNotifyOpt: utils.AnyPtr(true),
+						OnlyId: utils.AnyPtr(true),
 					},
 				})
 				if err != nil {
@@ -228,17 +227,17 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 	})
 }
 
-func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgData, convId string, members ...*pb.GetGroupMemberListResp_GroupMember) {
+func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgData, convId string, members ...*pb.GroupMemberInfo) {
 	previewUids := make([]string, 0)
 	noPreviewUids := make([]string, 0)
 	for _, member := range members {
-		if member.NotifyOpt.NoDisturb {
+		if member.NoDisturb {
 			continue
 		}
-		if member.NotifyOpt.Preview {
-			previewUids = append(previewUids, member.UserId)
+		if member.Preview {
+			previewUids = append(previewUids, member.MemberId)
 		} else {
-			noPreviewUids = append(noPreviewUids, member.UserId)
+			noPreviewUids = append(noPreviewUids, member.MemberId)
 		}
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content

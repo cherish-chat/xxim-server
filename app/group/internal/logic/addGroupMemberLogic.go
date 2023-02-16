@@ -69,6 +69,8 @@ func (l *AddGroupMemberLogic) AddGroupMember(in *pb.AddGroupMemberReq) (*pb.AddG
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 	})
 	if err != nil {
 		l.Errorf("AddGroupMember error: %v", err)

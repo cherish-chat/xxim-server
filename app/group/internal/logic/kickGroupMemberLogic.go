@@ -149,6 +149,8 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				return err
 			}
 			return nil
+		}, func(tx *gorm.DB) error {
+			return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 		})
 	})
 	if err != nil {

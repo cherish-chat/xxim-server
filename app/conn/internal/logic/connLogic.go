@@ -85,7 +85,14 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 				// 是同一条连接
 				return
 			}
-			userConn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+			// 踢掉老的连接
+			if userConn.ConnectedAt.Before(c.ConnectedAt) {
+				// userConn 比 c 连接时间早，说明 userConn 是老连接，需要踢掉
+				userConn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+			} else {
+				// 打印两个连接
+				logx.WithContext(context.Background()).Infof("duplicate connection: %s, %s", utils.AnyToString(userConn.ConnParam), utils.AnyToString(c.ConnParam))
+			}
 		}
 		err := singletonUserConnStorage.UpdateDevice(param.UserId, param.Platform, param.DeviceId, c)
 		if err != nil {

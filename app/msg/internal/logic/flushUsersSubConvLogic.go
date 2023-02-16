@@ -30,7 +30,7 @@ func NewFlushUsersSubConvLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 // FlushUsersSubConv 刷新用户订阅的会话
 func (l *FlushUsersSubConvLogic) FlushUsersSubConv(in *pb.FlushUsersSubConvReq) (*pb.CommonResp, error) {
 	for _, userId := range utils.Set(in.UserIds) {
-		err := l.SetUserSubscriptions(userId)
+		err := l.SetUserSubscriptions(userId, in.CompareConvIds)
 		if err != nil {
 			l.Errorf("set user subscriptions error: %v", err)
 			return pb.NewRetryErrorResp(), err
@@ -39,7 +39,7 @@ func (l *FlushUsersSubConvLogic) FlushUsersSubConv(in *pb.FlushUsersSubConvReq) 
 	return &pb.CommonResp{}, nil
 }
 
-func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
+func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string, compareConvIds []string) error {
 	var convIds []string
 	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
 		UserId: userId,
@@ -49,13 +49,27 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string) error {
 		return err
 	}
 	convIds = convIdOfUser.ConvIds
+	convIdMap := make(map[string]bool)
+	for _, id := range convIds {
+		convIdMap[id] = true
+	}
+	for _, id := range compareConvIds {
+		// 是否存在
+		if _, ok := convIdMap[id]; !ok {
+			// 如果是单聊
+			if pb.IsSingleConv(id) {
+				// 也订阅
+				convIds = append(convIds, id)
+			}
+		}
+	}
 	// mzadd and setex
 	if len(convIds) > 0 {
 		var keys []string
 		for _, id := range convIds {
 			keys = append(keys, rediskey.ConvMembersSubscribed(id))
 		}
-		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*5)
+		err := xredis.MZAddEx(l.svcCtx.RedisSub(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*5)
 		if err != nil {
 			l.Errorf("mzaddex error: %v", err)
 			return err

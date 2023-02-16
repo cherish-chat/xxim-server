@@ -34,7 +34,7 @@ func (l *GetConvSubscribersLogic) GetConvSubscribers(in *pb.GetConvSubscribersRe
 	if in.LastActiveTime != nil {
 		min = *in.LastActiveTime
 	}
-	val, err := l.svcCtx.Redis().ZrangebyscoreWithScoresCtx(l.ctx, rediskey.ConvMembersSubscribed(in.ConvId), min, time.Now().UnixMilli()+1000*60*60)
+	val, err := l.svcCtx.RedisSub().ZrangebyscoreWithScoresCtx(l.ctx, rediskey.ConvMembersSubscribed(in.ConvId), min, time.Now().UnixMilli()+1000*60*60)
 	if err != nil {
 		if err == redis.Nil {
 			return &pb.GetConvSubscribersResp{}, nil

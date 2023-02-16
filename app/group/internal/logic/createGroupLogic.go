@@ -151,6 +151,8 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), group.Id)
 	})
 	if err != nil {
 		return &pb.CreateGroupResp{CommonResp: pb.NewRetryErrorResp()}, err

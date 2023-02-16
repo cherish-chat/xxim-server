@@ -193,7 +193,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	if count > 0 {
-		l.Errorf("用户已存在: %s", in.Id)
+		l.Infof("用户已存在: %s", in.Id)
 		return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "用户名已存在"))}, nil
 	}
 	// 插入用户表

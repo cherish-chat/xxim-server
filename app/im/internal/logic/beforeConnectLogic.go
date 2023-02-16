@@ -40,7 +40,7 @@ func (l *BeforeConnectLogic) BeforeConnect(in *pb.BeforeConnectReq) (*pb.BeforeC
 	// 查询user是否被禁用
 	detail, err := l.svcCtx.UserService().GetUserModelDetail(l.ctx, &pb.GetUserModelDetailReq{Id: in.ConnParam.UserId})
 	if err != nil {
-		l.Errorf("查询用户失败: %v", err)
+		l.Infof("查询用户失败: %v", err)
 		return &pb.BeforeConnectResp{Msg: "连接失败"}, status.Error(codes.Unauthenticated, "用户被删除")
 	}
 	if detail.UserModel.UnblockTime > 0 {

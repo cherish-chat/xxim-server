@@ -87,6 +87,11 @@ func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp
 		_, err = l.svcCtx.NoticeService().AfterConnect(l.ctx, in)
 		return err
 	})
+	fs = append(fs, func() error {
+		var err error
+		_, err = l.svcCtx.UserService().AfterConnect(l.ctx, in)
+		return err
+	})
 	err := mr.Finish(fs...)
 	if err != nil {
 		return pb.NewRetryErrorResp(), err

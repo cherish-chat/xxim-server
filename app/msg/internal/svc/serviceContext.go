@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
@@ -23,6 +24,7 @@ type ServiceContext struct {
 	Config             config.Config
 	msgProducer        *xtdmq.TDMQProducer
 	zedis              *redis.Redis
+	zedisSub           *redis.Redis
 	mysql              *gorm.DB
 	imService          imservice.ImService
 	relationService    relationservice.RelationService
@@ -60,6 +62,20 @@ func (s *ServiceContext) Redis() *redis.Redis {
 		s.zedis = s.Config.Redis.NewRedis()
 	}
 	return s.zedis
+}
+
+func (s *ServiceContext) RedisSub() *redis.Redis {
+	if s.zedisSub == nil {
+		s.zedisSub = s.Config.Redis.NewRedis()
+		err := s.zedisSub.Pipelined(func(pipeliner redis.Pipeliner) error {
+			pipeliner.Select(context.Background(), 1)
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
+	return s.zedisSub
 }
 
 func (s *ServiceContext) Mysql() *gorm.DB {

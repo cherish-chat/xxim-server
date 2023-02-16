@@ -8,7 +8,6 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
-	"nhooyr.io/websocket"
 	"sync"
 )
 
@@ -168,14 +167,7 @@ func (l *UserConnStorage) Range(f func(id string, conn *types.UserConn) bool) {
 		} else {
 			// 删除旧的连接
 			if found.Pointer != conn.Pointer {
-				if found.ConnectedAt.Sub(conn.ConnectedAt) < 0 {
-					found.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
-					l.svcCtx.Redis().Hdel(l.redisKey, found.Pointer)
-					userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId] = conn
-				} else {
-					conn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
-					l.svcCtx.Redis().Hdel(l.redisKey, conn.Pointer)
-				}
+				logx.Infof("duplicate connection: %v %v %v %v %v %v", conn.ConnParam.UserId, conn.ConnParam.Platform, conn.ConnParam.DeviceId, found.ConnectedAt, conn.ConnectedAt)
 			}
 		}
 		if !f(pointer, conn) {

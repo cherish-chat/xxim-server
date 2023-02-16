@@ -1,7 +1,5 @@
 package pb
 
-import "strings"
-
 func HiddenConvIdCommand() string {
 	return NoticeConvId("command")
 }
@@ -28,18 +26,6 @@ func HiddenConvId(convId string) string {
 
 func HiddenConvIdSingle(selfId string, userId string) string {
 	return NoticeConvId(SingleConvId(selfId, userId))
-}
-
-// DefaultAckId 默认的ackId -1表示会话最大的ackId
-func DefaultAckId(convId string) int64 {
-	if convId == HiddenConvIdCommand() || convId == HiddenConvIdFriendMember() || convId == HiddenConvIdGroupMember() {
-		return -1
-	}
-	// 如果包含@，则表示是隐藏会话 也返回-1
-	if strings.Contains(convId, "@") {
-		return -1
-	}
-	return 0
 }
 
 const (

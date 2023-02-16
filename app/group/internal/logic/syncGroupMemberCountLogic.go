@@ -46,7 +46,7 @@ func (l *SyncGroupMemberCountLogic) SyncGroupMemberCount(in *pb.SyncGroupMemberC
 	}
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "FlushCache", func(ctx context.Context) {
 		utils.RetryProxy(ctx, 12, time.Second, func() error {
-			err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
+			err = groupmodel.CleanGroupCache(ctx, l.svcCtx.Redis(), in.GroupId)
 			if err != nil {
 				l.Errorf("CreateGroup CleanGroupCache error: %v", err)
 				return err

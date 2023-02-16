@@ -43,7 +43,6 @@ type (
 	GetGroupMemberListReq_GetGroupMemberListFilter = pb.GetGroupMemberListReq_GetGroupMemberListFilter
 	GetGroupMemberListReq_GetGroupMemberListOpt    = pb.GetGroupMemberListReq_GetGroupMemberListOpt
 	GetGroupMemberListResp                         = pb.GetGroupMemberListResp
-	GetGroupMemberListResp_GroupMember             = pb.GetGroupMemberListResp_GroupMember
 	GetGroupModelDetailReq                         = pb.GetGroupModelDetailReq
 	GetGroupModelDetailResp                        = pb.GetGroupModelDetailResp
 	GetGroupNoticeListReq                          = pb.GetGroupNoticeListReq
@@ -64,6 +63,8 @@ type (
 	KickGroupMemberResp                            = pb.KickGroupMemberResp
 	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
+	MapGroupMemberInfoByIdsReq                     = pb.MapGroupMemberInfoByIdsReq
+	MapGroupMemberInfoByIdsResp                    = pb.MapGroupMemberInfoByIdsResp
 	SearchGroupsByKeywordReq                       = pb.SearchGroupsByKeywordReq
 	SearchGroupsByKeywordResp                      = pb.SearchGroupsByKeywordResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
@@ -92,6 +93,8 @@ type (
 		SetGroupMemberInfo(ctx context.Context, in *SetGroupMemberInfoReq, opts ...grpc.CallOption) (*SetGroupMemberInfoResp, error)
 		// GetGroupMemberInfo 获取群成员信息
 		GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
+		//  MapGroupMemberInfoByIds 批量获取群成员信息
+		MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error)
 		// EditGroupInfo 编辑群信息
 		EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
 		// TransferGroupOwner 转让群主
@@ -183,6 +186,12 @@ func (m *defaultGroupService) SetGroupMemberInfo(ctx context.Context, in *SetGro
 func (m *defaultGroupService) GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.GetGroupMemberInfo(ctx, in, opts...)
+}
+
+//  MapGroupMemberInfoByIds 批量获取群成员信息
+func (m *defaultGroupService) MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.MapGroupMemberInfoByIds(ctx, in, opts...)
 }
 
 // EditGroupInfo 编辑群信息

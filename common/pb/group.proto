@@ -206,13 +206,33 @@ message GroupMemberInfo {
   // 置顶选项
   bool top = 5;
   // 免打扰选项
-  bool disturb = 6;
+  bool noDisturb = 6;
   // 免打扰选项更多设置
   GroupDisturbOpt disturbMore = 7;
   // 聊天背景图
   string chatBg = 8;
   // 群角色
   GroupRole role = 9;
+  // 解封时间
+  int64 unbanTime = 10;
+  // 预览
+  bool preview = 11;
+}
+
+//MapGroupMemberInfoByIdsReq 批量获取群成员信息
+message MapGroupMemberInfoByIdsReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  repeated string memberIds = 3;
+}
+
+//MapGroupMemberInfoByIdsResp 批量获取群成员信息
+message MapGroupMemberInfoByIdsResp {
+  CommonResp commonResp = 1;
+  // 群成员信息
+  map<string, GroupMemberInfo> groupMemberInfoMap = 2;
 }
 
 //GetGroupMemberInfoResp 获取群成员信息
@@ -279,13 +299,17 @@ message GetGroupMemberListReq {
   message GetGroupMemberListFilter {
     // 是否接受离线推送
     optional bool noDisturb = 1;
+    // 只包含群主
+    optional bool onlyOwner = 2;
+    // 只包含管理员
+    optional bool onlyAdmin = 3;
+    // 只包含成员
+    optional bool onlyMember = 4;
   }
   GetGroupMemberListFilter filter = 4;
   message GetGroupMemberListOpt {
     // 是否只获取id
     optional bool onlyId = 1;
-    // 是否获取消息接收选项
-    optional bool getNotifyOpt = 2;
   }
   GetGroupMemberListOpt opt = 5;
 }
@@ -293,12 +317,8 @@ message GetGroupMemberListReq {
 //GetGroupMemberListResp 获取群成员列表
 message GetGroupMemberListResp {
   CommonResp commonResp = 1;
-  message GroupMember {
-    string userId = 1;
-    MsgNotifyOpt notifyOpt = 2;
-  }
   // 群成员列表
-  repeated GroupMember groupMemberList = 2;
+  repeated GroupMemberInfo groupMemberList = 2;
 }
 
 //GetMyGroupListReq 获取我的群聊列表
@@ -617,6 +637,8 @@ service groupService {
   rpc SetGroupMemberInfo(SetGroupMemberInfoReq) returns (SetGroupMemberInfoResp) {}
   //GetGroupMemberInfo 获取群成员信息
   rpc GetGroupMemberInfo(GetGroupMemberInfoReq) returns (GetGroupMemberInfoResp) {}
+  // MapGroupMemberInfoByIds 批量获取群成员信息
+  rpc MapGroupMemberInfoByIds(MapGroupMemberInfoByIdsReq) returns (MapGroupMemberInfoByIdsResp) {}
   //EditGroupInfo 编辑群信息
   rpc EditGroupInfo(EditGroupInfoReq) returns (EditGroupInfoResp) {}
   //TransferGroupOwner 转让群主
