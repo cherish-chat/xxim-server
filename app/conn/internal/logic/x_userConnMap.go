@@ -167,7 +167,7 @@ func (l *UserConnStorage) Range(f func(id string, conn *types.UserConn) bool) {
 		} else {
 			// 删除旧的连接
 			if found.Pointer != conn.Pointer {
-				logx.Infof("duplicate connection: %v %v %v %v %v %v", conn.ConnParam.UserId, conn.ConnParam.Platform, conn.ConnParam.DeviceId, found.ConnectedAt, conn.ConnectedAt)
+				logx.Infof("duplicate connection: %v %v %v %v %v", conn.ConnParam.UserId, conn.ConnParam.Platform, conn.ConnParam.DeviceId, found.ConnectedAt, conn.ConnectedAt)
 			}
 		}
 		if !f(pointer, conn) {
