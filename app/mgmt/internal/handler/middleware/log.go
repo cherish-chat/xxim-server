@@ -43,8 +43,13 @@ func Log(tx *gorm.DB) gin.HandlerFunc {
 		initEnableLogApiPaths(tx)
 	}
 	return func(ctx *gin.Context) {
-		// 只有POST请求才需要验证
+		// 只有POST请求才需要记录
 		if ctx.Request.Method != "POST" {
+			ctx.Next()
+			return
+		}
+		// 只有 json 请求才需要记录
+		if !strings.Contains(ctx.Request.Header.Get("Content-Type"), "application/json") {
 			ctx.Next()
 			return
 		}

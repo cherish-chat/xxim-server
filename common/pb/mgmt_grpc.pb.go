@@ -65,6 +65,15 @@ type MgmtServiceClient interface {
 	GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
 	GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error)
+	//相册分类
+	GetAllMSAlbumCate(ctx context.Context, in *GetAllMSAlbumCateReq, opts ...grpc.CallOption) (*GetAllMSAlbumCateResp, error)
+	DeleteMSAlbumCate(ctx context.Context, in *DeleteMSAlbumCateReq, opts ...grpc.CallOption) (*DeleteMSAlbumCateResp, error)
+	AddMSAlbumCate(ctx context.Context, in *AddMSAlbumCateReq, opts ...grpc.CallOption) (*AddMSAlbumCateResp, error)
+	UpdateMSAlbumCate(ctx context.Context, in *UpdateMSAlbumCateReq, opts ...grpc.CallOption) (*UpdateMSAlbumCateResp, error)
+	//相册
+	GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error)
+	DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error)
+	UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -462,6 +471,69 @@ func (c *mgmtServiceClient) GetAllMSLoginRecord(ctx context.Context, in *GetAllM
 	return out, nil
 }
 
+func (c *mgmtServiceClient) GetAllMSAlbumCate(ctx context.Context, in *GetAllMSAlbumCateReq, opts ...grpc.CallOption) (*GetAllMSAlbumCateResp, error) {
+	out := new(GetAllMSAlbumCateResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSAlbumCate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSAlbumCate(ctx context.Context, in *DeleteMSAlbumCateReq, opts ...grpc.CallOption) (*DeleteMSAlbumCateResp, error) {
+	out := new(DeleteMSAlbumCateResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSAlbumCate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSAlbumCate(ctx context.Context, in *AddMSAlbumCateReq, opts ...grpc.CallOption) (*AddMSAlbumCateResp, error) {
+	out := new(AddMSAlbumCateResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSAlbumCate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSAlbumCate(ctx context.Context, in *UpdateMSAlbumCateReq, opts ...grpc.CallOption) (*UpdateMSAlbumCateResp, error) {
+	out := new(UpdateMSAlbumCateResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSAlbumCate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error) {
+	out := new(GetAllMSAlbumResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSAlbum", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error) {
+	out := new(DeleteMSAlbumResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSAlbum", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error) {
+	out := new(UpdateMSAlbumResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSAlbum", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -509,6 +581,15 @@ type MgmtServiceServer interface {
 	GetMSOperationLogDetail(context.Context, *GetMSOperationLogDetailReq) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error)
 	GetAllMSLoginRecord(context.Context, *GetAllMSLoginRecordReq) (*GetAllMSLoginRecordResp, error)
+	//相册分类
+	GetAllMSAlbumCate(context.Context, *GetAllMSAlbumCateReq) (*GetAllMSAlbumCateResp, error)
+	DeleteMSAlbumCate(context.Context, *DeleteMSAlbumCateReq) (*DeleteMSAlbumCateResp, error)
+	AddMSAlbumCate(context.Context, *AddMSAlbumCateReq) (*AddMSAlbumCateResp, error)
+	UpdateMSAlbumCate(context.Context, *UpdateMSAlbumCateReq) (*UpdateMSAlbumCateResp, error)
+	//相册
+	GetAllMSAlbum(context.Context, *GetAllMSAlbumReq) (*GetAllMSAlbumResp, error)
+	DeleteMSAlbum(context.Context, *DeleteMSAlbumReq) (*DeleteMSAlbumResp, error)
+	UpdateMSAlbum(context.Context, *UpdateMSAlbumReq) (*UpdateMSAlbumResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -644,6 +725,27 @@ func (UnimplementedMgmtServiceServer) DeleteMSOperationLog(context.Context, *Del
 }
 func (UnimplementedMgmtServiceServer) GetAllMSLoginRecord(context.Context, *GetAllMSLoginRecordReq) (*GetAllMSLoginRecordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSLoginRecord not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSAlbumCate(context.Context, *GetAllMSAlbumCateReq) (*GetAllMSAlbumCateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSAlbumCate not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSAlbumCate(context.Context, *DeleteMSAlbumCateReq) (*DeleteMSAlbumCateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSAlbumCate not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSAlbumCate(context.Context, *AddMSAlbumCateReq) (*AddMSAlbumCateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSAlbumCate not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSAlbumCate(context.Context, *UpdateMSAlbumCateReq) (*UpdateMSAlbumCateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSAlbumCate not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSAlbum(context.Context, *GetAllMSAlbumReq) (*GetAllMSAlbumResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSAlbum not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSAlbum(context.Context, *DeleteMSAlbumReq) (*DeleteMSAlbumResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSAlbum not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSAlbum(context.Context, *UpdateMSAlbumReq) (*UpdateMSAlbumResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSAlbum not implemented")
 }
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
@@ -1432,6 +1534,132 @@ func _MgmtService_GetAllMSLoginRecord_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_GetAllMSAlbumCate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSAlbumCateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSAlbumCate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSAlbumCate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSAlbumCate(ctx, req.(*GetAllMSAlbumCateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSAlbumCate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSAlbumCateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSAlbumCate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSAlbumCate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSAlbumCate(ctx, req.(*DeleteMSAlbumCateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSAlbumCate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSAlbumCateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSAlbumCate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSAlbumCate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSAlbumCate(ctx, req.(*AddMSAlbumCateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSAlbumCate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSAlbumCateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSAlbumCate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSAlbumCate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSAlbumCate(ctx, req.(*UpdateMSAlbumCateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetAllMSAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSAlbumReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSAlbum(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSAlbum",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSAlbum(ctx, req.(*GetAllMSAlbumReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSAlbumReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSAlbum(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSAlbum",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSAlbum(ctx, req.(*DeleteMSAlbumReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSAlbum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSAlbumReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSAlbum(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSAlbum",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSAlbum(ctx, req.(*UpdateMSAlbumReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1610,6 +1838,34 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllMSLoginRecord",
 			Handler:    _MgmtService_GetAllMSLoginRecord_Handler,
+		},
+		{
+			MethodName: "GetAllMSAlbumCate",
+			Handler:    _MgmtService_GetAllMSAlbumCate_Handler,
+		},
+		{
+			MethodName: "DeleteMSAlbumCate",
+			Handler:    _MgmtService_DeleteMSAlbumCate_Handler,
+		},
+		{
+			MethodName: "AddMSAlbumCate",
+			Handler:    _MgmtService_AddMSAlbumCate_Handler,
+		},
+		{
+			MethodName: "UpdateMSAlbumCate",
+			Handler:    _MgmtService_UpdateMSAlbumCate_Handler,
+		},
+		{
+			MethodName: "GetAllMSAlbum",
+			Handler:    _MgmtService_GetAllMSAlbum_Handler,
+		},
+		{
+			MethodName: "DeleteMSAlbum",
+			Handler:    _MgmtService_DeleteMSAlbum_Handler,
+		},
+		{
+			MethodName: "UpdateMSAlbum",
+			Handler:    _MgmtService_UpdateMSAlbum_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

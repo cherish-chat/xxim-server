@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"github.com/bwmarrin/snowflake"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -41,7 +42,18 @@ func Md5(s string) string {
 	return hex.EncodeToString(cipher)
 }
 
+func Md5Bytes(data []byte) string {
+	h := md5.New()
+	h.Write(data)
+	cipher := h.Sum(nil)
+	return hex.EncodeToString(cipher)
+}
+
 func Md516(s string) string {
 	// 将中间的第9位到第24位提取出来
 	return Md5(s)[8:24]
+}
+
+func GetSuffix(filename string) string {
+	return filename[strings.LastIndex(filename, ".")+1:]
 }

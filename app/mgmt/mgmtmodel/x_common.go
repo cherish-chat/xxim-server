@@ -35,6 +35,8 @@ func InitData(tx *gorm.DB) {
 	initRoleMenu(tx)
 	// 设置角色接口关联
 	initRoleApiPath(tx)
+	// 相册分类
+	initAlbumCate(tx)
 }
 
 func initRoleMenu(tx *gorm.DB) {

@@ -21,12 +21,14 @@ type AppLineConfigStorageCos struct {
 	SecretKey  string `json:"secretKey"`
 	BucketName string `json:"bucketName"`
 	Region     string `json:"region"`
+	BucketUrl  string `json:"bucketUrl"`
 }
 type AppLineConfigStorageOss struct {
 	Endpoint        string `json:"endpoint"`
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
 	BucketName      string `json:"bucketName"`
+	BucketUrl       string `json:"bucketUrl"`
 }
 type AppLineConfigStorageMinio struct {
 	Endpoint        string `json:"endpoint"`
@@ -34,9 +36,21 @@ type AppLineConfigStorageMinio struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 	BucketName      string `json:"bucketName"`
 	SSL             bool   `json:"ssl"`
+	BucketUrl       string `json:"bucketUrl"`
 }
 type AppLineConfigStorageKodo struct {
 	AccessKey  string `json:"accessKey"`
 	SecretKey  string `json:"secretKey"`
 	BucketName string `json:"bucketName"`
+	BucketUrl  string `json:"bucketUrl"`
+}
+
+type AppLineConfigClass struct {
+	ApiLines []struct {
+		Host    string `json:"host"`
+		Ssl     bool   `json:"ssl"`
+		WsPort  int    `json:"wsPort"`
+		TcpPort int    `json:"tcpPort"`
+	} `json:"apiLines"`
+	ObjectStorage AppLineConfigStorage `json:"objectStorage"`
 }

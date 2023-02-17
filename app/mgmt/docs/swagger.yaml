@@ -57,6 +57,18 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  mshandler.cateRenameReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        minimum: 0
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
   mshandler.getAllMSRoleListResp:
     properties:
       count:
@@ -159,6 +171,18 @@ definitions:
         description: 账号
         type: string
     type: object
+  mshandler.renameMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        minimum: 0
+        type: integer
+      name:
+        type: string
+    required:
+    - name
+    type: object
   mshandler.updateMSRoleReq:
     properties:
       commonReq:
@@ -203,6 +227,36 @@ definitions:
       sort:
         description: 排序
         type: integer
+    type: object
+  mshandler.uploadImageResp:
+    properties:
+      aid:
+        description: 管理ID
+        type: string
+      cid:
+        description: 类目ID
+        type: integer
+      ext:
+        description: 文件扩展
+        type: string
+      id:
+        description: 主键
+        type: integer
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: 访问地址
+        type: string
+      size:
+        description: 文件大小
+        type: integer
+      type:
+        description: '文件类型: [10=图片, 20=视频]'
+        type: integer
+      url:
+        description: 文件路径
+        type: string
     type: object
   pb.AddAppMgmtEmojiReq:
     properties:
@@ -274,6 +328,18 @@ definitions:
         $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.AddAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddMSAlbumCateReq:
+    properties:
+      albumCate:
+        $ref: '#/definitions/pb.MSAlbumCate'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddMSAlbumCateResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -839,6 +905,34 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DeleteMSAlbumCateReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSAlbumCateResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSAlbumResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.DeleteMSApiPathReq:
     properties:
       commonReq:
@@ -1218,6 +1312,42 @@ definitions:
         items:
           $ref: '#/definitions/pb.LoginRecord'
         type: array
+      total:
+        type: integer
+    type: object
+  pb.GetAllMSAlbumCateReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.GetAllMSAlbumCateResp:
+    properties:
+      albumCates:
+        items:
+          $ref: '#/definitions/pb.MSAlbumCate'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAllMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSAlbumResp:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/pb.MSAlbum'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
       total:
         type: integer
     type: object
@@ -1985,6 +2115,15 @@ definitions:
       port:
         type: integer
     type: object
+  pb.GetServerAllConfigResp_SmsConfig:
+    properties:
+      enabled:
+        type: boolean
+      tencentSms:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_TencentSmsConfig'
+      type:
+        type: string
+    type: object
   pb.GetServerAllConfigResp_TelemetryConfig:
     properties:
       batcher:
@@ -1994,10 +2133,27 @@ definitions:
       sampler:
         type: number
     type: object
+  pb.GetServerAllConfigResp_TencentSmsConfig:
+    properties:
+      appId:
+        type: string
+      region:
+        type: string
+      secretId:
+        type: string
+      secretKey:
+        type: string
+      sign:
+        type: string
+      templateId:
+        type: string
+    type: object
   pb.GetServerAllConfigResp_UserRpcConfig:
     properties:
       port:
         type: integer
+      sms:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_SmsConfig'
     type: object
   pb.GetUserDefaultConvDetailReq:
     properties:
@@ -2204,6 +2360,60 @@ definitions:
       userAgent:
         type: string
       userId:
+        type: string
+    type: object
+  pb.MSAlbum:
+    properties:
+      aid:
+        type: string
+      cid:
+        type: string
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      deleteTime:
+        type: integer
+      deleteTimeStr:
+        type: string
+      ext:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
+      type:
+        type: integer
+      updateTime:
+        type: integer
+      updateTimeStr:
+        type: string
+      url:
+        type: string
+    type: object
+  pb.MSAlbumCate:
+    properties:
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      deleteTime:
+        type: integer
+      deleteTimeStr:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      pid:
+        type: string
+      type:
+        type: integer
+      updateTime:
+        type: integer
+      updateTimeStr:
         type: string
     type: object
   pb.MSApiPath:
@@ -2653,6 +2863,16 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.UpdateMSAlbumCateResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSAlbumResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.UpdateMSApiPathReq:
     properties:
       apiPath:
@@ -2829,6 +3049,8 @@ definitions:
         type: boolean
       remark:
         type: string
+      successUserCount:
+        type: integer
     type: object
   pb.UserIpList:
     properties:
@@ -3572,6 +3794,230 @@ paths:
       summary: 新增appVPN
       tags:
       - appVPN管理
+  /ms/album/cate/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSAlbumCateResp'
+      summary: 添加类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSAlbumCateResp'
+      summary: 删除类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/list:
+    post:
+      consumes:
+      - application/json
+      description: 获取类目列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSAlbumCateResp'
+      summary: 获取类目列表
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/rename:
+    post:
+      consumes:
+      - application/json
+      description: 重命名类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/mshandler.cateRenameReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSAlbumCateResp'
+      summary: 重命名类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除相册
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSAlbumResp'
+      summary: 删除相册
+      tags:
+      - 管理系统相关接口
+  /ms/album/list:
+    post:
+      consumes:
+      - application/json
+      description: 获取相册列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSAlbumResp'
+      summary: 获取相册列表
+      tags:
+      - 管理系统相关接口
+  /ms/album/rename:
+    post:
+      consumes:
+      - application/json
+      description: 重命名相册
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/mshandler.renameMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSAlbumResp'
+      summary: 重命名相册
+      tags:
+      - 管理系统相关接口
   /ms/config:
     post:
       consumes:
@@ -6157,6 +6603,42 @@ paths:
       summary: 更新appVPN
       tags:
       - appVPN管理
+  /ms/upload/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 通过表单上传文件视频
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 类目ID
+        in: formData
+        name: cid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/mshandler.uploadImageResp'
+      summary: 通过表单上传文件视频
+      tags:
+      - 管理系统相关接口
   /server/get/app/line:
     post:
       consumes:

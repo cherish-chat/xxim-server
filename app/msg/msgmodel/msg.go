@@ -73,6 +73,12 @@ func (m *Msg) TableName() string {
 }
 
 func NewMsgFromPb(in *pb.MsgData) *Msg {
+	if in.Options == nil {
+		in.Options = &pb.MsgData_Options{}
+	}
+	if in.OfflinePush == nil {
+		in.OfflinePush = &pb.MsgData_OfflinePush{}
+	}
 	return &Msg{
 		ServerMsgId: in.ServerMsgId,
 		ConvId:      in.ConvId,

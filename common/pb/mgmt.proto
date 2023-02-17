@@ -773,6 +773,153 @@ message GetAllMSLoginRecordResp {
   int64 total = 3;
 }
 
+/*
+type Album struct {
+	ID         uint   `gorm:"primarykey;comment:'主键ID';AUTO_INCREMENT;"`
+	Cid        uint   `gorm:"not null;default:0;comment:'类目ID';index;"`
+	Aid        string `gorm:"not null;default:0;comment:'管理ID';index;"`
+	Type       int    `gorm:"not null;default:10;comment:'文件类型: [10=图片, 20=视频]';index;"`
+	Name       string `gorm:"not null;default:'';comment:'文件名称';index;"`
+	Url        string `gorm:"not null;comment:'文件路径'"`
+	Ext        string `gorm:"not null;default:'';comment:'文件扩展';index;"`
+	Size       int64  `gorm:"not null;default:0;comment:文件大小"`
+	CreateTime int64  `gorm:"column:createTime;autoCreateTime;not null;comment:'创建时间';index;"`
+	UpdateTime int64  `gorm:"column:updateTime;autoUpdateTime;not null;comment:'更新时间';index;"`
+	DeleteTime int64  `gorm:"column:deleteTime;not null;default:0;comment:'删除时间';index;"`
+}
+ */
+//MSAlbum 相册
+message MSAlbum {
+  int32 id = 1;
+  string cid = 2;
+  string aid = 3;
+  int32 type = 4;
+  string name = 5;
+  string url = 6;
+  string ext = 7;
+  int64 size = 8;
+  int64 createTime = 9;
+  int64 updateTime = 10;
+  int64 deleteTime = 11;
+
+  string createTimeStr = 12;
+  string updateTimeStr = 13;
+  string deleteTimeStr = 14;
+}
+
+//GetAllMSAlbumReq 获取所有相册列表请求
+message GetAllMSAlbumReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSAlbumResp 获取所有相册列表响应
+message GetAllMSAlbumResp {
+  CommonResp commonResp = 1;
+  repeated MSAlbum albums = 2;
+  int64 total = 3;
+}
+
+//GetMSAlbumDetailReq 获取相册详情请求
+message GetMSAlbumDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//DeleteMSAlbumReq 删除相册请求
+message DeleteMSAlbumReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSAlbumResp 删除相册响应
+message DeleteMSAlbumResp {
+  CommonResp commonResp = 1;
+}
+
+//AddMSAlbumCateReq 添加相册分类请求
+message AddMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  MSAlbumCate albumCate = 2;
+}
+
+//AddMSAlbumCateResp 添加相册分类响应
+message AddMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSAlbumReq 更新相册请求
+message UpdateMSAlbumReq {
+  CommonReq commonReq = 1;
+  MSAlbum album = 2;
+}
+
+//UpdateMSAlbumResp 更新相册响应
+message UpdateMSAlbumResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type AlbumCate struct {
+	ID         uint   `gorm:"primarykey;comment:'主键ID';AUTO_INCREMENT;"`
+	Pid        uint   `gorm:"not null;default:0;comment:'父级ID';index;"`
+	Type       int    `gorm:"not null;default:10;comment:'文件类型: [10=图片, 20=视频]';index;"`
+	Name       string `gorm:"not null;default:'';comment:'分类名称';index;"`
+	CreateTime int64  `gorm:"column:createTime;autoCreateTime;not null;comment:'创建时间';index;"`
+	UpdateTime int64  `gorm:"column:updateTime;autoUpdateTime;not null;comment:'更新时间';"`
+	DeleteTime int64  `gorm:"column:deleteTime;not null;default:0;comment:'删除时间';index;"`
+}
+ */
+
+//MSAlbumCate 相册分类
+message MSAlbumCate {
+  int32 id = 1;
+  string pid = 2;
+  int32 type = 3;
+  string name = 4;
+  int64 createTime = 5;
+  int64 updateTime = 6;
+  int64 deleteTime = 7;
+
+  string createTimeStr = 8;
+  string updateTimeStr = 9;
+  string deleteTimeStr = 10;
+}
+
+//GetAllMSAlbumCateReq 获取所有相册分类列表请求
+message GetAllMSAlbumCateReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAllMSAlbumCateResp 获取所有相册分类列表响应
+message GetAllMSAlbumCateResp {
+  CommonResp commonResp = 1;
+  repeated MSAlbumCate albumCates = 2;
+}
+
+//DeleteMSAlbumCateReq 删除相册分类请求
+message DeleteMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSAlbumCateResp 删除相册分类响应
+message DeleteMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSAlbumCateReq 更新相册分类请求
+message UpdateMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  MSAlbumCate albumCate = 2;
+}
+
+//UpdateMSAlbumCateResp 更新相册分类响应
+message UpdateMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
@@ -826,4 +973,15 @@ service mgmtService {
   rpc DeleteMSOperationLog(DeleteMSOperationLogReq) returns (DeleteMSOperationLogResp);
 
   rpc GetAllMSLoginRecord(GetAllMSLoginRecordReq) returns (GetAllMSLoginRecordResp);
+
+  //相册分类
+  rpc GetAllMSAlbumCate(GetAllMSAlbumCateReq) returns (GetAllMSAlbumCateResp);
+  rpc DeleteMSAlbumCate(DeleteMSAlbumCateReq) returns (DeleteMSAlbumCateResp);
+  rpc AddMSAlbumCate(AddMSAlbumCateReq) returns (AddMSAlbumCateResp);
+  rpc UpdateMSAlbumCate(UpdateMSAlbumCateReq) returns (UpdateMSAlbumCateResp);
+
+  //相册
+  rpc GetAllMSAlbum(GetAllMSAlbumReq) returns (GetAllMSAlbumResp);
+  rpc DeleteMSAlbum(DeleteMSAlbumReq) returns (DeleteMSAlbumResp);
+  rpc UpdateMSAlbum(UpdateMSAlbumReq) returns (UpdateMSAlbumResp);
 }
