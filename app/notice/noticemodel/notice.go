@@ -95,6 +95,9 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB, rc *redis.Redis) error
 	if m.Ext == nil {
 		m.Ext = make([]byte, 0)
 	}
+	if m.Content == nil {
+		m.Content = make([]byte, 0)
+	}
 	// upsert insert on duplicate key
 	return tx.Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "uniqueId"}, {Name: "convId"}},
