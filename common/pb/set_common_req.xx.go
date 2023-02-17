@@ -44,7 +44,11 @@ func (x *AcceptAddFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *RejectAddFriendReq) SetCommonReq(r *CommonReq) {
+func (x *GetGroupHomeReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetGroupMemberListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 

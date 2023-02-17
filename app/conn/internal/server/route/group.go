@@ -89,5 +89,25 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/searchGroupsByKeyword", route)
 		}
+		// GetGroupHomeReq GetGroupHomeResp
+		{
+			route := conngateway.Route[*pb.GetGroupHomeReq, *pb.GetGroupHomeResp]{
+				NewRequest: func() *pb.GetGroupHomeReq {
+					return &pb.GetGroupHomeReq{}
+				},
+				Do: svcCtx.GroupService().GetGroupHome,
+			}
+			conngateway.AddRoute("/v1/group/getGroupHome", route)
+		}
+		// GetGroupMemberListReq GetGroupMemberListResp
+		{
+			route := conngateway.Route[*pb.GetGroupMemberListReq, *pb.GetGroupMemberListResp]{
+				NewRequest: func() *pb.GetGroupMemberListReq {
+					return &pb.GetGroupMemberListReq{}
+				},
+				Do: svcCtx.GroupService().GetGroupMemberList,
+			}
+			conngateway.AddRoute("/v1/group/getGroupMemberList", route)
+		}
 	}
 }
