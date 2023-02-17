@@ -24,7 +24,7 @@ var (
 func ZaddEx(ctx context.Context, rc *redis.Redis, key string, member string, score int64, seconds int64) error {
 	if zaddexSha1 == "" {
 		var err error
-		mhSetSha, err = rc.ScriptLoadCtx(ctx, zaddexScript)
+		zaddexSha1, err = rc.ScriptLoadCtx(ctx, zaddexScript)
 		if err != nil {
 			return err
 		}
