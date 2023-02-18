@@ -130,6 +130,12 @@ func (s *GroupServiceServer) HandleGroupApply(ctx context.Context, in *pb.Handle
 	return l.HandleGroupApply(in)
 }
 
+// GetGroupApplyList 获取群聊申请列表
+func (s *GroupServiceServer) GetGroupApplyList(ctx context.Context, in *pb.GetGroupApplyListReq) (*pb.GetGroupApplyListResp, error) {
+	l := logic.NewGetGroupApplyListLogic(ctx, s.svcCtx)
+	return l.GetGroupApplyList(in)
+}
+
 // GetGroupListByUserId 分页获取某人的群列表
 func (s *GroupServiceServer) GetGroupListByUserId(ctx context.Context, in *pb.GetGroupListByUserIdReq) (*pb.GetGroupListByUserIdResp, error) {
 	l := logic.NewGetGroupListByUserIdLogic(ctx, s.svcCtx)

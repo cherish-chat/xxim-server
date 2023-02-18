@@ -20,6 +20,10 @@ func (x *ConfirmRegisterReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *GetGroupApplyListReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *SearchUsersByKeywordReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

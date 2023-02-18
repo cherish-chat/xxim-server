@@ -69,6 +69,16 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/handleGroupApply", route)
 		}
+		// GetGroupApplyListReq GetGroupApplyListResp
+		{
+			route := conngateway.Route[*pb.GetGroupApplyListReq, *pb.GetGroupApplyListResp]{
+				NewRequest: func() *pb.GetGroupApplyListReq {
+					return &pb.GetGroupApplyListReq{}
+				},
+				Do: svcCtx.GroupService().GetGroupApplyList,
+			}
+			conngateway.AddRoute("/v1/group/getGroupApplyList", route)
+		}
 		// KickGroupMemberReq KickGroupMemberResp
 		{
 			route := conngateway.Route[*pb.KickGroupMemberReq, *pb.KickGroupMemberResp]{

@@ -31,6 +31,9 @@ type (
 	EditGroupNoticeResp                            = pb.EditGroupNoticeResp
 	GetAllGroupModelReq                            = pb.GetAllGroupModelReq
 	GetAllGroupModelResp                           = pb.GetAllGroupModelResp
+	GetGroupApplyListReq                           = pb.GetGroupApplyListReq
+	GetGroupApplyListReq_Filter                    = pb.GetGroupApplyListReq_Filter
+	GetGroupApplyListResp                          = pb.GetGroupApplyListResp
 	GetGroupHomeReq                                = pb.GetGroupHomeReq
 	GetGroupHomeResp                               = pb.GetGroupHomeResp
 	GetGroupHomeResp_MemberStatistics              = pb.GetGroupHomeResp_MemberStatistics
@@ -50,6 +53,7 @@ type (
 	GetMyGroupListReq                              = pb.GetMyGroupListReq
 	GetMyGroupListReq_Filter                       = pb.GetMyGroupListReq_Filter
 	GetMyGroupListResp                             = pb.GetMyGroupListResp
+	GroupApplyInfo                                 = pb.GroupApplyInfo
 	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
 	GroupModel                                     = pb.GroupModel
@@ -113,6 +117,8 @@ type (
 		ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
 		// HandleGroupApply 处理群聊申请
 		HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+		// GetGroupApplyList 获取群聊申请列表
+		GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error)
 		// GetGroupListByUserId 分页获取某人的群列表
 		GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
 		// GetAllGroupModel 获取所有群组
@@ -246,6 +252,12 @@ func (m *defaultGroupService) ApplyToBeGroupMember(ctx context.Context, in *Appl
 func (m *defaultGroupService) HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.HandleGroupApply(ctx, in, opts...)
+}
+
+// GetGroupApplyList 获取群聊申请列表
+func (m *defaultGroupService) GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GetGroupApplyList(ctx, in, opts...)
 }
 
 // GetGroupListByUserId 分页获取某人的群列表

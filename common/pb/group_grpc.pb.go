@@ -58,6 +58,8 @@ type GroupServiceClient interface {
 	ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
 	//HandleGroupApply 处理群聊申请
 	HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+	//GetGroupApplyList 获取群聊申请列表
+	GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error)
 	//GetGroupListByUserId 分页获取某人的群列表
 	GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
 	//GetAllGroupModel 获取所有群组
@@ -244,6 +246,15 @@ func (c *groupServiceClient) HandleGroupApply(ctx context.Context, in *HandleGro
 	return out, nil
 }
 
+func (c *groupServiceClient) GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error) {
+	out := new(GetGroupApplyListResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupApplyList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *groupServiceClient) GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error) {
 	out := new(GetGroupListByUserIdResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupListByUserId", in, out, opts...)
@@ -347,6 +358,8 @@ type GroupServiceServer interface {
 	ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error)
 	//HandleGroupApply 处理群聊申请
 	HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error)
+	//GetGroupApplyList 获取群聊申请列表
+	GetGroupApplyList(context.Context, *GetGroupApplyListReq) (*GetGroupApplyListResp, error)
 	//GetGroupListByUserId 分页获取某人的群列表
 	GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error)
 	//GetAllGroupModel 获取所有群组
@@ -421,6 +434,9 @@ func (UnimplementedGroupServiceServer) ApplyToBeGroupMember(context.Context, *Ap
 }
 func (UnimplementedGroupServiceServer) HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HandleGroupApply not implemented")
+}
+func (UnimplementedGroupServiceServer) GetGroupApplyList(context.Context, *GetGroupApplyListReq) (*GetGroupApplyListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupApplyList not implemented")
 }
 func (UnimplementedGroupServiceServer) GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupListByUserId not implemented")
@@ -780,6 +796,24 @@ func _GroupService_HandleGroupApply_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_GetGroupApplyList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupApplyListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetGroupApplyList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GetGroupApplyList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetGroupApplyList(ctx, req.(*GetGroupApplyListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GroupService_GetGroupListByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetGroupListByUserIdReq)
 	if err := dec(in); err != nil {
@@ -984,6 +1018,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HandleGroupApply",
 			Handler:    _GroupService_HandleGroupApply_Handler,
+		},
+		{
+			MethodName: "GetGroupApplyList",
+			Handler:    _GroupService_GetGroupApplyList_Handler,
 		},
 		{
 			MethodName: "GetGroupListByUserId",

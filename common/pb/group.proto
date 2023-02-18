@@ -3,6 +3,7 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 import "im.proto";
+import "user.proto";
 enum GroupDisturbOpt {
   // 接收消息但不提醒
   DisturbReceive = 0;
@@ -417,6 +418,53 @@ message HandleGroupApplyResp {
   CommonResp commonResp = 1;
 }
 
+//getGroupApplyList 获取群聊申请列表
+message GetGroupApplyListReq {
+  CommonReq commonReq = 1;
+  // 分页
+  Page page = 2;
+  // 过滤
+  message Filter {
+    // 申请状态
+    optional GroupApplyHandleResult result = 1;
+  }
+  Filter filter = 3;
+}
+message GroupApplyInfo {
+  // 申请ID
+  string applyId = 1;
+  // 群ID
+  string groupId = 2;
+  // 申请人
+  string userId = 3;
+  // 申请状态
+  GroupApplyHandleResult result = 4;
+  // 申请理由
+  string reason = 5;
+  // 申请时间
+  int64 applyTime = 6;
+  string applyTimeStr = 7;
+  // 处理时间
+  int64 handleTime = 8;
+  string handleTimeStr = 9;
+  // 处理人
+  string handleUserId = 10;
+
+  // 申请人的baseInfo
+  optional UserBaseInfo userBaseInfo = 11;
+  // 处理人的baseInfo
+  optional UserBaseInfo handleUserBaseInfo = 12;
+
+  // 群的baseInfo
+  optional GroupBaseInfo groupBaseInfo = 13;
+}
+message GetGroupApplyListResp {
+  CommonResp commonResp = 1;
+  // 申请列表
+  repeated GroupApplyInfo groupApplyList = 2;
+  // 总数
+  int64 total = 3;
+}
 
 //分页获取某人的群列表
 message GetGroupListByUserIdReq {
@@ -657,6 +705,8 @@ service groupService {
   rpc ApplyToBeGroupMember(ApplyToBeGroupMemberReq) returns (ApplyToBeGroupMemberResp) {}
   //HandleGroupApply 处理群聊申请
   rpc HandleGroupApply(HandleGroupApplyReq) returns (HandleGroupApplyResp) {}
+  //GetGroupApplyList 获取群聊申请列表
+  rpc GetGroupApplyList(GetGroupApplyListReq) returns (GetGroupApplyListResp) {}
 
   //GetGroupListByUserId 分页获取某人的群列表
   rpc GetGroupListByUserId(GetGroupListByUserIdReq) returns (GetGroupListByUserIdResp) {}
