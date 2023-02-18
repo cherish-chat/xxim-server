@@ -163,6 +163,9 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	}
 	// 是否必填头像
 	var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(l.ctx), "")
+	if in.Avatar != nil && *in.Avatar != "" {
+		avatar = *in.Avatar
+	}
 	if l.svcCtx.ConfigMgr.RegisterMustAvatar(l.ctx) {
 		// 请求中必须带头像
 		if in.Avatar == nil {
@@ -175,6 +178,9 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	}
 	// 是否必填昵称
 	var nickname = l.svcCtx.ConfigMgr.NicknameDefault(l.ctx)
+	if in.Nickname != nil && *in.Nickname != "" {
+		nickname = *in.Nickname
+	}
 	if l.svcCtx.ConfigMgr.RegisterMustNickname(l.ctx) {
 		// 请求中必须带昵称
 		if in.Nickname == nil {
