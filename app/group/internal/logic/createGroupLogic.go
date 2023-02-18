@@ -232,6 +232,7 @@ func (l *CreateGroupLogic) sendMsg(in *pb.CreateGroupReq, group *groupmodel.Grou
 							Avatar:   self.Avatar,
 							Xb:       self.Xb,
 							Birthday: self.Birthday,
+							Role:     int32(self.Role),
 						},
 						group.Id,
 						l.svcCtx.T(in.CommonReq.Language, "欢迎加入群聊"),

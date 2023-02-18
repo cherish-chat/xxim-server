@@ -52,6 +52,8 @@ message UserBaseInfo {
   BirthdayInfo birthday = 5;
   // 最后一次连接 ip所在地
   IpRegion ipRegion = 6;
+  // 角色
+  int32 role = 7; // 0:普通用户 1:客服/管理员 2:游客
 }
 
 // 登录 如果没有注册过，会暂存到临时表，等待用户确认后注册成功

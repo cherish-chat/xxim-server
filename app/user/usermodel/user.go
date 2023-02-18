@@ -158,6 +158,7 @@ func (m *User) BaseInfo() *pb.UserBaseInfo {
 		Xb:       m.Xb,
 		Birthday: m.Birthday,
 		IpRegion: nil,
+		Role:     int32(m.Role),
 	}
 }
 

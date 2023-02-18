@@ -175,6 +175,7 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 							Avatar:   self.Avatar,
 							Xb:       self.Xb,
 							Birthday: self.Birthday,
+							Role:     int32(self.Role),
 						},
 						in.ApplyUserId,
 						l.svcCtx.T(in.CommonReq.Language, text),

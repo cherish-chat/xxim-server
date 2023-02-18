@@ -55,6 +55,7 @@ func (l *BatchGetUserBaseInfoLogic) BatchGetUserBaseInfo(in *pb.BatchGetUserBase
 			Xb:       user.Xb,
 			Birthday: user.Birthday,
 			IpRegion: userConn.IpRegion, // latest connect ip region
+			Role:     int32(user.Role),
 		})
 	}
 	return &pb.BatchGetUserBaseInfoResp{UserBaseInfos: resp}, nil
