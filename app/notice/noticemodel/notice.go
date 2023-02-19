@@ -128,6 +128,34 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB, rc *redis.Redis) error
 
 }
 
+func BatchInsert(tx *gorm.DB, notices []*Notice, rc *redis.Redis) error {
+	ctx := context.Background()
+	for _, m := range notices {
+		if m.ConvAutoId == 0 {
+			// 获取maxConvAutoId
+			convAutoId, err := GetMaxConvAutoId(ctx, rc, m.ConvId, 1)
+			if err != nil {
+				return err
+			}
+			m.ConvAutoId = convAutoId
+		}
+		if m.NoticeId == "" {
+			m.NoticeId = pb.ServerNoticeId(m.ConvId, m.ConvAutoId, m.UserId)
+		}
+		if m.CreateTime == 0 {
+			m.CreateTime = time.Now().UnixMilli()
+		}
+		if m.Ext == nil {
+			m.Ext = make([]byte, 0)
+		}
+		if m.Content == nil {
+			m.Content = make([]byte, 0)
+		}
+	}
+	// 忽略唯一索引冲突
+	return tx.Model(&Notice{}).Clauses(clause.Insert{Modifier: "IGNORE"}).Create(notices).Error
+}
+
 func GetMaxConvAutoId(ctx context.Context, rc *redis.Redis, convId string, incr int64) (int64, error) {
 	logger := logx.WithContext(ctx)
 	// incr redis

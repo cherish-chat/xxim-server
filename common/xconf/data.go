@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -84,6 +85,10 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("offline_push_title", str("消息", "offline_push_title", "默认线路", "离线推送标题"))
 	// offline_push_content 离线推送内容
 	m.insertIfNotFound("offline_push_content", str("消息", "offline_push_content", "您有一条新消息", "离线推送内容"))
+	// read_msg_task_interval 插入已读消息 任务 时间间隔
+	m.insertIfNotFound("read_msg_task_interval", num("消息", "read_msg_task_interval", 100, "插入已读消息 任务 时间间隔"))
+	//read_msg_task_batch_size 插入已读消息 任务 批量大小
+	m.insertIfNotFound("read_msg_task_batch_size", num("消息", "read_msg_task_batch_size", 500, "插入已读消息 任务 批量大小"))
 
 	// 好友
 	// friend_max_count 好友最大数量
@@ -482,4 +487,14 @@ func (m *ConfigMgr) SmsSendLimitInterval(ctx context.Context) int {
 // SmsSendLimitEveryday sms.send_limit.everyday
 func (m *ConfigMgr) SmsSendLimitEveryday(ctx context.Context) int64 {
 	return utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.everyday"))
+}
+
+// ReadMsgTaskInterval 已读消息任务间隔
+func (m *ConfigMgr) ReadMsgTaskInterval(ctx context.Context) time.Duration {
+	return time.Duration(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_interval", "100"))) * time.Millisecond
+}
+
+// ReadMsgTaskBatchSize 已读消息任务批量大小
+func (m *ConfigMgr) ReadMsgTaskBatchSize(ctx context.Context) int {
+	return int(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_batch_size", "500")))
 }
