@@ -18,12 +18,14 @@ type ReadMsgTask struct {
 	errChan    chan error
 }
 
-func (l *ReadMsgLogic) readMsgTask() {
-	ticker := time.NewTicker(l.svcCtx.ConfigMgr.ReadMsgTaskInterval(l.ctx))
+func (l *ReadMsgLogic) readMsgTask(size int) {
+	interval := l.svcCtx.ConfigMgr.ReadMsgTaskInterval(l.ctx)
+	l.Infof("readMsgTask interval: %d, size: %d", interval/time.Millisecond, size)
+	ticker := time.NewTicker(interval)
 	for {
 		select {
 		case <-ticker.C:
-			notices, errChans := l.popReadMsgTask(l.svcCtx.ConfigMgr.ReadMsgTaskBatchSize(l.ctx))
+			notices, errChans := l.popReadMsgTask(size)
 			if len(notices) == 0 {
 				continue
 			}
@@ -45,13 +47,14 @@ var singleReadMsgLogic *ReadMsgLogic
 func NewReadMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ReadMsgLogic {
 	ctx = context.Background()
 	if singleReadMsgLogic == nil {
+		size := svcCtx.ConfigMgr.ReadMsgTaskBatchSize(ctx)
 		singleReadMsgLogic = &ReadMsgLogic{
 			ctx:          ctx,
 			svcCtx:       svcCtx,
-			readMsgTasks: make(chan *ReadMsgTask, 0),
+			readMsgTasks: make(chan *ReadMsgTask, size),
 			Logger:       logx.WithContext(ctx),
 		}
-		go singleReadMsgLogic.readMsgTask()
+		go singleReadMsgLogic.readMsgTask(size)
 	}
 	return singleReadMsgLogic
 }
@@ -107,20 +110,20 @@ func (l *ReadMsgLogic) readMsg(in *pb.ReadMsgReq) (*pb.ReadMsgResp, error) {
 }
 
 func (l *ReadMsgLogic) popReadMsgTask(num int) ([]*noticemodel.Notice, []chan error) {
-	if len(l.readMsgTasks) == 0 {
+	length := len(l.readMsgTasks)
+	//l.Debugf("popReadMsgTask length: %d, num: %d", length, num)
+	if length == 0 {
 		return nil, nil
 	}
 	var (
-		tasks    []*ReadMsgTask
 		notices  []*noticemodel.Notice
 		errChans []chan error
 	)
-	if len(l.readMsgTasks) < num {
-		num = len(l.readMsgTasks)
+	if length < num {
+		num = length
 	}
 	for i := 0; i < num; i++ {
 		task := <-l.readMsgTasks
-		tasks = append(tasks, task)
 		notice := &noticemodel.Notice{
 			ConvId: pb.HiddenConvId(task.readMsgReq.ConvId),
 			Options: noticemodel.NoticeOption{

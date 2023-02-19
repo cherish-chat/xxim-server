@@ -149,6 +149,9 @@ func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []st
 func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, listMap map[string]*pb.MsgDataList) {
 	for convId, msgDataList := range listMap {
 		for _, data := range msgDataList.MsgDataList {
+			if !data.GetOptions().GetOfflinePush() {
+				continue
+			}
 			if data.IsSingleConv() {
 				// 单聊
 				receiver := data.ReceiverUid()

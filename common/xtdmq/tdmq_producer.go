@@ -8,6 +8,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	oteltrace "go.opentelemetry.io/otel/trace"
+	"math"
 	"strconv"
 	"time"
 )
@@ -46,6 +47,7 @@ type TDMQProducer struct {
 	ProducerConfig TDMQProducerConfig
 	producer       pulsar.Producer
 	client         pulsar.Client
+	produceTimes   int
 }
 
 func NewTDMQProducer(config TDMQConfig, producerConfig TDMQProducerConfig) *TDMQProducer {
@@ -75,12 +77,25 @@ func (p *TDMQProducer) init() {
 		Topic:       p.ProducerConfig.TopicName,
 		Name:        p.ProducerConfig.GetProducerName(),
 		SendTimeout: time.Duration(p.ProducerConfig.SendTimeout) * time.Millisecond,
+		MessageRouter: func(message *pulsar.ProducerMessage, metadata pulsar.TopicMetadata) int {
+			partitions := metadata.NumPartitions()
+			i := p.incrTimes() % int(partitions)
+			return i
+		},
 	})
 	if err != nil {
 		logx.Errorf("Could not instantiate Pulsar producer: %v", err)
 		panic(err)
 	}
 	p.producer = producer
+}
+
+func (p *TDMQProducer) incrTimes() int {
+	if p.produceTimes >= math.MaxInt {
+		p.produceTimes = 0
+	}
+	p.produceTimes++
+	return p.produceTimes
 }
 
 func (p *TDMQProducer) Produce(
