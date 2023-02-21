@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -177,6 +178,77 @@ func (m *Msg) ExpireSeconds() int {
 	return xredis.ExpireMinutes(5)
 }
 
+func GetMsgTableNameById(id string) string {
+	convId, seq := pb.ParseConvServerMsgId(id)
+	md5 := utils.Md5(convId)
+	// 取后2位
+	tableName := fmt.Sprintf("msg_%s", md5[len(md5)-2:])
+	// 每100000 seq分一个表
+	tableName = fmt.Sprintf("%s_%d", tableName, seq/100000)
+	return tableName
+}
+
+var tableNameExists = make(map[string]bool)
+
+func CreateMsgTable(tx *gorm.DB, tableName string) error {
+	if len(tableNameExists) == 0 {
+		// 获取所有表名
+		rows, err := tx.Raw("show tables").Rows()
+		if err != nil {
+			logx.Errorf("CreateMsgTable error: %v", err)
+			return err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			err = rows.Scan(&name)
+			if err != nil {
+				logx.Errorf("CreateMsgTable error: %v", err)
+				return err
+			}
+			tableNameExists[name] = true
+		}
+	}
+	if _, ok := tableNameExists[tableName]; ok {
+		return nil
+	}
+	err := tx.Table(tableName).Migrator().CreateTable(&Msg{})
+	if err != nil {
+		logx.Errorf("CreateMsgTable error: %v", err)
+		return err
+	}
+	tableNameExists[tableName] = true
+	return nil
+}
+
+func InsertManyMsg(ctx context.Context, tx *gorm.DB, models []*Msg) error {
+	if len(models) == 0 {
+		return nil
+	}
+	// 分表
+	var tableModels = make(map[string][]*Msg)
+	for _, model := range models {
+		tableName := GetMsgTableNameById(model.ServerMsgId)
+		if _, ok := tableModels[tableName]; !ok {
+			tableModels[tableName] = make([]*Msg, 0)
+		}
+		tableModels[tableName] = append(tableModels[tableName], model)
+	}
+	return tx.Transaction(func(tx *gorm.DB) error {
+		for tableName, models := range tableModels {
+			err := CreateMsgTable(tx, tableName)
+			if err != nil {
+				return err
+			}
+			err = tx.Table(tableName).Create(models).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
 func MsgFromMysql(
 	ctx context.Context,
 	rc *zedis.Redis,
@@ -187,7 +259,24 @@ func MsgFromMysql(
 		return make([]*Msg, 0), nil
 	}
 	xtrace.StartFuncSpan(ctx, "FindMsgByIds", func(ctx context.Context) {
-		err = tx.Model(&Msg{}).Where("id in (?)", ids).Find(&msgList).Error
+		// tableNameIds
+		var tableNameIds = make(map[string][]string)
+		for _, id := range ids {
+			tableName := GetMsgTableNameById(id)
+			if _, ok := tableNameIds[tableName]; !ok {
+				tableNameIds[tableName] = make([]string, 0)
+			}
+			tableNameIds[tableName] = append(tableNameIds[tableName], id)
+		}
+		// 查询
+		for tableName, ids := range tableNameIds {
+			var tmpMsgList []*Msg
+			err = tx.Table(tableName).Where("id in (?)", ids).Limit(len(ids)).Find(&tmpMsgList).Error
+			if err != nil {
+				return
+			}
+			msgList = append(msgList, tmpMsgList...)
+		}
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("GetSingleMsgListBySeq failed, err: %v", err)

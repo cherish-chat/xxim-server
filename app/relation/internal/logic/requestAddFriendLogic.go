@@ -87,7 +87,7 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx) {
+		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx, in.CommonReq.UserId) {
 			return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
@@ -123,17 +123,17 @@ func (l *RequestAddFriendLogic) RequestAddFriend(in *pb.RequestAddFriendReq) (*p
 		// 如果对方的角色是用户
 		if to.Role == usermodel.RoleUser {
 			// 用户能否添加用户为好友
-			if !l.svcCtx.ConfigMgr.UserCanAddUserAsFriend(l.ctx) {
+			if !l.svcCtx.ConfigMgr.UserCanAddUserAsFriend(l.ctx, in.CommonReq.UserId) {
 				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加用户为好友"))}, nil
 			}
 		} else if to.Role == usermodel.RoleGuest {
 			// 用户能否添加游客为好友
-			if !l.svcCtx.ConfigMgr.UserCanAddGuestAsFriend(l.ctx) {
+			if !l.svcCtx.ConfigMgr.UserCanAddGuestAsFriend(l.ctx, in.CommonReq.UserId) {
 				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加游客为好友"))}, nil
 			}
 		} else if to.Role == usermodel.RoleService {
 			// 用户能否添加客服为好友
-			if !l.svcCtx.ConfigMgr.UserCanAddServiceAsFriend(l.ctx) {
+			if !l.svcCtx.ConfigMgr.UserCanAddServiceAsFriend(l.ctx, in.CommonReq.UserId) {
 				return &pb.RequestAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不能添加客服为好友"))}, nil
 			}
 		} else {
@@ -250,7 +250,7 @@ func (l *RequestAddFriendLogic) requestAddFriend(in *pb.RequestAddFriendReq) (*p
 					StorageForClient: false,
 					UpdateConvNotice: false,
 				},
-				ContentType: 0,
+				ContentType: pb.NoticeContentType_ApplyToBeFriend,
 				Content:     nil,
 				UniqueId:    "requestAddFriend",
 				Title:       "",

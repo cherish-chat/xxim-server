@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"sort"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -58,13 +59,15 @@ func (l *GetAllMsgListLogic) GetAllMsgList(in *pb.GetAllMsgListReq) (*pb.GetAllM
 		}
 		idList = append(idList, pb.ServerMsgId(in.ConvId, i))
 	}
-	err = l.svcCtx.Mysql().Model(&msgmodel.Msg{}).
-		Where("id in (?)", idList).
-		Order("serverTime DESC").
-		Limit(int(in.Page.Size)).Find(&models).Error
+	models, err = msgmodel.MsgFromMysql(l.ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), idList)
 	if err != nil {
 		l.Errorf("GetList err: %v", err)
 		return &pb.GetAllMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
+	} else {
+		// serverTime 倒序
+		sort.Slice(models, func(i, j int) bool {
+			return models[i].ServerTime > models[j].ServerTime
+		})
 	}
 	if len(models) == 0 {
 		return &pb.GetAllMsgListResp{CommonResp: pb.NewSuccessResp()}, nil

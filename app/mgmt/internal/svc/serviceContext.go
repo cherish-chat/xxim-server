@@ -92,7 +92,15 @@ func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
 
 func (s *ServiceContext) AppMgmtService() appmgmtservice.AppMgmtService {
 	if s.appMgmtService == nil {
-		s.appMgmtService = appmgmtservice.NewAppMgmtService(zrpc.MustNewClient(s.Config.AppMgmtRpc,
+		s.appMgmtService = appmgmtservice.NewAppMgmtService(zrpc.MustNewClient(zrpc.RpcClientConf{
+			Etcd:      s.Config.AppMgmtRpc.Etcd,
+			Endpoints: s.Config.AppMgmtRpc.Endpoints,
+			Target:    s.Config.AppMgmtRpc.Target,
+			App:       s.Config.AppMgmtRpc.App,
+			Token:     s.Config.AppMgmtRpc.Token,
+			NonBlock:  true,
+			Timeout:   10 * 1000,
+		},
 			utils.Zrpc.Options()...))
 	}
 	return s.appMgmtService

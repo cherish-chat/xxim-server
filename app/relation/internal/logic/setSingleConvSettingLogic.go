@@ -56,7 +56,7 @@ func (l *SetSingleConvSettingLogic) SetSingleConvSetting(in *pb.SetSingleConvSet
 			"singleConvSetting_notifyVibrate_Default":     "1",
 			"singleConvSetting_isShield_Default":          "0",
 			"singleConvSetting_chatBg_Default":            "",
-		})
+		}, in.CommonReq.UserId)
 		dest = &relationmodel.SingleConvSetting{
 			ConvId:            in.Setting.ConvId,
 			UserId:            in.Setting.UserId,

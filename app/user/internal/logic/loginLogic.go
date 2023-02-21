@@ -51,7 +51,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 用户密码输入错误次数是否超过限制
 	// 获取用户密码输入错误次数
 	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
-	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx) {
+	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx, in.CommonReq.UserId) {
 		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，密码输入错误次数超过限制")}, nil
 	}
 	// 用户存在 判断密码是否正确
@@ -68,7 +68,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户不能在"+in.CommonReq.Platform+"登录"))}, nil
 			}
 			// 用户登录时是否需要ip在白名单
-			if l.svcCtx.ConfigMgr.LoginUserNeedIpWhiteList(l.ctx) {
+			if l.svcCtx.ConfigMgr.LoginUserNeedIpWhiteList(l.ctx, user.Id) {
 				resp, err := l.checkIpWhiteList(in)
 				if err != nil {
 					return resp, err
@@ -79,11 +79,11 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 			}
 		} else if user.Role == usermodel.RoleService {
 			// 客服能否在该平台功能
-			if !l.svcCtx.ConfigMgr.LoginServiceOnPlatform(l.ctx, in.CommonReq.Platform) {
+			if !l.svcCtx.ConfigMgr.LoginServiceOnPlatform(l.ctx, in.CommonReq.Platform, user.Id) {
 				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "客服不能在"+in.CommonReq.Platform+"登录"))}, nil
 			}
 			// 客服登录时是否需要ip在白名单
-			if l.svcCtx.ConfigMgr.LoginServiceNeedIpWhiteList(l.ctx) {
+			if l.svcCtx.ConfigMgr.LoginServiceNeedIpWhiteList(l.ctx, user.Id) {
 				resp, err := l.checkIpWhiteList(in)
 				if err != nil {
 					return resp, err
@@ -94,11 +94,11 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 			}
 		} else if user.Role == usermodel.RoleGuest {
 			// 游客能否在该平台功能
-			if !l.svcCtx.ConfigMgr.LoginGuestOnPlatform(l.ctx, in.CommonReq.Platform) {
+			if !l.svcCtx.ConfigMgr.LoginGuestOnPlatform(l.ctx, in.CommonReq.Platform, user.Id) {
 				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "游客不能在"+in.CommonReq.Platform+"登录"))}, nil
 			}
 			// 游客登录时是否需要ip在白名单
-			if l.svcCtx.ConfigMgr.LoginGuestNeedIpWhiteList(l.ctx) {
+			if l.svcCtx.ConfigMgr.LoginGuestNeedIpWhiteList(l.ctx, user.Id) {
 				resp, err := l.checkIpWhiteList(in)
 				if err != nil {
 					return resp, err

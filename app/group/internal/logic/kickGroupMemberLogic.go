@@ -76,7 +76,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 
 			if self.Role == usermodel.RoleUser {
 				// 普通用户是否允许退群
-				if !l.svcCtx.ConfigMgr.GroupAllowUserQuit(l.ctx) {
+				if !l.svcCtx.ConfigMgr.GroupAllowUserQuit(l.ctx, in.MemberId) {
 					return &pb.KickGroupMemberResp{CommonResp: pb.NewAlertErrorResp(
 						"操作失败",
 						"普通用户不允许退群",

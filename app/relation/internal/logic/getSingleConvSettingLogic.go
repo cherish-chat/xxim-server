@@ -93,7 +93,7 @@ func (l *GetSingleConvSettingLogic) notFound(in *pb.GetSingleConvSettingReq) (*p
 		"singleConvSetting_notifyVibrate_Default":     "1",
 		"singleConvSetting_isShield_Default":          "0",
 		"singleConvSetting_chatBg_Default":            "",
-	})
+	}, in.UserId)
 	dest := &relationmodel.SingleConvSetting{
 		ConvId:            in.ConvId,
 		UserId:            in.UserId,

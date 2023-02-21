@@ -45,22 +45,22 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 
 func (l *SendMsgListAsyncLogic) checkText(data *pb.MsgData) (*pb.SendMsgListResp, error) {
 	// 是否开启了敏感词过滤
-	if l.svcCtx.ConfigMgr.MessageShieldWordCheck(l.ctx) {
+	if l.svcCtx.ConfigMgr.MessageShieldWordCheck(l.ctx, data.SenderId) {
 		text := string(data.Content)
 		sentence, found := ShieldWordTrieTreeInstance.Check(text)
 		if found {
 			// 是否不允许发
-			if !l.svcCtx.ConfigMgr.MessageShieldWordAllow(l.ctx) {
+			if !l.svcCtx.ConfigMgr.MessageShieldWordAllow(l.ctx, data.SenderId) {
 				// 直接报错返回
 				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "内容包含违规词")}, nil
 			}
 			// 是否需要替换
-			if l.svcCtx.ConfigMgr.MessageShieldWordAllowReplace(l.ctx) {
+			if l.svcCtx.ConfigMgr.MessageShieldWordAllowReplace(l.ctx, data.SenderId) {
 				data.Content = []byte(sentence)
 				// 检查offlinePush
 				if data.OfflinePush != nil {
-					data.OfflinePush.Title = l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx)
-					data.OfflinePush.Content = l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx)
+					data.OfflinePush.Title = l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx, data.SenderId)
+					data.OfflinePush.Content = l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx, data.SenderId)
 				}
 			}
 		}

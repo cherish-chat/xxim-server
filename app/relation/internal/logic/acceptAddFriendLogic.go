@@ -47,7 +47,7 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx) {
+		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx, in.CommonReq.UserId) {
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}

@@ -278,64 +278,64 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("group.show_group_info.user.link_show", boolean("外部链接", "group.show_group_info.user.link_show", true, "是否显示外部链接按钮"))
 }
 
-func (m *ConfigMgr) DefaultGroupDescription(ctx context.Context) string {
-	return m.GetCtx(ctx, "default_group_description")
+func (m *ConfigMgr) DefaultGroupDescription(ctx context.Context, userId string) string {
+	return m.GetCtx(ctx, "default_group_description", userId)
 }
 
-func (m *ConfigMgr) DefaultGroupNewMemberHistoryMsgCount(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "default_group_new_member_history_msg_count"))
+func (m *ConfigMgr) DefaultGroupNewMemberHistoryMsgCount(ctx context.Context, userId string) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "default_group_new_member_history_msg_count", userId))
 }
 
-func (m *ConfigMgr) DefaultGroupJoinGroupQuestion(ctx context.Context) string {
-	return m.GetCtx(ctx, "default_group_join_group_question")
+func (m *ConfigMgr) DefaultGroupJoinGroupQuestion(ctx context.Context, userId string) string {
+	return m.GetCtx(ctx, "default_group_join_group_question", userId)
 }
 
-func (m *ConfigMgr) DefaultGroupName(ctx context.Context) string {
-	return m.GetCtx(ctx, "default_group_name")
+func (m *ConfigMgr) DefaultGroupName(ctx context.Context, userId string) string {
+	return m.GetCtx(ctx, "default_group_name", userId)
 }
 
 func (m *ConfigMgr) DefaultMinGroupId(ctx context.Context) string {
-	return m.GetCtx(ctx, "default_min_group_id")
+	return m.GetCtx(ctx, "default_min_group_id", "")
 }
 
-func (m *ConfigMgr) DefaultGroupAvatars(ctx context.Context) []string {
-	return m.GetSliceCtx(ctx, "default_group_avatars")
+func (m *ConfigMgr) DefaultGroupAvatars(ctx context.Context, userId string) []string {
+	return m.GetSliceCtx(ctx, "default_group_avatars", userId)
 }
 
-func (m *ConfigMgr) OfflinePushTitle(ctx context.Context) string {
-	return m.GetCtx(ctx, "offline_push_title")
+func (m *ConfigMgr) OfflinePushTitle(ctx context.Context, userId string) string {
+	return m.GetCtx(ctx, "offline_push_title", userId)
 }
 
-func (m *ConfigMgr) OfflinePushContent(ctx context.Context) string {
-	return m.GetCtx(ctx, "offline_push_content")
+func (m *ConfigMgr) OfflinePushContent(ctx context.Context, userId string) string {
+	return m.GetCtx(ctx, "offline_push_content", userId)
 }
 
-func (m *ConfigMgr) FriendMaxCount(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "friend_max_count"))
+func (m *ConfigMgr) FriendMaxCount(ctx context.Context, userId string) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "friend_max_count", userId))
 }
 
 func (m *ConfigMgr) NicknameDefault(ctx context.Context) string {
-	return m.GetCtx(ctx, "nickname_default")
+	return m.GetCtx(ctx, "nickname_default", "")
 }
 
 func (m *ConfigMgr) SignatureIfNotSet(ctx context.Context) string {
-	return m.GetCtx(ctx, "signature_if_not_set")
+	return m.GetCtx(ctx, "signature_if_not_set", "")
 }
 
 func (m *ConfigMgr) AvatarsDefault(ctx context.Context) []string {
-	return m.GetSliceCtx(ctx, "avatars_default")
+	return m.GetSliceCtx(ctx, "avatars_default", "")
 }
 
 // RegisterIpLimit register.ip_limit.period register.ip_limit.quota
 func (m *ConfigMgr) RegisterIpLimit(ctx context.Context) (int, int) {
-	period := utils.AnyToInt64(m.GetCtx(ctx, "register.ip_limit.period"))
-	quota := utils.AnyToInt64(m.GetCtx(ctx, "register.ip_limit.quota"))
+	period := utils.AnyToInt64(m.GetCtx(ctx, "register.ip_limit.period", ""))
+	quota := utils.AnyToInt64(m.GetCtx(ctx, "register.ip_limit.quota", ""))
 	return int(period), int(quota)
 }
 
 // RegisterMustIpInWhiteList register.must.ip_in_white_list
 func (m *ConfigMgr) RegisterMustIpInWhiteList(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.must.ip_in_white_list") == "1"
+	return m.GetCtx(ctx, "register.must.ip_in_white_list", "") == "1"
 }
 
 // EnablePlatformRegister register.allow.$platform
@@ -344,32 +344,32 @@ func (m *ConfigMgr) EnablePlatformRegister(ctx context.Context, platform string)
 		logx.WithContext(ctx).Errorf("EnablePlatformRegister invalid platform: %s", platform)
 		return false
 	}
-	return m.GetByPlatformCtx(ctx, "register.allow."+platform, platform) == "1"
+	return m.GetByPlatformCtx(ctx, "register.allow."+platform, platform, "") == "1"
 }
 
 // RegisterMustInviteCode register.invite_code.required
 func (m *ConfigMgr) RegisterMustInviteCode(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.invite_code.required") == "1"
+	return m.GetCtx(ctx, "register.invite_code.required", "") == "1"
 }
 
 // RegisterMustMobile register.mobile.required
 func (m *ConfigMgr) RegisterMustMobile(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.mobile.required") == "1"
+	return m.GetCtx(ctx, "register.mobile.required", "") == "1"
 }
 
 // RegisterMustSmsCode register.mobile.sms
 func (m *ConfigMgr) RegisterMustSmsCode(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.mobile.sms") == "1"
+	return m.GetCtx(ctx, "register.mobile.sms", "") == "1"
 }
 
 // RegisterMustAvatar register.avatar.required
 func (m *ConfigMgr) RegisterMustAvatar(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.avatar.required") == "1"
+	return m.GetCtx(ctx, "register.avatar.required", "") == "1"
 }
 
 // RegisterMustNickname register.nickname.required
 func (m *ConfigMgr) RegisterMustNickname(ctx context.Context) bool {
-	return m.GetCtx(ctx, "register.nickname.required") == "1"
+	return m.GetCtx(ctx, "register.nickname.required", "") == "1"
 }
 
 // LoginUserOnPlatform login.allow_user.$platform
@@ -378,90 +378,90 @@ func (m *ConfigMgr) LoginUserOnPlatform(ctx context.Context, platform string) bo
 		logx.WithContext(ctx).Errorf("LoginUserOnPlatform invalid platform: %s", platform)
 		return false
 	}
-	return m.GetByPlatformCtx(ctx, "login.allow_user."+platform, platform) == "1"
+	return m.GetByPlatformCtx(ctx, "login.allow_user."+platform, platform, "") == "1"
 }
 
 // LoginServiceOnPlatform login.allow_service.$platform
-func (m *ConfigMgr) LoginServiceOnPlatform(ctx context.Context, platform string) bool {
+func (m *ConfigMgr) LoginServiceOnPlatform(ctx context.Context, platform string, userId string) bool {
 	if _, ok := pb.PlatformMap[platform]; !ok {
 		logx.WithContext(ctx).Errorf("LoginUserOnPlatform invalid platform: %s", platform)
 		return false
 	}
-	return m.GetByPlatformCtx(ctx, "login.allow_service."+platform, platform) == "1"
+	return m.GetByPlatformCtx(ctx, "login.allow_service."+platform, platform, userId) == "1"
 }
 
 // LoginGuestOnPlatform login.allow_guest.$platform
-func (m *ConfigMgr) LoginGuestOnPlatform(ctx context.Context, platform string) bool {
+func (m *ConfigMgr) LoginGuestOnPlatform(ctx context.Context, platform string, userId string) bool {
 	if _, ok := pb.PlatformMap[platform]; !ok {
 		logx.WithContext(ctx).Errorf("LoginUserOnPlatform invalid platform: %s", platform)
 		return false
 	}
-	return m.GetByPlatformCtx(ctx, "login.allow_guest."+platform, platform) == "1"
+	return m.GetByPlatformCtx(ctx, "login.allow_guest."+platform, platform, userId) == "1"
 }
 
 // LoginUserNeedIpWhiteList login.must_user.ip_in_white_list
-func (m *ConfigMgr) LoginUserNeedIpWhiteList(ctx context.Context) bool {
-	return m.GetCtx(ctx, "login.must_user.ip_in_white_list") == "1"
+func (m *ConfigMgr) LoginUserNeedIpWhiteList(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "login.must_user.ip_in_white_list", userId) == "1"
 }
 
 // LoginServiceNeedIpWhiteList login.must_service.ip_in_white_list
-func (m *ConfigMgr) LoginServiceNeedIpWhiteList(ctx context.Context) bool {
-	return m.GetCtx(ctx, "login.must_service.ip_in_white_list") == "1"
+func (m *ConfigMgr) LoginServiceNeedIpWhiteList(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "login.must_service.ip_in_white_list", userId) == "1"
 }
 
 // LoginGuestNeedIpWhiteList login.must_guest.ip_in_white_list
-func (m *ConfigMgr) LoginGuestNeedIpWhiteList(ctx context.Context) bool {
-	return m.GetCtx(ctx, "login.must_guest.ip_in_white_list") == "1"
+func (m *ConfigMgr) LoginGuestNeedIpWhiteList(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "login.must_guest.ip_in_white_list", userId) == "1"
 }
 
 // UserCanAddUserAsFriend friend.add.user
-func (m *ConfigMgr) UserCanAddUserAsFriend(ctx context.Context) bool {
-	return m.GetCtx(ctx, "friend.add.user") == "1"
+func (m *ConfigMgr) UserCanAddUserAsFriend(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "friend.add.user", userId) == "1"
 }
 
 // UserCanAddServiceAsFriend friend.add.service
-func (m *ConfigMgr) UserCanAddServiceAsFriend(ctx context.Context) bool {
-	return m.GetCtx(ctx, "friend.add.service") == "1"
+func (m *ConfigMgr) UserCanAddServiceAsFriend(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "friend.add.service", userId) == "1"
 }
 
 // UserCanAddGuestAsFriend friend.add.guest
-func (m *ConfigMgr) UserCanAddGuestAsFriend(ctx context.Context) bool {
-	return m.GetCtx(ctx, "friend.add.guest") == "1"
+func (m *ConfigMgr) UserCanAddGuestAsFriend(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "friend.add.guest", userId) == "1"
 }
 
 // UserPasswordErrorMaxCount login.password_error_limit
-func (m *ConfigMgr) UserPasswordErrorMaxCount(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "login.password_error_limit"))
+func (m *ConfigMgr) UserPasswordErrorMaxCount(ctx context.Context, userId string) int64 {
+	return utils.AnyToInt64(m.GetCtx(ctx, "login.password_error_limit", userId))
 }
 
 // SmsErrorMaxCount sms_error_limit.quota
 func (m *ConfigMgr) SmsErrorMaxCount(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.quota"))
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.quota", ""))
 }
 
 // SmsErrorPeriod sms_error_limit.period
 func (m *ConfigMgr) SmsErrorPeriod(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.period"))
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms_error_limit.period", ""))
 }
 
 // MessageShieldWordCheck message.shield_word.check
-func (m *ConfigMgr) MessageShieldWordCheck(ctx context.Context) bool {
-	return m.GetCtx(ctx, "message.shield_word.check") == "1"
+func (m *ConfigMgr) MessageShieldWordCheck(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "message.shield_word.check", userId) == "1"
 }
 
 // MessageShieldWordAllow message.shield_word.allow
-func (m *ConfigMgr) MessageShieldWordAllow(ctx context.Context) bool {
-	return m.GetCtx(ctx, "message.shield_word.allow") == "1"
+func (m *ConfigMgr) MessageShieldWordAllow(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "message.shield_word.allow", userId) == "1"
 }
 
 // MessageShieldWordAllowReplace message.shield_word.replace
-func (m *ConfigMgr) MessageShieldWordAllowReplace(ctx context.Context) bool {
-	return m.GetCtx(ctx, "message.shield_word.replace") == "1"
+func (m *ConfigMgr) MessageShieldWordAllowReplace(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "message.shield_word.replace", userId) == "1"
 }
 
 // MessageShieldWordReplace message.shield_word.replace_word
 func (m *ConfigMgr) MessageShieldWordReplace(ctx context.Context) rune {
-	word := m.GetCtx(ctx, "message.shield_word.replace_word")
+	word := m.GetCtx(ctx, "message.shield_word.replace_word", "")
 	if len(word) == 0 {
 		return '*'
 	}
@@ -475,26 +475,26 @@ func (m *ConfigMgr) MessageShieldWordReplace(ctx context.Context) rune {
 }
 
 // GroupAllowUserQuit group.quit_user.allow
-func (m *ConfigMgr) GroupAllowUserQuit(ctx context.Context) bool {
-	return m.GetCtx(ctx, "group.quit_user.allow") == "1"
+func (m *ConfigMgr) GroupAllowUserQuit(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "group.quit_user.allow", userId) == "1"
 }
 
 // SmsSendLimitInterval sms.send_limit.interval
 func (m *ConfigMgr) SmsSendLimitInterval(ctx context.Context) int {
-	return int(utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.interval")))
+	return int(utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.interval", "")))
 }
 
 // SmsSendLimitEveryday sms.send_limit.everyday
 func (m *ConfigMgr) SmsSendLimitEveryday(ctx context.Context) int64 {
-	return utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.everyday"))
+	return utils.AnyToInt64(m.GetCtx(ctx, "sms.send_limit.everyday", ""))
 }
 
 // ReadMsgTaskInterval 已读消息任务间隔
 func (m *ConfigMgr) ReadMsgTaskInterval(ctx context.Context) time.Duration {
-	return time.Duration(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_interval", "100"))) * time.Millisecond
+	return time.Duration(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_interval", "100", ""))) * time.Millisecond
 }
 
 // ReadMsgTaskBatchSize 已读消息任务批量大小
 func (m *ConfigMgr) ReadMsgTaskBatchSize(ctx context.Context) int {
-	return int(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_batch_size", "500")))
+	return int(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_batch_size", "500", "")))
 }

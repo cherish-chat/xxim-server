@@ -46,6 +46,8 @@ const (
 
 	// groupMember
 	NoticeContentType_ApplyToBeGroupMember = 401 // 申请加入群
+	// friendMember
+	NoticeContentType_ApplyToBeFriend = 501 // 申请加为好友
 )
 
 type (

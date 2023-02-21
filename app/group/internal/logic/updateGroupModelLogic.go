@@ -52,6 +52,7 @@ func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*p
 		updateMap["adminRemark"] = in.GroupModel.AdminRemark
 	}
 	updateMap["allMute"] = in.GroupModel.AllMute
+	updateMap["allMuterType"] = in.GroupModel.AllMuterType
 	updateMap["speakLimit"] = in.GroupModel.SpeakLimit
 	updateMap["maxMember"] = in.GroupModel.MaxMember
 	updateMap["memberCanStartTempChat"] = in.GroupModel.MemberCanStartTempChat

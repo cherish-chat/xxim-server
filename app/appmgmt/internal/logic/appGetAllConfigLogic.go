@@ -24,7 +24,7 @@ func NewAppGetAllConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 }
 
 func (l *AppGetAllConfigLogic) AppGetAllConfig(in *pb.AppGetAllConfigReq) (*pb.AppGetAllConfigResp, error) {
-	configs, err := l.svcCtx.ConfigMgr.GetAll(l.ctx)
+	configs, err := l.svcCtx.ConfigMgr.GetAll(l.ctx, "")
 	if err != nil {
 		l.Errorf("get all app config error: %v", err)
 		return &pb.AppGetAllConfigResp{
@@ -32,6 +32,14 @@ func (l *AppGetAllConfigLogic) AppGetAllConfig(in *pb.AppGetAllConfigReq) (*pb.A
 		}, err
 	}
 	var configMap = make(map[string]string)
+	for _, config := range configs {
+		configMap[config.K] = config.V
+	}
+	configs, err = l.svcCtx.ConfigMgr.GetAll(l.ctx, in.CommonReq.UserId)
+	if err != nil {
+		l.Errorf("get all app mgmt config error: %v", err)
+		return &pb.AppGetAllConfigResp{ConfigMap: configMap}, nil
+	}
 	for _, config := range configs {
 		configMap[config.K] = config.V
 	}

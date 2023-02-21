@@ -272,6 +272,10 @@ func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) 
 	}
 	for i, val := range vals {
 		user := &User{}
+		if val == "" {
+			// 未命中
+			continue
+		}
 		if val == xredis.NotFound {
 			id := ids[i]
 			user.NotFound(id)

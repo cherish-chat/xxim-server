@@ -54,7 +54,9 @@ func (l *GetAllGroupModelLogic) GetAllGroupModel(in *pb.GetAllGroupModelReq) (*p
 				} else if v == "dismiss" {
 					wheres = append(wheres, xorm.Where("dismissTime > ?", 0))
 				} else if v == "mute" {
-					wheres = append(wheres, xorm.Where("allMute = ?", true))
+					wheres = append(wheres, xorm.Where("allMute = ? AND allMuterType = 0", true))
+				} else if v == "muteNormal" {
+					wheres = append(wheres, xorm.Where("allMute = ? AND allMuterType = 1", true))
 				}
 			case "memberCount_gte":
 				val := utils.AnyToInt64(v)
