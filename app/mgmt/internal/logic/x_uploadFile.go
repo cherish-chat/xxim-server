@@ -71,6 +71,9 @@ func (l *UploadFileLogic) UploadFile(key string, data []byte) (string, error) {
 		l.Errorf("请配置app对象存储")
 		return "", errors.New("请配置app对象存储")
 	}
+	if exist, err := storage.ExistObject(l.ctx, key); err == nil && exist {
+		return storage.GetObjectUrl(key), nil
+	}
 	return storage.PutObject(l.ctx, key, data)
 }
 

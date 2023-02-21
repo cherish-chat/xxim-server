@@ -2,6 +2,7 @@ package xstorage
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"golang.org/x/net/context"
@@ -12,6 +13,10 @@ type OssStorage struct {
 	Config *pb.AppLineConfig_Storage_Oss
 	client *oss.Client
 	bucket *oss.Bucket
+}
+
+func (o *OssStorage) ExistObject(ctx context.Context, key string) (exist bool, err error) {
+	return o.bucket.IsObjectExist(key)
 }
 
 var singletonOssStorage *OssStorage
@@ -46,4 +51,8 @@ func (o *OssStorage) PutObject(ctx context.Context, objectName string, data []by
 		return "", err
 	}
 	return o.Config.BucketUrl + "/" + objectName, nil
+}
+
+func (o *OssStorage) GetObjectUrl(key string) string {
+	return fmt.Sprintf("%s/%s", o.Config.BucketUrl, key)
 }

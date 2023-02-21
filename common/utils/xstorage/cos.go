@@ -3,6 +3,7 @@ package xstorage
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	cos "github.com/tencentyun/cos-go-sdk-v5"
 	"net/http"
@@ -13,6 +14,18 @@ import (
 type CosStorage struct {
 	Config *pb.AppLineConfig_Storage_Cos
 	bucket *cos.Client
+}
+
+func (o *CosStorage) GetObjectUrl(key string) string {
+	return fmt.Sprintf("%s/%s", o.Config.BucketUrl, key)
+}
+
+func (o *CosStorage) ExistObject(ctx context.Context, key string) (exists bool, err error) {
+	response, err := o.bucket.Object.Head(ctx, key, nil)
+	if err != nil {
+		return false, err
+	}
+	return response.StatusCode == http.StatusOK, nil
 }
 
 var singletonCosStorage *CosStorage

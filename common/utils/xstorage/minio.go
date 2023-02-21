@@ -3,6 +3,7 @@ package xstorage
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	minio "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -12,6 +13,18 @@ import (
 type MinioStorage struct {
 	Config *pb.AppLineConfig_Storage_Minio
 	Client *minio.Client
+}
+
+func (s *MinioStorage) ExistObject(ctx context.Context, key string) (exists bool, err error) {
+	_, err = s.Client.StatObject(ctx, s.Config.BucketName, key, minio.StatObjectOptions{})
+	if err != nil {
+		e, ok := err.(minio.ErrorResponse)
+		if ok && e.Code == "NoSuchKey" {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
 
 var singletonMinioStorage *MinioStorage
@@ -46,4 +59,8 @@ func (s *MinioStorage) PutObject(ctx context.Context, objectName string, data []
 		return "", err
 	}
 	return s.Config.BucketUrl + "/" + objectName, nil
+}
+
+func (s *MinioStorage) GetObjectUrl(key string) string {
+	return fmt.Sprintf("%s/%s", s.Config.BucketUrl, key)
 }

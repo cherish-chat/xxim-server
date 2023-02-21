@@ -3,6 +3,7 @@ package xstorage
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
@@ -13,6 +14,14 @@ type KodoStorage struct {
 	Config    *pb.AppLineConfig_Storage_Kodo
 	mac       *qbox.Mac
 	putPolicy *storage.PutPolicy
+}
+
+func (s *KodoStorage) GetObjectUrl(key string) string {
+	return fmt.Sprintf("%s/%s", s.Config.BucketUrl, key)
+}
+
+func (s *KodoStorage) ExistObject(ctx context.Context, key string) (exists bool, err error) {
+	return false, nil
 }
 
 var singletonKodoStorage *KodoStorage
