@@ -10,11 +10,14 @@ require (
 	github.com/docker/docker v20.10.21+incompatible
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/joho/godotenv v1.5.1
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20221017063954-c5c24655eb63
 	github.com/minio/minio-go/v7 v7.0.47
 	github.com/pingcap/parser v3.1.2+incompatible
 	github.com/qiniu/go-sdk/v7 v7.14.0
 	github.com/qiniu/qmgo v1.1.4
+	github.com/sashabaranov/go-gpt3 v1.2.0
+	github.com/stretchr/testify v1.8.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.10
@@ -120,6 +123,7 @@ require (
 	github.com/pingcap/errors v0.11.4 // indirect
 	github.com/pingcap/tidb v2.0.11+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.13.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect

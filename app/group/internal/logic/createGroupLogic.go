@@ -211,6 +211,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 
 	return &pb.CreateGroupResp{
 		GroupId: utils.AnyPtr(group.Id),
+		Info:    group.GroupBaseInfo(),
 	}, nil
 }
 

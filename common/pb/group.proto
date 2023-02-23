@@ -36,6 +36,7 @@ message CreateGroupResp {
   CommonResp commonResp = 1;
   // 群ID
   optional string groupId = 2;
+  optional GroupBaseInfo info = 3;
 }
 
 //GetGroupHomeReq 获取群聊首页
