@@ -98,7 +98,6 @@ message SetCxnParamsReq {
   string appVersion = 6;
   string language = 7;
   string networkUsed = 8;
-  int64  clientTime = 9;
   bytes ext = 11;
 }
 
