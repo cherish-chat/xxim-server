@@ -49,5 +49,15 @@ func RegisterRelation(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/relation/getFriendList", route)
 		}
+		// DeleteFriendReq DeleteFriendResp
+		{
+			route := conngateway.Route[*pb.DeleteFriendReq, *pb.DeleteFriendResp]{
+				NewRequest: func() *pb.DeleteFriendReq {
+					return &pb.DeleteFriendReq{}
+				},
+				Do: svcCtx.RelationService().DeleteFriend,
+			}
+			conngateway.AddRoute("/v1/relation/deleteFriend", route)
+		}
 	}
 }
