@@ -191,7 +191,8 @@ func (c *Client) RequestX(
 		return err
 	}
 	// 5s ctx
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelFunc()
 	for {
 		select {
 		case <-ctx.Done():
