@@ -1,6 +1,7 @@
 package xaes
 
 import (
+	"gotest.tools/v3/assert"
 	"testing"
 )
 
@@ -10,8 +11,6 @@ func TestEncrypt(t *testing.T) {
 	bytes, _ := Decrypt([]byte("iv"), []byte("key"), encryptBytes)
 	t.Log(string(bytes))
 	bytes, err := Decrypt([]byte("iv"), []byte("key"), []byte("data"))
-	if err != nil {
-		t.Fatalf("decrypt error: %v", err)
-	}
+	assert.Assert(t, err != nil, "err should not be nil")
 	t.Log(string(bytes))
 }
