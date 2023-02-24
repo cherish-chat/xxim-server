@@ -25,11 +25,22 @@ func main() {
 				Ext:         nil,
 			},
 			UserConfig: conn.UserConfig{
-				UserId:   "test123456",
+				UserId:   "testb4",
 				Password: utils.Md5("123456"),
 				Token:    "",
 				Ext:      nil,
 			},
+			RsaPublicKey: `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuiJyMvMqTKKC5Z4qWU3v
+R9ZWm1JnEEP66xYC0a62XsNE+Vi/3OtKChrhsLGzzEfpAmYLtIdODK/Wm5VQeFqA
+w/2UgWtIxPrKfLllA3tTcKkbw/K/9WkO24FKmPPg00L7OaVbfvg/0TorLnMyQ65R
+OnG8fvs+LqrIRIDgGZIPGCytV4IdV988v/7KHLNUvyAoINLVIISriUwwr5cjAORL
+RLsPVW0jJp4xNleE55Vi+0PlmloPwGtEt9xMRIaTIQzpgBzuLLymxF5a5ifbHg/V
+xqDumvu1sYCot9fhDqktYsVz990FgpHJv7xeY11ZFvfKYl4T0VLg5Mvzq8+BX5ut
+SQIDAQAB
+-----END PUBLIC KEY-----
+`,
+			AesIv: "哈哈哈aaaaaaaasdsadsada",
 		},
 	}
 	svcCtx := svc.NewServiceContext(conf)

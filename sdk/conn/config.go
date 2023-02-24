@@ -30,6 +30,8 @@ type Config struct {
 	Headers      []Header // http header
 	DeviceConfig DeviceConfig
 	UserConfig   UserConfig
+	RsaPublicKey string
+	AesIv        string
 }
 
 func (c Config) GetHeader() http.Header {

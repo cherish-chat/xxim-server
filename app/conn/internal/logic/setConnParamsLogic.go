@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/xrsa"
 	"google.golang.org/grpc"
 )
 
@@ -25,6 +26,7 @@ func NewSetConnParamsLogic(svcCtx *svc.ServiceContext) *SetConnParamsLogic {
 }
 
 func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnParamsReq, opts ...grpc.CallOption) (*pb.SetCxnParamsResp, error) {
+
 	return &pb.SetCxnParamsResp{
 		Platform:    req.GetPlatform(),
 		DeviceId:    req.GetPackageId(),
@@ -34,10 +36,26 @@ func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnPa
 		Language:    req.GetLanguage(),
 		NetworkUsed: req.GetNetworkUsed(),
 		Ext:         req.GetExt(),
+		AesKey:      req.GetAesKey(),
 	}, nil
 }
 
 func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParamsResp, c *types.UserConn) {
+	// rsa加密后的 aesKey
+	aesKeyEncrypted := resp.GetAesKey()
+	var aesKey *string
+	// 是否不为空
+	if len(aesKeyEncrypted) > 0 {
+		// 解密
+		decrypt, err := xrsa.Decrypt(aesKeyEncrypted, []byte(l.svcCtx.Config.RsaPrivateKey))
+		if err != nil {
+			// 断开连接
+			c.Conn.Close(types.WebsocketStatusCodeRsaFailed(), "rsa decrypt failed")
+			return
+		}
+		// 设置 aesKey
+		aesKey = utils.AnyPtr(utils.Md5Bytes(decrypt))
+	}
 	c.SetConnParams(&pb.ConnParam{
 		UserId:      c.ConnParam.UserId,
 		Token:       c.ConnParam.Token,
@@ -51,5 +69,6 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParams
 		OsVersion:   resp.OsVersion,
 		AppVersion:  resp.AppVersion,
 		Language:    resp.Language,
+		AesKey:      aesKey,
 	})
 }

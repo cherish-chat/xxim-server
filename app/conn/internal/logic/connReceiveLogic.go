@@ -6,6 +6,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/utils/xaes"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -32,6 +34,19 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 	switch websocket.MessageType(typ) {
 	case websocket.MessageBinary:
 		// 接收到消息
+		{
+			// 解密
+			if c.ConnParam.AesKey != nil {
+				// aes解密
+				var err error
+				msg, err = xaes.Decrypt([]byte(l.svcCtx.Config.AesIv), []byte(*c.ConnParam.AesKey), msg)
+				if err != nil {
+					l.Errorf("【疑似攻击】userId: %s, ip: %s, ip2region: %s", c.ConnParam.UserId, c.ConnParam.Ips, ip2region.Ip2Region(c.ConnParam.Ips).String())
+					c.Conn.Close(int(websocket.StatusPolicyViolation), "protocol error")
+					return
+				}
+			}
+		}
 		body := &pb.RequestBody{}
 		var bodyData []byte
 		err := proto.Unmarshal(msg, body)

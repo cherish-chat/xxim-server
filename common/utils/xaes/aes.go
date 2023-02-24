@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"errors"
 	"github.com/cherish-chat/xxim-server/common/utils"
 )
+
+var DecryptError = errors.New("decrypt error")
 
 // Encrypt aes加密
 func Encrypt(iv []byte, key []byte, data []byte) []byte {
@@ -21,15 +24,20 @@ func Encrypt(iv []byte, key []byte, data []byte) []byte {
 }
 
 // Decrypt aes解密
-func Decrypt(iv []byte, key []byte, data []byte) []byte {
+func Decrypt(iv []byte, key []byte, data []byte) (decrypted []byte, err error) {
 	iv = []byte(utils.Md516(string(iv)))
 	key = []byte(utils.Md5(string(key)))
 	block, _ := aes.NewCipher(key)
 	blockMode := cipher.NewCBCDecrypter(block, iv)
-	decrypted := make([]byte, len(data))
+	decrypted = make([]byte, len(data))
+	defer func() {
+		if r := recover(); r != nil {
+			err = DecryptError
+		}
+	}()
 	blockMode.CryptBlocks(decrypted, data)
 	decrypted = pkcs7UnPadding(decrypted)
-	return decrypted
+	return
 }
 
 // 使用PKCS7进行填充，IOS也是7

@@ -91,8 +91,11 @@ type (
 		DiscovType    string // default: endpoints, options: k8s|endpoints
 		K8sNamespace  string // default: xxim
 		Endpoints     []string
-		Port          int64 // default: 6700
-		WebsocketPort int64 // default: 6701
+		Port          int64  // default: 6700
+		WebsocketPort int64  // default: 6701
+		RsaPublicKey  string // 客户端使用公钥来加密
+		RsaPrivateKey string // 服务端使用私钥来解密
+		AesIv         string
 	}
 	ImRpcConfig struct {
 		Port int64 // default: 6702
@@ -186,6 +189,9 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			},
 			Port:          6700,
 			WebsocketPort: 6701,
+			RsaPublicKey:  "",
+			RsaPrivateKey: "",
+			AesIv:         "",
 		},
 		ImRpc: ImRpcConfig{
 			Port: 6702,

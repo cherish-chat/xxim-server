@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/xaes"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -53,6 +54,7 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 			Ips:         param.Ips,
 			NetworkUsed: param.NetworkUsed,
 			Headers:     param.Headers,
+			AesKey:      param.AesKey,
 		},
 	})
 	if err != nil {
@@ -111,6 +113,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 					NetworkUsed: param.NetworkUsed,
 					Headers:     param.Headers,
 					PodIp:       l.svcCtx.PodIp,
+					AesKey:      param.AesKey,
 				},
 				ConnectedAt: utils.AnyToString(c.ConnectedAt.UnixMilli()),
 			})
@@ -153,6 +156,7 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 					NetworkUsed: c.ConnParam.NetworkUsed,
 					Headers:     c.ConnParam.Headers,
 					PodIp:       l.svcCtx.PodIp,
+					AesKey:      c.ConnParam.AesKey,
 				},
 				ConnectedAt:    utils.AnyToString(c.ConnectedAt.UnixMilli()),
 				DisconnectedAt: utils.AnyToString(time.Now().UnixMilli()),
@@ -280,5 +284,12 @@ func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*typ
 }
 
 func (l *ConnLogic) SendMsgToConn(c *types.UserConn, data []byte) error {
+	// 加密
+	{
+		if c.ConnParam.AesKey != nil {
+			// aes加密
+			data = xaes.Encrypt([]byte(l.svcCtx.Config.AesIv), []byte(*c.ConnParam.AesKey), data)
+		}
+	}
 	return c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)
 }

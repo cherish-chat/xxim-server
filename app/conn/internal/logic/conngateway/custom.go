@@ -28,7 +28,8 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	callback func(ctx context.Context, resp RESP, c *types.UserConn),
 ) (*pb.ResponseBody, error) {
 	logger := logx.WithContext(ctx)
-	err := proto.Unmarshal(body.GetData(), req)
+	data := body.GetData()
+	err := proto.Unmarshal(data, req)
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", method, err.Error())
 		return nil, err

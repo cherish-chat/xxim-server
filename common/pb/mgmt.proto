@@ -57,6 +57,9 @@ message GetServerAllConfigResp {
     repeated string endpoints = 3;
     int64 port = 4;
     int64 websocketPort = 5;
+    string rsaPublicKey = 6;
+    string rsaPrivateKey = 7;
+    string aesIv = 8;
   }
   message ImRpcConfig {
     int64 port = 1;

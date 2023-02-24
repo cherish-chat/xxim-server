@@ -192,6 +192,9 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 			"Host": serverConfig.Common.Host,
 		}
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ConnRpc.Port)
+		c["RsaPublicKey"] = serverConfig.ConnRpc.RsaPublicKey
+		c["RsaPrivateKey"] = serverConfig.ConnRpc.RsaPrivateKey
+		c["AesIv"] = serverConfig.ConnRpc.AesIv
 	case "im":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ImRpc.Port)
 	case "appmgmt":

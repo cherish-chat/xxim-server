@@ -5,6 +5,8 @@ import (
 	"errors"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/xaes"
+	"github.com/cherish-chat/xxim-server/common/utils/xrsa"
 	"github.com/cherish-chat/xxim-server/sdk/types"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
@@ -22,6 +24,7 @@ type Client struct {
 	lock         sync.Mutex
 	respMap      sync.Map
 	ticker       *time.Ticker
+	aesKey       []byte
 }
 
 func NewClient(config Config, eventHandler types.EventHandler) *Client {
@@ -112,6 +115,7 @@ func (c *Client) Connect() error {
 		c.Close(websocket.StatusInternalError, "set ws error")
 		return err
 	}
+	c.sync()
 	return nil
 }
 
@@ -133,6 +137,16 @@ func (c *Client) readMessage() {
 			}
 			go c.EventHandler.OnMessage(typ, message)
 			if typ == websocket.MessageBinary {
+				// 解密
+				if len(c.aesKey) > 0 {
+					// aes解密
+					var err error
+					message, err = xaes.Decrypt([]byte(c.Config.AesIv), c.aesKey, message)
+					if err != nil {
+						c.Close(websocket.StatusInternalError, "decrypt message error")
+						return
+					}
+				}
 				pushBody := &pb.PushBody{}
 				err = proto.Unmarshal(message, pushBody)
 				if err != nil {
@@ -186,7 +200,7 @@ func (c *Client) RequestX(
 	if ws == nil {
 		return errors.New("ws is nil")
 	}
-	err := ws.Write(c.ctx, websocket.MessageBinary, dataBuff)
+	err := c.write(method, ws, dataBuff)
 	if err != nil {
 		return err
 	}
@@ -214,8 +228,21 @@ func (c *Client) RequestX(
 }
 
 func (c *Client) SetCxnParams() error {
+	c.aesKey = nil
 	resp := &pb.SetCxnParamsResp{}
-	err := c.RequestX("/v1/conn/white/setCxnParams", &pb.SetCxnParamsReq{
+	var aesKeyEncrypted []byte
+	var err error
+	aesKey := []byte(utils.GenId())
+	if c.Config.RsaPublicKey != "" {
+		bytes, err := xrsa.Encrypt(aesKey, []byte(c.Config.RsaPublicKey))
+		if err != nil {
+			logx.Errorf("set cxn params error: %s", err.Error())
+			return err
+		}
+		aesKeyEncrypted = bytes
+		c.aesKey = []byte(utils.Md5Bytes(aesKey))
+	}
+	err = c.RequestX("/v1/conn/white/setCxnParams", &pb.SetCxnParamsReq{
 		PackageId:   c.Config.DeviceConfig.PackageId,
 		Platform:    c.Config.DeviceConfig.Platform,
 		DeviceId:    c.Config.DeviceConfig.DeviceId,
@@ -225,6 +252,7 @@ func (c *Client) SetCxnParams() error {
 		Language:    c.Config.DeviceConfig.Language,
 		NetworkUsed: c.Config.DeviceConfig.NetworkUsed,
 		Ext:         c.Config.DeviceConfig.Ext,
+		AesKey:      aesKeyEncrypted,
 	}, resp)
 	if err != nil {
 		logx.Errorf("set cxn params error: %s", err.Error())
@@ -317,4 +345,18 @@ func (c *Client) sync() {
 		logx.Errorf("batchGetConvSeq error: %s", err.Error())
 		return
 	}
+}
+
+func (c *Client) write(method string, ws *websocket.Conn, dataBuff []byte) error {
+	if method != "/v1/conn/white/setCxnParams" {
+		if len(c.aesKey) > 0 {
+			dataBuff = xaes.Encrypt([]byte(c.Config.AesIv), c.aesKey, dataBuff)
+		}
+	}
+	err := ws.Write(c.ctx, websocket.MessageBinary, dataBuff)
+	if err != nil {
+		logx.Errorf("write error: %s", err.Error())
+		return err
+	}
+	return nil
 }

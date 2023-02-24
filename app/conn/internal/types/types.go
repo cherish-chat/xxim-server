@@ -43,6 +43,7 @@ type (
 		NetworkUsed string            // 4G/5G/WIFI
 		Headers     map[string]string // 其他参数
 		Timestamp   int64             // 时间戳
+		AesKey      *string           // aes key
 	}
 )
 
@@ -58,8 +59,13 @@ func (c *UserConn) SetConnParams(connParam *pb.ConnParam) {
 	c.ConnParam.Ips = connParam.Ips
 	c.ConnParam.NetworkUsed = connParam.NetworkUsed
 	c.ConnParam.Headers = connParam.Headers
+	c.ConnParam.AesKey = connParam.AesKey
 }
 
 func WebsocketStatusCodeAuthFailed(code int) int {
 	return 3000
+}
+
+func WebsocketStatusCodeRsaFailed() int {
+	return 3001
 }
