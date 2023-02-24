@@ -138,7 +138,7 @@ func (l *GetGroupMemberListLogic) GetGroupMemberList(in *pb.GetGroupMemberListRe
 func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMemberListReq, whereMap map[string]interface{}, orMap map[string][]interface{}, offset int32, limit int32, rdsKey string, saveKeysKey string) ([]string, error) {
 	// 先把 key 保存起来
 	// hset
-	err := l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, "")
+	err := l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, rdsKey)
 	if err != nil {
 		l.Errorf("redis hset %s error: %v", saveKeysKey, err)
 		return make([]string, 0), err
