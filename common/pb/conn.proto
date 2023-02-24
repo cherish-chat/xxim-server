@@ -28,6 +28,7 @@ message ConnParam {
   string language = 12;
   int64 timestamp = 13;
   optional string aesKey = 14; // 32位
+  optional string aesIv = 15; // 16位
 }
 
 // 获取用户的连接 可以用userId、platforms、devices过滤
@@ -100,6 +101,7 @@ message SetCxnParamsReq {
   string language = 7;
   string networkUsed = 8;
   optional bytes aesKey = 9; // 用于加密请求和响应
+  optional bytes aesIv = 10; // 用于加密请求和响应
   bytes ext = 11;
 }
 
@@ -112,6 +114,7 @@ message SetCxnParamsResp {
   string language = 6;
   string networkUsed = 7;
   optional bytes aesKey = 8; // 用于加密请求和响应
+  optional bytes aesIv = 9; // 用于加密请求和响应
   bytes ext = 11;
 }
 

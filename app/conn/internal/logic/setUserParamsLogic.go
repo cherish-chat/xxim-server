@@ -86,6 +86,7 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 		AppVersion:  c.ConnParam.AppVersion,
 		Language:    c.ConnParam.Language,
 		AesKey:      c.ConnParam.AesKey,
+		AesIv:       c.ConnParam.AesIv,
 	})
 	GetConnLogic().AddSubscriber(c)
 }

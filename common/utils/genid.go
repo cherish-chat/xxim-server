@@ -54,6 +54,11 @@ func Md516(s string) string {
 	return Md5(s)[8:24]
 }
 
+func Md5Bytes16(data []byte) string {
+	// 将中间的第9位到第24位提取出来
+	return Md5Bytes(data)[8:24]
+}
+
 func GetSuffix(filename string) string {
 	return filename[strings.LastIndex(filename, ".")+1:]
 }

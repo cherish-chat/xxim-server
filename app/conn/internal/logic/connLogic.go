@@ -55,6 +55,7 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 			NetworkUsed: param.NetworkUsed,
 			Headers:     param.Headers,
 			AesKey:      param.AesKey,
+			AesIv:       param.AesIv,
 		},
 	})
 	if err != nil {
@@ -114,6 +115,7 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 					Headers:     param.Headers,
 					PodIp:       l.svcCtx.PodIp,
 					AesKey:      param.AesKey,
+					AesIv:       param.AesIv,
 				},
 				ConnectedAt: utils.AnyToString(c.ConnectedAt.UnixMilli()),
 			})
@@ -157,6 +159,7 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 					Headers:     c.ConnParam.Headers,
 					PodIp:       l.svcCtx.PodIp,
 					AesKey:      c.ConnParam.AesKey,
+					AesIv:       c.ConnParam.AesIv,
 				},
 				ConnectedAt:    utils.AnyToString(c.ConnectedAt.UnixMilli()),
 				DisconnectedAt: utils.AnyToString(time.Now().UnixMilli()),
@@ -286,9 +289,9 @@ func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*typ
 func (l *ConnLogic) SendMsgToConn(c *types.UserConn, data []byte) error {
 	// 加密
 	{
-		if c.ConnParam.AesKey != nil {
+		if c.ConnParam.AesKey != nil && c.ConnParam.AesIv != nil {
 			// aes加密
-			data = xaes.Encrypt([]byte(l.svcCtx.Config.AesIv), []byte(*c.ConnParam.AesKey), data)
+			data = xaes.Encrypt([]byte(*c.ConnParam.AesIv), []byte(*c.ConnParam.AesKey), data)
 		}
 	}
 	return c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)

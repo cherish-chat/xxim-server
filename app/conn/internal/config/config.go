@@ -21,5 +21,4 @@ type Config struct {
 	NoticeRpc     zrpc.RpcClientConf
 	RsaPublicKey  string // 客户端使用公钥来加密
 	RsaPrivateKey string // 服务端使用私钥来解密
-	AesIv         string // 客户端使用iv来加密
 }

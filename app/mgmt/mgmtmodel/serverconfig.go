@@ -95,7 +95,6 @@ type (
 		WebsocketPort int64  // default: 6701
 		RsaPublicKey  string // 客户端使用公钥来加密
 		RsaPrivateKey string // 服务端使用私钥来解密
-		AesIv         string
 	}
 	ImRpcConfig struct {
 		Port int64 // default: 6702
@@ -191,7 +190,6 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			WebsocketPort: 6701,
 			RsaPublicKey:  "",
 			RsaPrivateKey: "",
-			AesIv:         "",
 		},
 		ImRpc: ImRpcConfig{
 			Port: 6702,

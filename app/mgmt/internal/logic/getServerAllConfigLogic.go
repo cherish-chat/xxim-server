@@ -59,7 +59,6 @@ func (l *GetServerAllConfigLogic) GetServerAllConfig(in *pb.GetServerAllConfigRe
 			WebsocketPort: config.ConnRpc.WebsocketPort,
 			RsaPublicKey:  config.ConnRpc.RsaPublicKey,
 			RsaPrivateKey: config.ConnRpc.RsaPrivateKey,
-			AesIv:         config.ConnRpc.AesIv,
 		},
 		ImRpc: &pb.GetServerAllConfigResp_ImRpcConfig{Port: config.ImRpc.Port},
 		MsgRpc: &pb.GetServerAllConfigResp_MsgRpcConfig{

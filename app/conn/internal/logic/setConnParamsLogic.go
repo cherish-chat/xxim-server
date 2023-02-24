@@ -37,6 +37,7 @@ func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnPa
 		NetworkUsed: req.GetNetworkUsed(),
 		Ext:         req.GetExt(),
 		AesKey:      req.GetAesKey(),
+		AesIv:       req.GetAesIv(),
 	}, nil
 }
 
@@ -56,6 +57,20 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParams
 		// 设置 aesKey
 		aesKey = utils.AnyPtr(utils.Md5Bytes(decrypt))
 	}
+	// rsa加密后的 aesIv
+	aesIvEncrypted := resp.GetAesIv()
+	var aesIv *string
+	// 是否不为空
+	if len(aesIvEncrypted) > 0 {
+		decrypt, err := xrsa.Decrypt(aesIvEncrypted, []byte(l.svcCtx.Config.RsaPrivateKey))
+		if err != nil {
+			// 断开连接
+			c.Conn.Close(types.WebsocketStatusCodeRsaFailed(), "rsa decrypt failed")
+			return
+		}
+		// 设置 aesIv
+		aesIv = utils.AnyPtr(utils.Md5Bytes16(decrypt))
+	}
 	c.SetConnParams(&pb.ConnParam{
 		UserId:      c.ConnParam.UserId,
 		Token:       c.ConnParam.Token,
@@ -70,5 +85,6 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParams
 		AppVersion:  resp.AppVersion,
 		Language:    resp.Language,
 		AesKey:      aesKey,
+		AesIv:       aesIv,
 	})
 }

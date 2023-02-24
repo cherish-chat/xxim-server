@@ -31,7 +31,6 @@ type Config struct {
 	DeviceConfig DeviceConfig
 	UserConfig   UserConfig
 	RsaPublicKey string
-	AesIv        string
 }
 
 func (c Config) GetHeader() http.Header {

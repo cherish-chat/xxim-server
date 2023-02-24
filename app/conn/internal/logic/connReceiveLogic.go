@@ -36,10 +36,10 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 		// 接收到消息
 		{
 			// 解密
-			if c.ConnParam.AesKey != nil {
+			if c.ConnParam.AesKey != nil && c.ConnParam.AesIv != nil {
 				// aes解密
 				var err error
-				msg, err = xaes.Decrypt([]byte(l.svcCtx.Config.AesIv), []byte(*c.ConnParam.AesKey), msg)
+				msg, err = xaes.Decrypt([]byte(*c.ConnParam.AesIv), []byte(*c.ConnParam.AesKey), msg)
 				if err != nil {
 					l.Errorf("【疑似攻击】userId: %s, ip: %s, ip2region: %s", c.ConnParam.UserId, c.ConnParam.Ips, ip2region.Ip2Region(c.ConnParam.Ips).String())
 					c.Conn.Close(int(websocket.StatusPolicyViolation), "protocol error")

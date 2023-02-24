@@ -25,6 +25,7 @@ type Client struct {
 	respMap      sync.Map
 	ticker       *time.Ticker
 	aesKey       []byte
+	aesIv        []byte
 }
 
 func NewClient(config Config, eventHandler types.EventHandler) *Client {
@@ -138,10 +139,10 @@ func (c *Client) readMessage() {
 			go c.EventHandler.OnMessage(typ, message)
 			if typ == websocket.MessageBinary {
 				// 解密
-				if len(c.aesKey) > 0 {
+				if len(c.aesKey) > 0 && len(c.aesIv) > 0 {
 					// aes解密
 					var err error
-					message, err = xaes.Decrypt([]byte(c.Config.AesIv), c.aesKey, message)
+					message, err = xaes.Decrypt(c.aesIv, c.aesKey, message)
 					if err != nil {
 						c.Close(websocket.StatusInternalError, "decrypt message error")
 						return
@@ -229,10 +230,13 @@ func (c *Client) RequestX(
 
 func (c *Client) SetCxnParams() error {
 	c.aesKey = nil
+	c.aesIv = nil
 	resp := &pb.SetCxnParamsResp{}
 	var aesKeyEncrypted []byte
+	var aesIvEncrypted []byte
 	var err error
 	aesKey := []byte(utils.GenId())
+	aesIv := []byte(utils.GenId())
 	if c.Config.RsaPublicKey != "" {
 		bytes, err := xrsa.Encrypt(aesKey, []byte(c.Config.RsaPublicKey))
 		if err != nil {
@@ -241,6 +245,14 @@ func (c *Client) SetCxnParams() error {
 		}
 		aesKeyEncrypted = bytes
 		c.aesKey = []byte(utils.Md5Bytes(aesKey))
+
+		bytes, err = xrsa.Encrypt(aesIv, []byte(c.Config.RsaPublicKey))
+		if err != nil {
+			logx.Errorf("set cxn params error: %s", err.Error())
+			return err
+		}
+		aesIvEncrypted = bytes
+		c.aesIv = []byte(utils.Md5Bytes16(aesIv))
 	}
 	err = c.RequestX("/v1/conn/white/setCxnParams", &pb.SetCxnParamsReq{
 		PackageId:   c.Config.DeviceConfig.PackageId,
@@ -253,6 +265,7 @@ func (c *Client) SetCxnParams() error {
 		NetworkUsed: c.Config.DeviceConfig.NetworkUsed,
 		Ext:         c.Config.DeviceConfig.Ext,
 		AesKey:      aesKeyEncrypted,
+		AesIv:       aesIvEncrypted,
 	}, resp)
 	if err != nil {
 		logx.Errorf("set cxn params error: %s", err.Error())
@@ -349,8 +362,8 @@ func (c *Client) sync() {
 
 func (c *Client) write(method string, ws *websocket.Conn, dataBuff []byte) error {
 	if method != "/v1/conn/white/setCxnParams" {
-		if len(c.aesKey) > 0 {
-			dataBuff = xaes.Encrypt([]byte(c.Config.AesIv), c.aesKey, dataBuff)
+		if len(c.aesKey) > 0 && len(c.aesIv) > 0 {
+			dataBuff = xaes.Encrypt(c.aesIv, c.aesKey, dataBuff)
 		}
 	}
 	err := ws.Write(c.ctx, websocket.MessageBinary, dataBuff)

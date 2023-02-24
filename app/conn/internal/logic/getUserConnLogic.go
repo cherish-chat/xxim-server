@@ -36,6 +36,7 @@ func (l *GetUserConnLogic) GetUserConn(in *pb.GetUserConnReq) (*pb.GetUserConnRe
 			PodIp:       l.svcCtx.PodIp,
 			Timestamp:   conn.ConnParam.Timestamp,
 			AesKey:      conn.ConnParam.AesKey,
+			AesIv:       conn.ConnParam.AesIv,
 		})
 	}
 	return &pb.GetUserConnResp{ConnParams: resp}, nil

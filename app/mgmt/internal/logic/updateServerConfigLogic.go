@@ -61,7 +61,6 @@ func (l *UpdateServerConfigLogic) UpdateServerConfig(in *pb.UpdateServerConfigRe
 			Port:          in.Config.ConnRpc.Port,
 			WebsocketPort: in.Config.ConnRpc.WebsocketPort,
 			RsaPublicKey:  in.Config.ConnRpc.RsaPublicKey,
-			AesIv:         in.Config.ConnRpc.AesIv,
 			RsaPrivateKey: in.Config.ConnRpc.RsaPrivateKey,
 		},
 		ImRpc: mgmtmodel.ImRpcConfig{Port: in.Config.ImRpc.Port},

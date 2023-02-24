@@ -40,7 +40,6 @@ xqDumvu1sYCot9fhDqktYsVz990FgpHJv7xeY11ZFvfKYl4T0VLg5Mvzq8+BX5ut
 SQIDAQAB
 -----END PUBLIC KEY-----
 `,
-			AesIv: "哈哈哈aaaaaaaasdsadsada",
 		},
 	}
 	svcCtx := svc.NewServiceContext(conf)
