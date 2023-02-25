@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/xrsa"
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 )
 
@@ -55,7 +56,7 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParams
 			return
 		}
 		// 设置 aesKey
-		aesKey = utils.AnyPtr(utils.Md5Bytes(decrypt))
+		aesKey = utils.AnyPtr(string(decrypt))
 	}
 	// rsa加密后的 aesIv
 	aesIvEncrypted := resp.GetAesIv()
@@ -69,7 +70,10 @@ func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParams
 			return
 		}
 		// 设置 aesIv
-		aesIv = utils.AnyPtr(utils.Md5Bytes16(decrypt))
+		aesIv = utils.AnyPtr(string(decrypt))
+	}
+	if aesIv != nil && aesKey != nil {
+		logx.Infof("aesKey: %s, aesIv: %s", *aesKey, *aesIv)
 	}
 	c.SetConnParams(&pb.ConnParam{
 		UserId:      c.ConnParam.UserId,

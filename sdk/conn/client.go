@@ -244,7 +244,7 @@ func (c *Client) SetCxnParams() error {
 			return err
 		}
 		aesKeyEncrypted = bytes
-		c.aesKey = []byte(utils.Md5Bytes(aesKey))
+		c.aesKey = aesKey
 
 		bytes, err = xrsa.Encrypt(aesIv, []byte(c.Config.RsaPublicKey))
 		if err != nil {
@@ -252,7 +252,7 @@ func (c *Client) SetCxnParams() error {
 			return err
 		}
 		aesIvEncrypted = bytes
-		c.aesIv = []byte(utils.Md5Bytes16(aesIv))
+		c.aesIv = aesIv
 	}
 	err = c.RequestX("/v1/conn/white/setCxnParams", &pb.SetCxnParamsReq{
 		PackageId:   c.Config.DeviceConfig.PackageId,

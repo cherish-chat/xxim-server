@@ -100,8 +100,8 @@ message SetCxnParamsReq {
   string appVersion = 6;
   string language = 7;
   string networkUsed = 8;
-  optional bytes aesKey = 9; // 用于加密请求和响应
-  optional bytes aesIv = 10; // 用于加密请求和响应
+  bytes aesKey = 9; // 用于加密请求和响应
+  bytes aesIv = 10; // 用于加密请求和响应
   bytes ext = 11;
 }
 
