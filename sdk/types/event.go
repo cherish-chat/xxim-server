@@ -23,7 +23,7 @@ type EventHandler interface {
 	// OnPushMsgDataList is called when a message is received.
 	OnPushMsgDataList(body *pb.PushBody)
 	// OnPushNoticeData is called when a message is received.
-	OnPushNoticeData(body *pb.PushBody)
+	OnPushNoticeData(noticeData *pb.NoticeData) bool
 	// OnPushResponseBody is called when a message is received.
 	OnPushResponseBody(body *pb.PushBody)
 	// OnTimer is called when a timer is triggered.

@@ -159,7 +159,19 @@ func (c *Client) readMessage() {
 				case pb.PushEvent_PushMsgDataList:
 					go c.EventHandler.OnPushMsgDataList(pushBody)
 				case pb.PushEvent_PushNoticeData:
-					go c.EventHandler.OnPushNoticeData(pushBody)
+					noticeData := &pb.NoticeData{}
+					err = proto.Unmarshal(pushBody.Data, noticeData)
+					if err != nil {
+						// close and return
+						c.Close(websocket.StatusInternalError, "read message error")
+						return
+					}
+					go func() {
+						ok := c.EventHandler.OnPushNoticeData(noticeData)
+						if ok {
+							c.ackNoticeData(noticeData)
+						}
+					}()
 				case pb.PushEvent_PushResponseBody:
 					// 解析消息
 					respBody := &pb.ResponseBody{}
@@ -372,4 +384,14 @@ func (c *Client) write(method string, ws *websocket.Conn, dataBuff []byte) error
 		return err
 	}
 	return nil
+}
+
+func (c *Client) ackNoticeData(data *pb.NoticeData) {
+	err := c.RequestX("/v1/notice/ackNoticeData", &pb.AckNoticeDataReq{
+		ConvId:   data.ConvId,
+		NoticeId: data.NoticeId,
+	}, &pb.AckNoticeDataResp{})
+	if err != nil {
+		logx.Errorf("ackNoticeData error: %s", err.Error())
+	}
 }

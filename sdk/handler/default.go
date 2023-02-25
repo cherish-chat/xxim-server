@@ -56,8 +56,9 @@ func (l *ConnLogic) OnPushMsgDataList(body *pb.PushBody) {
 	}
 }
 
-func (l *ConnLogic) OnPushNoticeData(body *pb.PushBody) {
-
+func (l *ConnLogic) OnPushNoticeData(noticeData *pb.NoticeData) bool {
+	logx.Debugf("noticeData: %s", utils.AnyToString(noticeData))
+	return true
 }
 
 func (l *ConnLogic) OnPushResponseBody(body *pb.PushBody) {
