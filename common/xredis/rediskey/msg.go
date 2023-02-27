@@ -39,3 +39,7 @@ func OfflinePushMsgListKey(uniqueId string) string {
 func SyncSendMsgLimiter() string {
 	return "token_limter:sync_send_msg_limiter"
 }
+
+func LatestGetConvIds(userId string) string {
+	return "s:latest_get_conv_ids:" + userId
+}

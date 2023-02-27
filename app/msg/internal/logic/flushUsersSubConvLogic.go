@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
+	"strings"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
@@ -61,6 +62,22 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string, compareConv
 				// 也订阅
 				convIds = append(convIds, id)
 			}
+		}
+	}
+	// 获取上次订阅的会话ids
+	latestGetConvIdsRedisKey := rediskey.LatestGetConvIds(userId)
+	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, latestGetConvIdsRedisKey)
+	latestGetConvIds := strings.Split(val, ",")
+	// 取消上次会话的订阅
+	if len(latestGetConvIds) > 0 {
+		var keys []string
+		for _, id := range latestGetConvIds {
+			keys = append(keys, rediskey.ConvMembersSubscribed(id))
+		}
+		err := xredis.MZRem(l.svcCtx.RedisSub(), l.ctx, keys, rediskey.ConvMemberPodIp(userId))
+		if err != nil {
+			l.Errorf("mzrem error: %v", err)
+			return err
 		}
 	}
 	// mzadd and setex
