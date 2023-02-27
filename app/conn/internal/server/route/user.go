@@ -122,5 +122,15 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/white/verifySms", route)
 		}
+		// ResetPasswordReq ResetPasswordResp
+		{
+			route := conngateway.Route[*pb.ResetPasswordReq, *pb.ResetPasswordResp]{
+				NewRequest: func() *pb.ResetPasswordReq {
+					return &pb.ResetPasswordReq{}
+				},
+				Do: svcCtx.UserService().ResetPassword,
+			}
+			conngateway.AddRoute("/v1/user/white/resetPassword", route)
+		}
 	}
 }

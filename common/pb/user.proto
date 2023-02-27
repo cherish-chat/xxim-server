@@ -239,6 +239,23 @@ message UpdateUserPasswordResp {
   CommonResp commonResp = 1;
 }
 
+// 忘记密码重置密码
+//ResetPasswordReq 重置密码
+message ResetPasswordReq {
+  CommonReq commonReq = 1;
+  // 手机号
+  string mobile = 2;
+  optional string mobileCountryCode = 3;
+  // 验证码
+  string smsCode = 4;
+  // 新密码
+  string newPassword = 5;
+}
+
+message ResetPasswordResp {
+  CommonResp commonResp = 1;
+}
+
 /*
 type InvitationCode struct {
 	Code        string `gorm:"column:code;type:varchar(32);not null;primary_key;" json:"code"`
@@ -878,6 +895,7 @@ service userService {
   rpc BatchGetUserAllDevices(BatchGetUserAllDevicesReq) returns (BatchGetUserAllDevicesResp) {}
   rpc UpdateUserInfo(UpdateUserInfoReq) returns (UpdateUserInfoResp) {}
   rpc UpdateUserPassword(UpdateUserPasswordReq) returns (UpdateUserPasswordResp) {}
+  rpc ResetPassword(ResetPasswordReq) returns (ResetPasswordResp) {}
 
   rpc GetAllUserInvitationCode(GetAllUserInvitationCodeReq) returns (GetAllUserInvitationCodeResp) {}
   rpc GetUserInvitationCodeDetail(GetUserInvitationCodeDetailReq) returns (GetUserInvitationCodeDetailResp) {}

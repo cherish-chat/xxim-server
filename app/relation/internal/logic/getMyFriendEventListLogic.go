@@ -41,6 +41,7 @@ func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEvent
 	err = l.svcCtx.Mysql().Model(&relationmodel.RequestAddFriend{}).
 		Where("(fromUserId = ? OR toUserId = ?) AND createTime > ? AND createTime < ?", in.CommonReq.UserId, in.CommonReq.UserId, clearTime, pb.PageIndex(in.PageIndex)).
 		Order("createTime desc").
+		Limit(20).
 		Find(&list).Error
 	if err != nil {
 		l.Errorf("get friend event list error: %v", err)

@@ -75,6 +75,8 @@ type (
 	MapUserByIdsResp                      = pb.MapUserByIdsResp
 	RegisterReq                           = pb.RegisterReq
 	RegisterResp                          = pb.RegisterResp
+	ResetPasswordReq                      = pb.ResetPasswordReq
+	ResetPasswordResp                     = pb.ResetPasswordResp
 	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
 	SendSmsReq                            = pb.SendSmsReq
@@ -127,6 +129,7 @@ type (
 		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
 		UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
 		GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
 		GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
 		AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
@@ -239,6 +242,11 @@ func (m *defaultUserService) UpdateUserInfo(ctx context.Context, in *UpdateUserI
 func (m *defaultUserService) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UpdateUserPassword(ctx, in, opts...)
+}
+
+func (m *defaultUserService) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.ResetPassword(ctx, in, opts...)
 }
 
 func (m *defaultUserService) GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error) {

@@ -94,6 +94,11 @@ func (s *UserServiceServer) UpdateUserPassword(ctx context.Context, in *pb.Updat
 	return l.UpdateUserPassword(in)
 }
 
+func (s *UserServiceServer) ResetPassword(ctx context.Context, in *pb.ResetPasswordReq) (*pb.ResetPasswordResp, error) {
+	l := logic.NewResetPasswordLogic(ctx, s.svcCtx)
+	return l.ResetPassword(in)
+}
+
 func (s *UserServiceServer) GetAllUserInvitationCode(ctx context.Context, in *pb.GetAllUserInvitationCodeReq) (*pb.GetAllUserInvitationCodeResp, error) {
 	l := logic.NewGetAllUserInvitationCodeLogic(ctx, s.svcCtx)
 	return l.GetAllUserInvitationCode(in)

@@ -39,6 +39,9 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 	if resp == nil || resp.UserId == "" || resp.Token == "" {
 		return
 	}
+	if resp.UserId == c.ConnParam.UserId && resp.Token == c.ConnParam.Token {
+		return
+	}
 	// 鉴权
 	code, err := GetConnLogic().BeforeConnect(ctx, types.ConnParam{
 		UserId:      resp.UserId,

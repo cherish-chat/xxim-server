@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
@@ -132,6 +133,49 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		if count > 0 {
 			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
 		}
+	} else {
+		if in.Mobile != nil && *in.Mobile != "" {
+			mobile = *in.Mobile
+		}
+		if in.MobileCountryCode != nil && *in.MobileCountryCode != "" {
+			mobileCountryCode = *in.MobileCountryCode
+		}
+	}
+	// 如果手机号不为空，判断手机号是否存在
+	{
+		// 判断是否有锁
+		var lockKey = fmt.Sprintf("register_mobile_%v_%v", mobileCountryCode, mobile)
+		exists, err := l.svcCtx.Redis().ExistsCtx(l.ctx, lockKey)
+		if err != nil {
+			l.Errorf("check lock err: %v", err)
+			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if exists {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
+		}
+		// 先给手机号上锁
+		err = l.svcCtx.Redis().SetexCtx(l.ctx, lockKey, "1", 10)
+		if err != nil {
+			l.Errorf("set lock err: %v", err)
+			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		// 判断手机号是否存在
+		var count int64
+		err = l.svcCtx.Mysql().Model(&usermodel.User{}).Where("mobile = ? and mobileCountryCode = ?", mobile, mobileCountryCode).Count(&count).Error
+		if err != nil {
+			l.Errorf("check mobile err: %v", err)
+			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if count > 0 {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
+		}
+		defer func() {
+			// 删除锁
+			_, err = l.svcCtx.Redis().DelCtx(l.ctx, lockKey)
+			if err != nil {
+				l.Errorf("del lock err: %v", err)
+			}
+		}()
 	}
 	// 是否必须要smsCode
 	if l.svcCtx.ConfigMgr.RegisterMustSmsCode(l.ctx) {

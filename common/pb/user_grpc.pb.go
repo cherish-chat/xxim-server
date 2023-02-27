@@ -38,6 +38,7 @@ type UserServiceClient interface {
 	BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
 	UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
 	GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
 	GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
 	AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
@@ -197,6 +198,15 @@ func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserIn
 func (c *userServiceClient) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error) {
 	out := new(UpdateUserPasswordResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	out := new(ResetPasswordResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/ResetPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -484,6 +494,7 @@ type UserServiceServer interface {
 	BatchGetUserAllDevices(context.Context, *BatchGetUserAllDevicesReq) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*UpdateUserInfoResp, error)
 	UpdateUserPassword(context.Context, *UpdateUserPasswordReq) (*UpdateUserPasswordResp, error)
+	ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error)
 	GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error)
 	GetUserInvitationCodeDetail(context.Context, *GetUserInvitationCodeDetailReq) (*GetUserInvitationCodeDetailResp, error)
 	AddUserInvitationCode(context.Context, *AddUserInvitationCodeReq) (*AddUserInvitationCodeResp, error)
@@ -561,6 +572,9 @@ func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUse
 }
 func (UnimplementedUserServiceServer) UpdateUserPassword(context.Context, *UpdateUserPasswordReq) (*UpdateUserPasswordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPassword not implemented")
+}
+func (UnimplementedUserServiceServer) ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (UnimplementedUserServiceServer) GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserInvitationCode not implemented")
@@ -910,6 +924,24 @@ func _UserService_UpdateUserPassword_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ResetPassword(ctx, req.(*ResetPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1498,6 +1530,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserPassword",
 			Handler:    _UserService_UpdateUserPassword_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _UserService_ResetPassword_Handler,
 		},
 		{
 			MethodName: "GetAllUserInvitationCode",
