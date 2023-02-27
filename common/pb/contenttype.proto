@@ -1,0 +1,24 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+
+enum MsgContentType {
+  unknown = 0; // 未知类型
+  typing = 1; // 正在输入
+  tip = 2; // 提示
+
+  text = 11; // 文本
+  image = 12; // 图片
+  audio = 13; // 语音
+  video = 14; // 视频
+  file = 15; // 文件
+  location = 16; // 位置
+  card = 17; // 名片
+  merge = 18; // 合并
+  emoji = 19; // 表情
+  command = 20; // 命令
+  richText = 21; // 富文本
+  markdown = 22; // markdown
+
+  custom = 100; // 自定义消息
+}
