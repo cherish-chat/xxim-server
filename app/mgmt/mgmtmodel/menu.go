@@ -49,6 +49,8 @@ func (m *Menu) ToPb() *pb.MSMenu {
 		IsShow:       m.IsShow,
 		IsDisable:    m.IsDisable,
 		Children:     make([]*pb.MSMenu, 0),
+		UpdatedAt:    m.UpdateTime,
+		UpdatedAtStr: utils.TimeFormat(m.UpdateTime),
 	}
 }
 

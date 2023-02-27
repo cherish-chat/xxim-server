@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,6 +33,7 @@ func (l *UpdateMSMenuLogic) UpdateMSMenu(in *pb.UpdateMSMenuReq) (*pb.UpdateMSMe
 		return &pb.UpdateMSMenuResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	updateMap := make(map[string]interface{})
+	updateMap["updateTime"] = time.Now().UnixMilli()
 	if in.Menu.Pid != "" {
 		updateMap["pid"] = in.Menu.Pid
 	}
