@@ -64,7 +64,7 @@ func (l *GetGroupApplyListLogic) GetGroupApplyList(in *pb.GetGroupApplyListReq) 
 	}
 	var total int64
 	tx.Count(&total)
-	tx = tx.Order("createTime desc")
+	tx = tx.Order("applyTime desc")
 	tx = xorm.Paging(tx, in.Page.Page, in.Page.Size)
 	err = tx.Find(&groupApplyList).Error
 	if len(groupApplyList) == 0 {

@@ -123,16 +123,6 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		}
 		mobile = *in.Mobile
 		mobileCountryCode = *in.MobileCountryCode
-		// 手机号是否存在
-		var count int64
-		err := l.svcCtx.Mysql().Model(&usermodel.User{}).Where("mobile = ? and mobileCountryCode = ?", mobile, mobileCountryCode).Count(&count).Error
-		if err != nil {
-			l.Errorf("check mobile err: %v", err)
-			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
-		}
-		if count > 0 {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
-		}
 	} else {
 		if in.Mobile != nil && *in.Mobile != "" {
 			mobile = *in.Mobile
@@ -142,7 +132,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		}
 	}
 	// 如果手机号不为空，判断手机号是否存在
-	{
+	if mobile != "" {
 		// 判断是否有锁
 		var lockKey = fmt.Sprintf("register_mobile_%v_%v", mobileCountryCode, mobile)
 		exists, err := l.svcCtx.Redis().ExistsCtx(l.ctx, lockKey)
@@ -271,8 +261,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			DeviceId:    in.CommonReq.DeviceId,
 			DeviceModel: in.CommonReq.DeviceModel,
 		},
-		InvitationCode: inviCode,
-		CreateTime:     time.Now().UnixMilli(),
+		InvitationCode:    inviCode,
+		CreateTime:        time.Now().UnixMilli(),
+		Mobile:            mobile,
+		MobileCountryCode: mobileCountryCode,
 	}
 	err = xorm.InsertOne(l.svcCtx.Mysql(), user)
 	if err != nil {
