@@ -27,7 +27,10 @@ func upsert(tx *gorm.DB, id string, model interface{}) {
 }
 
 func InitData(tx *gorm.DB) {
+	// restore
 	initMenu(tx)
+	restoreMenu(tx)
+	insertMenu(tx)
 	initRole(tx)
 	initApiPath(tx)
 	initMSIPWhitelist(tx)

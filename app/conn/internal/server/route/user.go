@@ -132,5 +132,15 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/white/resetPassword", route)
 		}
+		// ReportUserReq ReportUserResp
+		{
+			route := conngateway.Route[*pb.ReportUserReq, *pb.ReportUserResp]{
+				NewRequest: func() *pb.ReportUserReq {
+					return &pb.ReportUserReq{}
+				},
+				Do: svcCtx.UserService().ReportUser,
+			}
+			conngateway.AddRoute("/v1/user/reportUser", route)
+		}
 	}
 }

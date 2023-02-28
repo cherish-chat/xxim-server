@@ -57,6 +57,7 @@ func (m *Menu) ToPb() *pb.MSMenu {
 func genMenu(in []*pb.MSMenu) []*Menu {
 	var menus []*Menu
 	for _, v := range in {
+		v := v
 		menus = append(menus, &Menu{
 			Id:        v.Id,
 			Pid:       v.Pid,
@@ -164,6 +165,9 @@ func genMenu3(
 		Children:     nil,
 	}
 }
+
+var defaultMenus []*Menu
+
 func initMenu(tx *gorm.DB) {
 	menus := genMenu([]*pb.MSMenu{
 		// INSERT INTO `la_system_auth_menu` VALUES (1, 0, 'C', '工作台', 'el-icon-Monitor', 50, 'index:console', 'workbench', 'workbench/index', '', '', 1, 1, 0, 1650341765, 1668672757);
@@ -370,7 +374,32 @@ func initMenu(tx *gorm.DB) {
 			),
 		),
 	})
-	for _, menu := range menus {
+	defaultMenus = menus
+}
+
+// restoreMenu 还原menu
+func restoreMenu(tx *gorm.DB) {
+	// update
+	for _, menu := range defaultMenus {
+		menu := *menu
+		tx.Model(&Menu{}).Where("id = ?", menu.Id).Updates(map[string]any{
+			"pid":        menu.Pid,
+			"menuType":   menu.MenuType,
+			"menuIcon":   menu.MenuIcon,
+			"menuSort":   menu.MenuSort,
+			"perms":      menu.Perms,
+			"paths":      menu.Paths,
+			"component":  menu.Component,
+			"selected":   menu.Selected,
+			"params":     menu.Params,
+			"updateTime": time.Now().UnixMilli(),
+		})
+	}
+}
+
+// insertMenu 插入menu
+func insertMenu(tx *gorm.DB) {
+	for _, menu := range defaultMenus {
 		insertIfNotFound(tx, menu.Id, menu)
 	}
 }

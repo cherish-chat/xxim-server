@@ -49,12 +49,12 @@ func (l *GetMyMSMenuListLogic) GetMyMSMenuList(in *pb.GetMyMSMenuListReq) (*pb.G
 	}
 	var menuList []*pb.MSMenu
 	for _, menu := range menus {
-		if menu.Pid == "0" {
+		if menu.Pid == "0" || menu.Pid == "" {
 			menuList = append(menuList, menu.ToPb())
 		}
 	}
 	for _, menu := range menus {
-		if menu.Pid != "" {
+		if menu.Pid != "" && menu.Pid != "0" {
 			found := false
 			for _, m := range menuList {
 				if m.Id == menu.Pid {

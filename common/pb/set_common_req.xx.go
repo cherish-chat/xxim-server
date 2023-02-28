@@ -4,6 +4,14 @@ func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *ReportUserReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *ReportGroupReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

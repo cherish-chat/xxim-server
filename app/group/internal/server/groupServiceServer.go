@@ -177,3 +177,9 @@ func (s *GroupServiceServer) AddGroupMember(ctx context.Context, in *pb.AddGroup
 	l := logic.NewAddGroupMemberLogic(ctx, s.svcCtx)
 	return l.AddGroupMember(in)
 }
+
+//  ReportGroup
+func (s *GroupServiceServer) ReportGroup(ctx context.Context, in *pb.ReportGroupReq) (*pb.ReportGroupResp, error) {
+	l := logic.NewReportGroupLogic(ctx, s.svcCtx)
+	return l.ReportGroup(in)
+}

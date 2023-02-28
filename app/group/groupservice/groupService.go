@@ -69,6 +69,8 @@ type (
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
 	MapGroupMemberInfoByIdsReq                     = pb.MapGroupMemberInfoByIdsReq
 	MapGroupMemberInfoByIdsResp                    = pb.MapGroupMemberInfoByIdsResp
+	ReportGroupReq                                 = pb.ReportGroupReq
+	ReportGroupResp                                = pb.ReportGroupResp
 	SearchGroupsByKeywordReq                       = pb.SearchGroupsByKeywordReq
 	SearchGroupsByKeywordResp                      = pb.SearchGroupsByKeywordResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
@@ -133,6 +135,8 @@ type (
 		SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
 		// AddGroupMember 添加群成员
 		AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
+		//  ReportGroup
+		ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
 	}
 
 	defaultGroupService struct {
@@ -300,4 +304,10 @@ func (m *defaultGroupService) SearchGroupsByKeyword(ctx context.Context, in *Sea
 func (m *defaultGroupService) AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.AddGroupMember(ctx, in, opts...)
+}
+
+//  ReportGroup
+func (m *defaultGroupService) ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ReportGroup(ctx, in, opts...)
 }

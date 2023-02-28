@@ -6611,6 +6611,119 @@ func (x *VerifySmsResp) GetCommonResp() *CommonResp {
 	return nil
 }
 
+// 举报用户
+// ReportUserReq 举报用户请求
+type ReportUserReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonReq *CommonReq `protobuf:"bytes,1,opt,name=commonReq,proto3" json:"commonReq"`
+	UserId    string     `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId"`
+	Reason    string     `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason"`
+}
+
+func (x *ReportUserReq) Reset() {
+	*x = ReportUserReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_proto_msgTypes[97]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReportUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportUserReq) ProtoMessage() {}
+
+func (x *ReportUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_user_proto_msgTypes[97]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportUserReq.ProtoReflect.Descriptor instead.
+func (*ReportUserReq) Descriptor() ([]byte, []int) {
+	return file_user_proto_rawDescGZIP(), []int{97}
+}
+
+func (x *ReportUserReq) GetCommonReq() *CommonReq {
+	if x != nil {
+		return x.CommonReq
+	}
+	return nil
+}
+
+func (x *ReportUserReq) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *ReportUserReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// ReportUserResp 举报用户响应
+type ReportUserResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CommonResp *CommonResp `protobuf:"bytes,1,opt,name=commonResp,proto3" json:"commonResp"`
+}
+
+func (x *ReportUserResp) Reset() {
+	*x = ReportUserResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_user_proto_msgTypes[98]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReportUserResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReportUserResp) ProtoMessage() {}
+
+func (x *ReportUserResp) ProtoReflect() protoreflect.Message {
+	mi := &file_user_proto_msgTypes[98]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReportUserResp.ProtoReflect.Descriptor instead.
+func (*ReportUserResp) Descriptor() ([]byte, []int) {
+	return file_user_proto_rawDescGZIP(), []int{98}
+}
+
+func (x *ReportUserResp) GetCommonResp() *CommonResp {
+	if x != nil {
+		return x.CommonResp
+	}
+	return nil
+}
+
 type BatchGetUserAllDevicesResp_AllDevices struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -6623,7 +6736,7 @@ type BatchGetUserAllDevicesResp_AllDevices struct {
 func (x *BatchGetUserAllDevicesResp_AllDevices) Reset() {
 	*x = BatchGetUserAllDevicesResp_AllDevices{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_user_proto_msgTypes[99]
+		mi := &file_user_proto_msgTypes[101]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -6636,7 +6749,7 @@ func (x *BatchGetUserAllDevicesResp_AllDevices) String() string {
 func (*BatchGetUserAllDevicesResp_AllDevices) ProtoMessage() {}
 
 func (x *BatchGetUserAllDevicesResp_AllDevices) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[99]
+	mi := &file_user_proto_msgTypes[101]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7558,6 +7671,17 @@ var file_user_proto_rawDesc = []byte{
 	0x69, 0x66, 0x79, 0x53, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f,
 	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e,
 	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a,
+	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x22, 0x6c, 0x0a, 0x0d, 0x52, 0x65,
+	0x70, 0x6f, 0x72, 0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x12, 0x2b, 0x0a, 0x09, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x52, 0x09, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x73, 0x65, 0x72,
+	0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64,
+	0x12, 0x16, 0x0a, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x40, 0x0a, 0x0e, 0x52, 0x65, 0x70, 0x6f,
+	0x72, 0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2e, 0x0a, 0x0a, 0x63, 0x6f,
+	0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e,
+	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x52, 0x0a,
 	0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x2a, 0x29, 0x0a, 0x02, 0x58, 0x42,
 	0x12, 0x0d, 0x0a, 0x09, 0x55, 0x6e, 0x6b, 0x6e, 0x6f, 0x77, 0x6e, 0x58, 0x42, 0x10, 0x00, 0x12,
 	0x08, 0x0a, 0x04, 0x4d, 0x61, 0x6c, 0x65, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x65, 0x6d,
@@ -7587,7 +7711,7 @@ var file_user_proto_rawDesc = []byte{
 	0x5f, 0x43, 0x6c, 0x65, 0x61, 0x72, 0x54, 0x69, 0x6d, 0x65, 0x10, 0x15, 0x2a, 0x2c, 0x0a, 0x08,
 	0x55, 0x73, 0x65, 0x72, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x08, 0x0a, 0x04, 0x55, 0x73, 0x65, 0x72,
 	0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x10, 0x01, 0x12,
-	0x09, 0x0a, 0x05, 0x47, 0x75, 0x65, 0x73, 0x74, 0x10, 0x03, 0x32, 0xd5, 0x1a, 0x0a, 0x0b, 0x75,
+	0x09, 0x0a, 0x05, 0x47, 0x75, 0x65, 0x73, 0x74, 0x10, 0x03, 0x32, 0x8c, 0x1b, 0x0a, 0x0b, 0x75,
 	0x73, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x4c, 0x6f,
 	0x67, 0x69, 0x6e, 0x12, 0x0c, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65,
 	0x71, 0x1a, 0x0d, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70,
@@ -7801,8 +7925,11 @@ var file_user_proto_rawDesc = []byte{
 	0x0a, 0x09, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x53, 0x6d, 0x73, 0x12, 0x10, 0x2e, 0x70, 0x62,
 	0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x53, 0x6d, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x11, 0x2e,
 	0x70, 0x62, 0x2e, 0x56, 0x65, 0x72, 0x69, 0x66, 0x79, 0x53, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x22, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x22, 0x00, 0x12, 0x35, 0x0a, 0x0a, 0x52, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x55, 0x73, 0x65, 0x72,
+	0x12, 0x11, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x55, 0x73, 0x65, 0x72,
+	0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x72, 0x74, 0x55,
+	0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x22, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70,
+	0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -7818,7 +7945,7 @@ func file_user_proto_rawDescGZIP() []byte {
 }
 
 var file_user_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 107)
+var file_user_proto_msgTypes = make([]protoimpl.MessageInfo, 109)
 var file_user_proto_goTypes = []interface{}{
 	(XB)(0),                                       // 0: pb.XB
 	(Constellation)(0),                            // 1: pb.Constellation
@@ -7921,258 +8048,264 @@ var file_user_proto_goTypes = []interface{}{
 	(*SendSmsResp)(nil),                           // 98: pb.SendSmsResp
 	(*VerifySmsReq)(nil),                          // 99: pb.VerifySmsReq
 	(*VerifySmsResp)(nil),                         // 100: pb.VerifySmsResp
-	nil,                                           // 101: pb.MapUserByIdsResp.UsersEntry
-	nil,                                           // 102: pb.GetUserSettingsResp.SettingsEntry
-	(*BatchGetUserAllDevicesResp_AllDevices)(nil), // 103: pb.BatchGetUserAllDevicesResp.AllDevices
-	nil,                        // 104: pb.GetAllUserInvitationCodeReq.FilterEntry
-	nil,                        // 105: pb.GetAllUserIpWhiteListReq.FilterEntry
-	nil,                        // 106: pb.GetAllUserIpBlackListReq.FilterEntry
-	nil,                        // 107: pb.GetAllUserDefaultConvReq.FilterEntry
-	nil,                        // 108: pb.UserModel.InfoMapEntry
-	nil,                        // 109: pb.GetAllUserModelReq.FilterEntry
-	nil,                        // 110: pb.GetAllLoginRecordReq.FilterEntry
-	(*IpRegion)(nil),           // 111: pb.IpRegion
-	(*CommonReq)(nil),          // 112: pb.CommonReq
-	(*CommonResp)(nil),         // 113: pb.CommonResp
-	(*Page)(nil),               // 114: pb.Page
-	(*AfterConnectReq)(nil),    // 115: pb.AfterConnectReq
-	(*AfterDisconnectReq)(nil), // 116: pb.AfterDisconnectReq
+	(*ReportUserReq)(nil),                         // 101: pb.ReportUserReq
+	(*ReportUserResp)(nil),                        // 102: pb.ReportUserResp
+	nil,                                           // 103: pb.MapUserByIdsResp.UsersEntry
+	nil,                                           // 104: pb.GetUserSettingsResp.SettingsEntry
+	(*BatchGetUserAllDevicesResp_AllDevices)(nil), // 105: pb.BatchGetUserAllDevicesResp.AllDevices
+	nil,                        // 106: pb.GetAllUserInvitationCodeReq.FilterEntry
+	nil,                        // 107: pb.GetAllUserIpWhiteListReq.FilterEntry
+	nil,                        // 108: pb.GetAllUserIpBlackListReq.FilterEntry
+	nil,                        // 109: pb.GetAllUserDefaultConvReq.FilterEntry
+	nil,                        // 110: pb.UserModel.InfoMapEntry
+	nil,                        // 111: pb.GetAllUserModelReq.FilterEntry
+	nil,                        // 112: pb.GetAllLoginRecordReq.FilterEntry
+	(*IpRegion)(nil),           // 113: pb.IpRegion
+	(*CommonReq)(nil),          // 114: pb.CommonReq
+	(*CommonResp)(nil),         // 115: pb.CommonResp
+	(*Page)(nil),               // 116: pb.Page
+	(*AfterConnectReq)(nil),    // 117: pb.AfterConnectReq
+	(*AfterDisconnectReq)(nil), // 118: pb.AfterDisconnectReq
 }
 var file_user_proto_depIdxs = []int32{
 	1,   // 0: pb.BirthdayInfo.constellation:type_name -> pb.Constellation
 	0,   // 1: pb.UserBaseInfo.xb:type_name -> pb.XB
 	4,   // 2: pb.UserBaseInfo.birthday:type_name -> pb.BirthdayInfo
-	111, // 3: pb.UserBaseInfo.ipRegion:type_name -> pb.IpRegion
-	112, // 4: pb.LoginReq.commonReq:type_name -> pb.CommonReq
-	113, // 5: pb.LoginResp.commonResp:type_name -> pb.CommonResp
-	112, // 6: pb.ConfirmRegisterReq.commonReq:type_name -> pb.CommonReq
-	113, // 7: pb.ConfirmRegisterResp.commonResp:type_name -> pb.CommonResp
-	112, // 8: pb.RegisterReq.commonReq:type_name -> pb.CommonReq
+	113, // 3: pb.UserBaseInfo.ipRegion:type_name -> pb.IpRegion
+	114, // 4: pb.LoginReq.commonReq:type_name -> pb.CommonReq
+	115, // 5: pb.LoginResp.commonResp:type_name -> pb.CommonResp
+	114, // 6: pb.ConfirmRegisterReq.commonReq:type_name -> pb.CommonReq
+	115, // 7: pb.ConfirmRegisterResp.commonResp:type_name -> pb.CommonResp
+	114, // 8: pb.RegisterReq.commonReq:type_name -> pb.CommonReq
 	0,   // 9: pb.RegisterReq.xb:type_name -> pb.XB
 	4,   // 10: pb.RegisterReq.birthday:type_name -> pb.BirthdayInfo
-	113, // 11: pb.RegisterResp.commonResp:type_name -> pb.CommonResp
-	112, // 12: pb.MapUserByIdsReq.commonReq:type_name -> pb.CommonReq
-	113, // 13: pb.MapUserByIdsResp.commonResp:type_name -> pb.CommonResp
-	101, // 14: pb.MapUserByIdsResp.users:type_name -> pb.MapUserByIdsResp.UsersEntry
-	112, // 15: pb.BatchGetUserBaseInfoReq.commonReq:type_name -> pb.CommonReq
-	113, // 16: pb.BatchGetUserBaseInfoResp.commonResp:type_name -> pb.CommonResp
+	115, // 11: pb.RegisterResp.commonResp:type_name -> pb.CommonResp
+	114, // 12: pb.MapUserByIdsReq.commonReq:type_name -> pb.CommonReq
+	115, // 13: pb.MapUserByIdsResp.commonResp:type_name -> pb.CommonResp
+	103, // 14: pb.MapUserByIdsResp.users:type_name -> pb.MapUserByIdsResp.UsersEntry
+	114, // 15: pb.BatchGetUserBaseInfoReq.commonReq:type_name -> pb.CommonReq
+	115, // 16: pb.BatchGetUserBaseInfoResp.commonResp:type_name -> pb.CommonResp
 	6,   // 17: pb.BatchGetUserBaseInfoResp.userBaseInfos:type_name -> pb.UserBaseInfo
-	112, // 18: pb.SearchUsersByKeywordReq.commonReq:type_name -> pb.CommonReq
-	113, // 19: pb.SearchUsersByKeywordResp.commonResp:type_name -> pb.CommonResp
+	114, // 18: pb.SearchUsersByKeywordReq.commonReq:type_name -> pb.CommonReq
+	115, // 19: pb.SearchUsersByKeywordResp.commonResp:type_name -> pb.CommonResp
 	6,   // 20: pb.SearchUsersByKeywordResp.users:type_name -> pb.UserBaseInfo
-	112, // 21: pb.GetUserHomeReq.commonReq:type_name -> pb.CommonReq
-	113, // 22: pb.GetUserHomeResp.commonResp:type_name -> pb.CommonResp
+	114, // 21: pb.GetUserHomeReq.commonReq:type_name -> pb.CommonReq
+	115, // 22: pb.GetUserHomeResp.commonResp:type_name -> pb.CommonResp
 	0,   // 23: pb.GetUserHomeResp.xb:type_name -> pb.XB
 	4,   // 24: pb.GetUserHomeResp.birthday:type_name -> pb.BirthdayInfo
-	111, // 25: pb.GetUserHomeResp.ipRegion:type_name -> pb.IpRegion
+	113, // 25: pb.GetUserHomeResp.ipRegion:type_name -> pb.IpRegion
 	5,   // 26: pb.GetUserHomeResp.levelInfo:type_name -> pb.LevelInfo
-	112, // 27: pb.GetUserSettingsReq.commonReq:type_name -> pb.CommonReq
+	114, // 27: pb.GetUserSettingsReq.commonReq:type_name -> pb.CommonReq
 	2,   // 28: pb.GetUserSettingsReq.keys:type_name -> pb.UserSettingKey
 	2,   // 29: pb.UserSetting.key:type_name -> pb.UserSettingKey
-	113, // 30: pb.GetUserSettingsResp.commonResp:type_name -> pb.CommonResp
-	102, // 31: pb.GetUserSettingsResp.settings:type_name -> pb.GetUserSettingsResp.SettingsEntry
-	112, // 32: pb.SetUserSettingsReq.commonReq:type_name -> pb.CommonReq
+	115, // 30: pb.GetUserSettingsResp.commonResp:type_name -> pb.CommonResp
+	104, // 31: pb.GetUserSettingsResp.settings:type_name -> pb.GetUserSettingsResp.SettingsEntry
+	114, // 32: pb.SetUserSettingsReq.commonReq:type_name -> pb.CommonReq
 	22,  // 33: pb.SetUserSettingsReq.settings:type_name -> pb.UserSetting
-	113, // 34: pb.SetUserSettingsResp.commonResp:type_name -> pb.CommonResp
-	112, // 35: pb.BatchGetUserAllDevicesReq.commonReq:type_name -> pb.CommonReq
-	113, // 36: pb.BatchGetUserAllDevicesResp.commonResp:type_name -> pb.CommonResp
-	103, // 37: pb.BatchGetUserAllDevicesResp.allDevices:type_name -> pb.BatchGetUserAllDevicesResp.AllDevices
-	112, // 38: pb.UpdateUserInfoReq.commonReq:type_name -> pb.CommonReq
-	113, // 39: pb.UpdateUserInfoResp.commonResp:type_name -> pb.CommonResp
-	112, // 40: pb.UpdateUserPasswordReq.commonReq:type_name -> pb.CommonReq
-	113, // 41: pb.UpdateUserPasswordResp.commonResp:type_name -> pb.CommonResp
-	112, // 42: pb.ResetPasswordReq.commonReq:type_name -> pb.CommonReq
-	113, // 43: pb.ResetPasswordResp.commonResp:type_name -> pb.CommonResp
-	112, // 44: pb.GetAllUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
-	114, // 45: pb.GetAllUserInvitationCodeReq.page:type_name -> pb.Page
-	104, // 46: pb.GetAllUserInvitationCodeReq.filter:type_name -> pb.GetAllUserInvitationCodeReq.FilterEntry
-	113, // 47: pb.GetAllUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
+	115, // 34: pb.SetUserSettingsResp.commonResp:type_name -> pb.CommonResp
+	114, // 35: pb.BatchGetUserAllDevicesReq.commonReq:type_name -> pb.CommonReq
+	115, // 36: pb.BatchGetUserAllDevicesResp.commonResp:type_name -> pb.CommonResp
+	105, // 37: pb.BatchGetUserAllDevicesResp.allDevices:type_name -> pb.BatchGetUserAllDevicesResp.AllDevices
+	114, // 38: pb.UpdateUserInfoReq.commonReq:type_name -> pb.CommonReq
+	115, // 39: pb.UpdateUserInfoResp.commonResp:type_name -> pb.CommonResp
+	114, // 40: pb.UpdateUserPasswordReq.commonReq:type_name -> pb.CommonReq
+	115, // 41: pb.UpdateUserPasswordResp.commonResp:type_name -> pb.CommonResp
+	114, // 42: pb.ResetPasswordReq.commonReq:type_name -> pb.CommonReq
+	115, // 43: pb.ResetPasswordResp.commonResp:type_name -> pb.CommonResp
+	114, // 44: pb.GetAllUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
+	116, // 45: pb.GetAllUserInvitationCodeReq.page:type_name -> pb.Page
+	106, // 46: pb.GetAllUserInvitationCodeReq.filter:type_name -> pb.GetAllUserInvitationCodeReq.FilterEntry
+	115, // 47: pb.GetAllUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
 	34,  // 48: pb.GetAllUserInvitationCodeResp.userInvitationCodes:type_name -> pb.UserInvitationCode
-	112, // 49: pb.GetUserInvitationCodeDetailReq.commonReq:type_name -> pb.CommonReq
-	113, // 50: pb.GetUserInvitationCodeDetailResp.commonResp:type_name -> pb.CommonResp
+	114, // 49: pb.GetUserInvitationCodeDetailReq.commonReq:type_name -> pb.CommonReq
+	115, // 50: pb.GetUserInvitationCodeDetailResp.commonResp:type_name -> pb.CommonResp
 	34,  // 51: pb.GetUserInvitationCodeDetailResp.userInvitationCode:type_name -> pb.UserInvitationCode
-	112, // 52: pb.AddUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
+	114, // 52: pb.AddUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
 	34,  // 53: pb.AddUserInvitationCodeReq.userInvitationCode:type_name -> pb.UserInvitationCode
-	113, // 54: pb.AddUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
-	112, // 55: pb.UpdateUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
+	115, // 54: pb.AddUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
+	114, // 55: pb.UpdateUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
 	34,  // 56: pb.UpdateUserInvitationCodeReq.userInvitationCode:type_name -> pb.UserInvitationCode
-	113, // 57: pb.UpdateUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
-	112, // 58: pb.DeleteUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
-	113, // 59: pb.DeleteUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
-	112, // 60: pb.GetAllUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
-	114, // 61: pb.GetAllUserIpWhiteListReq.page:type_name -> pb.Page
-	105, // 62: pb.GetAllUserIpWhiteListReq.filter:type_name -> pb.GetAllUserIpWhiteListReq.FilterEntry
-	113, // 63: pb.GetAllUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
+	115, // 57: pb.UpdateUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
+	114, // 58: pb.DeleteUserInvitationCodeReq.commonReq:type_name -> pb.CommonReq
+	115, // 59: pb.DeleteUserInvitationCodeResp.commonResp:type_name -> pb.CommonResp
+	114, // 60: pb.GetAllUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
+	116, // 61: pb.GetAllUserIpWhiteListReq.page:type_name -> pb.Page
+	107, // 62: pb.GetAllUserIpWhiteListReq.filter:type_name -> pb.GetAllUserIpWhiteListReq.FilterEntry
+	115, // 63: pb.GetAllUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
 	45,  // 64: pb.GetAllUserIpWhiteListResp.userIpLists:type_name -> pb.UserIpList
-	112, // 65: pb.GetUserIpWhiteListDetailReq.commonReq:type_name -> pb.CommonReq
-	113, // 66: pb.GetUserIpWhiteListDetailResp.commonResp:type_name -> pb.CommonResp
+	114, // 65: pb.GetUserIpWhiteListDetailReq.commonReq:type_name -> pb.CommonReq
+	115, // 66: pb.GetUserIpWhiteListDetailResp.commonResp:type_name -> pb.CommonResp
 	45,  // 67: pb.GetUserIpWhiteListDetailResp.userIpList:type_name -> pb.UserIpList
-	112, // 68: pb.AddUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
+	114, // 68: pb.AddUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
 	45,  // 69: pb.AddUserIpWhiteListReq.userIpList:type_name -> pb.UserIpList
-	113, // 70: pb.AddUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
-	112, // 71: pb.UpdateUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
+	115, // 70: pb.AddUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
+	114, // 71: pb.UpdateUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
 	45,  // 72: pb.UpdateUserIpWhiteListReq.userIpList:type_name -> pb.UserIpList
-	113, // 73: pb.UpdateUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
-	112, // 74: pb.DeleteUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
-	113, // 75: pb.DeleteUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
-	112, // 76: pb.GetAllUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
-	114, // 77: pb.GetAllUserIpBlackListReq.page:type_name -> pb.Page
-	106, // 78: pb.GetAllUserIpBlackListReq.filter:type_name -> pb.GetAllUserIpBlackListReq.FilterEntry
-	113, // 79: pb.GetAllUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
+	115, // 73: pb.UpdateUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
+	114, // 74: pb.DeleteUserIpWhiteListReq.commonReq:type_name -> pb.CommonReq
+	115, // 75: pb.DeleteUserIpWhiteListResp.commonResp:type_name -> pb.CommonResp
+	114, // 76: pb.GetAllUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
+	116, // 77: pb.GetAllUserIpBlackListReq.page:type_name -> pb.Page
+	108, // 78: pb.GetAllUserIpBlackListReq.filter:type_name -> pb.GetAllUserIpBlackListReq.FilterEntry
+	115, // 79: pb.GetAllUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
 	45,  // 80: pb.GetAllUserIpBlackListResp.userIpLists:type_name -> pb.UserIpList
-	112, // 81: pb.GetUserIpBlackListDetailReq.commonReq:type_name -> pb.CommonReq
-	113, // 82: pb.GetUserIpBlackListDetailResp.commonResp:type_name -> pb.CommonResp
+	114, // 81: pb.GetUserIpBlackListDetailReq.commonReq:type_name -> pb.CommonReq
+	115, // 82: pb.GetUserIpBlackListDetailResp.commonResp:type_name -> pb.CommonResp
 	45,  // 83: pb.GetUserIpBlackListDetailResp.userIpList:type_name -> pb.UserIpList
-	112, // 84: pb.AddUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
+	114, // 84: pb.AddUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
 	45,  // 85: pb.AddUserIpBlackListReq.userIpList:type_name -> pb.UserIpList
-	113, // 86: pb.AddUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
-	112, // 87: pb.UpdateUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
+	115, // 86: pb.AddUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
+	114, // 87: pb.UpdateUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
 	45,  // 88: pb.UpdateUserIpBlackListReq.userIpList:type_name -> pb.UserIpList
-	113, // 89: pb.UpdateUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
-	112, // 90: pb.DeleteUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
-	113, // 91: pb.DeleteUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
-	112, // 92: pb.GetAllUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
-	114, // 93: pb.GetAllUserDefaultConvReq.page:type_name -> pb.Page
-	107, // 94: pb.GetAllUserDefaultConvReq.filter:type_name -> pb.GetAllUserDefaultConvReq.FilterEntry
-	113, // 95: pb.GetAllUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
+	115, // 89: pb.UpdateUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
+	114, // 90: pb.DeleteUserIpBlackListReq.commonReq:type_name -> pb.CommonReq
+	115, // 91: pb.DeleteUserIpBlackListResp.commonResp:type_name -> pb.CommonResp
+	114, // 92: pb.GetAllUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
+	116, // 93: pb.GetAllUserDefaultConvReq.page:type_name -> pb.Page
+	109, // 94: pb.GetAllUserDefaultConvReq.filter:type_name -> pb.GetAllUserDefaultConvReq.FilterEntry
+	115, // 95: pb.GetAllUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
 	66,  // 96: pb.GetAllUserDefaultConvResp.userDefaultConvs:type_name -> pb.UserDefaultConv
-	112, // 97: pb.GetUserDefaultConvDetailReq.commonReq:type_name -> pb.CommonReq
-	113, // 98: pb.GetUserDefaultConvDetailResp.commonResp:type_name -> pb.CommonResp
+	114, // 97: pb.GetUserDefaultConvDetailReq.commonReq:type_name -> pb.CommonReq
+	115, // 98: pb.GetUserDefaultConvDetailResp.commonResp:type_name -> pb.CommonResp
 	66,  // 99: pb.GetUserDefaultConvDetailResp.userDefaultConv:type_name -> pb.UserDefaultConv
-	112, // 100: pb.AddUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
+	114, // 100: pb.AddUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
 	66,  // 101: pb.AddUserDefaultConvReq.userDefaultConv:type_name -> pb.UserDefaultConv
-	113, // 102: pb.AddUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
-	112, // 103: pb.UpdateUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
+	115, // 102: pb.AddUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
+	114, // 103: pb.UpdateUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
 	66,  // 104: pb.UpdateUserDefaultConvReq.userDefaultConv:type_name -> pb.UserDefaultConv
-	113, // 105: pb.UpdateUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
-	112, // 106: pb.DeleteUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
-	113, // 107: pb.DeleteUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
+	115, // 105: pb.UpdateUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
+	114, // 106: pb.DeleteUserDefaultConvReq.commonReq:type_name -> pb.CommonReq
+	115, // 107: pb.DeleteUserDefaultConvResp.commonResp:type_name -> pb.CommonResp
 	78,  // 108: pb.UserModel.regInfo:type_name -> pb.UserLoginInfo
 	79,  // 109: pb.UserModel.birthday:type_name -> pb.UserBirthdayInfo
-	108, // 110: pb.UserModel.infoMap:type_name -> pb.UserModel.InfoMapEntry
+	110, // 110: pb.UserModel.infoMap:type_name -> pb.UserModel.InfoMapEntry
 	77,  // 111: pb.UserModel.levelInfo:type_name -> pb.UserLevelInfo
 	80,  // 112: pb.UserModel.lastLoginRecord:type_name -> pb.UserLoginRecord
-	112, // 113: pb.GetAllUserModelReq.commonReq:type_name -> pb.CommonReq
-	114, // 114: pb.GetAllUserModelReq.page:type_name -> pb.Page
-	109, // 115: pb.GetAllUserModelReq.filter:type_name -> pb.GetAllUserModelReq.FilterEntry
-	113, // 116: pb.GetAllUserModelResp.commonResp:type_name -> pb.CommonResp
+	114, // 113: pb.GetAllUserModelReq.commonReq:type_name -> pb.CommonReq
+	116, // 114: pb.GetAllUserModelReq.page:type_name -> pb.Page
+	111, // 115: pb.GetAllUserModelReq.filter:type_name -> pb.GetAllUserModelReq.FilterEntry
+	115, // 116: pb.GetAllUserModelResp.commonResp:type_name -> pb.CommonResp
 	81,  // 117: pb.GetAllUserModelResp.userModelList:type_name -> pb.UserModel
-	112, // 118: pb.GetUserModelDetailReq.commonReq:type_name -> pb.CommonReq
-	113, // 119: pb.GetUserModelDetailResp.commonResp:type_name -> pb.CommonResp
+	114, // 118: pb.GetUserModelDetailReq.commonReq:type_name -> pb.CommonReq
+	115, // 119: pb.GetUserModelDetailResp.commonResp:type_name -> pb.CommonResp
 	81,  // 120: pb.GetUserModelDetailResp.userModel:type_name -> pb.UserModel
-	112, // 121: pb.AddUserModelReq.commonReq:type_name -> pb.CommonReq
+	114, // 121: pb.AddUserModelReq.commonReq:type_name -> pb.CommonReq
 	81,  // 122: pb.AddUserModelReq.userModel:type_name -> pb.UserModel
-	113, // 123: pb.AddUserModelResp.commonResp:type_name -> pb.CommonResp
-	112, // 124: pb.UpdateUserModelReq.commonReq:type_name -> pb.CommonReq
+	115, // 123: pb.AddUserModelResp.commonResp:type_name -> pb.CommonResp
+	114, // 124: pb.UpdateUserModelReq.commonReq:type_name -> pb.CommonReq
 	81,  // 125: pb.UpdateUserModelReq.userModel:type_name -> pb.UserModel
-	113, // 126: pb.UpdateUserModelResp.commonResp:type_name -> pb.CommonResp
-	112, // 127: pb.DeleteUserModelReq.commonReq:type_name -> pb.CommonReq
-	113, // 128: pb.DeleteUserModelResp.commonResp:type_name -> pb.CommonResp
-	112, // 129: pb.SwitchUserModelReq.commonReq:type_name -> pb.CommonReq
-	113, // 130: pb.SwitchUserModelResp.commonResp:type_name -> pb.CommonResp
-	112, // 131: pb.GetAllLoginRecordReq.commonReq:type_name -> pb.CommonReq
-	114, // 132: pb.GetAllLoginRecordReq.page:type_name -> pb.Page
-	110, // 133: pb.GetAllLoginRecordReq.filter:type_name -> pb.GetAllLoginRecordReq.FilterEntry
-	113, // 134: pb.GetAllLoginRecordResp.commonResp:type_name -> pb.CommonResp
+	115, // 126: pb.UpdateUserModelResp.commonResp:type_name -> pb.CommonResp
+	114, // 127: pb.DeleteUserModelReq.commonReq:type_name -> pb.CommonReq
+	115, // 128: pb.DeleteUserModelResp.commonResp:type_name -> pb.CommonResp
+	114, // 129: pb.SwitchUserModelReq.commonReq:type_name -> pb.CommonReq
+	115, // 130: pb.SwitchUserModelResp.commonResp:type_name -> pb.CommonResp
+	114, // 131: pb.GetAllLoginRecordReq.commonReq:type_name -> pb.CommonReq
+	116, // 132: pb.GetAllLoginRecordReq.page:type_name -> pb.Page
+	112, // 133: pb.GetAllLoginRecordReq.filter:type_name -> pb.GetAllLoginRecordReq.FilterEntry
+	115, // 134: pb.GetAllLoginRecordResp.commonResp:type_name -> pb.CommonResp
 	94,  // 135: pb.GetAllLoginRecordResp.loginRecordList:type_name -> pb.LoginRecord
-	112, // 136: pb.SendSmsReq.commonReq:type_name -> pb.CommonReq
-	113, // 137: pb.SendSmsResp.commonResp:type_name -> pb.CommonResp
-	112, // 138: pb.VerifySmsReq.commonReq:type_name -> pb.CommonReq
-	113, // 139: pb.VerifySmsResp.commonResp:type_name -> pb.CommonResp
-	22,  // 140: pb.GetUserSettingsResp.SettingsEntry.value:type_name -> pb.UserSetting
-	7,   // 141: pb.userService.Login:input_type -> pb.LoginReq
-	9,   // 142: pb.userService.ConfirmRegister:input_type -> pb.ConfirmRegisterReq
-	11,  // 143: pb.userService.Register:input_type -> pb.RegisterReq
-	13,  // 144: pb.userService.MapUserByIds:input_type -> pb.MapUserByIdsReq
-	15,  // 145: pb.userService.BatchGetUserBaseInfo:input_type -> pb.BatchGetUserBaseInfoReq
-	17,  // 146: pb.userService.SearchUsersByKeyword:input_type -> pb.SearchUsersByKeywordReq
-	19,  // 147: pb.userService.GetUserHome:input_type -> pb.GetUserHomeReq
-	21,  // 148: pb.userService.GetUserSettings:input_type -> pb.GetUserSettingsReq
-	24,  // 149: pb.userService.SetUserSettings:input_type -> pb.SetUserSettingsReq
-	115, // 150: pb.userService.AfterConnect:input_type -> pb.AfterConnectReq
-	116, // 151: pb.userService.AfterDisconnect:input_type -> pb.AfterDisconnectReq
-	26,  // 152: pb.userService.BatchGetUserAllDevices:input_type -> pb.BatchGetUserAllDevicesReq
-	28,  // 153: pb.userService.UpdateUserInfo:input_type -> pb.UpdateUserInfoReq
-	30,  // 154: pb.userService.UpdateUserPassword:input_type -> pb.UpdateUserPasswordReq
-	32,  // 155: pb.userService.ResetPassword:input_type -> pb.ResetPasswordReq
-	35,  // 156: pb.userService.GetAllUserInvitationCode:input_type -> pb.GetAllUserInvitationCodeReq
-	37,  // 157: pb.userService.GetUserInvitationCodeDetail:input_type -> pb.GetUserInvitationCodeDetailReq
-	39,  // 158: pb.userService.AddUserInvitationCode:input_type -> pb.AddUserInvitationCodeReq
-	41,  // 159: pb.userService.UpdateUserInvitationCode:input_type -> pb.UpdateUserInvitationCodeReq
-	43,  // 160: pb.userService.DeleteUserInvitationCode:input_type -> pb.DeleteUserInvitationCodeReq
-	46,  // 161: pb.userService.GetAllUserIpWhiteList:input_type -> pb.GetAllUserIpWhiteListReq
-	48,  // 162: pb.userService.GetUserIpWhiteListDetail:input_type -> pb.GetUserIpWhiteListDetailReq
-	50,  // 163: pb.userService.AddUserIpWhiteList:input_type -> pb.AddUserIpWhiteListReq
-	52,  // 164: pb.userService.UpdateUserIpWhiteList:input_type -> pb.UpdateUserIpWhiteListReq
-	54,  // 165: pb.userService.DeleteUserIpWhiteList:input_type -> pb.DeleteUserIpWhiteListReq
-	56,  // 166: pb.userService.GetAllUserIpBlackList:input_type -> pb.GetAllUserIpBlackListReq
-	58,  // 167: pb.userService.GetUserIpBlackListDetail:input_type -> pb.GetUserIpBlackListDetailReq
-	60,  // 168: pb.userService.AddUserIpBlackList:input_type -> pb.AddUserIpBlackListReq
-	62,  // 169: pb.userService.UpdateUserIpBlackList:input_type -> pb.UpdateUserIpBlackListReq
-	64,  // 170: pb.userService.DeleteUserIpBlackList:input_type -> pb.DeleteUserIpBlackListReq
-	67,  // 171: pb.userService.GetAllUserDefaultConv:input_type -> pb.GetAllUserDefaultConvReq
-	69,  // 172: pb.userService.GetUserDefaultConvDetail:input_type -> pb.GetUserDefaultConvDetailReq
-	71,  // 173: pb.userService.AddUserDefaultConv:input_type -> pb.AddUserDefaultConvReq
-	73,  // 174: pb.userService.UpdateUserDefaultConv:input_type -> pb.UpdateUserDefaultConvReq
-	75,  // 175: pb.userService.DeleteUserDefaultConv:input_type -> pb.DeleteUserDefaultConvReq
-	82,  // 176: pb.userService.GetAllUserModel:input_type -> pb.GetAllUserModelReq
-	84,  // 177: pb.userService.GetUserModelDetail:input_type -> pb.GetUserModelDetailReq
-	86,  // 178: pb.userService.AddUserModel:input_type -> pb.AddUserModelReq
-	88,  // 179: pb.userService.UpdateUserModel:input_type -> pb.UpdateUserModelReq
-	90,  // 180: pb.userService.DeleteUserModel:input_type -> pb.DeleteUserModelReq
-	92,  // 181: pb.userService.SwitchUserModel:input_type -> pb.SwitchUserModelReq
-	95,  // 182: pb.userService.GetAllLoginRecord:input_type -> pb.GetAllLoginRecordReq
-	97,  // 183: pb.userService.SendSms:input_type -> pb.SendSmsReq
-	99,  // 184: pb.userService.VerifySms:input_type -> pb.VerifySmsReq
-	8,   // 185: pb.userService.Login:output_type -> pb.LoginResp
-	10,  // 186: pb.userService.ConfirmRegister:output_type -> pb.ConfirmRegisterResp
-	12,  // 187: pb.userService.Register:output_type -> pb.RegisterResp
-	14,  // 188: pb.userService.MapUserByIds:output_type -> pb.MapUserByIdsResp
-	16,  // 189: pb.userService.BatchGetUserBaseInfo:output_type -> pb.BatchGetUserBaseInfoResp
-	18,  // 190: pb.userService.SearchUsersByKeyword:output_type -> pb.SearchUsersByKeywordResp
-	20,  // 191: pb.userService.GetUserHome:output_type -> pb.GetUserHomeResp
-	23,  // 192: pb.userService.GetUserSettings:output_type -> pb.GetUserSettingsResp
-	25,  // 193: pb.userService.SetUserSettings:output_type -> pb.SetUserSettingsResp
-	113, // 194: pb.userService.AfterConnect:output_type -> pb.CommonResp
-	113, // 195: pb.userService.AfterDisconnect:output_type -> pb.CommonResp
-	27,  // 196: pb.userService.BatchGetUserAllDevices:output_type -> pb.BatchGetUserAllDevicesResp
-	29,  // 197: pb.userService.UpdateUserInfo:output_type -> pb.UpdateUserInfoResp
-	31,  // 198: pb.userService.UpdateUserPassword:output_type -> pb.UpdateUserPasswordResp
-	33,  // 199: pb.userService.ResetPassword:output_type -> pb.ResetPasswordResp
-	36,  // 200: pb.userService.GetAllUserInvitationCode:output_type -> pb.GetAllUserInvitationCodeResp
-	38,  // 201: pb.userService.GetUserInvitationCodeDetail:output_type -> pb.GetUserInvitationCodeDetailResp
-	40,  // 202: pb.userService.AddUserInvitationCode:output_type -> pb.AddUserInvitationCodeResp
-	42,  // 203: pb.userService.UpdateUserInvitationCode:output_type -> pb.UpdateUserInvitationCodeResp
-	44,  // 204: pb.userService.DeleteUserInvitationCode:output_type -> pb.DeleteUserInvitationCodeResp
-	47,  // 205: pb.userService.GetAllUserIpWhiteList:output_type -> pb.GetAllUserIpWhiteListResp
-	49,  // 206: pb.userService.GetUserIpWhiteListDetail:output_type -> pb.GetUserIpWhiteListDetailResp
-	51,  // 207: pb.userService.AddUserIpWhiteList:output_type -> pb.AddUserIpWhiteListResp
-	53,  // 208: pb.userService.UpdateUserIpWhiteList:output_type -> pb.UpdateUserIpWhiteListResp
-	55,  // 209: pb.userService.DeleteUserIpWhiteList:output_type -> pb.DeleteUserIpWhiteListResp
-	57,  // 210: pb.userService.GetAllUserIpBlackList:output_type -> pb.GetAllUserIpBlackListResp
-	59,  // 211: pb.userService.GetUserIpBlackListDetail:output_type -> pb.GetUserIpBlackListDetailResp
-	61,  // 212: pb.userService.AddUserIpBlackList:output_type -> pb.AddUserIpBlackListResp
-	63,  // 213: pb.userService.UpdateUserIpBlackList:output_type -> pb.UpdateUserIpBlackListResp
-	65,  // 214: pb.userService.DeleteUserIpBlackList:output_type -> pb.DeleteUserIpBlackListResp
-	68,  // 215: pb.userService.GetAllUserDefaultConv:output_type -> pb.GetAllUserDefaultConvResp
-	70,  // 216: pb.userService.GetUserDefaultConvDetail:output_type -> pb.GetUserDefaultConvDetailResp
-	72,  // 217: pb.userService.AddUserDefaultConv:output_type -> pb.AddUserDefaultConvResp
-	74,  // 218: pb.userService.UpdateUserDefaultConv:output_type -> pb.UpdateUserDefaultConvResp
-	76,  // 219: pb.userService.DeleteUserDefaultConv:output_type -> pb.DeleteUserDefaultConvResp
-	83,  // 220: pb.userService.GetAllUserModel:output_type -> pb.GetAllUserModelResp
-	85,  // 221: pb.userService.GetUserModelDetail:output_type -> pb.GetUserModelDetailResp
-	87,  // 222: pb.userService.AddUserModel:output_type -> pb.AddUserModelResp
-	89,  // 223: pb.userService.UpdateUserModel:output_type -> pb.UpdateUserModelResp
-	91,  // 224: pb.userService.DeleteUserModel:output_type -> pb.DeleteUserModelResp
-	93,  // 225: pb.userService.SwitchUserModel:output_type -> pb.SwitchUserModelResp
-	96,  // 226: pb.userService.GetAllLoginRecord:output_type -> pb.GetAllLoginRecordResp
-	98,  // 227: pb.userService.SendSms:output_type -> pb.SendSmsResp
-	100, // 228: pb.userService.VerifySms:output_type -> pb.VerifySmsResp
-	185, // [185:229] is the sub-list for method output_type
-	141, // [141:185] is the sub-list for method input_type
-	141, // [141:141] is the sub-list for extension type_name
-	141, // [141:141] is the sub-list for extension extendee
-	0,   // [0:141] is the sub-list for field type_name
+	114, // 136: pb.SendSmsReq.commonReq:type_name -> pb.CommonReq
+	115, // 137: pb.SendSmsResp.commonResp:type_name -> pb.CommonResp
+	114, // 138: pb.VerifySmsReq.commonReq:type_name -> pb.CommonReq
+	115, // 139: pb.VerifySmsResp.commonResp:type_name -> pb.CommonResp
+	114, // 140: pb.ReportUserReq.commonReq:type_name -> pb.CommonReq
+	115, // 141: pb.ReportUserResp.commonResp:type_name -> pb.CommonResp
+	22,  // 142: pb.GetUserSettingsResp.SettingsEntry.value:type_name -> pb.UserSetting
+	7,   // 143: pb.userService.Login:input_type -> pb.LoginReq
+	9,   // 144: pb.userService.ConfirmRegister:input_type -> pb.ConfirmRegisterReq
+	11,  // 145: pb.userService.Register:input_type -> pb.RegisterReq
+	13,  // 146: pb.userService.MapUserByIds:input_type -> pb.MapUserByIdsReq
+	15,  // 147: pb.userService.BatchGetUserBaseInfo:input_type -> pb.BatchGetUserBaseInfoReq
+	17,  // 148: pb.userService.SearchUsersByKeyword:input_type -> pb.SearchUsersByKeywordReq
+	19,  // 149: pb.userService.GetUserHome:input_type -> pb.GetUserHomeReq
+	21,  // 150: pb.userService.GetUserSettings:input_type -> pb.GetUserSettingsReq
+	24,  // 151: pb.userService.SetUserSettings:input_type -> pb.SetUserSettingsReq
+	117, // 152: pb.userService.AfterConnect:input_type -> pb.AfterConnectReq
+	118, // 153: pb.userService.AfterDisconnect:input_type -> pb.AfterDisconnectReq
+	26,  // 154: pb.userService.BatchGetUserAllDevices:input_type -> pb.BatchGetUserAllDevicesReq
+	28,  // 155: pb.userService.UpdateUserInfo:input_type -> pb.UpdateUserInfoReq
+	30,  // 156: pb.userService.UpdateUserPassword:input_type -> pb.UpdateUserPasswordReq
+	32,  // 157: pb.userService.ResetPassword:input_type -> pb.ResetPasswordReq
+	35,  // 158: pb.userService.GetAllUserInvitationCode:input_type -> pb.GetAllUserInvitationCodeReq
+	37,  // 159: pb.userService.GetUserInvitationCodeDetail:input_type -> pb.GetUserInvitationCodeDetailReq
+	39,  // 160: pb.userService.AddUserInvitationCode:input_type -> pb.AddUserInvitationCodeReq
+	41,  // 161: pb.userService.UpdateUserInvitationCode:input_type -> pb.UpdateUserInvitationCodeReq
+	43,  // 162: pb.userService.DeleteUserInvitationCode:input_type -> pb.DeleteUserInvitationCodeReq
+	46,  // 163: pb.userService.GetAllUserIpWhiteList:input_type -> pb.GetAllUserIpWhiteListReq
+	48,  // 164: pb.userService.GetUserIpWhiteListDetail:input_type -> pb.GetUserIpWhiteListDetailReq
+	50,  // 165: pb.userService.AddUserIpWhiteList:input_type -> pb.AddUserIpWhiteListReq
+	52,  // 166: pb.userService.UpdateUserIpWhiteList:input_type -> pb.UpdateUserIpWhiteListReq
+	54,  // 167: pb.userService.DeleteUserIpWhiteList:input_type -> pb.DeleteUserIpWhiteListReq
+	56,  // 168: pb.userService.GetAllUserIpBlackList:input_type -> pb.GetAllUserIpBlackListReq
+	58,  // 169: pb.userService.GetUserIpBlackListDetail:input_type -> pb.GetUserIpBlackListDetailReq
+	60,  // 170: pb.userService.AddUserIpBlackList:input_type -> pb.AddUserIpBlackListReq
+	62,  // 171: pb.userService.UpdateUserIpBlackList:input_type -> pb.UpdateUserIpBlackListReq
+	64,  // 172: pb.userService.DeleteUserIpBlackList:input_type -> pb.DeleteUserIpBlackListReq
+	67,  // 173: pb.userService.GetAllUserDefaultConv:input_type -> pb.GetAllUserDefaultConvReq
+	69,  // 174: pb.userService.GetUserDefaultConvDetail:input_type -> pb.GetUserDefaultConvDetailReq
+	71,  // 175: pb.userService.AddUserDefaultConv:input_type -> pb.AddUserDefaultConvReq
+	73,  // 176: pb.userService.UpdateUserDefaultConv:input_type -> pb.UpdateUserDefaultConvReq
+	75,  // 177: pb.userService.DeleteUserDefaultConv:input_type -> pb.DeleteUserDefaultConvReq
+	82,  // 178: pb.userService.GetAllUserModel:input_type -> pb.GetAllUserModelReq
+	84,  // 179: pb.userService.GetUserModelDetail:input_type -> pb.GetUserModelDetailReq
+	86,  // 180: pb.userService.AddUserModel:input_type -> pb.AddUserModelReq
+	88,  // 181: pb.userService.UpdateUserModel:input_type -> pb.UpdateUserModelReq
+	90,  // 182: pb.userService.DeleteUserModel:input_type -> pb.DeleteUserModelReq
+	92,  // 183: pb.userService.SwitchUserModel:input_type -> pb.SwitchUserModelReq
+	95,  // 184: pb.userService.GetAllLoginRecord:input_type -> pb.GetAllLoginRecordReq
+	97,  // 185: pb.userService.SendSms:input_type -> pb.SendSmsReq
+	99,  // 186: pb.userService.VerifySms:input_type -> pb.VerifySmsReq
+	101, // 187: pb.userService.ReportUser:input_type -> pb.ReportUserReq
+	8,   // 188: pb.userService.Login:output_type -> pb.LoginResp
+	10,  // 189: pb.userService.ConfirmRegister:output_type -> pb.ConfirmRegisterResp
+	12,  // 190: pb.userService.Register:output_type -> pb.RegisterResp
+	14,  // 191: pb.userService.MapUserByIds:output_type -> pb.MapUserByIdsResp
+	16,  // 192: pb.userService.BatchGetUserBaseInfo:output_type -> pb.BatchGetUserBaseInfoResp
+	18,  // 193: pb.userService.SearchUsersByKeyword:output_type -> pb.SearchUsersByKeywordResp
+	20,  // 194: pb.userService.GetUserHome:output_type -> pb.GetUserHomeResp
+	23,  // 195: pb.userService.GetUserSettings:output_type -> pb.GetUserSettingsResp
+	25,  // 196: pb.userService.SetUserSettings:output_type -> pb.SetUserSettingsResp
+	115, // 197: pb.userService.AfterConnect:output_type -> pb.CommonResp
+	115, // 198: pb.userService.AfterDisconnect:output_type -> pb.CommonResp
+	27,  // 199: pb.userService.BatchGetUserAllDevices:output_type -> pb.BatchGetUserAllDevicesResp
+	29,  // 200: pb.userService.UpdateUserInfo:output_type -> pb.UpdateUserInfoResp
+	31,  // 201: pb.userService.UpdateUserPassword:output_type -> pb.UpdateUserPasswordResp
+	33,  // 202: pb.userService.ResetPassword:output_type -> pb.ResetPasswordResp
+	36,  // 203: pb.userService.GetAllUserInvitationCode:output_type -> pb.GetAllUserInvitationCodeResp
+	38,  // 204: pb.userService.GetUserInvitationCodeDetail:output_type -> pb.GetUserInvitationCodeDetailResp
+	40,  // 205: pb.userService.AddUserInvitationCode:output_type -> pb.AddUserInvitationCodeResp
+	42,  // 206: pb.userService.UpdateUserInvitationCode:output_type -> pb.UpdateUserInvitationCodeResp
+	44,  // 207: pb.userService.DeleteUserInvitationCode:output_type -> pb.DeleteUserInvitationCodeResp
+	47,  // 208: pb.userService.GetAllUserIpWhiteList:output_type -> pb.GetAllUserIpWhiteListResp
+	49,  // 209: pb.userService.GetUserIpWhiteListDetail:output_type -> pb.GetUserIpWhiteListDetailResp
+	51,  // 210: pb.userService.AddUserIpWhiteList:output_type -> pb.AddUserIpWhiteListResp
+	53,  // 211: pb.userService.UpdateUserIpWhiteList:output_type -> pb.UpdateUserIpWhiteListResp
+	55,  // 212: pb.userService.DeleteUserIpWhiteList:output_type -> pb.DeleteUserIpWhiteListResp
+	57,  // 213: pb.userService.GetAllUserIpBlackList:output_type -> pb.GetAllUserIpBlackListResp
+	59,  // 214: pb.userService.GetUserIpBlackListDetail:output_type -> pb.GetUserIpBlackListDetailResp
+	61,  // 215: pb.userService.AddUserIpBlackList:output_type -> pb.AddUserIpBlackListResp
+	63,  // 216: pb.userService.UpdateUserIpBlackList:output_type -> pb.UpdateUserIpBlackListResp
+	65,  // 217: pb.userService.DeleteUserIpBlackList:output_type -> pb.DeleteUserIpBlackListResp
+	68,  // 218: pb.userService.GetAllUserDefaultConv:output_type -> pb.GetAllUserDefaultConvResp
+	70,  // 219: pb.userService.GetUserDefaultConvDetail:output_type -> pb.GetUserDefaultConvDetailResp
+	72,  // 220: pb.userService.AddUserDefaultConv:output_type -> pb.AddUserDefaultConvResp
+	74,  // 221: pb.userService.UpdateUserDefaultConv:output_type -> pb.UpdateUserDefaultConvResp
+	76,  // 222: pb.userService.DeleteUserDefaultConv:output_type -> pb.DeleteUserDefaultConvResp
+	83,  // 223: pb.userService.GetAllUserModel:output_type -> pb.GetAllUserModelResp
+	85,  // 224: pb.userService.GetUserModelDetail:output_type -> pb.GetUserModelDetailResp
+	87,  // 225: pb.userService.AddUserModel:output_type -> pb.AddUserModelResp
+	89,  // 226: pb.userService.UpdateUserModel:output_type -> pb.UpdateUserModelResp
+	91,  // 227: pb.userService.DeleteUserModel:output_type -> pb.DeleteUserModelResp
+	93,  // 228: pb.userService.SwitchUserModel:output_type -> pb.SwitchUserModelResp
+	96,  // 229: pb.userService.GetAllLoginRecord:output_type -> pb.GetAllLoginRecordResp
+	98,  // 230: pb.userService.SendSms:output_type -> pb.SendSmsResp
+	100, // 231: pb.userService.VerifySms:output_type -> pb.VerifySmsResp
+	102, // 232: pb.userService.ReportUser:output_type -> pb.ReportUserResp
+	188, // [188:233] is the sub-list for method output_type
+	143, // [143:188] is the sub-list for method input_type
+	143, // [143:143] is the sub-list for extension type_name
+	143, // [143:143] is the sub-list for extension extendee
+	0,   // [0:143] is the sub-list for field type_name
 }
 
 func init() { file_user_proto_init() }
@@ -9347,7 +9480,31 @@ func file_user_proto_init() {
 				return nil
 			}
 		}
-		file_user_proto_msgTypes[99].Exporter = func(v interface{}, i int) interface{} {
+		file_user_proto_msgTypes[97].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReportUserReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_user_proto_msgTypes[98].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReportUserResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_user_proto_msgTypes[101].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*BatchGetUserAllDevicesResp_AllDevices); i {
 			case 0:
 				return &v.state
@@ -9371,7 +9528,7 @@ func file_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_user_proto_rawDesc,
 			NumEnums:      4,
-			NumMessages:   107,
+			NumMessages:   109,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

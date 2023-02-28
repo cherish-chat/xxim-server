@@ -59,5 +59,25 @@ func RegisterRelation(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/relation/deleteFriend", route)
 		}
+		// BlockUserReq BlockUserResp
+		{
+			route := conngateway.Route[*pb.BlockUserReq, *pb.BlockUserResp]{
+				NewRequest: func() *pb.BlockUserReq {
+					return &pb.BlockUserReq{}
+				},
+				Do: svcCtx.RelationService().BlockUser,
+			}
+			conngateway.AddRoute("/v1/relation/blockUser", route)
+		}
+		// DeleteBlockUserReq DeleteBlockUserResp
+		{
+			route := conngateway.Route[*pb.DeleteBlockUserReq, *pb.DeleteBlockUserResp]{
+				NewRequest: func() *pb.DeleteBlockUserReq {
+					return &pb.DeleteBlockUserReq{}
+				},
+				Do: svcCtx.RelationService().DeleteBlockUser,
+			}
+			conngateway.AddRoute("/v1/relation/deleteBlockUser", route)
+		}
 	}
 }

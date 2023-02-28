@@ -243,3 +243,8 @@ func (s *UserServiceServer) VerifySms(ctx context.Context, in *pb.VerifySmsReq) 
 	l := logic.NewVerifySmsLogic(ctx, s.svcCtx)
 	return l.VerifySms(in)
 }
+
+func (s *UserServiceServer) ReportUser(ctx context.Context, in *pb.ReportUserReq) (*pb.ReportUserResp, error) {
+	l := logic.NewReportUserLogic(ctx, s.svcCtx)
+	return l.ReportUser(in)
+}

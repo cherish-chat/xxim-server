@@ -676,6 +676,19 @@ message AddGroupMemberResp {
   CommonResp commonResp = 1;
 }
 
+// 举报群
+// ReportGroupReq
+message ReportGroupReq {
+  CommonReq commonReq = 1;
+  string groupId = 2;
+  string reason = 3;
+}
+
+// ReportGroupResp 举报群
+message ReportGroupResp {
+  CommonResp commonResp = 1;
+}
+
 service groupService {
   //CreateGroup 创建群聊
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
@@ -733,4 +746,7 @@ service groupService {
 
   //AddGroupMember 添加群成员
   rpc AddGroupMember(AddGroupMemberReq) returns (AddGroupMemberResp) {}
+
+  // ReportGroup
+  rpc ReportGroup(ReportGroupReq) returns (ReportGroupResp) {}
 }

@@ -43,6 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		groupmodel.Group{},
 		groupmodel.GroupMember{},
 		groupmodel.GroupApply{},
+		groupmodel.ReportRecord{},
 	)
 	return s
 }

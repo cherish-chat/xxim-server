@@ -49,6 +49,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		&usermodel.IpBlackList{},
 		&usermodel.UserRecycleBin{},
 		&usermodel.StatusRecord{},
+		&usermodel.ReportRecord{},
 	)
 	return s
 }

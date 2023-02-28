@@ -877,6 +877,19 @@ message VerifySmsResp {
   CommonResp commonResp = 1;
 }
 
+// 举报用户
+// ReportUserReq 举报用户请求
+message ReportUserReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+  string reason = 3;
+}
+
+// ReportUserResp 举报用户响应
+message ReportUserResp {
+  CommonResp commonResp = 1;
+}
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -932,4 +945,6 @@ service userService {
 
   rpc SendSms(SendSmsReq) returns (SendSmsResp) {}
   rpc VerifySms(VerifySmsReq) returns (VerifySmsResp) {}
+
+  rpc ReportUser(ReportUserReq) returns (ReportUserResp) {}
 }

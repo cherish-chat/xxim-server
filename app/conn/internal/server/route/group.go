@@ -119,5 +119,15 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/getGroupMemberList", route)
 		}
+		// ReportGroupReq ReportGroupResp
+		{
+			route := conngateway.Route[*pb.ReportGroupReq, *pb.ReportGroupResp]{
+				NewRequest: func() *pb.ReportGroupReq {
+					return &pb.ReportGroupReq{}
+				},
+				Do: svcCtx.GroupService().ReportGroup,
+			}
+			conngateway.AddRoute("/v1/group/reportGroup", route)
+		}
 	}
 }

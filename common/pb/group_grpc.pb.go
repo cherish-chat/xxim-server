@@ -74,6 +74,8 @@ type GroupServiceClient interface {
 	SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
 	//AddGroupMember 添加群成员
 	AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
+	// ReportGroup
+	ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
 }
 
 type groupServiceClient struct {
@@ -318,6 +320,15 @@ func (c *groupServiceClient) AddGroupMember(ctx context.Context, in *AddGroupMem
 	return out, nil
 }
 
+func (c *groupServiceClient) ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error) {
+	out := new(ReportGroupResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ReportGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -374,6 +385,8 @@ type GroupServiceServer interface {
 	SearchGroupsByKeyword(context.Context, *SearchGroupsByKeywordReq) (*SearchGroupsByKeywordResp, error)
 	//AddGroupMember 添加群成员
 	AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error)
+	// ReportGroup
+	ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -458,6 +471,9 @@ func (UnimplementedGroupServiceServer) SearchGroupsByKeyword(context.Context, *S
 }
 func (UnimplementedGroupServiceServer) AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddGroupMember not implemented")
+}
+func (UnimplementedGroupServiceServer) ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportGroup not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -940,6 +956,24 @@ func _GroupService_AddGroupMember_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_ReportGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ReportGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ReportGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ReportGroup(ctx, req.(*ReportGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1050,6 +1084,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddGroupMember",
 			Handler:    _GroupService_AddGroupMember_Handler,
+		},
+		{
+			MethodName: "ReportGroup",
+			Handler:    _GroupService_ReportGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

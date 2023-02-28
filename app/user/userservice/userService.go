@@ -75,6 +75,8 @@ type (
 	MapUserByIdsResp                      = pb.MapUserByIdsResp
 	RegisterReq                           = pb.RegisterReq
 	RegisterResp                          = pb.RegisterResp
+	ReportUserReq                         = pb.ReportUserReq
+	ReportUserResp                        = pb.ReportUserResp
 	ResetPasswordReq                      = pb.ResetPasswordReq
 	ResetPasswordResp                     = pb.ResetPasswordResp
 	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
@@ -159,6 +161,7 @@ type (
 		GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
 		SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
 		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
+		ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 	}
 
 	defaultUserService struct {
@@ -392,4 +395,9 @@ func (m *defaultUserService) SendSms(ctx context.Context, in *SendSmsReq, opts .
 func (m *defaultUserService) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.VerifySms(ctx, in, opts...)
+}
+
+func (m *defaultUserService) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.ReportUser(ctx, in, opts...)
 }
