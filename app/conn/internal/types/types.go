@@ -71,3 +71,7 @@ func WebsocketStatusCodeAuthFailed(code int) int {
 func WebsocketStatusCodeRsaFailed() int {
 	return 3001
 }
+
+func WebsocketStatusCodePlatformFailed() int {
+	return 3002
+}

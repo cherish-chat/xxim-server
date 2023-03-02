@@ -13,6 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
+	"strings"
 	"sync"
 	"time"
 )
@@ -294,5 +295,12 @@ func (l *ConnLogic) SendMsgToConn(c *types.UserConn, data []byte) error {
 			data = xaes.Encrypt([]byte(*c.ConnParam.AesIv), []byte(*c.ConnParam.AesKey), data)
 		}
 	}
-	return c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)
+	err := c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)
+	if err != nil {
+		if strings.Contains(err.Error(), "close") {
+			c.Conn.Close(int(websocket.StatusNormalClosure), "kick")
+		}
+		logx.Errorf("SendMsgToConn error: %s", err.Error())
+	}
+	return err
 }

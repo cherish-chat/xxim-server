@@ -152,26 +152,37 @@ func (l *UserConnStorage) Range(f func(id string, conn *types.UserConn) bool) {
 	if err != nil {
 		return
 	}
-	var userDeviceMap = make(map[string]map[string]*types.UserConn)
+	var userDeviceMap = make(map[string]map[string]map[string]*types.UserConn)
 	// hgetall -> key: id value: connValue
 	for pointer := range hgetall {
 		conn, ok := l.getConn(pointer)
 		if !ok {
 			continue
 		}
+		// platformMap
 		if _, ok := userDeviceMap[conn.ConnParam.UserId]; !ok {
-			userDeviceMap[conn.ConnParam.UserId] = make(map[string]*types.UserConn)
+			userDeviceMap[conn.ConnParam.UserId] = make(map[string]map[string]*types.UserConn)
 		}
-		if found, ok := userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId]; !ok {
-			userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.DeviceId] = conn
-		} else {
+		// deviceMap
+		if _, ok := userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.Platform]; !ok {
+			userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.Platform] = make(map[string]*types.UserConn)
+		}
+		// duplicate
+		if found, ok := userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.Platform][conn.ConnParam.DeviceId]; ok {
 			// 删除旧的连接
 			if found.Pointer != conn.Pointer {
 				logx.Infof("duplicate connection: %v %v %v %v %v", conn.ConnParam.UserId, conn.ConnParam.Platform, conn.ConnParam.DeviceId, found.ConnectedAt, conn.ConnectedAt)
 			}
 		}
-		if !f(pointer, conn) {
-			break
+		userDeviceMap[conn.ConnParam.UserId][conn.ConnParam.Platform][conn.ConnParam.DeviceId] = conn
+	}
+	for userId, platformMap := range userDeviceMap {
+		for _, deviceMap := range platformMap {
+			for _, conn := range deviceMap {
+				if !f(userId, conn) {
+					return
+				}
+			}
 		}
 	}
 }

@@ -27,7 +27,6 @@ func NewSetConnParamsLogic(svcCtx *svc.ServiceContext) *SetConnParamsLogic {
 }
 
 func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnParamsReq, opts ...grpc.CallOption) (*pb.SetCxnParamsResp, error) {
-
 	return &pb.SetCxnParamsResp{
 		Platform:    req.GetPlatform(),
 		DeviceId:    req.GetPackageId(),
@@ -43,6 +42,12 @@ func (l *SetConnParamsLogic) SetConnParams(ctx context.Context, req *pb.SetCxnPa
 }
 
 func (l *SetConnParamsLogic) Callback(ctx context.Context, resp *pb.SetCxnParamsResp, c *types.UserConn) {
+	// 验证
+	_, ok := pb.PlatformMap[resp.Platform]
+	if !ok {
+		c.Conn.Close(types.WebsocketStatusCodePlatformFailed(), "platform failed")
+		return
+	}
 	// rsa加密后的 aesKey
 	aesKeyEncrypted := resp.GetAesKey()
 	var aesKey *string

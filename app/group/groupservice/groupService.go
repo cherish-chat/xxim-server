@@ -68,6 +68,7 @@ type (
 	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
 	MapGroupMemberInfoByIdsReq                     = pb.MapGroupMemberInfoByIdsReq
+	MapGroupMemberInfoByIdsReq_Opt                 = pb.MapGroupMemberInfoByIdsReq_Opt
 	MapGroupMemberInfoByIdsResp                    = pb.MapGroupMemberInfoByIdsResp
 	ReportGroupReq                                 = pb.ReportGroupReq
 	ReportGroupResp                                = pb.ReportGroupResp

@@ -219,6 +219,8 @@ message GroupMemberInfo {
   int64 unbanTime = 10;
   // 预览
   bool preview = 11;
+  // 用户基本信息
+  UserBaseInfo userBaseInfo = 12;
 }
 
 //MapGroupMemberInfoByIdsReq 批量获取群成员信息
@@ -228,6 +230,12 @@ message MapGroupMemberInfoByIdsReq {
   string groupId = 2;
   // 群成员ID
   repeated string memberIds = 3;
+  // Opt
+  message Opt {
+    // 是否获取用户基本信息
+    bool userBaseInfo = 1;
+  }
+  Opt opt = 4;
 }
 
 //MapGroupMemberInfoByIdsResp 批量获取群成员信息

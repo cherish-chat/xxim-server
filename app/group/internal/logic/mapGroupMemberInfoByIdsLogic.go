@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"gorm.io/gorm"
 
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
@@ -45,8 +47,40 @@ func (l *MapGroupMemberInfoByIdsLogic) MapGroupMemberInfoByIds(in *pb.MapGroupMe
 			l.svcCtx.T(in.CommonReq.Language, "群成员不存在"),
 		)}, gorm.ErrRecordNotFound
 	}
+	var userIds []string
 	for _, member := range members {
-		memberInfoMap[member.UserId] = member.Pb()
+		userIds = append(userIds, member.UserId)
+	}
+	userIds = utils.Set(userIds)
+	var userMap = make(map[string]*usermodel.User)
+	if in.GetOpt().GetUserBaseInfo() {
+		mapUserByIds, err := l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
+			CommonReq: in.CommonReq,
+			Ids:       userIds,
+		})
+		if err != nil {
+			l.Errorf("getGroupMemberInfoLogic err: %v", err)
+			return &pb.MapGroupMemberInfoByIdsResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		for _, bytes := range mapUserByIds.Users {
+			user := usermodel.UserFromBytes(bytes)
+			userMap[user.Id] = user
+		}
+	}
+	for _, member := range members {
+		info := member.Pb()
+		if in.GetOpt().GetUserBaseInfo() {
+			if user, ok := userMap[member.UserId]; ok {
+				info.UserBaseInfo = user.BaseInfo()
+			} else {
+				info.UserBaseInfo = &pb.UserBaseInfo{
+					Id:       member.UserId,
+					Nickname: "用户已注销",
+					Avatar:   "",
+				}
+			}
+		}
+		memberInfoMap[member.UserId] = info
 	}
 	return &pb.MapGroupMemberInfoByIdsResp{
 		CommonResp:         pb.NewSuccessResp(),

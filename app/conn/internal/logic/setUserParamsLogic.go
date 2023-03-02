@@ -75,6 +75,21 @@ func (l *SetUserParamsLogic) Callback(ctx context.Context, resp *pb.SetUserParam
 		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(code), "您的账号在其他设备登录")
 		return
 	}
+	kickResp, err := l.svcCtx.ImService().KickUserConn(ctx, &pb.KickUserConnReq{GetUserConnReq: &pb.GetUserConnReq{
+		UserIds:   []string{c.ConnParam.UserId},
+		Platforms: []string{c.ConnParam.Platform},
+		Devices:   []string{c.ConnParam.DeviceId},
+	}})
+	if err != nil {
+		logx.WithContext(ctx).Errorf("KickUserConn err: %v", err)
+		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(1), "服务错误，请稍后再试")
+		return
+	}
+	if kickResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+		logx.WithContext(ctx).Errorf("KickUserConn code: %d", kickResp.GetCommonResp().GetCode())
+		c.Conn.Close(types.WebsocketStatusCodeAuthFailed(1), "服务错误，请稍后再试")
+		return
+	}
 	c.SetConnParams(&pb.ConnParam{
 		UserId:      resp.UserId,
 		Token:       resp.Token,

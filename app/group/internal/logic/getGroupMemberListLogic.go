@@ -131,8 +131,11 @@ func (l *GetGroupMemberListLogic) GetGroupMemberList(in *pb.GetGroupMemberListRe
 			}
 			groupMemberList = append(groupMemberList, info)
 		}
+		return &pb.GetGroupMemberListResp{
+			CommonResp:      pb.NewSuccessResp(),
+			GroupMemberList: groupMemberList,
+		}, nil
 	}
-	return &pb.GetGroupMemberListResp{}, nil
 }
 
 func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMemberListReq, whereMap map[string]interface{}, orMap map[string][]interface{}, offset int32, limit int32, rdsKey string, saveKeysKey string) ([]string, error) {
