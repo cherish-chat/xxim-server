@@ -76,3 +76,8 @@ func (s *ImServiceServer) GetAllConvIdOfUser(ctx context.Context, in *pb.GetAllC
 	l := logic.NewGetAllConvIdOfUserLogic(ctx, s.svcCtx)
 	return l.GetAllConvIdOfUser(in)
 }
+
+func (s *ImServiceServer) UpdateConvSetting(ctx context.Context, in *pb.UpdateConvSettingReq) (*pb.UpdateConvSettingResp, error) {
+	l := logic.NewUpdateConvSettingLogic(ctx, s.svcCtx)
+	return l.UpdateConvSetting(in)
+}

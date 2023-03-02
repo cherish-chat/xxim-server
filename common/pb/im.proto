@@ -81,6 +81,18 @@ message GetAllConvIdOfUserResp {
   repeated string noticeIds = 5;
 }
 
+//UpdateConvSettingReq 更新会话设置
+message UpdateConvSettingReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  optional bool isTop = 3;
+}
+
+//UpdateConvSettingResp 更新会话设置
+message UpdateConvSettingResp {
+  CommonResp commonResp = 1;
+}
+
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -93,4 +105,5 @@ service imService {
   rpc BatchGetUserLatestConn(BatchGetUserLatestConnReq) returns (BatchGetUserLatestConnResp);
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
   rpc GetAllConvIdOfUser(GetAllConvIdOfUserReq) returns (GetAllConvIdOfUserResp);
+  rpc UpdateConvSetting(UpdateConvSettingReq) returns (UpdateConvSettingResp);
 }

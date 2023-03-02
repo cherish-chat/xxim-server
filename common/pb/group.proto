@@ -180,6 +180,8 @@ message SetGroupMemberInfoReq {
   optional int64 unbanTime = 13;
   // 群备注
   optional string groupRemark = 14;
+  // 置顶
+  optional bool isTop = 15;
 }
 
 //SetGroupMemberInfoResp 设置群成员信息

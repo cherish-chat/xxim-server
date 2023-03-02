@@ -35,6 +35,7 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 		route.RegisterAppMgmt(s.svcCtx)
 		route.RegisterConn(s.svcCtx)
 		route.RegisterGroup(s.svcCtx)
+		route.RegisterIm(s.svcCtx)
 		route.RegisterMsg(s.svcCtx)
 		route.RegisterNotice(s.svcCtx)
 		route.RegisterRelation(s.svcCtx)

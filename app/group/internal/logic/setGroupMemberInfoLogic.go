@@ -118,6 +118,9 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 		if in.GroupRemark != nil {
 			updateMap["groupRemark"] = *in.GroupRemark
 		}
+		if in.IsTop != nil {
+			updateMap["isTop"] = *in.IsTop
+		}
 		// 再修改数据库
 		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			// 修改数据库

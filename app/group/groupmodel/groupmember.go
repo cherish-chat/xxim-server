@@ -34,6 +34,8 @@ type (
 		NoDisturb bool `bson:"noDisturb" json:"noDisturb" gorm:"column:noDisturb;type:tinyint(1);not null;index;default:0;comment:是否免打扰"`
 		// 预览
 		Preview bool `bson:"preview" json:"preview" gorm:"column:preview;type:tinyint(1);not null;default:0;comment:预览"`
+		// 置顶
+		IsTop bool `bson:"isTop" json:"isTop" gorm:"column:isTop;type:tinyint(1);not null;default:0;comment:置顶"`
 	}
 )
 
