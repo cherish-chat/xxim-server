@@ -117,6 +117,7 @@ func (l *GetGroupMemberListLogic) GetGroupMemberList(in *pb.GetGroupMemberListRe
 				CommonReq: in.CommonReq,
 				GroupId:   in.GroupId,
 				MemberIds: userIds,
+				Opt:       &pb.MapGroupMemberInfoByIdsReq_Opt{UserBaseInfo: true},
 			})
 		})
 		if err != nil {
@@ -167,7 +168,7 @@ func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMember
 		tx = tx.Where(where, args...)
 	}
 	var userIds []string
-	err = tx.Order("remark asc, userId asc").Offset(int(offset)).Limit(int(limit)).Pluck("userId", &userIds).Error
+	err = tx.Order("role desc, remark asc, userId asc").Offset(int(offset)).Limit(int(limit)).Pluck("userId", &userIds).Error
 	if err != nil {
 		l.Errorf("mysql pluck error: %v", err)
 		return make([]string, 0), err
