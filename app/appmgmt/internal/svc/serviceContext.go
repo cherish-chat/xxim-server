@@ -29,6 +29,7 @@ type ServiceContext struct {
 	userService     userservice.UserService
 	groupService    groupservice.GroupService
 	ConfigMgr       *xconf.ConfigMgr
+	MsgPodsMgr      *msgservice.MsgPodsMgr
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -36,6 +37,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
+	s.MsgPodsMgr = msgservice.NewMsgPodsMgr(c.MsgRpcPod)
 	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	return s
 }
@@ -51,6 +53,8 @@ func (s *ServiceContext) Mysql() *gorm.DB {
 		s.mysql.AutoMigrate(&appmgmtmodel.ShieldWord{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Version{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Vpn{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Link{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Stats{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

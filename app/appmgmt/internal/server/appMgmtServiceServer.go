@@ -37,6 +37,11 @@ func (s *AppMgmtServiceServer) GetAllAppMgmtVersion(ctx context.Context, in *pb.
 	return l.GetAllAppMgmtVersion(in)
 }
 
+func (s *AppMgmtServiceServer) GetLatestVersion(ctx context.Context, in *pb.GetLatestVersionReq) (*pb.GetLatestVersionResp, error) {
+	l := logic.NewGetLatestVersionLogic(ctx, s.svcCtx)
+	return l.GetLatestVersion(in)
+}
+
 func (s *AppMgmtServiceServer) GetAppMgmtVersionDetail(ctx context.Context, in *pb.GetAppMgmtVersionDetailReq) (*pb.GetAppMgmtVersionDetailResp, error) {
 	l := logic.NewGetAppMgmtVersionDetailLogic(ctx, s.svcCtx)
 	return l.GetAppMgmtVersionDetail(in)
@@ -180,4 +185,34 @@ func (s *AppMgmtServiceServer) UpdateAppMgmtNotice(ctx context.Context, in *pb.U
 func (s *AppMgmtServiceServer) DeleteAppMgmtNotice(ctx context.Context, in *pb.DeleteAppMgmtNoticeReq) (*pb.DeleteAppMgmtNoticeResp, error) {
 	l := logic.NewDeleteAppMgmtNoticeLogic(ctx, s.svcCtx)
 	return l.DeleteAppMgmtNotice(in)
+}
+
+func (s *AppMgmtServiceServer) GetAllAppMgmtLink(ctx context.Context, in *pb.GetAllAppMgmtLinkReq) (*pb.GetAllAppMgmtLinkResp, error) {
+	l := logic.NewGetAllAppMgmtLinkLogic(ctx, s.svcCtx)
+	return l.GetAllAppMgmtLink(in)
+}
+
+func (s *AppMgmtServiceServer) GetAppMgmtLinkDetail(ctx context.Context, in *pb.GetAppMgmtLinkDetailReq) (*pb.GetAppMgmtLinkDetailResp, error) {
+	l := logic.NewGetAppMgmtLinkDetailLogic(ctx, s.svcCtx)
+	return l.GetAppMgmtLinkDetail(in)
+}
+
+func (s *AppMgmtServiceServer) AddAppMgmtLink(ctx context.Context, in *pb.AddAppMgmtLinkReq) (*pb.AddAppMgmtLinkResp, error) {
+	l := logic.NewAddAppMgmtLinkLogic(ctx, s.svcCtx)
+	return l.AddAppMgmtLink(in)
+}
+
+func (s *AppMgmtServiceServer) UpdateAppMgmtLink(ctx context.Context, in *pb.UpdateAppMgmtLinkReq) (*pb.UpdateAppMgmtLinkResp, error) {
+	l := logic.NewUpdateAppMgmtLinkLogic(ctx, s.svcCtx)
+	return l.UpdateAppMgmtLink(in)
+}
+
+func (s *AppMgmtServiceServer) DeleteAppMgmtLink(ctx context.Context, in *pb.DeleteAppMgmtLinkReq) (*pb.DeleteAppMgmtLinkResp, error) {
+	l := logic.NewDeleteAppMgmtLinkLogic(ctx, s.svcCtx)
+	return l.DeleteAppMgmtLink(in)
+}
+
+func (s *AppMgmtServiceServer) AppGetAllConfig(ctx context.Context, in *pb.AppGetAllConfigReq) (*pb.AppGetAllConfigResp, error) {
+	l := logic.NewAppGetAllConfigLogic(ctx, s.svcCtx)
+	return l.AppGetAllConfig(in)
 }

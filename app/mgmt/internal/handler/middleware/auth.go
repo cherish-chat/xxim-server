@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"io"
+	"strings"
 )
 
 var dontCheckTokenMap = map[string]bool{
@@ -26,6 +27,11 @@ func Auth(rc *redis.Redis) gin.HandlerFunc {
 		}
 		if _, ok := dontCheckTokenMap[c.Request.URL.Path]; ok {
 			dontCheckToken(c)
+			return
+		}
+		// 如果是 multipart/form-data 请求，走另外的验证
+		if strings.Contains(c.Request.Header.Get("Content-Type"), "multipart/form-data") {
+			multipartFormDataAuth(c, rc)
 			return
 		}
 		// 请求头中的token、ip
@@ -67,6 +73,19 @@ func Auth(rc *redis.Redis) gin.HandlerFunc {
 			}
 			c.Next()
 		}
+	}
+}
+
+func multipartFormDataAuth(c *gin.Context, rc *redis.Redis) {
+	// 请求头中的token、ip
+	token := c.GetHeader("token")
+	userId := c.GetHeader("userId")
+	tokenCode, _ := xjwt.VerifyTokenAdmin(c.Request.Context(), rc, userId, token)
+	if xjwt.VerifyTokenCodeOK != tokenCode {
+		c.AbortWithStatus(401)
+		return
+	} else {
+		c.Next()
 	}
 }
 

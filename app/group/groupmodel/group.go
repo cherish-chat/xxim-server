@@ -36,6 +36,8 @@ type (
 		// GroupSetting
 		// 全体禁言开关
 		AllMute bool `bson:"allMute" json:"allMute" gorm:"column:allMute;type:tinyint(1);not null;default:0;index"`
+		// 全体禁言对象
+		AllMuterType pb.AllMuterType `bson:"allMuterType" json:"allMuterType" gorm:"column:allMuterType;type:tinyint(1);not null;default:0;"`
 		// 发言频率限制
 		SpeakLimit int32 `bson:"speakLimit,omitempty" json:"speakLimit" gorm:"column:speakLimit;type:int;not null;default:0;"`
 		// 群成员人数上限
@@ -101,6 +103,7 @@ func (m *Group) ToPB() *pb.GroupModel {
 		AnonymousChat:            m.AnonymousChat,
 		JoinGroupOption:          m.JoinGroupOption.ToPB(),
 		AdminRemark:              m.AdminRemark,
+		AllMuterType:             m.AllMuterType,
 	}
 }
 

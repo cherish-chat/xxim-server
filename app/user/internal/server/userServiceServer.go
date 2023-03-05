@@ -32,6 +32,11 @@ func (s *UserServiceServer) ConfirmRegister(ctx context.Context, in *pb.ConfirmR
 	return l.ConfirmRegister(in)
 }
 
+func (s *UserServiceServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
+	return l.Register(in)
+}
+
 func (s *UserServiceServer) MapUserByIds(ctx context.Context, in *pb.MapUserByIdsReq) (*pb.MapUserByIdsResp, error) {
 	l := logic.NewMapUserByIdsLogic(ctx, s.svcCtx)
 	return l.MapUserByIds(in)
@@ -82,6 +87,16 @@ func (s *UserServiceServer) BatchGetUserAllDevices(ctx context.Context, in *pb.B
 func (s *UserServiceServer) UpdateUserInfo(ctx context.Context, in *pb.UpdateUserInfoReq) (*pb.UpdateUserInfoResp, error) {
 	l := logic.NewUpdateUserInfoLogic(ctx, s.svcCtx)
 	return l.UpdateUserInfo(in)
+}
+
+func (s *UserServiceServer) UpdateUserPassword(ctx context.Context, in *pb.UpdateUserPasswordReq) (*pb.UpdateUserPasswordResp, error) {
+	l := logic.NewUpdateUserPasswordLogic(ctx, s.svcCtx)
+	return l.UpdateUserPassword(in)
+}
+
+func (s *UserServiceServer) ResetPassword(ctx context.Context, in *pb.ResetPasswordReq) (*pb.ResetPasswordResp, error) {
+	l := logic.NewResetPasswordLogic(ctx, s.svcCtx)
+	return l.ResetPassword(in)
 }
 
 func (s *UserServiceServer) GetAllUserInvitationCode(ctx context.Context, in *pb.GetAllUserInvitationCodeReq) (*pb.GetAllUserInvitationCodeResp, error) {
@@ -217,4 +232,19 @@ func (s *UserServiceServer) SwitchUserModel(ctx context.Context, in *pb.SwitchUs
 func (s *UserServiceServer) GetAllLoginRecord(ctx context.Context, in *pb.GetAllLoginRecordReq) (*pb.GetAllLoginRecordResp, error) {
 	l := logic.NewGetAllLoginRecordLogic(ctx, s.svcCtx)
 	return l.GetAllLoginRecord(in)
+}
+
+func (s *UserServiceServer) SendSms(ctx context.Context, in *pb.SendSmsReq) (*pb.SendSmsResp, error) {
+	l := logic.NewSendSmsLogic(ctx, s.svcCtx)
+	return l.SendSms(in)
+}
+
+func (s *UserServiceServer) VerifySms(ctx context.Context, in *pb.VerifySmsReq) (*pb.VerifySmsResp, error) {
+	l := logic.NewVerifySmsLogic(ctx, s.svcCtx)
+	return l.VerifySms(in)
+}
+
+func (s *UserServiceServer) ReportUser(ctx context.Context, in *pb.ReportUserReq) (*pb.ReportUserResp, error) {
+	l := logic.NewReportUserLogic(ctx, s.svcCtx)
+	return l.ReportUser(in)
 }

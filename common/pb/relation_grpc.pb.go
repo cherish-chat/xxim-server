@@ -31,8 +31,6 @@ type RelationServiceClient interface {
 	BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
 	DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
-	SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error)
-	GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error)
 	GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 	GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error)
@@ -127,24 +125,6 @@ func (c *relationServiceClient) DeleteFriend(ctx context.Context, in *DeleteFrie
 	return out, nil
 }
 
-func (c *relationServiceClient) SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error) {
-	out := new(SetSingleConvSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/SetSingleConvSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *relationServiceClient) GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error) {
-	out := new(GetSingleConvSettingResp)
-	err := c.cc.Invoke(ctx, "/pb.relationService/GetSingleConvSetting", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *relationServiceClient) GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error) {
 	out := new(GetFriendListResp)
 	err := c.cc.Invoke(ctx, "/pb.relationService/GetFriendList", in, out, opts...)
@@ -185,8 +165,6 @@ type RelationServiceServer interface {
 	BlockUser(context.Context, *BlockUserReq) (*BlockUserResp, error)
 	DeleteBlockUser(context.Context, *DeleteBlockUserReq) (*DeleteBlockUserResp, error)
 	DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error)
-	SetSingleConvSetting(context.Context, *SetSingleConvSettingReq) (*SetSingleConvSettingResp, error)
-	GetSingleConvSetting(context.Context, *GetSingleConvSettingReq) (*GetSingleConvSettingResp, error)
 	GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error)
 	GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(context.Context, *GetFriendListByUserIdReq) (*GetFriendListByUserIdResp, error)
@@ -223,12 +201,6 @@ func (UnimplementedRelationServiceServer) DeleteBlockUser(context.Context, *Dele
 }
 func (UnimplementedRelationServiceServer) DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFriend not implemented")
-}
-func (UnimplementedRelationServiceServer) SetSingleConvSetting(context.Context, *SetSingleConvSettingReq) (*SetSingleConvSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSingleConvSetting not implemented")
-}
-func (UnimplementedRelationServiceServer) GetSingleConvSetting(context.Context, *GetSingleConvSettingReq) (*GetSingleConvSettingResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSingleConvSetting not implemented")
 }
 func (UnimplementedRelationServiceServer) GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
@@ -414,42 +386,6 @@ func _RelationService_DeleteFriend_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RelationService_SetSingleConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSingleConvSettingReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelationServiceServer).SetSingleConvSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.relationService/SetSingleConvSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).SetSingleConvSetting(ctx, req.(*SetSingleConvSettingReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RelationService_GetSingleConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSingleConvSettingReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelationServiceServer).GetSingleConvSetting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.relationService/GetSingleConvSetting",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationServiceServer).GetSingleConvSetting(ctx, req.(*GetSingleConvSettingReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RelationService_GetFriendList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFriendListReq)
 	if err := dec(in); err != nil {
@@ -546,14 +482,6 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteFriend",
 			Handler:    _RelationService_DeleteFriend_Handler,
-		},
-		{
-			MethodName: "SetSingleConvSetting",
-			Handler:    _RelationService_SetSingleConvSetting_Handler,
-		},
-		{
-			MethodName: "GetSingleConvSetting",
-			Handler:    _RelationService_GetSingleConvSetting_Handler,
 		},
 		{
 			MethodName: "GetFriendList",

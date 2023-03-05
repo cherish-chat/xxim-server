@@ -29,12 +29,14 @@ func NewAddUserInvitationCodeLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 func (l *AddUserInvitationCodeLogic) AddUserInvitationCode(in *pb.AddUserInvitationCodeReq) (*pb.AddUserInvitationCodeResp, error) {
 	model := &usermodel.InvitationCode{
-		Code:        in.UserInvitationCode.Code,
-		Remark:      in.UserInvitationCode.Remark,
-		Creator:     in.CommonReq.UserId,
-		CreatorType: in.UserInvitationCode.CreatorType,
-		IsEnable:    in.UserInvitationCode.IsEnable,
-		CreateTime:  time.Now().UnixMilli(),
+		Code:             in.UserInvitationCode.Code,
+		Remark:           in.UserInvitationCode.Remark,
+		Creator:          in.CommonReq.UserId,
+		CreatorType:      in.UserInvitationCode.CreatorType,
+		IsEnable:         in.UserInvitationCode.IsEnable,
+		SuccessUserCount: 0,
+		DefaultConvMode:  in.UserInvitationCode.DefaultConvMode,
+		CreateTime:       time.Now().UnixMilli(),
 	}
 	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 		err := model.Insert(tx)

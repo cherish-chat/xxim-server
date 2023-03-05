@@ -4,15 +4,16 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
 type ApiPath struct {
 	Id         string `gorm:"column:id;primarykey;comment:'主键'"`
-	Title      string `gorm:"column:title;not null;default:'';comment:'api标题''"`
+	Title      string `gorm:"column:title;not null;default:'';comment:'api标题';index;"`
 	Path       string `gorm:"column:path;not null;default:'';comment:'api路径'"`
 	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注信息'"`
-	LogEnable  bool   `gorm:"column:logEnable;not null;default:0;comment:'是否记录日志'"`
+	LogEnable  bool   `gorm:"column:logEnable;not null;default:0;comment:'是否记录日志';index;"`
 	CreateTime int64  `gorm:"column:createTime;not null;comment:'创建时间'"`
 	UpdateTime int64  `gorm:"column:updateTime;not null;comment:'更新时间'"`
 }
@@ -61,11 +62,17 @@ func init() {
 	})
 }
 
+var apiPathId int
+
+func genApiPathId() string {
+	apiPathId++
+	return strconv.Itoa(apiPathId)
+}
 func initDefaultApiPaths(group string, services map[string]string) {
 	now := time.Now().UnixMilli()
 	for k, v := range services {
 		defaultApiPaths = append(defaultApiPaths, &ApiPath{
-			Id:         utils.GenId(),
+			Id:         genApiPathId(),
 			Title:      v + ":添加",
 			Path:       "/api/" + group + "/add/" + k,
 			Remark:     "",
@@ -74,7 +81,7 @@ func initDefaultApiPaths(group string, services map[string]string) {
 			UpdateTime: now,
 		})
 		defaultApiPaths = append(defaultApiPaths, &ApiPath{
-			Id:         utils.GenId(),
+			Id:         genApiPathId(),
 			Title:      v + ":删除",
 			Path:       "/api/" + group + "/delete/" + k,
 			Remark:     "",
@@ -83,7 +90,7 @@ func initDefaultApiPaths(group string, services map[string]string) {
 			UpdateTime: now,
 		})
 		defaultApiPaths = append(defaultApiPaths, &ApiPath{
-			Id:         utils.GenId(),
+			Id:         genApiPathId(),
 			Title:      v + ":编辑",
 			Path:       "/api/" + group + "/update/" + k,
 			Remark:     "",

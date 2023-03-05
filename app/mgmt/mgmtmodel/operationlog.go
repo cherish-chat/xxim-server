@@ -19,13 +19,13 @@ type OperationLog struct {
 	// 请求参数
 	ReqParams string `gorm:"column:reqParams;comment:'请求参数';type:text;"`
 	// 请求结果是否成功
-	ResultSuccess bool `gorm:"column:resultSuccess;not null;default:0;comment:'请求结果是否成功'index;"`
+	ResultSuccess bool `gorm:"column:resultSuccess;not null;default:0;comment:'请求结果是否成功';index;"`
 	// 请求结果
 	ReqResultMsg string `gorm:"column:reqResultMsg;not null;default:'';comment:'请求结果'"`
 	// 响应
 	Resp string `gorm:"column:resp;comment:'响应';type:text;"`
 	// 请求ip
-	ReqIp string `gorm:"column:reqIp;not null;default:'';comment:'请求ip'index;"`
+	ReqIp string `gorm:"column:reqIp;not null;default:'';comment:'请求ip';index;"`
 	// ip来源
 	IpSource string `gorm:"column:ipSource;not null;default:'';comment:'ip来源'"`
 	// 请求耗时

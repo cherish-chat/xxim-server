@@ -43,5 +43,12 @@ func (l *UpdateAppMgmtShieldWordLogic) UpdateAppMgmtShieldWord(in *pb.UpdateAppM
 			return &pb.UpdateAppMgmtShieldWordResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
+	for _, pod := range l.svcCtx.MsgPodsMgr.AllMsgServices() {
+		_, err := pod.FlushShieldWordTireTree(context.Background(), &pb.FlushShieldWordTireTreeReq{})
+		if err != nil {
+			l.Errorf("flush shield word tire tree err: %v", err)
+			return &pb.UpdateAppMgmtShieldWordResp{CommonResp: pb.NewRetryErrorResp()}, nil
+		}
+	}
 	return &pb.UpdateAppMgmtShieldWordResp{}, nil
 }

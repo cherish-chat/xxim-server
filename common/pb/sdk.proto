@@ -50,6 +50,8 @@ message SetCxnParamsReq {
   string appVersion = 6;
   string language = 7;
   string networkUsed = 8;
+  bytes aesKey = 9; // 用于加密请求和响应的aes key; 他应该是随机字符串的rsa加密结果; 服务端拿到该字段后使用rsa私钥解密得到随机字符串; 然后md5(随机字符串)得到aes key
+  bytes aesIv = 10; // 用于加密请求和响应的aes iv; 他应该是随机字符串的rsa加密结果; 服务端拿到该字段后使用rsa私钥解密得到随机字符串; 然后md5_16(随机字符串)得到aes iv
   bytes ext = 11;
 }
 

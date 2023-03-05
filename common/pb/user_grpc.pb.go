@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 	BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
@@ -36,6 +37,8 @@ type UserServiceClient interface {
 	AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 	BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
+	UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error)
+	ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
 	GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
 	GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
 	AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
@@ -63,6 +66,9 @@ type UserServiceClient interface {
 	DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
 	SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
 	GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
+	SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
+	VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
+	ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 }
 
 type userServiceClient struct {
@@ -85,6 +91,15 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginReq, opts ...grp
 func (c *userServiceClient) ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error) {
 	out := new(ConfirmRegisterResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/ConfirmRegister", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +190,24 @@ func (c *userServiceClient) BatchGetUserAllDevices(ctx context.Context, in *Batc
 func (c *userServiceClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error) {
 	out := new(UpdateUserInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error) {
+	out := new(UpdateUserPasswordResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	out := new(ResetPasswordResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/ResetPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -424,12 +457,40 @@ func (c *userServiceClient) GetAllLoginRecord(ctx context.Context, in *GetAllLog
 	return out, nil
 }
 
+func (c *userServiceClient) SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error) {
+	out := new(SendSmsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/SendSms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
+	out := new(VerifySmsResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/VerifySms", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {
+	out := new(ReportUserResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/ReportUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error)
 	BatchGetUserBaseInfo(context.Context, *BatchGetUserBaseInfoReq) (*BatchGetUserBaseInfoResp, error)
 	SearchUsersByKeyword(context.Context, *SearchUsersByKeywordReq) (*SearchUsersByKeywordResp, error)
@@ -442,6 +503,8 @@ type UserServiceServer interface {
 	AfterDisconnect(context.Context, *AfterDisconnectReq) (*CommonResp, error)
 	BatchGetUserAllDevices(context.Context, *BatchGetUserAllDevicesReq) (*BatchGetUserAllDevicesResp, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*UpdateUserInfoResp, error)
+	UpdateUserPassword(context.Context, *UpdateUserPasswordReq) (*UpdateUserPasswordResp, error)
+	ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error)
 	GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error)
 	GetUserInvitationCodeDetail(context.Context, *GetUserInvitationCodeDetailReq) (*GetUserInvitationCodeDetailResp, error)
 	AddUserInvitationCode(context.Context, *AddUserInvitationCodeReq) (*AddUserInvitationCodeResp, error)
@@ -469,6 +532,9 @@ type UserServiceServer interface {
 	DeleteUserModel(context.Context, *DeleteUserModelReq) (*DeleteUserModelResp, error)
 	SwitchUserModel(context.Context, *SwitchUserModelReq) (*SwitchUserModelResp, error)
 	GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error)
+	SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error)
+	VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error)
+	ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -481,6 +547,9 @@ func (UnimplementedUserServiceServer) Login(context.Context, *LoginReq) (*LoginR
 }
 func (UnimplementedUserServiceServer) ConfirmRegister(context.Context, *ConfirmRegisterReq) (*ConfirmRegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmRegister not implemented")
+}
+func (UnimplementedUserServiceServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserServiceServer) MapUserByIds(context.Context, *MapUserByIdsReq) (*MapUserByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapUserByIds not implemented")
@@ -511,6 +580,12 @@ func (UnimplementedUserServiceServer) BatchGetUserAllDevices(context.Context, *B
 }
 func (UnimplementedUserServiceServer) UpdateUserInfo(context.Context, *UpdateUserInfoReq) (*UpdateUserInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserPassword(context.Context, *UpdateUserPasswordReq) (*UpdateUserPasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserPassword not implemented")
+}
+func (UnimplementedUserServiceServer) ResetPassword(context.Context, *ResetPasswordReq) (*ResetPasswordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (UnimplementedUserServiceServer) GetAllUserInvitationCode(context.Context, *GetAllUserInvitationCodeReq) (*GetAllUserInvitationCodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserInvitationCode not implemented")
@@ -593,6 +668,15 @@ func (UnimplementedUserServiceServer) SwitchUserModel(context.Context, *SwitchUs
 func (UnimplementedUserServiceServer) GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllLoginRecord not implemented")
 }
+func (UnimplementedUserServiceServer) SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendSms not implemented")
+}
+func (UnimplementedUserServiceServer) VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifySms not implemented")
+}
+func (UnimplementedUserServiceServer) ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportUser not implemented")
+}
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
 // UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -638,6 +722,24 @@ func _UserService_ConfirmRegister_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).ConfirmRegister(ctx, req.(*ConfirmRegisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Register(ctx, req.(*RegisterReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -818,6 +920,42 @@ func _UserService_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UpdateUserInfo(ctx, req.(*UpdateUserInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ResetPassword(ctx, req.(*ResetPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1308,6 +1446,60 @@ func _UserService_GetAllLoginRecord_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SendSms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendSmsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendSms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/SendSms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendSms(ctx, req.(*SendSmsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_VerifySms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifySmsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).VerifySms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/VerifySms",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).VerifySms(ctx, req.(*VerifySmsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ReportUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ReportUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/ReportUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ReportUser(ctx, req.(*ReportUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1322,6 +1514,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmRegister",
 			Handler:    _UserService_ConfirmRegister_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _UserService_Register_Handler,
 		},
 		{
 			MethodName: "MapUserByIds",
@@ -1362,6 +1558,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _UserService_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "UpdateUserPassword",
+			Handler:    _UserService_UpdateUserPassword_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _UserService_ResetPassword_Handler,
 		},
 		{
 			MethodName: "GetAllUserInvitationCode",
@@ -1470,6 +1674,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllLoginRecord",
 			Handler:    _UserService_GetAllLoginRecord_Handler,
+		},
+		{
+			MethodName: "SendSms",
+			Handler:    _UserService_SendSms_Handler,
+		},
+		{
+			MethodName: "VerifySms",
+			Handler:    _UserService_VerifySms_Handler,
+		},
+		{
+			MethodName: "ReportUser",
+			Handler:    _UserService_ReportUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

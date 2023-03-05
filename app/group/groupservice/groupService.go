@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	AddGroupMemberReq                              = pb.AddGroupMemberReq
+	AddGroupMemberResp                             = pb.AddGroupMemberResp
 	ApplyToBeGroupMemberReq                        = pb.ApplyToBeGroupMemberReq
 	ApplyToBeGroupMemberResp                       = pb.ApplyToBeGroupMemberResp
 	CreateGroupNoticeReq                           = pb.CreateGroupNoticeReq
@@ -29,6 +31,9 @@ type (
 	EditGroupNoticeResp                            = pb.EditGroupNoticeResp
 	GetAllGroupModelReq                            = pb.GetAllGroupModelReq
 	GetAllGroupModelResp                           = pb.GetAllGroupModelResp
+	GetGroupApplyListReq                           = pb.GetGroupApplyListReq
+	GetGroupApplyListReq_Filter                    = pb.GetGroupApplyListReq_Filter
+	GetGroupApplyListResp                          = pb.GetGroupApplyListResp
 	GetGroupHomeReq                                = pb.GetGroupHomeReq
 	GetGroupHomeResp                               = pb.GetGroupHomeResp
 	GetGroupHomeResp_MemberStatistics              = pb.GetGroupHomeResp_MemberStatistics
@@ -41,7 +46,6 @@ type (
 	GetGroupMemberListReq_GetGroupMemberListFilter = pb.GetGroupMemberListReq_GetGroupMemberListFilter
 	GetGroupMemberListReq_GetGroupMemberListOpt    = pb.GetGroupMemberListReq_GetGroupMemberListOpt
 	GetGroupMemberListResp                         = pb.GetGroupMemberListResp
-	GetGroupMemberListResp_GroupMember             = pb.GetGroupMemberListResp_GroupMember
 	GetGroupModelDetailReq                         = pb.GetGroupModelDetailReq
 	GetGroupModelDetailResp                        = pb.GetGroupModelDetailResp
 	GetGroupNoticeListReq                          = pb.GetGroupNoticeListReq
@@ -49,6 +53,7 @@ type (
 	GetMyGroupListReq                              = pb.GetMyGroupListReq
 	GetMyGroupListReq_Filter                       = pb.GetMyGroupListReq_Filter
 	GetMyGroupListResp                             = pb.GetMyGroupListResp
+	GroupApplyInfo                                 = pb.GroupApplyInfo
 	GroupBaseInfo                                  = pb.GroupBaseInfo
 	GroupMemberInfo                                = pb.GroupMemberInfo
 	GroupModel                                     = pb.GroupModel
@@ -62,6 +67,13 @@ type (
 	KickGroupMemberResp                            = pb.KickGroupMemberResp
 	MapGroupByIdsReq                               = pb.MapGroupByIdsReq
 	MapGroupByIdsResp                              = pb.MapGroupByIdsResp
+	MapGroupMemberInfoByIdsReq                     = pb.MapGroupMemberInfoByIdsReq
+	MapGroupMemberInfoByIdsReq_Opt                 = pb.MapGroupMemberInfoByIdsReq_Opt
+	MapGroupMemberInfoByIdsResp                    = pb.MapGroupMemberInfoByIdsResp
+	ReportGroupReq                                 = pb.ReportGroupReq
+	ReportGroupResp                                = pb.ReportGroupResp
+	SearchGroupsByKeywordReq                       = pb.SearchGroupsByKeywordReq
+	SearchGroupsByKeywordResp                      = pb.SearchGroupsByKeywordResp
 	SetGroupMemberInfoReq                          = pb.SetGroupMemberInfoReq
 	SetGroupMemberInfoResp                         = pb.SetGroupMemberInfoResp
 	SyncGroupMemberCountReq                        = pb.SyncGroupMemberCountReq
@@ -88,6 +100,8 @@ type (
 		SetGroupMemberInfo(ctx context.Context, in *SetGroupMemberInfoReq, opts ...grpc.CallOption) (*SetGroupMemberInfoResp, error)
 		// GetGroupMemberInfo 获取群成员信息
 		GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
+		//  MapGroupMemberInfoByIds 批量获取群成员信息
+		MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error)
 		// EditGroupInfo 编辑群信息
 		EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
 		// TransferGroupOwner 转让群主
@@ -106,6 +120,8 @@ type (
 		ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
 		// HandleGroupApply 处理群聊申请
 		HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+		// GetGroupApplyList 获取群聊申请列表
+		GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error)
 		// GetGroupListByUserId 分页获取某人的群列表
 		GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
 		// GetAllGroupModel 获取所有群组
@@ -116,6 +132,12 @@ type (
 		UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
 		// DismissGroupModel 解散群组
 		DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
+		// SearchGroupsByKeyword 搜索群组
+		SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
+		// AddGroupMember 添加群成员
+		AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
+		//  ReportGroup
+		ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
 	}
 
 	defaultGroupService struct {
@@ -177,6 +199,12 @@ func (m *defaultGroupService) GetGroupMemberInfo(ctx context.Context, in *GetGro
 	return client.GetGroupMemberInfo(ctx, in, opts...)
 }
 
+//  MapGroupMemberInfoByIds 批量获取群成员信息
+func (m *defaultGroupService) MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.MapGroupMemberInfoByIds(ctx, in, opts...)
+}
+
 // EditGroupInfo 编辑群信息
 func (m *defaultGroupService) EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
@@ -231,6 +259,12 @@ func (m *defaultGroupService) HandleGroupApply(ctx context.Context, in *HandleGr
 	return client.HandleGroupApply(ctx, in, opts...)
 }
 
+// GetGroupApplyList 获取群聊申请列表
+func (m *defaultGroupService) GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GetGroupApplyList(ctx, in, opts...)
+}
+
 // GetGroupListByUserId 分页获取某人的群列表
 func (m *defaultGroupService) GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
@@ -259,4 +293,22 @@ func (m *defaultGroupService) UpdateGroupModel(ctx context.Context, in *UpdateGr
 func (m *defaultGroupService) DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.DismissGroupModel(ctx, in, opts...)
+}
+
+// SearchGroupsByKeyword 搜索群组
+func (m *defaultGroupService) SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.SearchGroupsByKeyword(ctx, in, opts...)
+}
+
+// AddGroupMember 添加群成员
+func (m *defaultGroupService) AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.AddGroupMember(ctx, in, opts...)
+}
+
+//  ReportGroup
+func (m *defaultGroupService) ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ReportGroup(ctx, in, opts...)
 }

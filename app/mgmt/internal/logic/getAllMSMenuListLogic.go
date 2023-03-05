@@ -34,13 +34,13 @@ func (l *GetAllMSMenuListLogic) GetAllMSMenuList(in *pb.GetAllMSMenuListReq) (*p
 	var menuList []*pb.MSMenu
 	// 一级
 	for _, menu := range menus {
-		if menu.Pid == "0" {
+		if menu.Pid == "0" || menu.Pid == "" {
 			menuList = append(menuList, menu.ToPb())
 		}
 	}
 	// 二级
 	for _, menu := range menus {
-		if menu.Pid != "" {
+		if menu.Pid != "" && menu.Pid != "0" {
 			for _, m := range menuList {
 				if m.Id == menu.Pid {
 					m.Children = append(m.Children, menu.ToPb())
@@ -51,7 +51,7 @@ func (l *GetAllMSMenuListLogic) GetAllMSMenuList(in *pb.GetAllMSMenuListReq) (*p
 	}
 	// 三级
 	for _, menu := range menus {
-		if menu.Pid != "" {
+		if menu.Pid != "" && menu.Pid != "0" {
 			for _, m := range menuList {
 				for _, c := range m.Children {
 					if c.Id == menu.Pid {

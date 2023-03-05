@@ -93,6 +93,14 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 				"Port":      serverConfig.ConnRpc.Port,
 			},
 		},
+		"MsgRpcPod": map[string]any{
+			"DiscovType": serverConfig.MsgRpc.DiscovType,
+			"Endpoints":  serverConfig.MsgRpc.Endpoints,
+			"K8s": map[string]any{
+				"Namespace": serverConfig.MsgRpc.K8sNamespace,
+				"Port":      serverConfig.MsgRpc.Port,
+			},
+		},
 	}
 	if serverConfig.ConnRpc.DiscovType == "endpoints" {
 		c["ImRpc"] = map[string]any{
@@ -184,18 +192,36 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 			"Host": serverConfig.Common.Host,
 		}
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ConnRpc.Port)
+		c["RsaPublicKey"] = serverConfig.ConnRpc.RsaPublicKey
+		c["RsaPrivateKey"] = serverConfig.ConnRpc.RsaPrivateKey
 	case "im":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.ImRpc.Port)
 	case "appmgmt":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.AppMgmtRpc.Port)
 	case "group":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.GroupRpc.Port)
+		c["GroupConfig"] = map[string]any{
+			"MaxGroupCount":       serverConfig.GroupRpc.MaxGroupCount,
+			"MaxGroupMemberCount": serverConfig.GroupRpc.MaxGroupMemberCount,
+		}
 	case "notice":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.NoticeRpc.Port)
 	case "relation":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.RelationRpc.Port)
 	case "user":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.UserRpc.Port)
+		c["Sms"] = map[string]any{
+			"Enabled": serverConfig.UserRpc.Sms.Enabled,
+			"Type":    serverConfig.UserRpc.Sms.Type,
+			"TencentSms": map[string]any{
+				"AppId":      serverConfig.UserRpc.Sms.TencentSms.AppId,
+				"SecretId":   serverConfig.UserRpc.Sms.TencentSms.SecretId,
+				"SecretKey":  serverConfig.UserRpc.Sms.TencentSms.SecretKey,
+				"Region":     serverConfig.UserRpc.Sms.TencentSms.Region,
+				"Sign":       serverConfig.UserRpc.Sms.TencentSms.Sign,
+				"TemplateId": serverConfig.UserRpc.Sms.TencentSms.TemplateId,
+			},
+		}
 	case "msg":
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.MsgRpc.Port)
 		c["MobPush"] = map[string]any{

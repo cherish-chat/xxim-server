@@ -41,6 +41,9 @@ func (l *BatchGetUserBaseInfoLogic) BatchGetUserBaseInfo(in *pb.BatchGetUserBase
 		userConnMap[conn.UserId] = conn
 	}
 	for _, user := range usersByIds {
+		if user.Id == "" {
+			continue
+		}
 		userConn, ok := userConnMap[user.Id]
 		if !ok {
 			userConn = &pb.GetUserLatestConnResp{}
@@ -52,6 +55,7 @@ func (l *BatchGetUserBaseInfoLogic) BatchGetUserBaseInfo(in *pb.BatchGetUserBase
 			Xb:       user.Xb,
 			Birthday: user.Birthday,
 			IpRegion: userConn.IpRegion, // latest connect ip region
+			Role:     int32(user.Role),
 		})
 	}
 	return &pb.BatchGetUserBaseInfoResp{UserBaseInfos: resp}, nil

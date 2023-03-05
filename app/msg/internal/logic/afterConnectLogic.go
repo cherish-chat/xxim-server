@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +25,10 @@ func NewAfterConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Afte
 
 // conn hook
 func (l *AfterConnectLogic) AfterConnect(in *pb.AfterConnectReq) (*pb.CommonResp, error) {
-	_, err := NewFlushUsersSubConvLogic(l.ctx, l.svcCtx).FlushUsersSubConv(&pb.FlushUsersSubConvReq{UserIds: []string{in.ConnParam.UserId}})
+	var err error
+	xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "msgService/AfterConnect/FlushUsersSubConv", func(ctx context.Context) {
+		_, err = NewFlushUsersSubConvLogic(ctx, l.svcCtx).FlushUsersSubConv(&pb.FlushUsersSubConvReq{UserIds: []string{in.ConnParam.UserId}})
+	}, nil)
 	if err != nil {
 		return &pb.CommonResp{}, err
 	}

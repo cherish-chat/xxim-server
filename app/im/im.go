@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/app/im/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtservice"
 
 	"github.com/cherish-chat/xxim-server/app/im/internal/config"
@@ -24,6 +25,8 @@ func main() {
 	var c config.Config
 	mgmtservice.MustLoadConfig(*mgmtRpcAddress, "im", &c)
 	ctx := svc.NewServiceContext(c)
+	logic.InitAllIpBlackList(ctx)
+
 	svr := server.NewImServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

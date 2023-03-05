@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/app/im/immodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
@@ -149,6 +150,9 @@ func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []st
 func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, listMap map[string]*pb.MsgDataList) {
 	for convId, msgDataList := range listMap {
 		for _, data := range msgDataList.MsgDataList {
+			if !data.GetOptions().GetOfflinePush() {
+				continue
+			}
 			if data.IsSingleConv() {
 				// 单聊
 				receiver := data.ReceiverUid()
@@ -166,29 +170,18 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 				}
 				l.offlinePushUser(ctx, data, convId, receiver)
 			} else if data.IsGroupConv() {
-				// 群聊
-				receiver := data.ReceiverGid()
 				// 查询群成员
-				memberList, err := l.svcCtx.GroupService().GetGroupMemberList(ctx, &pb.GetGroupMemberListReq{
-					GroupId: receiver,
-					Page: &pb.Page{
-						Page: 1,
-						Size: 99999,
-					},
-					Filter: &pb.GetGroupMemberListReq_GetGroupMemberListFilter{NoDisturb: utils.AnyPtr(false)},
-					Opt: &pb.GetGroupMemberListReq_GetGroupMemberListOpt{
-						OnlyId:       utils.AnyPtr(true),
-						GetNotifyOpt: utils.AnyPtr(true),
-					},
+				memberList, err := immodel.SearchGroupMemberList(l.svcCtx.Mysql(), data.ConvId, 1000, map[string]interface{}{
+					"isDisturb": false,
 				})
 				if err != nil {
 					l.Errorf("GetGroupMemberList err: %v", err)
 					continue
 				}
-				if len(memberList.GroupMemberList) == 0 {
+				if len(memberList) == 0 {
 					continue
 				}
-				l.offlinePushGroup(ctx, data, convId, memberList.GroupMemberList...)
+				l.offlinePushGroup(ctx, data, convId, memberList...)
 			}
 		}
 	}
@@ -196,21 +189,25 @@ func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, l
 
 func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData, convId string, userId string) {
 	// 查询用户在此会话的离线推送设置
-	convSetting, err := l.svcCtx.RelationService().GetSingleConvSetting(ctx, &pb.GetSingleConvSettingReq{
-		ConvId: convId,
-		UserId: userId,
+	convSettings, err := l.svcCtx.ImService().GetConvSetting(ctx, &pb.GetConvSettingReq{
+		ConvIds:   []string{convId},
+		CommonReq: &pb.CommonReq{UserId: userId},
 	})
 	if err != nil {
 		l.Errorf("GetSingleMsgNotifyOpt err: %v", err)
 		return
 	}
-	if convSetting.Setting.GetIsDisturb() {
+	if len(convSettings.ConvSettings) == 0 {
+		return
+	}
+	convSetting := convSettings.ConvSettings[0]
+	if convSetting.GetIsDisturb() {
 		// 免打扰
 		return
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
-	if !convSetting.Setting.GetNotifyPreview() {
-		alert, content = l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx)
+	if !convSetting.GetNotifyPreview() {
+		alert, content = l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx, data.SenderId), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx, data.SenderId)
 	}
 	// 推送
 	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
@@ -228,21 +225,21 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 	})
 }
 
-func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgData, convId string, members ...*pb.GetGroupMemberListResp_GroupMember) {
+func (l *PushMsgListLogic) offlinePushGroup(ctx context.Context, data *pb.MsgData, convId string, members ...*immodel.ConvSetting) {
 	previewUids := make([]string, 0)
 	noPreviewUids := make([]string, 0)
 	for _, member := range members {
-		if member.NotifyOpt.NoDisturb {
+		if member.IsDisturb {
 			continue
 		}
-		if member.NotifyOpt.Preview {
+		if member.NotifyPreview {
 			previewUids = append(previewUids, member.UserId)
 		} else {
 			noPreviewUids = append(noPreviewUids, member.UserId)
 		}
 	}
 	alert, content := data.OfflinePush.Title, data.OfflinePush.Content
-	noPreviewAlert, noPreviewContent := l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx)
+	noPreviewAlert, noPreviewContent := l.svcCtx.ConfigMgr.OfflinePushTitle(l.ctx, data.SenderId), l.svcCtx.ConfigMgr.OfflinePushContent(l.ctx, data.SenderId)
 	// 推送
 	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
 		if len(previewUids) > 0 {

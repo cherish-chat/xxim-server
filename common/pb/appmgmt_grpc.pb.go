@@ -25,6 +25,7 @@ type AppMgmtServiceClient interface {
 	GetAllAppMgmtConfig(ctx context.Context, in *GetAllAppMgmtConfigReq, opts ...grpc.CallOption) (*GetAllAppMgmtConfigResp, error)
 	UpdateAppMgmtConfig(ctx context.Context, in *UpdateAppMgmtConfigReq, opts ...grpc.CallOption) (*UpdateAppMgmtConfigResp, error)
 	GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error)
+	GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error)
 	GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error)
 	AddAppMgmtVersion(ctx context.Context, in *AddAppMgmtVersionReq, opts ...grpc.CallOption) (*AddAppMgmtVersionResp, error)
 	UpdateAppMgmtVersion(ctx context.Context, in *UpdateAppMgmtVersionReq, opts ...grpc.CallOption) (*UpdateAppMgmtVersionResp, error)
@@ -54,6 +55,12 @@ type AppMgmtServiceClient interface {
 	AddAppMgmtNotice(ctx context.Context, in *AddAppMgmtNoticeReq, opts ...grpc.CallOption) (*AddAppMgmtNoticeResp, error)
 	UpdateAppMgmtNotice(ctx context.Context, in *UpdateAppMgmtNoticeReq, opts ...grpc.CallOption) (*UpdateAppMgmtNoticeResp, error)
 	DeleteAppMgmtNotice(ctx context.Context, in *DeleteAppMgmtNoticeReq, opts ...grpc.CallOption) (*DeleteAppMgmtNoticeResp, error)
+	GetAllAppMgmtLink(ctx context.Context, in *GetAllAppMgmtLinkReq, opts ...grpc.CallOption) (*GetAllAppMgmtLinkResp, error)
+	GetAppMgmtLinkDetail(ctx context.Context, in *GetAppMgmtLinkDetailReq, opts ...grpc.CallOption) (*GetAppMgmtLinkDetailResp, error)
+	AddAppMgmtLink(ctx context.Context, in *AddAppMgmtLinkReq, opts ...grpc.CallOption) (*AddAppMgmtLinkResp, error)
+	UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error)
+	DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
+	AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
 }
 
 type appMgmtServiceClient struct {
@@ -85,6 +92,15 @@ func (c *appMgmtServiceClient) UpdateAppMgmtConfig(ctx context.Context, in *Upda
 func (c *appMgmtServiceClient) GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error) {
 	out := new(GetAllAppMgmtVersionResp)
 	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAllAppMgmtVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error) {
+	out := new(GetLatestVersionResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetLatestVersion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -352,6 +368,60 @@ func (c *appMgmtServiceClient) DeleteAppMgmtNotice(ctx context.Context, in *Dele
 	return out, nil
 }
 
+func (c *appMgmtServiceClient) GetAllAppMgmtLink(ctx context.Context, in *GetAllAppMgmtLinkReq, opts ...grpc.CallOption) (*GetAllAppMgmtLinkResp, error) {
+	out := new(GetAllAppMgmtLinkResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAllAppMgmtLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) GetAppMgmtLinkDetail(ctx context.Context, in *GetAppMgmtLinkDetailReq, opts ...grpc.CallOption) (*GetAppMgmtLinkDetailResp, error) {
+	out := new(GetAppMgmtLinkDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAppMgmtLinkDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) AddAppMgmtLink(ctx context.Context, in *AddAppMgmtLinkReq, opts ...grpc.CallOption) (*AddAppMgmtLinkResp, error) {
+	out := new(AddAppMgmtLinkResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/AddAppMgmtLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error) {
+	out := new(UpdateAppMgmtLinkResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/UpdateAppMgmtLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error) {
+	out := new(DeleteAppMgmtLinkResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/DeleteAppMgmtLink", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error) {
+	out := new(AppGetAllConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/AppGetAllConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppMgmtServiceServer is the server API for AppMgmtService service.
 // All implementations must embed UnimplementedAppMgmtServiceServer
 // for forward compatibility
@@ -359,6 +429,7 @@ type AppMgmtServiceServer interface {
 	GetAllAppMgmtConfig(context.Context, *GetAllAppMgmtConfigReq) (*GetAllAppMgmtConfigResp, error)
 	UpdateAppMgmtConfig(context.Context, *UpdateAppMgmtConfigReq) (*UpdateAppMgmtConfigResp, error)
 	GetAllAppMgmtVersion(context.Context, *GetAllAppMgmtVersionReq) (*GetAllAppMgmtVersionResp, error)
+	GetLatestVersion(context.Context, *GetLatestVersionReq) (*GetLatestVersionResp, error)
 	GetAppMgmtVersionDetail(context.Context, *GetAppMgmtVersionDetailReq) (*GetAppMgmtVersionDetailResp, error)
 	AddAppMgmtVersion(context.Context, *AddAppMgmtVersionReq) (*AddAppMgmtVersionResp, error)
 	UpdateAppMgmtVersion(context.Context, *UpdateAppMgmtVersionReq) (*UpdateAppMgmtVersionResp, error)
@@ -388,6 +459,12 @@ type AppMgmtServiceServer interface {
 	AddAppMgmtNotice(context.Context, *AddAppMgmtNoticeReq) (*AddAppMgmtNoticeResp, error)
 	UpdateAppMgmtNotice(context.Context, *UpdateAppMgmtNoticeReq) (*UpdateAppMgmtNoticeResp, error)
 	DeleteAppMgmtNotice(context.Context, *DeleteAppMgmtNoticeReq) (*DeleteAppMgmtNoticeResp, error)
+	GetAllAppMgmtLink(context.Context, *GetAllAppMgmtLinkReq) (*GetAllAppMgmtLinkResp, error)
+	GetAppMgmtLinkDetail(context.Context, *GetAppMgmtLinkDetailReq) (*GetAppMgmtLinkDetailResp, error)
+	AddAppMgmtLink(context.Context, *AddAppMgmtLinkReq) (*AddAppMgmtLinkResp, error)
+	UpdateAppMgmtLink(context.Context, *UpdateAppMgmtLinkReq) (*UpdateAppMgmtLinkResp, error)
+	DeleteAppMgmtLink(context.Context, *DeleteAppMgmtLinkReq) (*DeleteAppMgmtLinkResp, error)
+	AppGetAllConfig(context.Context, *AppGetAllConfigReq) (*AppGetAllConfigResp, error)
 	mustEmbedUnimplementedAppMgmtServiceServer()
 }
 
@@ -403,6 +480,9 @@ func (UnimplementedAppMgmtServiceServer) UpdateAppMgmtConfig(context.Context, *U
 }
 func (UnimplementedAppMgmtServiceServer) GetAllAppMgmtVersion(context.Context, *GetAllAppMgmtVersionReq) (*GetAllAppMgmtVersionResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllAppMgmtVersion not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetLatestVersion(context.Context, *GetLatestVersionReq) (*GetLatestVersionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatestVersion not implemented")
 }
 func (UnimplementedAppMgmtServiceServer) GetAppMgmtVersionDetail(context.Context, *GetAppMgmtVersionDetailReq) (*GetAppMgmtVersionDetailResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppMgmtVersionDetail not implemented")
@@ -491,6 +571,24 @@ func (UnimplementedAppMgmtServiceServer) UpdateAppMgmtNotice(context.Context, *U
 func (UnimplementedAppMgmtServiceServer) DeleteAppMgmtNotice(context.Context, *DeleteAppMgmtNoticeReq) (*DeleteAppMgmtNoticeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppMgmtNotice not implemented")
 }
+func (UnimplementedAppMgmtServiceServer) GetAllAppMgmtLink(context.Context, *GetAllAppMgmtLinkReq) (*GetAllAppMgmtLinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllAppMgmtLink not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetAppMgmtLinkDetail(context.Context, *GetAppMgmtLinkDetailReq) (*GetAppMgmtLinkDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppMgmtLinkDetail not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) AddAppMgmtLink(context.Context, *AddAppMgmtLinkReq) (*AddAppMgmtLinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAppMgmtLink not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) UpdateAppMgmtLink(context.Context, *UpdateAppMgmtLinkReq) (*UpdateAppMgmtLinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAppMgmtLink not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) DeleteAppMgmtLink(context.Context, *DeleteAppMgmtLinkReq) (*DeleteAppMgmtLinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppMgmtLink not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) AppGetAllConfig(context.Context, *AppGetAllConfigReq) (*AppGetAllConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppGetAllConfig not implemented")
+}
 func (UnimplementedAppMgmtServiceServer) mustEmbedUnimplementedAppMgmtServiceServer() {}
 
 // UnsafeAppMgmtServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -554,6 +652,24 @@ func _AppMgmtService_GetAllAppMgmtVersion_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AppMgmtServiceServer).GetAllAppMgmtVersion(ctx, req.(*GetAllAppMgmtVersionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_GetLatestVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLatestVersionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetLatestVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetLatestVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetLatestVersion(ctx, req.(*GetLatestVersionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1080,6 +1196,114 @@ func _AppMgmtService_DeleteAppMgmtNotice_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppMgmtService_GetAllAppMgmtLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllAppMgmtLinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetAllAppMgmtLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetAllAppMgmtLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetAllAppMgmtLink(ctx, req.(*GetAllAppMgmtLinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_GetAppMgmtLinkDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppMgmtLinkDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetAppMgmtLinkDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetAppMgmtLinkDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetAppMgmtLinkDetail(ctx, req.(*GetAppMgmtLinkDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_AddAppMgmtLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAppMgmtLinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).AddAppMgmtLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/AddAppMgmtLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).AddAppMgmtLink(ctx, req.(*AddAppMgmtLinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_UpdateAppMgmtLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAppMgmtLinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).UpdateAppMgmtLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/UpdateAppMgmtLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).UpdateAppMgmtLink(ctx, req.(*UpdateAppMgmtLinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_DeleteAppMgmtLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAppMgmtLinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).DeleteAppMgmtLink(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/DeleteAppMgmtLink",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).DeleteAppMgmtLink(ctx, req.(*DeleteAppMgmtLinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_AppGetAllConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppGetAllConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).AppGetAllConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/AppGetAllConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).AppGetAllConfig(ctx, req.(*AppGetAllConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AppMgmtService_ServiceDesc is the grpc.ServiceDesc for AppMgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1098,6 +1322,10 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllAppMgmtVersion",
 			Handler:    _AppMgmtService_GetAllAppMgmtVersion_Handler,
+		},
+		{
+			MethodName: "GetLatestVersion",
+			Handler:    _AppMgmtService_GetLatestVersion_Handler,
 		},
 		{
 			MethodName: "GetAppMgmtVersionDetail",
@@ -1214,6 +1442,30 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAppMgmtNotice",
 			Handler:    _AppMgmtService_DeleteAppMgmtNotice_Handler,
+		},
+		{
+			MethodName: "GetAllAppMgmtLink",
+			Handler:    _AppMgmtService_GetAllAppMgmtLink_Handler,
+		},
+		{
+			MethodName: "GetAppMgmtLinkDetail",
+			Handler:    _AppMgmtService_GetAppMgmtLinkDetail_Handler,
+		},
+		{
+			MethodName: "AddAppMgmtLink",
+			Handler:    _AppMgmtService_AddAppMgmtLink_Handler,
+		},
+		{
+			MethodName: "UpdateAppMgmtLink",
+			Handler:    _AppMgmtService_UpdateAppMgmtLink_Handler,
+		},
+		{
+			MethodName: "DeleteAppMgmtLink",
+			Handler:    _AppMgmtService_DeleteAppMgmtLink_Handler,
+		},
+		{
+			MethodName: "AppGetAllConfig",
+			Handler:    _AppMgmtService_AppGetAllConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

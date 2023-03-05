@@ -21,6 +21,28 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 	group.POST("/health", r.health)
 	// 管理系统的配置
 	group.POST("/config", r.config)
+	group.POST("/stats", r.stats)
+	// album 相册
+	{
+		// 上传文件 通过 form-data 方式上传
+		//apiGroupNoMiddleware.POST("/upload/image", middleware.Auth(r.svcCtx.Redis()), r.uploadImage)
+		group.POST("/upload/image", r.uploadImage)
+		group.POST("/upload/video", r.uploadVideo)
+		// albumlist
+		group.POST("/album/list", r.albumList)
+		// albumrename
+		group.POST("/album/rename", r.albumRename)
+		// albumdelete
+		group.POST("/album/delete", r.albumDelete)
+		// catelist
+		group.POST("/album/cate/list", r.cateList)
+		// cateadd
+		group.POST("/album/cate/add", r.cateAdd)
+		// caterename
+		group.POST("/album/cate/rename", r.cateRename)
+		// catedelete
+		group.POST("/album/cate/delete", r.cateDelete)
+	}
 	// 管理菜单
 	{
 		// 获取全部菜单列表

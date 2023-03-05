@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"google.golang.org/protobuf/proto"
 	"strconv"
@@ -61,7 +62,7 @@ func (l *GetUserNoticeDataLogic) getUserNoticeData(in *pb.GetUserNoticeDataReq) 
 	var maxSeq int64
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "GetMaxConvAutoId", func(ctx context.Context) {
-		maxSeq, err = noticemodel.GetMaxConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, 0)
+		maxSeq, err = noticemodel.GetMaxConvAutoId(l.ctx, l.svcCtx.Redis(), in.ConvId, 0)
 	})
 	if in.DeviceId == nil {
 		// 查询用户当前在线的设备
@@ -74,6 +75,9 @@ func (l *GetUserNoticeDataLogic) getUserNoticeData(in *pb.GetUserNoticeDataReq) 
 		}
 		var deviceIds []string
 		for _, conn := range userConn.ConnParams {
+			if conn.DeviceId == "" {
+				l.Errorf("invalid device id, userId: %s, conn: %s", in.UserId, utils.AnyToString(conn))
+			}
 			deviceIds = append(deviceIds, conn.DeviceId)
 		}
 		if len(deviceIds) == 0 {
@@ -100,7 +104,7 @@ func (l *GetUserNoticeDataLogic) getDeviceNoticeData(in *pb.GetUserNoticeDataReq
 	var minSeq int64
 	var err error
 	xtrace.StartFuncSpan(l.ctx, "GetMinConvAutoId", func(ctx context.Context) {
-		minSeq, err = noticemodel.GetMinConvAutoId(l.ctx, l.svcCtx.Mysql(), in.ConvId, in.UserId, deviceId)
+		minSeq, err = noticemodel.GetMinConvAutoId(l.ctx, l.svcCtx.Redis(), in.ConvId, in.UserId, deviceId)
 	})
 	if err != nil {
 		l.Errorf("GetUserNoticeData failed, err: %v", err)
@@ -109,25 +113,25 @@ func (l *GetUserNoticeDataLogic) getDeviceNoticeData(in *pb.GetUserNoticeDataReq
 	if minSeq >= maxSeq {
 		return nil
 	}
-	notice, err := noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, deviceId, minSeq, maxSeq)
+	notice, err := noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, in.UserId, deviceId, minSeq, maxSeq)
 	if err != nil {
 		l.Errorf("GetUserNoticeData failed, err: %v", err)
 		return err
 	}
 	if notice == nil {
 		// 查询广播的通知
-		notice, err = noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, "", deviceId, minSeq, maxSeq)
+		notice, err = noticemodel.GetNotice(l.ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.ConvId, in.UserId, "", deviceId, minSeq, maxSeq)
 		if err != nil {
 			l.Errorf("GetUserNoticeData failed, err: %v", err)
 			return err
 		}
-		if notice != nil {
-			// 推送通知
-			err = l.pushNotice(in, notice, deviceId)
-			if err != nil {
-				l.Errorf("GetUserNoticeData failed, err: %v", err)
-				return err
-			}
+	}
+	if notice != nil {
+		// 推送通知
+		err = l.pushNotice(in, notice, deviceId)
+		if err != nil {
+			l.Errorf("GetUserNoticeData failed, err: %v", err)
+			return err
 		}
 	}
 	return nil

@@ -115,9 +115,6 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 		if in.UnbanTime != nil {
 			updateMap["unbanTime"] = *in.UnbanTime
 		}
-		if in.GroupRemark != nil {
-			updateMap["groupRemark"] = *in.GroupRemark
-		}
 		// 再修改数据库
 		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			// 修改数据库
@@ -147,7 +144,7 @@ func (l *SetGroupMemberInfoLogic) SetGroupMemberInfo(in *pb.SetGroupMemberInfoRe
 				UniqueId: "member",
 				Ext:      nil,
 			}
-			err = notice.Insert(l.ctx, tx)
+			err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 			if err != nil {
 				l.Errorf("insert notice failed, err: %v", err)
 				return err

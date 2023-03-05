@@ -52,6 +52,7 @@ func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*p
 		updateMap["adminRemark"] = in.GroupModel.AdminRemark
 	}
 	updateMap["allMute"] = in.GroupModel.AllMute
+	updateMap["allMuterType"] = in.GroupModel.AllMuterType
 	updateMap["speakLimit"] = in.GroupModel.SpeakLimit
 	updateMap["maxMember"] = in.GroupModel.MaxMember
 	updateMap["memberCanStartTempChat"] = in.GroupModel.MemberCanStartTempChat
@@ -81,7 +82,7 @@ func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*p
 				Title:    "",
 				Ext:      nil,
 			}
-			err = notice.Insert(l.ctx, tx)
+			err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 			if err != nil {
 				l.Errorf("insert notice failed, err: %v", err)
 				return err

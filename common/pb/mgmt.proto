@@ -57,6 +57,8 @@ message GetServerAllConfigResp {
     repeated string endpoints = 3;
     int64 port = 4;
     int64 websocketPort = 5;
+    string rsaPublicKey = 6;
+    string rsaPrivateKey = 7;
   }
   message ImRpcConfig {
     int64 port = 1;
@@ -82,15 +84,34 @@ message GetServerAllConfigResp {
     int64 port = 1;
     MobPushConfig mobPush = 2;
     MsgPulsarConfig pulsar = 3;
+    string discovType = 4;
+    string k8sNamespace = 5;
+    repeated string endpoints = 6;
   }
   message UserRpcConfig {
     int64 port = 1;
+    SmsConfig sms = 2;
+  }
+  message SmsConfig {
+    bool enabled = 1;
+    string type = 2;
+    TencentSmsConfig tencentSms = 3;
+  }
+  message TencentSmsConfig {
+    string appId = 1;
+    string secretId = 2;
+    string secretKey = 3;
+    string region = 4;
+    string sign = 5;
+    string templateId = 6;
   }
   message RelationRpcConfig {
     int64 port = 1;
   }
   message GroupRpcConfig {
     int64 port = 1;
+    int64 maxGroupCount = 2;
+    int64 maxGroupMemberCount = 3;
   }
   message NoticeRpcConfig {
     int64 port = 1;
@@ -124,6 +145,76 @@ message UpdateServerConfigReq {
 
 //UpdateServerConfigResp 更新服务器配置响应
 message UpdateServerConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//AppLineConfig
+message AppLineConfig {
+  string config = 1;
+  string aesIv = 2;
+  string aesKey = 3;
+  message Storage {
+    string type = 1;
+    string objectId = 2;
+    message Cos {
+      string appId = 1;
+      string secretId = 2;
+      string secretKey = 3;
+      string bucketName = 4;
+      string region = 5;
+      string bucketUrl = 6;
+    }
+    message Oss {
+      string endpoint = 1;
+      string accessKeyId = 2;
+      string accessKeySecret = 3;
+      string bucketName = 4;
+      string bucketUrl = 5;
+    }
+    message Minio {
+      string endpoint = 1;
+      string accessKeyId = 2;
+      string secretAccessKey = 3;
+      string bucketName = 4;
+      bool ssl = 5;
+      string bucketUrl = 6;
+      string region = 7;
+    }
+    message Kodo {
+      string accessKey = 1;
+      string secretKey = 2;
+      string bucketName = 3;
+      string region = 4;
+      string bucketUrl = 5;
+      bool useHTTPS = 6;
+    }
+    Cos cos = 4;
+    Oss oss = 5;
+    Minio minio = 6;
+    Kodo kodo = 7;
+  }
+  Storage storage = 4;
+}
+
+//GetAppLineConfigReq 获取应用线路配置请求
+message GetAppLineConfigReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppLineConfigResp 获取应用线路配置响应
+message GetAppLineConfigResp {
+  CommonResp commonResp = 1;
+  AppLineConfig appLineConfig = 2;
+}
+
+//UpdateAppLineConfigReq 更新应用线路配置请求
+message UpdateAppLineConfigReq {
+  CommonReq commonReq = 1;
+  AppLineConfig appLineConfig = 2;
+}
+
+//UpdateAppLineConfigResp 更新应用线路配置响应
+message UpdateAppLineConfigResp {
   CommonResp commonResp = 1;
 }
 
@@ -182,6 +273,7 @@ message MSMenu {
   bool isCache = 21; // 是否缓存
   bool isShow = 22; // 是否显示
   bool isDisable = 23; // 是否禁用
+  string menuIconElement2 = 24; // 菜单图标Element v2
   repeated MSMenu children = 30; // 子菜单
 }
 
@@ -684,6 +776,185 @@ message GetAllMSLoginRecordResp {
   int64 total = 3;
 }
 
+/*
+type Album struct {
+	ID         uint   `gorm:"primarykey;comment:'主键ID';AUTO_INCREMENT;"`
+	Cid        uint   `gorm:"not null;default:0;comment:'类目ID';index;"`
+	Aid        string `gorm:"not null;default:0;comment:'管理ID';index;"`
+	Type       int    `gorm:"not null;default:10;comment:'文件类型: [10=图片, 20=视频]';index;"`
+	Name       string `gorm:"not null;default:'';comment:'文件名称';index;"`
+	Url        string `gorm:"not null;comment:'文件路径'"`
+	Ext        string `gorm:"not null;default:'';comment:'文件扩展';index;"`
+	Size       int64  `gorm:"not null;default:0;comment:文件大小"`
+	CreateTime int64  `gorm:"column:createTime;autoCreateTime;not null;comment:'创建时间';index;"`
+	UpdateTime int64  `gorm:"column:updateTime;autoUpdateTime;not null;comment:'更新时间';index;"`
+	DeleteTime int64  `gorm:"column:deleteTime;not null;default:0;comment:'删除时间';index;"`
+}
+ */
+//MSAlbum 相册
+message MSAlbum {
+  int32 id = 1;
+  string cid = 2;
+  string aid = 3;
+  int32 type = 4;
+  string name = 5;
+  string url = 6;
+  string ext = 7;
+  int64 size = 8;
+  int64 createTime = 9;
+  int64 updateTime = 10;
+  int64 deleteTime = 11;
+
+  string createTimeStr = 12;
+  string updateTimeStr = 13;
+  string deleteTimeStr = 14;
+}
+
+//GetAllMSAlbumReq 获取所有相册列表请求
+message GetAllMSAlbumReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSAlbumResp 获取所有相册列表响应
+message GetAllMSAlbumResp {
+  CommonResp commonResp = 1;
+  repeated MSAlbum albums = 2;
+  int64 total = 3;
+}
+
+//GetMSAlbumDetailReq 获取相册详情请求
+message GetMSAlbumDetailReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//DeleteMSAlbumReq 删除相册请求
+message DeleteMSAlbumReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSAlbumResp 删除相册响应
+message DeleteMSAlbumResp {
+  CommonResp commonResp = 1;
+}
+
+//AddMSAlbumCateReq 添加相册分类请求
+message AddMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  MSAlbumCate albumCate = 2;
+}
+
+//AddMSAlbumCateResp 添加相册分类响应
+message AddMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSAlbumReq 更新相册请求
+message UpdateMSAlbumReq {
+  CommonReq commonReq = 1;
+  MSAlbum album = 2;
+}
+
+//UpdateMSAlbumResp 更新相册响应
+message UpdateMSAlbumResp {
+  CommonResp commonResp = 1;
+}
+
+/*
+type AlbumCate struct {
+	ID         uint   `gorm:"primarykey;comment:'主键ID';AUTO_INCREMENT;"`
+	Pid        uint   `gorm:"not null;default:0;comment:'父级ID';index;"`
+	Type       int    `gorm:"not null;default:10;comment:'文件类型: [10=图片, 20=视频]';index;"`
+	Name       string `gorm:"not null;default:'';comment:'分类名称';index;"`
+	CreateTime int64  `gorm:"column:createTime;autoCreateTime;not null;comment:'创建时间';index;"`
+	UpdateTime int64  `gorm:"column:updateTime;autoUpdateTime;not null;comment:'更新时间';"`
+	DeleteTime int64  `gorm:"column:deleteTime;not null;default:0;comment:'删除时间';index;"`
+}
+ */
+
+//MSAlbumCate 相册分类
+message MSAlbumCate {
+  int32 id = 1;
+  string pid = 2;
+  int32 type = 3;
+  string name = 4;
+  int64 createTime = 5;
+  int64 updateTime = 6;
+  int64 deleteTime = 7;
+
+  string createTimeStr = 8;
+  string updateTimeStr = 9;
+  string deleteTimeStr = 10;
+}
+
+//GetAllMSAlbumCateReq 获取所有相册分类列表请求
+message GetAllMSAlbumCateReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAllMSAlbumCateResp 获取所有相册分类列表响应
+message GetAllMSAlbumCateResp {
+  CommonResp commonResp = 1;
+  repeated MSAlbumCate albumCates = 2;
+}
+
+//DeleteMSAlbumCateReq 删除相册分类请求
+message DeleteMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSAlbumCateResp 删除相册分类响应
+message DeleteMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSAlbumCateReq 更新相册分类请求
+message UpdateMSAlbumCateReq {
+  CommonReq commonReq = 1;
+  MSAlbumCate albumCate = 2;
+}
+
+//UpdateMSAlbumCateResp 更新相册分类响应
+message UpdateMSAlbumCateResp {
+  CommonResp commonResp = 1;
+}
+
+//StatsMSReq 统计请求
+message StatsMSReq {
+  CommonReq commonReq = 1;
+  string startTime = 2;
+  string endTime = 3;
+}
+
+//StatsMSResp 统计响应
+message StatsMSResp {
+  message Today {
+    string time = 1;
+    int32 newUser = 2;
+    int32 newGroup = 4;
+    int32 todayMsg = 6;
+    int32 todayMsgUser = 8;
+    int32 todayAliveGroup = 9;
+    int32 todayAliveSingle = 10;
+    int32 todayAliveUser = 11;
+    int32 todayNewFriend = 12;
+  }
+  Today today = 1;
+  repeated string dates = 2;
+  repeated string legend = 3;
+  message Series {
+    string name = 1;
+    repeated int32 data = 2;
+    string type = 3;
+    string stack = 4;
+  }
+  repeated Series series = 4;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
@@ -691,6 +962,8 @@ service mgmtService {
   rpc GetServerConfig(GetServerConfigReq) returns (GetServerConfigResp);
   rpc GetServerAllConfig(GetServerAllConfigReq) returns (GetServerAllConfigResp);
   rpc UpdateServerConfig(UpdateServerConfigReq) returns (UpdateServerConfigResp);
+  rpc GetAppLineConfig(GetAppLineConfigReq) returns (GetAppLineConfigResp);
+  rpc UpdateAppLineConfig(UpdateAppLineConfigReq) returns (UpdateAppLineConfigResp);
 
   rpc LoginMS(LoginMSReq) returns (LoginMSResp);
   rpc HealthMS(CommonReq) returns (HealthMSResp);
@@ -735,4 +1008,17 @@ service mgmtService {
   rpc DeleteMSOperationLog(DeleteMSOperationLogReq) returns (DeleteMSOperationLogResp);
 
   rpc GetAllMSLoginRecord(GetAllMSLoginRecordReq) returns (GetAllMSLoginRecordResp);
+
+  //相册分类
+  rpc GetAllMSAlbumCate(GetAllMSAlbumCateReq) returns (GetAllMSAlbumCateResp);
+  rpc DeleteMSAlbumCate(DeleteMSAlbumCateReq) returns (DeleteMSAlbumCateResp);
+  rpc AddMSAlbumCate(AddMSAlbumCateReq) returns (AddMSAlbumCateResp);
+  rpc UpdateMSAlbumCate(UpdateMSAlbumCateReq) returns (UpdateMSAlbumCateResp);
+
+  //相册
+  rpc GetAllMSAlbum(GetAllMSAlbumReq) returns (GetAllMSAlbumResp);
+  rpc DeleteMSAlbum(DeleteMSAlbumReq) returns (DeleteMSAlbumResp);
+  rpc UpdateMSAlbum(UpdateMSAlbumReq) returns (UpdateMSAlbumResp);
+
+  rpc StatsMS(StatsMSReq) returns (StatsMSResp);
 }

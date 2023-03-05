@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/gin-gonic/gin"
+	"sort"
 	"strconv"
 )
 
@@ -55,6 +56,9 @@ func (r *AppMgrHandler) getAllConnectionList(ctx *gin.Context) {
 		devices   []string
 	)
 	for k, v := range in.Filter {
+		if v == "" {
+			continue
+		}
 		switch k {
 		case "userId":
 			userIds = append(userIds, v)
@@ -73,9 +77,14 @@ func (r *AppMgrHandler) getAllConnectionList(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
+	connParams := connResp.ConnParams
+	// 使用userId正序
+	sort.Slice(connParams, func(i, j int) bool {
+		return connParams[i].UserId < connParams[j].UserId
+	})
 	var (
 		connections []getAllConnectionListRespItem
-		total       = int64(len(connResp.ConnParams))
+		total       = int64(len(connParams))
 	)
 	// 分页
 	if in.Page == nil {
@@ -88,8 +97,8 @@ func (r *AppMgrHandler) getAllConnectionList(ctx *gin.Context) {
 		offset = (in.Page.Page - 1) * in.Page.Size
 		pass   = 0
 	)
-	for _, conn := range connResp.ConnParams {
-		if ip, ok := in.Filter["ip"]; ok {
+	for _, conn := range connParams {
+		if ip, ok := in.Filter["ip"]; ok && ip != "" {
 			if conn.Ips != ip {
 				continue
 			}

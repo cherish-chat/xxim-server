@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	AddMSAlbumCateReq                        = pb.AddMSAlbumCateReq
+	AddMSAlbumCateResp                       = pb.AddMSAlbumCateResp
 	AddMSApiPathReq                          = pb.AddMSApiPathReq
 	AddMSApiPathResp                         = pb.AddMSApiPathResp
 	AddMSIpWhiteListReq                      = pb.AddMSIpWhiteListReq
@@ -23,7 +25,17 @@ type (
 	AddMSRoleResp                            = pb.AddMSRoleResp
 	AddMSUserReq                             = pb.AddMSUserReq
 	AddMSUserResp                            = pb.AddMSUserResp
+	AppLineConfig                            = pb.AppLineConfig
+	AppLineConfig_Storage                    = pb.AppLineConfig_Storage
+	AppLineConfig_Storage_Cos                = pb.AppLineConfig_Storage_Cos
+	AppLineConfig_Storage_Kodo               = pb.AppLineConfig_Storage_Kodo
+	AppLineConfig_Storage_Minio              = pb.AppLineConfig_Storage_Minio
+	AppLineConfig_Storage_Oss                = pb.AppLineConfig_Storage_Oss
 	ConfigMSResp                             = pb.ConfigMSResp
+	DeleteMSAlbumCateReq                     = pb.DeleteMSAlbumCateReq
+	DeleteMSAlbumCateResp                    = pb.DeleteMSAlbumCateResp
+	DeleteMSAlbumReq                         = pb.DeleteMSAlbumReq
+	DeleteMSAlbumResp                        = pb.DeleteMSAlbumResp
 	DeleteMSApiPathReq                       = pb.DeleteMSApiPathReq
 	DeleteMSApiPathResp                      = pb.DeleteMSApiPathResp
 	DeleteMSIpWhiteListReq                   = pb.DeleteMSIpWhiteListReq
@@ -36,6 +48,10 @@ type (
 	DeleteMSRoleResp                         = pb.DeleteMSRoleResp
 	DeleteMSUserReq                          = pb.DeleteMSUserReq
 	DeleteMSUserResp                         = pb.DeleteMSUserResp
+	GetAllMSAlbumCateReq                     = pb.GetAllMSAlbumCateReq
+	GetAllMSAlbumCateResp                    = pb.GetAllMSAlbumCateResp
+	GetAllMSAlbumReq                         = pb.GetAllMSAlbumReq
+	GetAllMSAlbumResp                        = pb.GetAllMSAlbumResp
 	GetAllMSApiPathListReq                   = pb.GetAllMSApiPathListReq
 	GetAllMSApiPathListResp                  = pb.GetAllMSApiPathListResp
 	GetAllMSIpWhiteListReq                   = pb.GetAllMSIpWhiteListReq
@@ -50,6 +66,9 @@ type (
 	GetAllMSRoleListResp                     = pb.GetAllMSRoleListResp
 	GetAllMSUserListReq                      = pb.GetAllMSUserListReq
 	GetAllMSUserListResp                     = pb.GetAllMSUserListResp
+	GetAppLineConfigReq                      = pb.GetAppLineConfigReq
+	GetAppLineConfigResp                     = pb.GetAppLineConfigResp
+	GetMSAlbumDetailReq                      = pb.GetMSAlbumDetailReq
 	GetMSApiPathDetailReq                    = pb.GetMSApiPathDetailReq
 	GetMSApiPathDetailResp                   = pb.GetMSApiPathDetailResp
 	GetMSIpWhiteListDetailReq                = pb.GetMSIpWhiteListDetailReq
@@ -83,13 +102,17 @@ type (
 	GetServerAllConfigResp_NoticeRpcConfig   = pb.GetServerAllConfigResp_NoticeRpcConfig
 	GetServerAllConfigResp_RedisConfig       = pb.GetServerAllConfigResp_RedisConfig
 	GetServerAllConfigResp_RelationRpcConfig = pb.GetServerAllConfigResp_RelationRpcConfig
+	GetServerAllConfigResp_SmsConfig         = pb.GetServerAllConfigResp_SmsConfig
 	GetServerAllConfigResp_TelemetryConfig   = pb.GetServerAllConfigResp_TelemetryConfig
+	GetServerAllConfigResp_TencentSmsConfig  = pb.GetServerAllConfigResp_TencentSmsConfig
 	GetServerAllConfigResp_UserRpcConfig     = pb.GetServerAllConfigResp_UserRpcConfig
 	GetServerConfigReq                       = pb.GetServerConfigReq
 	GetServerConfigResp                      = pb.GetServerConfigResp
 	HealthMSResp                             = pb.HealthMSResp
 	LoginMSReq                               = pb.LoginMSReq
 	LoginMSResp                              = pb.LoginMSResp
+	MSAlbum                                  = pb.MSAlbum
+	MSAlbumCate                              = pb.MSAlbumCate
 	MSApiPath                                = pb.MSApiPath
 	MSIpWhiteList                            = pb.MSIpWhiteList
 	MSLoginRecord                            = pb.MSLoginRecord
@@ -97,8 +120,18 @@ type (
 	MSOperationLog                           = pb.MSOperationLog
 	MSRole                                   = pb.MSRole
 	MSUser                                   = pb.MSUser
+	StatsMSReq                               = pb.StatsMSReq
+	StatsMSResp                              = pb.StatsMSResp
+	StatsMSResp_Series                       = pb.StatsMSResp_Series
+	StatsMSResp_Today                        = pb.StatsMSResp_Today
 	SwitchMSUserStatusReq                    = pb.SwitchMSUserStatusReq
 	SwitchMSUserStatusResp                   = pb.SwitchMSUserStatusResp
+	UpdateAppLineConfigReq                   = pb.UpdateAppLineConfigReq
+	UpdateAppLineConfigResp                  = pb.UpdateAppLineConfigResp
+	UpdateMSAlbumCateReq                     = pb.UpdateMSAlbumCateReq
+	UpdateMSAlbumCateResp                    = pb.UpdateMSAlbumCateResp
+	UpdateMSAlbumReq                         = pb.UpdateMSAlbumReq
+	UpdateMSAlbumResp                        = pb.UpdateMSAlbumResp
 	UpdateMSApiPathReq                       = pb.UpdateMSApiPathReq
 	UpdateMSApiPathResp                      = pb.UpdateMSApiPathResp
 	UpdateMSIpWhiteListReq                   = pb.UpdateMSIpWhiteListReq
@@ -118,6 +151,8 @@ type (
 		GetServerConfig(ctx context.Context, in *GetServerConfigReq, opts ...grpc.CallOption) (*GetServerConfigResp, error)
 		GetServerAllConfig(ctx context.Context, in *GetServerAllConfigReq, opts ...grpc.CallOption) (*GetServerAllConfigResp, error)
 		UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
+		GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error)
+		UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error)
 		LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 		HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 		ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -154,6 +189,16 @@ type (
 		GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 		DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
 		GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error)
+		// 相册分类
+		GetAllMSAlbumCate(ctx context.Context, in *GetAllMSAlbumCateReq, opts ...grpc.CallOption) (*GetAllMSAlbumCateResp, error)
+		DeleteMSAlbumCate(ctx context.Context, in *DeleteMSAlbumCateReq, opts ...grpc.CallOption) (*DeleteMSAlbumCateResp, error)
+		AddMSAlbumCate(ctx context.Context, in *AddMSAlbumCateReq, opts ...grpc.CallOption) (*AddMSAlbumCateResp, error)
+		UpdateMSAlbumCate(ctx context.Context, in *UpdateMSAlbumCateReq, opts ...grpc.CallOption) (*UpdateMSAlbumCateResp, error)
+		// 相册
+		GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error)
+		DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error)
+		UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error)
+		StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -190,6 +235,16 @@ func (m *defaultMgmtService) GetServerAllConfig(ctx context.Context, in *GetServ
 func (m *defaultMgmtService) UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.UpdateServerConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAppLineConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppLineConfig(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error) {
@@ -370,4 +425,46 @@ func (m *defaultMgmtService) DeleteMSOperationLog(ctx context.Context, in *Delet
 func (m *defaultMgmtService) GetAllMSLoginRecord(ctx context.Context, in *GetAllMSLoginRecordReq, opts ...grpc.CallOption) (*GetAllMSLoginRecordResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.GetAllMSLoginRecord(ctx, in, opts...)
+}
+
+// 相册分类
+func (m *defaultMgmtService) GetAllMSAlbumCate(ctx context.Context, in *GetAllMSAlbumCateReq, opts ...grpc.CallOption) (*GetAllMSAlbumCateResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAllMSAlbumCate(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) DeleteMSAlbumCate(ctx context.Context, in *DeleteMSAlbumCateReq, opts ...grpc.CallOption) (*DeleteMSAlbumCateResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.DeleteMSAlbumCate(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) AddMSAlbumCate(ctx context.Context, in *AddMSAlbumCateReq, opts ...grpc.CallOption) (*AddMSAlbumCateResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.AddMSAlbumCate(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateMSAlbumCate(ctx context.Context, in *UpdateMSAlbumCateReq, opts ...grpc.CallOption) (*UpdateMSAlbumCateResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateMSAlbumCate(ctx, in, opts...)
+}
+
+// 相册
+func (m *defaultMgmtService) GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAllMSAlbum(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.DeleteMSAlbum(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateMSAlbum(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.StatsMS(ctx, in, opts...)
 }

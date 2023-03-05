@@ -60,6 +60,8 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 			NetworkUsed: c.ConnParam.NetworkUsed,
 			Headers:     c.ConnParam.Headers,
 			PodIp:       l.svcCtx.PodIp,
+			AesKey:      c.ConnParam.AesKey,
+			AesIv:       c.ConnParam.AesIv,
 		}
 		if err != nil {
 			l.Infof("SendMsg error: %v, uid: %s, platform: %s", err, c.ConnParam.UserId, c.ConnParam.Platform)

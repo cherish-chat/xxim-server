@@ -73,8 +73,16 @@ type (
 	LoginResp                             = pb.LoginResp
 	MapUserByIdsReq                       = pb.MapUserByIdsReq
 	MapUserByIdsResp                      = pb.MapUserByIdsResp
+	RegisterReq                           = pb.RegisterReq
+	RegisterResp                          = pb.RegisterResp
+	ReportUserReq                         = pb.ReportUserReq
+	ReportUserResp                        = pb.ReportUserResp
+	ResetPasswordReq                      = pb.ResetPasswordReq
+	ResetPasswordResp                     = pb.ResetPasswordResp
 	SearchUsersByKeywordReq               = pb.SearchUsersByKeywordReq
 	SearchUsersByKeywordResp              = pb.SearchUsersByKeywordResp
+	SendSmsReq                            = pb.SendSmsReq
+	SendSmsResp                           = pb.SendSmsResp
 	SetUserSettingsReq                    = pb.SetUserSettingsReq
 	SetUserSettingsResp                   = pb.SetUserSettingsResp
 	SwitchUserModelReq                    = pb.SwitchUserModelReq
@@ -91,6 +99,8 @@ type (
 	UpdateUserIpWhiteListResp             = pb.UpdateUserIpWhiteListResp
 	UpdateUserModelReq                    = pb.UpdateUserModelReq
 	UpdateUserModelResp                   = pb.UpdateUserModelResp
+	UpdateUserPasswordReq                 = pb.UpdateUserPasswordReq
+	UpdateUserPasswordResp                = pb.UpdateUserPasswordResp
 	UserBaseInfo                          = pb.UserBaseInfo
 	UserBirthdayInfo                      = pb.UserBirthdayInfo
 	UserDefaultConv                       = pb.UserDefaultConv
@@ -101,10 +111,13 @@ type (
 	UserLoginRecord                       = pb.UserLoginRecord
 	UserModel                             = pb.UserModel
 	UserSetting                           = pb.UserSetting
+	VerifySmsReq                          = pb.VerifySmsReq
+	VerifySmsResp                         = pb.VerifySmsResp
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error)
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error)
 		BatchGetUserBaseInfo(ctx context.Context, in *BatchGetUserBaseInfoReq, opts ...grpc.CallOption) (*BatchGetUserBaseInfoResp, error)
 		SearchUsersByKeyword(ctx context.Context, in *SearchUsersByKeywordReq, opts ...grpc.CallOption) (*SearchUsersByKeywordResp, error)
@@ -117,6 +130,8 @@ type (
 		AfterDisconnect(ctx context.Context, in *AfterDisconnectReq, opts ...grpc.CallOption) (*CommonResp, error)
 		BatchGetUserAllDevices(ctx context.Context, in *BatchGetUserAllDevicesReq, opts ...grpc.CallOption) (*BatchGetUserAllDevicesResp, error)
 		UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error)
+		UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error)
+		ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error)
 		GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error)
 		GetUserInvitationCodeDetail(ctx context.Context, in *GetUserInvitationCodeDetailReq, opts ...grpc.CallOption) (*GetUserInvitationCodeDetailResp, error)
 		AddUserInvitationCode(ctx context.Context, in *AddUserInvitationCodeReq, opts ...grpc.CallOption) (*AddUserInvitationCodeResp, error)
@@ -144,6 +159,9 @@ type (
 		DeleteUserModel(ctx context.Context, in *DeleteUserModelReq, opts ...grpc.CallOption) (*DeleteUserModelResp, error)
 		SwitchUserModel(ctx context.Context, in *SwitchUserModelReq, opts ...grpc.CallOption) (*SwitchUserModelResp, error)
 		GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
+		SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
+		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
+		ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 	}
 
 	defaultUserService struct {
@@ -165,6 +183,11 @@ func (m *defaultUserService) Login(ctx context.Context, in *LoginReq, opts ...gr
 func (m *defaultUserService) ConfirmRegister(ctx context.Context, in *ConfirmRegisterReq, opts ...grpc.CallOption) (*ConfirmRegisterResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.ConfirmRegister(ctx, in, opts...)
+}
+
+func (m *defaultUserService) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
 }
 
 func (m *defaultUserService) MapUserByIds(ctx context.Context, in *MapUserByIdsReq, opts ...grpc.CallOption) (*MapUserByIdsResp, error) {
@@ -217,6 +240,16 @@ func (m *defaultUserService) BatchGetUserAllDevices(ctx context.Context, in *Bat
 func (m *defaultUserService) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReq, opts ...grpc.CallOption) (*UpdateUserInfoResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UpdateUserInfo(ctx, in, opts...)
+}
+
+func (m *defaultUserService) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordReq, opts ...grpc.CallOption) (*UpdateUserPasswordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserPassword(ctx, in, opts...)
+}
+
+func (m *defaultUserService) ResetPassword(ctx context.Context, in *ResetPasswordReq, opts ...grpc.CallOption) (*ResetPasswordResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.ResetPassword(ctx, in, opts...)
 }
 
 func (m *defaultUserService) GetAllUserInvitationCode(ctx context.Context, in *GetAllUserInvitationCodeReq, opts ...grpc.CallOption) (*GetAllUserInvitationCodeResp, error) {
@@ -352,4 +385,19 @@ func (m *defaultUserService) SwitchUserModel(ctx context.Context, in *SwitchUser
 func (m *defaultUserService) GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.GetAllLoginRecord(ctx, in, opts...)
+}
+
+func (m *defaultUserService) SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.SendSms(ctx, in, opts...)
+}
+
+func (m *defaultUserService) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.VerifySms(ctx, in, opts...)
+}
+
+func (m *defaultUserService) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.ReportUser(ctx, in, opts...)
 }

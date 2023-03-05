@@ -37,6 +37,11 @@ func (l *GetAllMSUserListLogic) GetAllMSUserList(in *pb.GetAllMSUserListReq) (*p
 			switch k {
 			case "username":
 				wheres = append(wheres, xorm.Where("id = ?", v))
+			case "nickname":
+				wheres = append(wheres, xorm.Where("nickname LIKE ?", "%"+v+"%"))
+			case "role":
+				// roleId
+				wheres = append(wheres, xorm.Where("roleId = ?", v))
 			}
 		}
 	}

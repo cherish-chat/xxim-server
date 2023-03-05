@@ -44,6 +44,7 @@ func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeRe
 		IpRegion:  nil,
 		Signature: user.InfoMap.Get("signature", l.svcCtx.ConfigMgr.SignatureIfNotSet(l.ctx)),
 		LevelInfo: user.LevelInfo.Pb(),
+		Role:      int32(user.Role),
 	}
 	latestConn, err := l.svcCtx.ImService().GetUserLatestConn(l.ctx, &pb.GetUserLatestConnReq{UserId: user.Id})
 	if err != nil {

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
@@ -32,6 +33,31 @@ func (l *GetAllMSApiPathListLogic) GetAllMSApiPathList(in *pb.GetAllMSApiPathLis
 	var models []*mgmtmodel.ApiPath
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
+		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
+			switch k {
+			case "id":
+				wheres = append(wheres, xorm.Where("id = ?", v))
+			case "logEnable":
+				if v == "true" || v == "1" {
+					wheres = append(wheres, xorm.Where("logEnable = ?", true))
+				} else {
+					wheres = append(wheres, xorm.Where("logEnable = ?", false))
+				}
+			case "title":
+				wheres = append(wheres, xorm.Where("title like ?", "%"+v+"%"))
+			case "path":
+				wheres = append(wheres, xorm.Where("path like ?", "%"+v+"%"))
+			case "time_gte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime >= ?", val))
+			case "time_lte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime <= ?", val))
+			}
+		}
 	}
 	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &mgmtmodel.ApiPath{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
 	if err != nil {

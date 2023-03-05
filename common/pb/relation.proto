@@ -63,6 +63,7 @@ message AcceptAddFriendReq {
   CommonReq commonReq = 1;
   string applyUserId = 2; // 申请人id
   optional string requestId = 3; // 申请id
+  optional string sendTextMsg = 4; // 发送的文本消息
 }
 
 message AcceptAddFriendResp {
@@ -120,50 +121,6 @@ message DeleteFriendReq {
 
 message DeleteFriendResp {
   CommonResp commonResp = 1;
-}
-
-message SingleConvSetting {
-  string convId = 1;
-  string userId = 2;
-  // 设为置顶
-  optional bool isTop = 3;
-  // 设为免打扰
-  optional bool isDisturb = 4;
-  // 消息通知设置 （当免打扰时，此设置无效）
-  // 通知显示消息预览
-  optional bool notifyPreview = 5;
-  // 通知声音
-  optional bool notifySound = 6;
-  // 通知自定义声音
-  optional string notifyCustomSound = 7;
-  // 通知震动
-  optional bool notifyVibrate = 8;
-  // 屏蔽此人消息
-  optional bool isShield = 9;
-  // 聊天背景
-  optional string chatBg = 10;
-}
-
-//设置单聊设置
-message SetSingleConvSettingReq {
-  CommonReq commonReq = 1;
-  SingleConvSetting setting = 2;
-}
-
-message SetSingleConvSettingResp {
-  CommonResp commonResp = 1;
-}
-
-//获取单聊设置
-message GetSingleConvSettingReq {
-  CommonReq commonReq = 1;
-  string convId = 2;
-  string userId = 3;
-}
-
-message GetSingleConvSettingResp {
-  CommonResp commonResp = 1;
-  SingleConvSetting setting = 2;
 }
 
 //GetFriendListReq 获取好友列表
@@ -248,8 +205,6 @@ service relationService {
   rpc BlockUser(BlockUserReq) returns (BlockUserResp) {}
   rpc DeleteBlockUser(DeleteBlockUserReq) returns (DeleteBlockUserResp) {}
   rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
-  rpc SetSingleConvSetting(SetSingleConvSettingReq) returns (SetSingleConvSettingResp) {}
-  rpc GetSingleConvSetting(GetSingleConvSettingReq) returns (GetSingleConvSettingResp) {}
   rpc GetFriendList(GetFriendListReq) returns (GetFriendListResp) {}
   rpc GetMyFriendEventList(GetMyFriendEventListReq) returns (GetMyFriendEventListResp) {}
 

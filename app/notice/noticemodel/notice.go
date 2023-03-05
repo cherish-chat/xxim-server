@@ -4,15 +4,16 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
-	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strconv"
 	"time"
 )
 
@@ -76,10 +77,10 @@ func (m *NoticeOption) Scan(input interface{}) error {
 	return json.Unmarshal(input.([]byte), m)
 }
 
-func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
+func (m *Notice) Insert(ctx context.Context, tx *gorm.DB, rc *redis.Redis) error {
 	if m.ConvAutoId == 0 {
 		// 获取maxConvAutoId
-		convAutoId, err := GetMaxConvAutoId(ctx, tx, m.ConvId, 1)
+		convAutoId, err := GetMaxConvAutoId(ctx, rc, m.ConvId, 1)
 		if err != nil {
 			return err
 		}
@@ -93,6 +94,9 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 	}
 	if m.Ext == nil {
 		m.Ext = make([]byte, 0)
+	}
+	if m.Content == nil {
+		m.Content = make([]byte, 0)
 	}
 	// upsert insert on duplicate key
 	return tx.Clauses(clause.OnConflict{
@@ -124,91 +128,108 @@ func (m *Notice) Insert(ctx context.Context, tx *gorm.DB) error {
 
 }
 
-func GetMaxConvAutoId(ctx context.Context, tx *gorm.DB, convId string, incr int64) (int64, error) {
-	logger := logx.WithContext(ctx)
-	// 获取 加行锁
-	var maxConvAutoId = &NoticeMaxConvAutoId{}
-	maxConvAutoId.ConvId = convId
-	err := tx.Set("gorm:query_option", "FOR UPDATE").Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).First(maxConvAutoId).Error
-	if err != nil {
-		if xorm.RecordNotFound(err) {
-			// 不存在，初始化
-			maxConvAutoId.ConvAutoId = 1 + incr
-			err = tx.Model(&NoticeMaxConvAutoId{}).Create(&maxConvAutoId).Error
+func BatchInsert(tx *gorm.DB, notices []*Notice, rc *redis.Redis) error {
+	ctx := context.Background()
+	for _, m := range notices {
+		if m.ConvAutoId == 0 {
+			// 获取maxConvAutoId
+			convAutoId, err := GetMaxConvAutoId(ctx, rc, m.ConvId, 1)
 			if err != nil {
-				logger.Errorf("create maxConvAutoId err: %v", err)
-				return 0, err
+				return err
 			}
-			return maxConvAutoId.ConvAutoId, nil
-		} else {
-			logger.Errorf("get maxConvAutoId err: %v", err)
-			return 0, err
+			m.ConvAutoId = convAutoId
+		}
+		if m.NoticeId == "" {
+			m.NoticeId = pb.ServerNoticeId(m.ConvId, m.ConvAutoId, m.UserId)
+		}
+		if m.CreateTime == 0 {
+			m.CreateTime = time.Now().UnixMilli()
+		}
+		if m.Ext == nil {
+			m.Ext = make([]byte, 0)
+		}
+		if m.Content == nil {
+			m.Content = make([]byte, 0)
 		}
 	}
-	if incr > 0 {
-		// 更新
-		err = tx.Model(&NoticeMaxConvAutoId{}).Where("convId = ?", convId).Update("convAutoId", maxConvAutoId.ConvAutoId+incr).Error
-		if err != nil {
-			logger.Errorf("update maxConvAutoId err: %v", err)
-			return 0, err
-		}
-	}
-	return maxConvAutoId.ConvAutoId + incr, nil
+	// 忽略唯一索引冲突
+	return tx.Model(&Notice{}).Clauses(clause.Insert{Modifier: "IGNORE"}).Create(notices).Error
 }
 
-func GetMinConvAutoId(ctx context.Context, tx *gorm.DB, convId string, userId string, deviceId string) (int64, error) {
+func GetMaxConvAutoId(ctx context.Context, rc *redis.Redis, convId string, incr int64) (int64, error) {
 	logger := logx.WithContext(ctx)
-	var ackRecord NoticeAckRecord
-	err := tx.Model(&NoticeAckRecord{}).Where("convId = ? and userId = ? and deviceId = ?", convId, userId, deviceId).First(&ackRecord).Error
+	// incr redis
+	key := rediskey.NoticeConvAutoId(convId)
+	maxHKey := convId
+	val, err := rc.HincrbyCtx(ctx, key, maxHKey, int(incr))
 	if err != nil {
-		if xorm.RecordNotFound(err) {
-			ackRecord.ConvId = convId
-			ackRecord.UserId = userId
-			ackRecord.DeviceId = deviceId
-			if pb.DefaultAckId(convId) == -1 {
-				// 设置为maxConvAutoId
-				maxConvAutoId, err := GetMaxConvAutoId(ctx, tx, convId, 0)
-				if err != nil {
-					return 0, err
-				}
-				ackRecord.ConvAutoId = maxConvAutoId - 1
-			}
-			err = tx.Model(&NoticeAckRecord{}).Create(&ackRecord).Error
-			if err != nil {
-				logger.Errorf("create minConvAutoId err: %v", err)
-				return 0, err
-			}
-		} else {
-			logger.Errorf("get minConvAutoId err: %v", err)
-		}
+		logger.Errorf("incr redis err: %v", err)
 		return 0, err
 	}
-	return ackRecord.ConvAutoId, nil
+	return int64(val), nil
 }
 
-func GetNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
+func GetMinConvAutoId(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string) (int64, error) {
 	logger := logx.WithContext(ctx)
-	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
+	key := rediskey.NoticeConvAutoId(convId)
+	hkey := fmt.Sprintf("%s:%s", userId, deviceId)
+	val, err := rc.HgetCtx(ctx, key, hkey)
+	if err == redis.Nil || val == "" {
+		// 设置为maxConvAutoId
+		maxConvAutoId, err := GetMaxConvAutoId(ctx, rc, convId, 0)
+		if err != nil {
+			return 0, err
+		}
+		err = rc.HsetCtx(ctx, key, hkey, strconv.FormatInt(maxConvAutoId-1, 10))
+		if err != nil {
+			logger.Errorf("set minConvAutoId err: %v", err)
+			return 0, err
+		}
+		return maxConvAutoId - 1, nil
+	}
+	if err != nil {
+		logger.Errorf("get minConvAutoId err: %v", err)
+		return 0, err
+	}
+	minConvAutoId, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		logger.Errorf("parse minConvAutoId err: %v", err)
+		return 0, err
+	}
+	return minConvAutoId, nil
+}
+
+func SetMinConvAutoId(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string, seq int64) error {
+	// hset
+	key := rediskey.NoticeConvAutoId(convId)
+	hkey := fmt.Sprintf("%s:%s", userId, deviceId)
+	return rc.HsetCtx(ctx, key, hkey, strconv.FormatInt(seq, 10))
+}
+
+func GetNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userRedisKey string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
+	logger := logx.WithContext(ctx)
+	sortSetKey := rediskey.NoticeSortSetKey(convId, userRedisKey, userId, deviceId)
 	// get最小的 ZRANGEBYSCORE key -inf +inf LIMIT 0 1
 	pairs, err := rc.ZrangebyscoreWithScoresAndLimitCtx(ctx, sortSetKey, -405, 0, 0, 1)
 	if err != nil {
 		// 如果是 redis.Nil 则表示没有数据
 		if err == redis.Nil {
-			return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+			return getNoticeFromMysql(ctx, tx, rc, convId, userRedisKey, userId, deviceId, minSeq, maxSeq, sortSetKey)
 		} else {
 			logger.Errorf("zpopmin err: %v", err)
-			return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+			return getNoticeFromMysql(ctx, tx, rc, convId, userRedisKey, userId, deviceId, minSeq, maxSeq, sortSetKey)
 		}
 	}
 	if len(pairs) == 0 {
 		// 没有数据
-		return getNoticeFromMysql(ctx, tx, rc, convId, userId, deviceId, minSeq, maxSeq)
+		return getNoticeFromMysql(ctx, tx, rc, convId, userRedisKey, userId, deviceId, minSeq, maxSeq, sortSetKey)
 	}
 	noticeId := pairs[0].Key
 	// 如果 noticeId == xredis.NotFound 则表示真的没有数据 直接返回
-	if noticeId == xredis.NotFound {
-		return nil, nil
-	}
+	// 有bug 注掉
+	//if noticeId == xredis.NotFound {
+	//	return nil, nil
+	//}
 	// 使用noticeId查询notice
 	var notice *Notice
 	notice, err = GetNoticeById(ctx, tx, rc, noticeId)
@@ -219,11 +240,10 @@ func GetNotice(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string,
 	return notice, nil
 }
 
-func getNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, userId string, deviceId string, minSeq int64, maxSeq int64) (*Notice, error) {
-	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
+func getNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convId string, keyId string, userId string, deviceId string, minSeq int64, maxSeq int64, sortSetKey string) (*Notice, error) {
 	logger := logx.WithContext(ctx)
 	// 先删掉redis中的数据
-	err := flushNoticeZSet(ctx, rc, convId, userId, deviceId)
+	err := flushNoticeZSet(ctx, rc, convId, keyId, userId, deviceId)
 	// 直接查询mysql
 	var notices []*Notice
 	err = tx.Model(&Notice{}).
@@ -241,10 +261,11 @@ func getNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convI
 	}
 	if len(notices) == 0 {
 		// redis插入一条不存在的数据，防止缓存穿透
-		err := xredis.ZAddsEx(rc, ctx, sortSetKey, rediskey.NoticeSortSetExpire(), -1, xredis.NotFound)
-		if err != nil {
-			logger.Errorf("redis zadd err: %v", err)
-		}
+		// 有bug 注掉
+		//err := xredis.ZAddsEx(rc, ctx, sortSetKey, rediskey.NoticeSortSetExpire(), -1, xredis.NotFound)
+		//if err != nil {
+		//	logger.Errorf("redis zadd err: %v", err)
+		//}
 		return nil, nil
 	}
 	// 保存到redis
@@ -259,10 +280,10 @@ func getNoticeFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis, convI
 	return notices[0], nil
 }
 
-func flushNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string) error {
+func flushNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, keyId string, userId string, deviceId string) error {
 	logger := logx.WithContext(ctx)
 	// 先删掉redis中的数据
-	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
+	sortSetKey := rediskey.NoticeSortSetKey(convId, keyId, userId, deviceId)
 	_, err := rc.DelCtx(ctx, sortSetKey)
 	if err != nil {
 		logger.Errorf("redis del err: %v", err)
@@ -270,9 +291,9 @@ func flushNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, userId
 	return err
 }
 
-func DelNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string, seq int64) error {
+func DelNoticeZSet(ctx context.Context, rc *redis.Redis, convId string, keyId string, userId string, deviceId string, seq int64) error {
 	logger := logx.WithContext(ctx)
-	sortSetKey := rediskey.NoticeSortSetKey(convId, userId, deviceId)
+	sortSetKey := rediskey.NoticeSortSetKey(convId, keyId, userId, deviceId)
 	// zrembyseq
 	_, err := rc.ZremrangebyscoreCtx(ctx, sortSetKey, seq, seq)
 	if err != nil {

@@ -23,6 +23,7 @@ type ServiceContext struct {
 	Config             config.Config
 	msgProducer        *xtdmq.TDMQProducer
 	zedis              *redis.Redis
+	zedisSub           *redis.Redis
 	mysql              *gorm.DB
 	imService          imservice.ImService
 	relationService    relationservice.RelationService

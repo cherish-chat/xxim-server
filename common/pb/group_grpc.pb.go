@@ -38,6 +38,8 @@ type GroupServiceClient interface {
 	SetGroupMemberInfo(ctx context.Context, in *SetGroupMemberInfoReq, opts ...grpc.CallOption) (*SetGroupMemberInfoResp, error)
 	//GetGroupMemberInfo 获取群成员信息
 	GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
+	// MapGroupMemberInfoByIds 批量获取群成员信息
+	MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
 	//TransferGroupOwner 转让群主
@@ -56,6 +58,8 @@ type GroupServiceClient interface {
 	ApplyToBeGroupMember(ctx context.Context, in *ApplyToBeGroupMemberReq, opts ...grpc.CallOption) (*ApplyToBeGroupMemberResp, error)
 	//HandleGroupApply 处理群聊申请
 	HandleGroupApply(ctx context.Context, in *HandleGroupApplyReq, opts ...grpc.CallOption) (*HandleGroupApplyResp, error)
+	//GetGroupApplyList 获取群聊申请列表
+	GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error)
 	//GetGroupListByUserId 分页获取某人的群列表
 	GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error)
 	//GetAllGroupModel 获取所有群组
@@ -66,6 +70,12 @@ type GroupServiceClient interface {
 	UpdateGroupModel(ctx context.Context, in *UpdateGroupModelReq, opts ...grpc.CallOption) (*UpdateGroupModelResp, error)
 	//DismissGroupModel 解散群组
 	DismissGroupModel(ctx context.Context, in *DismissGroupModelReq, opts ...grpc.CallOption) (*DismissGroupModelResp, error)
+	//SearchGroupsByKeyword 搜索群组
+	SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error)
+	//AddGroupMember 添加群成员
+	AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
+	// ReportGroup
+	ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
 }
 
 type groupServiceClient struct {
@@ -142,6 +152,15 @@ func (c *groupServiceClient) SetGroupMemberInfo(ctx context.Context, in *SetGrou
 func (c *groupServiceClient) GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error) {
 	out := new(GetGroupMemberInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupMemberInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error) {
+	out := new(MapGroupMemberInfoByIdsResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/MapGroupMemberInfoByIds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -229,6 +248,15 @@ func (c *groupServiceClient) HandleGroupApply(ctx context.Context, in *HandleGro
 	return out, nil
 }
 
+func (c *groupServiceClient) GetGroupApplyList(ctx context.Context, in *GetGroupApplyListReq, opts ...grpc.CallOption) (*GetGroupApplyListResp, error) {
+	out := new(GetGroupApplyListResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupApplyList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *groupServiceClient) GetGroupListByUserId(ctx context.Context, in *GetGroupListByUserIdReq, opts ...grpc.CallOption) (*GetGroupListByUserIdResp, error) {
 	out := new(GetGroupListByUserIdResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/GetGroupListByUserId", in, out, opts...)
@@ -274,6 +302,33 @@ func (c *groupServiceClient) DismissGroupModel(ctx context.Context, in *DismissG
 	return out, nil
 }
 
+func (c *groupServiceClient) SearchGroupsByKeyword(ctx context.Context, in *SearchGroupsByKeywordReq, opts ...grpc.CallOption) (*SearchGroupsByKeywordResp, error) {
+	out := new(SearchGroupsByKeywordResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/SearchGroupsByKeyword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error) {
+	out := new(AddGroupMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/AddGroupMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error) {
+	out := new(ReportGroupResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ReportGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -294,6 +349,8 @@ type GroupServiceServer interface {
 	SetGroupMemberInfo(context.Context, *SetGroupMemberInfoReq) (*SetGroupMemberInfoResp, error)
 	//GetGroupMemberInfo 获取群成员信息
 	GetGroupMemberInfo(context.Context, *GetGroupMemberInfoReq) (*GetGroupMemberInfoResp, error)
+	// MapGroupMemberInfoByIds 批量获取群成员信息
+	MapGroupMemberInfoByIds(context.Context, *MapGroupMemberInfoByIdsReq) (*MapGroupMemberInfoByIdsResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error)
 	//TransferGroupOwner 转让群主
@@ -312,6 +369,8 @@ type GroupServiceServer interface {
 	ApplyToBeGroupMember(context.Context, *ApplyToBeGroupMemberReq) (*ApplyToBeGroupMemberResp, error)
 	//HandleGroupApply 处理群聊申请
 	HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error)
+	//GetGroupApplyList 获取群聊申请列表
+	GetGroupApplyList(context.Context, *GetGroupApplyListReq) (*GetGroupApplyListResp, error)
 	//GetGroupListByUserId 分页获取某人的群列表
 	GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error)
 	//GetAllGroupModel 获取所有群组
@@ -322,6 +381,12 @@ type GroupServiceServer interface {
 	UpdateGroupModel(context.Context, *UpdateGroupModelReq) (*UpdateGroupModelResp, error)
 	//DismissGroupModel 解散群组
 	DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error)
+	//SearchGroupsByKeyword 搜索群组
+	SearchGroupsByKeyword(context.Context, *SearchGroupsByKeywordReq) (*SearchGroupsByKeywordResp, error)
+	//AddGroupMember 添加群成员
+	AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error)
+	// ReportGroup
+	ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -353,6 +418,9 @@ func (UnimplementedGroupServiceServer) SetGroupMemberInfo(context.Context, *SetG
 func (UnimplementedGroupServiceServer) GetGroupMemberInfo(context.Context, *GetGroupMemberInfoReq) (*GetGroupMemberInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMemberInfo not implemented")
 }
+func (UnimplementedGroupServiceServer) MapGroupMemberInfoByIds(context.Context, *MapGroupMemberInfoByIdsReq) (*MapGroupMemberInfoByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MapGroupMemberInfoByIds not implemented")
+}
 func (UnimplementedGroupServiceServer) EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditGroupInfo not implemented")
 }
@@ -380,6 +448,9 @@ func (UnimplementedGroupServiceServer) ApplyToBeGroupMember(context.Context, *Ap
 func (UnimplementedGroupServiceServer) HandleGroupApply(context.Context, *HandleGroupApplyReq) (*HandleGroupApplyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HandleGroupApply not implemented")
 }
+func (UnimplementedGroupServiceServer) GetGroupApplyList(context.Context, *GetGroupApplyListReq) (*GetGroupApplyListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupApplyList not implemented")
+}
 func (UnimplementedGroupServiceServer) GetGroupListByUserId(context.Context, *GetGroupListByUserIdReq) (*GetGroupListByUserIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupListByUserId not implemented")
 }
@@ -394,6 +465,15 @@ func (UnimplementedGroupServiceServer) UpdateGroupModel(context.Context, *Update
 }
 func (UnimplementedGroupServiceServer) DismissGroupModel(context.Context, *DismissGroupModelReq) (*DismissGroupModelResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DismissGroupModel not implemented")
+}
+func (UnimplementedGroupServiceServer) SearchGroupsByKeyword(context.Context, *SearchGroupsByKeywordReq) (*SearchGroupsByKeywordResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchGroupsByKeyword not implemented")
+}
+func (UnimplementedGroupServiceServer) AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddGroupMember not implemented")
+}
+func (UnimplementedGroupServiceServer) ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportGroup not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -548,6 +628,24 @@ func _GroupService_GetGroupMemberInfo_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).GetGroupMemberInfo(ctx, req.(*GetGroupMemberInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_MapGroupMemberInfoByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MapGroupMemberInfoByIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).MapGroupMemberInfoByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/MapGroupMemberInfoByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).MapGroupMemberInfoByIds(ctx, req.(*MapGroupMemberInfoByIdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -714,6 +812,24 @@ func _GroupService_HandleGroupApply_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_GetGroupApplyList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupApplyListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GetGroupApplyList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GetGroupApplyList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GetGroupApplyList(ctx, req.(*GetGroupApplyListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GroupService_GetGroupListByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetGroupListByUserIdReq)
 	if err := dec(in); err != nil {
@@ -804,6 +920,60 @@ func _GroupService_DismissGroupModel_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_SearchGroupsByKeyword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchGroupsByKeywordReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).SearchGroupsByKeyword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/SearchGroupsByKeyword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).SearchGroupsByKeyword(ctx, req.(*SearchGroupsByKeywordReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_AddGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddGroupMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).AddGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/AddGroupMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).AddGroupMember(ctx, req.(*AddGroupMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_ReportGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ReportGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ReportGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ReportGroup(ctx, req.(*ReportGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -844,6 +1014,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GroupService_GetGroupMemberInfo_Handler,
 		},
 		{
+			MethodName: "MapGroupMemberInfoByIds",
+			Handler:    _GroupService_MapGroupMemberInfoByIds_Handler,
+		},
+		{
 			MethodName: "EditGroupInfo",
 			Handler:    _GroupService_EditGroupInfo_Handler,
 		},
@@ -880,6 +1054,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GroupService_HandleGroupApply_Handler,
 		},
 		{
+			MethodName: "GetGroupApplyList",
+			Handler:    _GroupService_GetGroupApplyList_Handler,
+		},
+		{
 			MethodName: "GetGroupListByUserId",
 			Handler:    _GroupService_GetGroupListByUserId_Handler,
 		},
@@ -898,6 +1076,18 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DismissGroupModel",
 			Handler:    _GroupService_DismissGroupModel_Handler,
+		},
+		{
+			MethodName: "SearchGroupsByKeyword",
+			Handler:    _GroupService_SearchGroupsByKeyword_Handler,
+		},
+		{
+			MethodName: "AddGroupMember",
+			Handler:    _GroupService_AddGroupMember_Handler,
+		},
+		{
+			MethodName: "ReportGroup",
+			Handler:    _GroupService_ReportGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,8 +9,8 @@ import (
 type IpList struct {
 	Id         string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
 	Platform   string `gorm:"column:platform;type:varchar(32);not null;default:'';" json:"platform"` // 针对平台
-	StartIp    string `gorm:"column:startIp;not null;default:'';comment:'起始IP';"`
-	EndIp      string `gorm:"column:endIp;not null;default:'';comment:'结束IP';"`
+	StartIp    string `gorm:"column:startIp;not null;default:'';comment:'起始IP';index;"`
+	EndIp      string `gorm:"column:endIp;not null;default:'';comment:'结束IP';index;"`
 	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注';"`
 	UserId     string `gorm:"column:userId;not null;default:'';comment:'用户ID';"` // 如果为空，则表示针对所有用户
 	IsEnable   bool   `gorm:"column:isEnable;not null;default:0;comment:'是否启用';index;"`

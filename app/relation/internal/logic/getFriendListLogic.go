@@ -45,6 +45,9 @@ func (l *GetFriendListLogic) getFriendListWithBaseInfo(in *pb.GetFriendListReq) 
 		return &pb.GetFriendListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	for _, userBaseInfo := range userBaseInfos.UserBaseInfos {
+		if userBaseInfo.Id == "" {
+			continue
+		}
 		userMap[userBaseInfo.Id] = userBaseInfo
 	}
 	myFriendList.UserMap = userMap

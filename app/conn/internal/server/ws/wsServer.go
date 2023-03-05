@@ -95,7 +95,13 @@ type userConn struct {
 }
 
 func (c *userConn) Close(code int, desc string) error {
-	return c.ws.Close(websocket.StatusCode(code), desc)
+	err := c.ws.Close(websocket.StatusCode(code), desc)
+	if err != nil {
+		if strings.Contains(err.Error(), "already wrote close") {
+			return nil
+		}
+	}
+	return err
 }
 
 func (c *userConn) Write(ctx context.Context, typ int, msg []byte) error {
@@ -212,6 +218,9 @@ func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, co
 				logx.Infof("websocket closed: %v", err)
 			} else if strings.Contains(err.Error(), "connection reset by peer") {
 				// 网络断开
+				logx.Infof("websocket closed: %v", err)
+			} else if strings.Contains(err.Error(), "corrupt input") {
+				// 输入数据错误
 				logx.Infof("websocket closed: %v", err)
 			} else {
 				logx.Errorf("failed to read message: %v", err)

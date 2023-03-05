@@ -19,7 +19,7 @@ import (
 const (
 	RoleUser    Role = 0 // 普通用户
 	RoleService Role = 1 //客服
-	RoleGuest   Role = 3 // 游客
+	RoleGuest   Role = 2 // 游客
 )
 
 func (r Role) String() string {
@@ -44,9 +44,9 @@ type (
 		// 邀请码
 		InvitationCode string `bson:"invitationCode" json:"invitationCode" gorm:"column:invitationCode;type:char(32);index;"`
 		// 手机号
-		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;"`
+		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;index:mobile_mobilecountrycode;"`
 		// 手机号国家码
-		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';"`
+		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';index:mobile_mobilecountrycode;"`
 
 		// 基本信息
 		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
@@ -158,6 +158,7 @@ func (m *User) BaseInfo() *pb.UserBaseInfo {
 		Xb:       m.Xb,
 		Birthday: m.Birthday,
 		IpRegion: nil,
+		Role:     int32(m.Role),
 	}
 }
 
@@ -258,6 +259,9 @@ func userFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.DB, ids []stri
 }
 
 func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) ([]*User, error) {
+	if len(ids) == 0 {
+		return make([]*User, 0), nil
+	}
 	users := make([]*User, 0)
 	vals, err := rc.MgetCtx(ctx, utils.UpdateSlice(ids, func(id string) string {
 		return rediskey.UserKey(id)
@@ -268,6 +272,10 @@ func getUsersByIdsFromRedis(ctx context.Context, rc *redis.Redis, ids []string) 
 	}
 	for i, val := range vals {
 		user := &User{}
+		if val == "" {
+			// 未命中
+			continue
+		}
 		if val == xredis.NotFound {
 			id := ids[i]
 			user.NotFound(id)

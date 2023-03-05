@@ -8,22 +8,23 @@ import (
 )
 
 type Menu struct {
-	Id         string `gorm:"column:id;primarykey;comment:'主键';"`
-	Pid        string `gorm:"column:pid;not null;default:0;comment:'上级菜单'"`
-	MenuType   string `gorm:"column:menuType;not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
-	MenuName   string `gorm:"column:menuName;not null;default:'';comment:'菜单名称'"`
-	MenuIcon   string `gorm:"column:menuIcon;not null;default:'';comment:'菜单图标'"`
-	MenuSort   int32  `gorm:"column:menuSort;not null;default:0;comment:'菜单排序'"`
-	Perms      string `gorm:"column:perms;not null;default:'';comment:'权限标识'"`
-	Paths      string `gorm:"column:paths;not null;default:'';comment:'路由地址'"`
-	Component  string `gorm:"column:component;not null;default:'';comment:'前端组件'"`
-	Selected   string `gorm:"column:selected;not null;default:'';comment:'选中路径'"`
-	Params     string `gorm:"column:params;not null;default:'';comment:'路由参数'"`
-	IsCache    bool   `gorm:"column:isCache;not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
-	IsShow     bool   `gorm:"column:isShow;not null;default:1;comment:'是否显示: 0=否, 1=是'"`
-	IsDisable  bool   `gorm:"column:isDisable;not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
-	CreateTime int64  `gorm:"column:createTime;not null;comment:'创建时间'"`
-	UpdateTime int64  `gorm:"column:updateTime;not null;comment:'更新时间'"`
+	Id               string `gorm:"column:id;primarykey;comment:'主键';"`
+	Pid              string `gorm:"column:pid;not null;default:0;comment:'上级菜单'"`
+	MenuType         string `gorm:"column:menuType;not null;default:'';comment:'权限类型: M=目录，C=菜单，A=按钮''"`
+	MenuName         string `gorm:"column:menuName;not null;default:'';comment:'菜单名称'"`
+	MenuIcon         string `gorm:"column:menuIcon;not null;default:'';comment:'菜单图标'"`
+	MenuIconElement2 string `gorm:"column:menuIconElement2;not null;default:'';comment:'elementui2图标'"`
+	MenuSort         int32  `gorm:"column:menuSort;not null;default:0;comment:'菜单排序'"`
+	Perms            string `gorm:"column:perms;not null;default:'';comment:'权限标识'"`
+	Paths            string `gorm:"column:paths;not null;default:'';comment:'路由地址'"`
+	Component        string `gorm:"column:component;not null;default:'';comment:'前端组件'"`
+	Selected         string `gorm:"column:selected;not null;default:'';comment:'选中路径'"`
+	Params           string `gorm:"column:params;not null;default:'';comment:'路由参数'"`
+	IsCache          bool   `gorm:"column:isCache;not null;default:0;comment:'是否缓存: 0=否, 1=是''"`
+	IsShow           bool   `gorm:"column:isShow;not null;default:1;comment:'是否显示: 0=否, 1=是'"`
+	IsDisable        bool   `gorm:"column:isDisable;not null;default:0;comment:'是否禁用: 0=否, 1=是'"`
+	CreateTime       int64  `gorm:"column:createTime;not null;comment:'创建时间'"`
+	UpdateTime       int64  `gorm:"column:updateTime;not null;comment:'更新时间'"`
 }
 
 func (m *Menu) TableName() string {
@@ -32,44 +33,49 @@ func (m *Menu) TableName() string {
 
 func (m *Menu) ToPb() *pb.MSMenu {
 	return &pb.MSMenu{
-		Id:           m.Id,
-		CreatedAt:    m.CreateTime,
-		CreatedAtStr: utils.TimeFormat(m.CreateTime),
-		Pid:          m.Pid,
-		MenuType:     m.MenuType,
-		MenuName:     m.MenuName,
-		MenuIcon:     m.MenuIcon,
-		MenuSort:     m.MenuSort,
-		Perms:        m.Perms,
-		Paths:        m.Paths,
-		Component:    m.Component,
-		Selected:     m.Selected,
-		Params:       m.Params,
-		IsCache:      m.IsCache,
-		IsShow:       m.IsShow,
-		IsDisable:    m.IsDisable,
-		Children:     make([]*pb.MSMenu, 0),
+		Id:               m.Id,
+		CreatedAt:        m.CreateTime,
+		CreatedAtStr:     utils.TimeFormat(m.CreateTime),
+		Pid:              m.Pid,
+		MenuType:         m.MenuType,
+		MenuName:         m.MenuName,
+		MenuIcon:         m.MenuIcon,
+		MenuIconElement2: m.MenuIconElement2,
+		MenuSort:         m.MenuSort,
+		Perms:            m.Perms,
+		Paths:            m.Paths,
+		Component:        m.Component,
+		Selected:         m.Selected,
+		Params:           m.Params,
+		IsCache:          m.IsCache,
+		IsShow:           m.IsShow,
+		IsDisable:        m.IsDisable,
+		Children:         make([]*pb.MSMenu, 0),
+		UpdatedAt:        m.UpdateTime,
+		UpdatedAtStr:     utils.TimeFormat(m.UpdateTime),
 	}
 }
 
 func genMenu(in []*pb.MSMenu) []*Menu {
 	var menus []*Menu
 	for _, v := range in {
+		v := v
 		menus = append(menus, &Menu{
-			Id:        v.Id,
-			Pid:       v.Pid,
-			MenuType:  v.MenuType,
-			MenuName:  v.MenuName,
-			MenuIcon:  v.MenuIcon,
-			MenuSort:  v.MenuSort,
-			Perms:     v.Perms,
-			Paths:     v.Paths,
-			Component: v.Component,
-			Selected:  v.Selected,
-			Params:    v.Params,
-			IsCache:   v.IsCache,
-			IsShow:    v.IsShow,
-			IsDisable: v.IsDisable,
+			Id:               v.Id,
+			Pid:              v.Pid,
+			MenuType:         v.MenuType,
+			MenuName:         v.MenuName,
+			MenuIcon:         v.MenuIcon,
+			MenuIconElement2: v.MenuIconElement2,
+			MenuSort:         v.MenuSort,
+			Perms:            v.Perms,
+			Paths:            v.Paths,
+			Component:        v.Component,
+			Selected:         v.Selected,
+			Params:           v.Params,
+			IsCache:          v.IsCache,
+			IsShow:           v.IsShow,
+			IsDisable:        v.IsDisable,
 		})
 		if len(v.Children) > 0 {
 			menus = append(menus, genMenu(v.Children)...)
@@ -162,6 +168,9 @@ func genMenu3(
 		Children:     nil,
 	}
 }
+
+var defaultMenus []*Menu
+
 func initMenu(tx *gorm.DB) {
 	menus := genMenu([]*pb.MSMenu{
 		// INSERT INTO `la_system_auth_menu` VALUES (1, 0, 'C', '工作台', 'el-icon-Monitor', 50, 'index:console', 'workbench', 'workbench/index', '', '', 1, 1, 0, 1650341765, 1668672757);
@@ -234,9 +243,15 @@ func initMenu(tx *gorm.DB) {
 			),
 		),
 		genMenu1("200", "运维管理", "local-icon-KMSguanli", 49, "devops",
+			// config 配置管理
 			genMenu2("201", "200", "配置管理", "el-icon-Setting", 0,
 				"", "devops/config", "devops/config/index",
 				genMenu3("202", "201", "更新配置", "devops:config:edit"),
+			),
+			// appline app线路
+			genMenu2("211", "200", "app线路", "el-icon-Connection", 0,
+				"", "devops/appline", "devops/appline/index",
+				genMenu3("212", "211", "编辑线路", "devops:appline:edit"),
 			),
 		),
 		genMenu1("300", "app管理", "el-icon-Apple", 48, "app",
@@ -297,6 +312,14 @@ func initMenu(tx *gorm.DB) {
 				genMenu3("373", "370", "表情组编辑", "app:emojigroup:edit"),
 				genMenu3("374", "370", "表情组删除", "app:emojigroup:del"),
 			),
+			// link 外链
+			genMenu2("380", "300", "外链管理", "el-icon-Link", 0,
+				"app:link:list", "app/link", "app/link/index",
+				genMenu3("381", "380", "外链详情", "app:link:detail"),
+				genMenu3("382", "380", "外链新增", "app:link:add"),
+				genMenu3("383", "380", "外链编辑", "app:link:edit"),
+				genMenu3("384", "380", "外链删除", "app:link:del"),
+			),
 		),
 		genMenu1("400", "用户管理", "el-icon-UserFilled", 48, "user",
 			// defaultconv 默认会话
@@ -354,7 +377,32 @@ func initMenu(tx *gorm.DB) {
 			),
 		),
 	})
-	for _, menu := range menus {
+	defaultMenus = menus
+}
+
+// restoreMenu 还原menu
+func restoreMenu(tx *gorm.DB) {
+	// update
+	for _, menu := range defaultMenus {
+		menu := *menu
+		tx.Model(&Menu{}).Where("id = ?", menu.Id).Updates(map[string]any{
+			"pid":        menu.Pid,
+			"menuType":   menu.MenuType,
+			"menuIcon":   menu.MenuIcon,
+			"menuSort":   menu.MenuSort,
+			"perms":      menu.Perms,
+			"paths":      menu.Paths,
+			"component":  menu.Component,
+			"selected":   menu.Selected,
+			"params":     menu.Params,
+			"updateTime": time.Now().UnixMilli(),
+		})
+	}
+}
+
+// insertMenu 插入menu
+func insertMenu(tx *gorm.DB) {
+	for _, menu := range defaultMenus {
 		insertIfNotFound(tx, menu.Id, menu)
 	}
 }

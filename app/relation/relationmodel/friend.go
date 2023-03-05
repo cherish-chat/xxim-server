@@ -15,6 +15,8 @@ type Friend struct {
 	UserId string `json:"userId" bson:"userId" gorm:"column:userId;type:char(32);not null;index:idx_user_friend_id,unique;index;comment:发起好友请求的用户"`
 	// 被添加的用户
 	FriendId string `json:"friendId" bson:"friendId" gorm:"column:friendId;type:char(32);not null;index:idx_user_friend_id,unique;index;comment:被添加的用户"`
+	// 创建时间
+	CreateTime int64 `json:"createTime" bson:"createTime" gorm:"column:createTime;type:bigint(20);not null;index;comment:创建时间"`
 }
 
 func (m *Friend) TableName() string {

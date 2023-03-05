@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/svc"
@@ -32,6 +33,21 @@ func (l *GetAllAppMgmtShieldWordLogic) GetAllAppMgmtShieldWord(in *pb.GetAllAppM
 	var models []*appmgmtmodel.ShieldWord
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
+		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
+			switch k {
+			case "word":
+				wheres = append(wheres, xorm.Where("word LIKE ?", v+"%"))
+			case "time_gte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime >= ?", val))
+			case "time_lte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("createTime <= ?", val))
+			}
+		}
 	}
 	count, err := xorm.ListWithPagingOrder(l.svcCtx.Mysql(), &models, &appmgmtmodel.ShieldWord{}, in.Page.Page, in.Page.Size, "createTime DESC", wheres...)
 	if err != nil {

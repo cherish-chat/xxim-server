@@ -13,6 +13,7 @@ type (
 		Read(ctx context.Context) (int, []byte, error)
 	}
 	UserConn struct {
+		Pointer     string
 		Conn        IConn
 		ConnParam   ConnParam
 		Ctx         context.Context
@@ -42,6 +43,8 @@ type (
 		NetworkUsed string            // 4G/5G/WIFI
 		Headers     map[string]string // 其他参数
 		Timestamp   int64             // 时间戳
+		AesKey      *string           // aes key
+		AesIv       *string           // aes iv
 	}
 )
 
@@ -57,8 +60,22 @@ func (c *UserConn) SetConnParams(connParam *pb.ConnParam) {
 	c.ConnParam.Ips = connParam.Ips
 	c.ConnParam.NetworkUsed = connParam.NetworkUsed
 	c.ConnParam.Headers = connParam.Headers
+	c.ConnParam.AesKey = connParam.AesKey
+	c.ConnParam.AesIv = connParam.AesIv
 }
 
 func WebsocketStatusCodeAuthFailed(code int) int {
 	return 3000
+}
+
+func WebsocketStatusCodeRsaFailed() int {
+	return 3001
+}
+
+func WebsocketStatusCodePlatformFailed() int {
+	return 3002
+}
+
+func WebsocketStatusCodeDeviceIdFailed() int {
+	return 3003
 }

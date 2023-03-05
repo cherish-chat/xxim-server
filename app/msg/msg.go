@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtservice"
+	"github.com/cherish-chat/xxim-server/app/msg/internal/logic"
 
 	"github.com/cherish-chat/xxim-server/app/msg/internal/config"
 	"github.com/cherish-chat/xxim-server/app/msg/internal/server"
@@ -24,6 +25,8 @@ func main() {
 	var c config.Config
 	mgmtservice.MustLoadConfig(*mgmtRpcAddress, "msg", &c)
 	ctx := svc.NewServiceContext(c)
+	logic.InitShieldWordTrieTree(ctx)
+
 	svr := server.NewMsgServiceServer(ctx)
 	svr.Start()
 

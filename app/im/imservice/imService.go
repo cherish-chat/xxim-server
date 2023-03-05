@@ -19,12 +19,17 @@ type (
 	BeforeConnectResp          = pb.BeforeConnectResp
 	BeforeRequestReq           = pb.BeforeRequestReq
 	BeforeRequestResp          = pb.BeforeRequestResp
+	ConvSetting                = pb.ConvSetting
 	GetAllConvIdOfUserReq      = pb.GetAllConvIdOfUserReq
 	GetAllConvIdOfUserResp     = pb.GetAllConvIdOfUserResp
+	GetConvSettingReq          = pb.GetConvSettingReq
+	GetConvSettingResp         = pb.GetConvSettingResp
 	GetUserLatestConnReq       = pb.GetUserLatestConnReq
 	GetUserLatestConnResp      = pb.GetUserLatestConnResp
 	ImMQBody                   = pb.ImMQBody
 	MsgNotifyOpt               = pb.MsgNotifyOpt
+	UpdateConvSettingReq       = pb.UpdateConvSettingReq
+	UpdateConvSettingResp      = pb.UpdateConvSettingResp
 
 	ImService interface {
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
@@ -38,6 +43,8 @@ type (
 		BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 		GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
+		UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
+		GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
 	}
 
 	defaultImService struct {
@@ -104,4 +111,14 @@ func (m *defaultImService) SendMsg(ctx context.Context, in *SendMsgReq, opts ...
 func (m *defaultImService) GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetAllConvIdOfUser(ctx, in, opts...)
+}
+
+func (m *defaultImService) UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.UpdateConvSetting(ctx, in, opts...)
+}
+
+func (m *defaultImService) GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.GetConvSetting(ctx, in, opts...)
 }

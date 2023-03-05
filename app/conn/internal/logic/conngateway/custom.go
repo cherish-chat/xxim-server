@@ -8,6 +8,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -26,7 +28,8 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 	callback func(ctx context.Context, resp RESP, c *types.UserConn),
 ) (*pb.ResponseBody, error) {
 	logger := logx.WithContext(ctx)
-	err := proto.Unmarshal(body.GetData(), req)
+	data := body.GetData()
+	err := proto.Unmarshal(data, req)
 	if err != nil {
 		logx.WithContext(c.Ctx).Errorf("%s unmarshal error: %s", method, err.Error())
 		return nil, err
@@ -48,6 +51,13 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 		xtrace.StartFuncSpan(ctx, method+"/BeforeRequest", func(ctx context.Context) {
 			beforeRequestResp, err = svcCtx.ImService().BeforeRequest(ctx, &pb.BeforeRequestReq{CommonReq: commonReq, Method: method})
 			if err != nil {
+				// 判断是不是 status.Error(codes.Unauthenticated, "ip被封禁")
+				statusError, ok := status.FromError(err)
+				if ok && statusError.Code() == codes.Unauthenticated {
+					// 被封禁
+					c.Conn.Close(types.WebsocketStatusCodeAuthFailed(3000), statusError.Message())
+					return
+				}
 				logger.Errorf("BeforeRequest err: %v", err)
 				return
 			}
@@ -61,11 +71,13 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 			}, nil
 		} else {
 			if beforeRequestResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+				data, _ := proto.Marshal(beforeRequestResp.CommonResp)
 				logger.Errorf("BeforeRequest err: %v", beforeRequestResp.GetCommonResp().GetMsg())
 				return &pb.ResponseBody{
 					ReqId:  body.GetReqId(),
 					Method: method,
 					Code:   pb.ResponseBody_Code(beforeRequestResp.GetCommonResp().GetCode()),
+					Data:   data,
 				}, nil
 			}
 		}
@@ -84,7 +96,12 @@ func OnReceiveCustom[REQ IReq, RESP IResp](
 			callback(ctx, resp, c)
 		}
 	}
-	respBuff, _ := proto.Marshal(resp)
+	var respBuff []byte
+	if resp.GetCommonResp().GetCode() == pb.CommonResp_Success {
+		respBuff, _ = proto.Marshal(resp)
+	} else {
+		respBuff, _ = proto.Marshal(resp.GetCommonResp())
+	}
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(ctx context.Context) {
 		ReqLog(c, method, body, req, resp, err)

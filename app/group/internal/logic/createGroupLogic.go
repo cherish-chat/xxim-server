@@ -59,23 +59,23 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 	}
 	group := &groupmodel.Group{
 		Id:                       strconv.Itoa(groupIdInt),
-		Name:                     l.svcCtx.ConfigMgr.DefaultGroupName(l.ctx),
-		Avatar:                   utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.DefaultGroupAvatars(l.ctx), ""),
+		Name:                     l.svcCtx.ConfigMgr.DefaultGroupName(l.ctx, in.CommonReq.UserId),
+		Avatar:                   utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.DefaultGroupAvatars(l.ctx, in.CommonReq.UserId), ""),
 		Owner:                    in.CommonReq.UserId,
 		Managers:                 make([]string, 0),
 		CreateTime:               time.Now().UnixMilli(),
 		DismissTime:              0,
-		Description:              l.svcCtx.ConfigMgr.DefaultGroupDescription(l.ctx),
+		Description:              l.svcCtx.ConfigMgr.DefaultGroupDescription(l.ctx, in.CommonReq.UserId),
 		AllMute:                  false,
 		SpeakLimit:               0,
-		MaxMember:                int32(l.svcCtx.ConfigMgr.DefaultGroupMaxMember(l.ctx)),
+		MaxMember:                int32(l.svcCtx.Config.GroupConfig.MaxGroupMemberCount),
 		MemberCanStartTempChat:   true,
 		MemberCanInviteFriend:    true,
-		NewMemberHistoryMsgCount: int32(l.svcCtx.ConfigMgr.DefaultGroupNewMemberHistoryMsgCount(l.ctx)),
+		NewMemberHistoryMsgCount: int32(l.svcCtx.ConfigMgr.DefaultGroupNewMemberHistoryMsgCount(l.ctx, in.CommonReq.UserId)),
 		AnonymousChat:            true,
 		JoinGroupOption: groupmodel.JoinGroupOption{
 			Type:     0,
-			Question: l.svcCtx.ConfigMgr.DefaultGroupJoinGroupQuestion(l.ctx),
+			Question: l.svcCtx.ConfigMgr.DefaultGroupJoinGroupQuestion(l.ctx, in.CommonReq.UserId),
 			Answer:   "",
 		},
 		MemberCount: 1 + len(in.Members),
@@ -145,12 +145,14 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 			Title:    "",
 			Ext:      nil,
 		}
-		err = notice.Insert(l.ctx, tx)
+		err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 		if err != nil {
 			l.Errorf("insert notice failed, err: %v", err)
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), group.Id)
 	})
 	if err != nil {
 		return &pb.CreateGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -209,6 +211,7 @@ func (l *CreateGroupLogic) CreateGroup(in *pb.CreateGroupReq) (*pb.CreateGroupRe
 
 	return &pb.CreateGroupResp{
 		GroupId: utils.AnyPtr(group.Id),
+		Info:    group.GroupBaseInfo(),
 	}, nil
 }
 
@@ -230,6 +233,7 @@ func (l *CreateGroupLogic) sendMsg(in *pb.CreateGroupReq, group *groupmodel.Grou
 							Avatar:   self.Avatar,
 							Xb:       self.Xb,
 							Birthday: self.Birthday,
+							Role:     int32(self.Role),
 						},
 						group.Id,
 						l.svcCtx.T(in.CommonReq.Language, "欢迎加入群聊"),

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math"
 	"strconv"
+	"strings"
 )
 
 func (x *CommonResp) SetMsg(msg string) {
@@ -146,4 +147,78 @@ func PageIndex(pageIndex string) int64 {
 		return math.MaxInt64
 	}
 	return parseInt
+}
+
+const (
+	Platform_Android = "android"
+	Platform_IOS     = "ios"
+	Platfrom_Ipad    = "ipad"
+	Platform_Windows = "windows"
+	Platform_Mac     = "macos"
+	Platform_Linux   = "linux"
+	Platfrom_Web     = "web"
+)
+
+var PlatformMap = map[string]string{
+	Platform_Android: "安卓",
+	Platform_IOS:     "苹果",
+	Platfrom_Ipad:    "苹果平板",
+	Platform_Windows: "Windows",
+	Platform_Mac:     "MacOS",
+	Platform_Linux:   "Linux",
+	Platfrom_Web:     "Web",
+}
+
+func (x *CommonReq) IsAndroid() bool {
+	if strings.ToLower(x.Platform) == Platform_Android {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsIOS() bool {
+	if strings.ToLower(x.Platform) == Platform_IOS {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsWindows() bool {
+	if strings.ToLower(x.Platform) == Platform_Windows {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsMac() bool {
+	if strings.ToLower(x.Platform) == Platform_Mac {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsLinux() bool {
+	if strings.ToLower(x.Platform) == Platform_Linux {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsWeb() bool {
+	if strings.ToLower(x.Platform) == Platfrom_Web {
+		return true
+	}
+	return false
+}
+
+func (x *CommonReq) IsMobile() bool {
+	return x.IsAndroid() || x.IsIOS()
+}
+
+func (x *CommonReq) IsPC() bool {
+	return x.IsWindows() || x.IsMac() || x.IsLinux()
+}
+
+func (x *CommonReq) IsApp() bool {
+	return x.IsMobile() || x.IsPC()
 }

@@ -59,14 +59,31 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	}
 	// 只能单条修改消息 多条不支持
 	if len(models) > 0 {
-		var err error
-		xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
-			err = xorm.InsertMany(l.svcCtx.Mysql(), &msgmodel.Msg{}, models)
+		{
+			var err error
+			xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
+				err = xorm.InsertMany(l.svcCtx.Mysql(), &msgmodel.Msg{}, models)
+				if err != nil {
+					l.Errorf("InsertMsgDataList.InsertManyMsg err:%v", err)
+				}
+			})
 			if err != nil {
-				l.Errorf("InsertMsgDataList.InsertManyMsg err:%v", err)
+				return respMsgDataList, err
 			}
-		})
-		return respMsgDataList, err
+		}
+		{
+			// 双写到分表库
+			var err error
+			xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
+				err = msgmodel.InsertManyMsg(ctx, l.svcCtx.Mysql(), models)
+				if err != nil {
+					l.Errorf("InsertMsgDataList.InsertManyMsg err:%v", err)
+				}
+			})
+			if err != nil {
+				return respMsgDataList, err
+			}
+		}
 	}
 	// 缓存预热
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {

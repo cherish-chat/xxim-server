@@ -29,7 +29,7 @@ func NewBatchGetConvSeqLogic(ctx context.Context, svcCtx *svc.ServiceContext) *B
 // BatchGetConvSeq 批量获取会话的seq
 func (l *BatchGetConvSeqLogic) BatchGetConvSeq(in *pb.BatchGetConvSeqReq) (*pb.BatchGetConvSeqResp, error) {
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "KeepAlive", func(ctx context.Context) {
-		_, e := l.svcCtx.ImService().KeepAlive(ctx, &pb.KeepAliveReq{CommonReq: in.GetCommonReq()})
+		_, e := l.svcCtx.ImService().KeepAlive(ctx, &pb.KeepAliveReq{CommonReq: in.GetCommonReq(), ConvIdList: in.GetConvIdList()})
 		if e != nil {
 			l.Errorf("KeepAlive failed, err: %v", e)
 		}

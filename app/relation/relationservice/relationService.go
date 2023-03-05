@@ -35,16 +35,11 @@ type (
 	GetFriendListResp         = pb.GetFriendListResp
 	GetMyFriendEventListReq   = pb.GetMyFriendEventListReq
 	GetMyFriendEventListResp  = pb.GetMyFriendEventListResp
-	GetSingleConvSettingReq   = pb.GetSingleConvSettingReq
-	GetSingleConvSettingResp  = pb.GetSingleConvSettingResp
 	RejectAddFriendReq        = pb.RejectAddFriendReq
 	RejectAddFriendResp       = pb.RejectAddFriendResp
 	RequestAddFriendExtra     = pb.RequestAddFriendExtra
 	RequestAddFriendReq       = pb.RequestAddFriendReq
 	RequestAddFriendResp      = pb.RequestAddFriendResp
-	SetSingleConvSettingReq   = pb.SetSingleConvSettingReq
-	SetSingleConvSettingResp  = pb.SetSingleConvSettingResp
-	SingleConvSetting         = pb.SingleConvSetting
 
 	RelationService interface {
 		AreFriends(ctx context.Context, in *AreFriendsReq, opts ...grpc.CallOption) (*AreFriendsResp, error)
@@ -56,8 +51,6 @@ type (
 		BlockUser(ctx context.Context, in *BlockUserReq, opts ...grpc.CallOption) (*BlockUserResp, error)
 		DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
 		DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
-		SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error)
-		GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error)
 		GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 		GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 		GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error)
@@ -117,16 +110,6 @@ func (m *defaultRelationService) DeleteBlockUser(ctx context.Context, in *Delete
 func (m *defaultRelationService) DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error) {
 	client := pb.NewRelationServiceClient(m.cli.Conn())
 	return client.DeleteFriend(ctx, in, opts...)
-}
-
-func (m *defaultRelationService) SetSingleConvSetting(ctx context.Context, in *SetSingleConvSettingReq, opts ...grpc.CallOption) (*SetSingleConvSettingResp, error) {
-	client := pb.NewRelationServiceClient(m.cli.Conn())
-	return client.SetSingleConvSetting(ctx, in, opts...)
-}
-
-func (m *defaultRelationService) GetSingleConvSetting(ctx context.Context, in *GetSingleConvSettingReq, opts ...grpc.CallOption) (*GetSingleConvSettingResp, error) {
-	client := pb.NewRelationServiceClient(m.cli.Conn())
-	return client.GetSingleConvSetting(ctx, in, opts...)
 }
 
 func (m *defaultRelationService) GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error) {

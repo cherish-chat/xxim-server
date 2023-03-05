@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -21,13 +22,13 @@ type (
 		// 服务端生成的消息id convId+seq
 		ServerMsgId string `bson:"_id" gorm:"column:id;primary_key;type:char(128);"`
 		// 会话id // 单聊：sender_id + receiver_id // 群聊：group_id
-		ConvId string `bson:"convId" gorm:"column:convId;type:char(96);index;"`
+		ConvId string `bson:"convId" gorm:"column:convId;type:char(96);index;index:servertime_convid;"`
 		// 客户端生成的消息id
 		ClientMsgId string `bson:"clientMsgId" gorm:"column:clientMsgId;type:char(128);index;"`
 		// 客户端发送消息的时间 13位时间戳
-		ClientTime int64 `bson:"clientTime" gorm:"column:clientTime;type:bigint;index;"`
-		// 服务端接收到消息的时间 13位时间戳
-		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index;"`
+		ClientTime int64 `bson:"clientTime" gorm:"column:clientTime;type:bigint;index,sort:desc;;"`
+		// 服务端接收到消息的时间 13位时间戳 index DESC
+		ServerTime int64 `bson:"serverTime" gorm:"column:serverTime;type:bigint;index,sort:desc;index:servertime_convid;"`
 		// 发送者id
 		SenderId string `bson:"senderId" gorm:"column:senderId;type:char(32);index;"`
 		// 发送者信息
@@ -73,6 +74,12 @@ func (m *Msg) TableName() string {
 }
 
 func NewMsgFromPb(in *pb.MsgData) *Msg {
+	if in.Options == nil {
+		in.Options = &pb.MsgData_Options{}
+	}
+	if in.OfflinePush == nil {
+		in.OfflinePush = &pb.MsgData_OfflinePush{}
+	}
 	return &Msg{
 		ServerMsgId: in.ServerMsgId,
 		ConvId:      in.ConvId,
@@ -171,6 +178,77 @@ func (m *Msg) ExpireSeconds() int {
 	return xredis.ExpireMinutes(5)
 }
 
+func GetMsgTableNameById(id string) string {
+	convId, seq := pb.ParseConvServerMsgId(id)
+	md5 := utils.Md5(convId)
+	// 取后2位
+	tableName := fmt.Sprintf("msg_%s", md5[len(md5)-2:])
+	// 每100000 seq分一个表
+	tableName = fmt.Sprintf("%s_%d", tableName, seq/100000)
+	return tableName
+}
+
+var tableNameExists = make(map[string]bool)
+
+func CreateMsgTable(tx *gorm.DB, tableName string) error {
+	if len(tableNameExists) == 0 {
+		// 获取所有表名
+		rows, err := tx.Raw("show tables").Rows()
+		if err != nil {
+			logx.Errorf("CreateMsgTable error: %v", err)
+			return err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			err = rows.Scan(&name)
+			if err != nil {
+				logx.Errorf("CreateMsgTable error: %v", err)
+				return err
+			}
+			tableNameExists[name] = true
+		}
+	}
+	if _, ok := tableNameExists[tableName]; ok {
+		return nil
+	}
+	err := tx.Table(tableName).Migrator().CreateTable(&Msg{})
+	if err != nil {
+		logx.Errorf("CreateMsgTable error: %v", err)
+		return err
+	}
+	tableNameExists[tableName] = true
+	return nil
+}
+
+func InsertManyMsg(ctx context.Context, tx *gorm.DB, models []*Msg) error {
+	if len(models) == 0 {
+		return nil
+	}
+	// 分表
+	var tableModels = make(map[string][]*Msg)
+	for _, model := range models {
+		tableName := GetMsgTableNameById(model.ServerMsgId)
+		if _, ok := tableModels[tableName]; !ok {
+			tableModels[tableName] = make([]*Msg, 0)
+		}
+		tableModels[tableName] = append(tableModels[tableName], model)
+	}
+	return tx.Transaction(func(tx *gorm.DB) error {
+		for tableName, models := range tableModels {
+			err := CreateMsgTable(tx, tableName)
+			if err != nil {
+				return err
+			}
+			err = tx.Table(tableName).Create(models).Error
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
 func MsgFromMysql(
 	ctx context.Context,
 	rc *zedis.Redis,
@@ -181,7 +259,24 @@ func MsgFromMysql(
 		return make([]*Msg, 0), nil
 	}
 	xtrace.StartFuncSpan(ctx, "FindMsgByIds", func(ctx context.Context) {
-		err = tx.Model(&Msg{}).Where("id in (?)", ids).Find(&msgList).Error
+		// tableNameIds
+		var tableNameIds = make(map[string][]string)
+		for _, id := range ids {
+			tableName := GetMsgTableNameById(id)
+			if _, ok := tableNameIds[tableName]; !ok {
+				tableNameIds[tableName] = make([]string, 0)
+			}
+			tableNameIds[tableName] = append(tableNameIds[tableName], id)
+		}
+		// 查询
+		for tableName, ids := range tableNameIds {
+			var tmpMsgList []*Msg
+			err = tx.Table(tableName).Where("id in (?)", ids).Limit(len(ids)).Find(&tmpMsgList).Error
+			if err != nil {
+				return
+			}
+			msgList = append(msgList, tmpMsgList...)
+		}
 	})
 	if err != nil {
 		logx.WithContext(ctx).Errorf("GetSingleMsgListBySeq failed, err: %v", err)

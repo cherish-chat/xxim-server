@@ -70,6 +70,12 @@ func (s *GroupServiceServer) GetGroupMemberInfo(ctx context.Context, in *pb.GetG
 	return l.GetGroupMemberInfo(in)
 }
 
+//  MapGroupMemberInfoByIds 批量获取群成员信息
+func (s *GroupServiceServer) MapGroupMemberInfoByIds(ctx context.Context, in *pb.MapGroupMemberInfoByIdsReq) (*pb.MapGroupMemberInfoByIdsResp, error) {
+	l := logic.NewMapGroupMemberInfoByIdsLogic(ctx, s.svcCtx)
+	return l.MapGroupMemberInfoByIds(in)
+}
+
 // EditGroupInfo 编辑群信息
 func (s *GroupServiceServer) EditGroupInfo(ctx context.Context, in *pb.EditGroupInfoReq) (*pb.EditGroupInfoResp, error) {
 	l := logic.NewEditGroupInfoLogic(ctx, s.svcCtx)
@@ -124,6 +130,12 @@ func (s *GroupServiceServer) HandleGroupApply(ctx context.Context, in *pb.Handle
 	return l.HandleGroupApply(in)
 }
 
+// GetGroupApplyList 获取群聊申请列表
+func (s *GroupServiceServer) GetGroupApplyList(ctx context.Context, in *pb.GetGroupApplyListReq) (*pb.GetGroupApplyListResp, error) {
+	l := logic.NewGetGroupApplyListLogic(ctx, s.svcCtx)
+	return l.GetGroupApplyList(in)
+}
+
 // GetGroupListByUserId 分页获取某人的群列表
 func (s *GroupServiceServer) GetGroupListByUserId(ctx context.Context, in *pb.GetGroupListByUserIdReq) (*pb.GetGroupListByUserIdResp, error) {
 	l := logic.NewGetGroupListByUserIdLogic(ctx, s.svcCtx)
@@ -152,4 +164,22 @@ func (s *GroupServiceServer) UpdateGroupModel(ctx context.Context, in *pb.Update
 func (s *GroupServiceServer) DismissGroupModel(ctx context.Context, in *pb.DismissGroupModelReq) (*pb.DismissGroupModelResp, error) {
 	l := logic.NewDismissGroupModelLogic(ctx, s.svcCtx)
 	return l.DismissGroupModel(in)
+}
+
+// SearchGroupsByKeyword 搜索群组
+func (s *GroupServiceServer) SearchGroupsByKeyword(ctx context.Context, in *pb.SearchGroupsByKeywordReq) (*pb.SearchGroupsByKeywordResp, error) {
+	l := logic.NewSearchGroupsByKeywordLogic(ctx, s.svcCtx)
+	return l.SearchGroupsByKeyword(in)
+}
+
+// AddGroupMember 添加群成员
+func (s *GroupServiceServer) AddGroupMember(ctx context.Context, in *pb.AddGroupMemberReq) (*pb.AddGroupMemberResp, error) {
+	l := logic.NewAddGroupMemberLogic(ctx, s.svcCtx)
+	return l.AddGroupMember(in)
+}
+
+//  ReportGroup
+func (s *GroupServiceServer) ReportGroup(ctx context.Context, in *pb.ReportGroupReq) (*pb.ReportGroupResp, error) {
+	l := logic.NewReportGroupLogic(ctx, s.svcCtx)
+	return l.ReportGroup(in)
 }

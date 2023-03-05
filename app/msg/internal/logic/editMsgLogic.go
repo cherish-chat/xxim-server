@@ -53,7 +53,7 @@ func (l *EditMsgLogic) EditMsg(in *pb.EditMsgReq) (*pb.EditMsgResp, error) {
 			Title:       "",
 			Ext:         nil,
 		}
-		return notice.Insert(l.ctx, tx)
+		return notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 	}, func(tx *gorm.DB) error {
 		// 删除消息缓存
 		return msgmodel.FlushMsgCache(l.ctx, l.svcCtx.Redis(), []string{in.ServerMsgId})

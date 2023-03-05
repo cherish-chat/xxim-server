@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtservice"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/config"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
@@ -9,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -19,6 +21,7 @@ type ServiceContext struct {
 	msgService      msgservice.MsgService
 	noticeService   noticeservice.NoticeService
 	relationService relationservice.RelationService
+	appMgmtService  appmgmtservice.AppMgmtService
 	userService     userservice.UserService
 	groupService    groupservice.GroupService
 	zedis           *redis.Redis
@@ -26,6 +29,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	ip2region.Init(c.Ip2RegionUrl)
 	s := &ServiceContext{
 		Config: c,
 		PodIp:  utils.GetPodIp(),
@@ -80,4 +84,12 @@ func (s *ServiceContext) GroupService() groupservice.GroupService {
 		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
 	}
 	return s.groupService
+}
+
+func (s *ServiceContext) AppMgmtService() appmgmtservice.AppMgmtService {
+	if s.appMgmtService == nil {
+		s.appMgmtService = appmgmtservice.NewAppMgmtService(zrpc.MustNewClient(s.Config.AppMgmtRpc,
+			utils.Zrpc.Options()...))
+	}
+	return s.appMgmtService
 }

@@ -33,6 +33,8 @@ type ImServiceClient interface {
 	BatchGetUserLatestConn(ctx context.Context, in *BatchGetUserLatestConnReq, opts ...grpc.CallOption) (*BatchGetUserLatestConnResp, error)
 	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 	GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
+	UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
+	GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
 }
 
 type imServiceClient struct {
@@ -142,6 +144,24 @@ func (c *imServiceClient) GetAllConvIdOfUser(ctx context.Context, in *GetAllConv
 	return out, nil
 }
 
+func (c *imServiceClient) UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error) {
+	out := new(UpdateConvSettingResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/UpdateConvSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *imServiceClient) GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error) {
+	out := new(GetConvSettingResp)
+	err := c.cc.Invoke(ctx, "/pb.imService/GetConvSetting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImServiceServer is the server API for ImService service.
 // All implementations must embed UnimplementedImServiceServer
 // for forward compatibility
@@ -157,6 +177,8 @@ type ImServiceServer interface {
 	BatchGetUserLatestConn(context.Context, *BatchGetUserLatestConnReq) (*BatchGetUserLatestConnResp, error)
 	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
 	GetAllConvIdOfUser(context.Context, *GetAllConvIdOfUserReq) (*GetAllConvIdOfUserResp, error)
+	UpdateConvSetting(context.Context, *UpdateConvSettingReq) (*UpdateConvSettingResp, error)
+	GetConvSetting(context.Context, *GetConvSettingReq) (*GetConvSettingResp, error)
 	mustEmbedUnimplementedImServiceServer()
 }
 
@@ -196,6 +218,12 @@ func (UnimplementedImServiceServer) SendMsg(context.Context, *SendMsgReq) (*Send
 }
 func (UnimplementedImServiceServer) GetAllConvIdOfUser(context.Context, *GetAllConvIdOfUserReq) (*GetAllConvIdOfUserResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllConvIdOfUser not implemented")
+}
+func (UnimplementedImServiceServer) UpdateConvSetting(context.Context, *UpdateConvSettingReq) (*UpdateConvSettingResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateConvSetting not implemented")
+}
+func (UnimplementedImServiceServer) GetConvSetting(context.Context, *GetConvSettingReq) (*GetConvSettingResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConvSetting not implemented")
 }
 func (UnimplementedImServiceServer) mustEmbedUnimplementedImServiceServer() {}
 
@@ -408,6 +436,42 @@ func _ImService_GetAllConvIdOfUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ImService_UpdateConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateConvSettingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).UpdateConvSetting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/UpdateConvSetting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).UpdateConvSetting(ctx, req.(*UpdateConvSettingReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ImService_GetConvSetting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConvSettingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).GetConvSetting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.imService/GetConvSetting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).GetConvSetting(ctx, req.(*GetConvSettingReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ImService_ServiceDesc is the grpc.ServiceDesc for ImService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -458,6 +522,14 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllConvIdOfUser",
 			Handler:    _ImService_GetAllConvIdOfUser_Handler,
+		},
+		{
+			MethodName: "UpdateConvSetting",
+			Handler:    _ImService_UpdateConvSetting_Handler,
+		},
+		{
+			MethodName: "GetConvSetting",
+			Handler:    _ImService_GetConvSetting_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

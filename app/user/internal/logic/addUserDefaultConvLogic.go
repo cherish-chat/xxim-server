@@ -34,6 +34,7 @@ func (l *AddUserDefaultConvLogic) AddUserDefaultConv(in *pb.AddUserDefaultConvRe
 		FilterType:     in.UserDefaultConv.FilterType,
 		InvitationCode: in.UserDefaultConv.InvitationCode,
 		ConvId:         in.UserDefaultConv.ConvId,
+		TextMsg:        in.UserDefaultConv.TextMsg,
 		CreateTime:     time.Now().UnixMilli(),
 	}
 	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {

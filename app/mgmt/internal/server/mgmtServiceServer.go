@@ -47,6 +47,16 @@ func (s *MgmtServiceServer) UpdateServerConfig(ctx context.Context, in *pb.Updat
 	return l.UpdateServerConfig(in)
 }
 
+func (s *MgmtServiceServer) GetAppLineConfig(ctx context.Context, in *pb.GetAppLineConfigReq) (*pb.GetAppLineConfigResp, error) {
+	l := logic.NewGetAppLineConfigLogic(ctx, s.svcCtx)
+	return l.GetAppLineConfig(in)
+}
+
+func (s *MgmtServiceServer) UpdateAppLineConfig(ctx context.Context, in *pb.UpdateAppLineConfigReq) (*pb.UpdateAppLineConfigResp, error) {
+	l := logic.NewUpdateAppLineConfigLogic(ctx, s.svcCtx)
+	return l.UpdateAppLineConfig(in)
+}
+
 func (s *MgmtServiceServer) LoginMS(ctx context.Context, in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	l := logic.NewLoginMSLogic(ctx, s.svcCtx)
 	return l.LoginMS(in)
@@ -225,4 +235,46 @@ func (s *MgmtServiceServer) DeleteMSOperationLog(ctx context.Context, in *pb.Del
 func (s *MgmtServiceServer) GetAllMSLoginRecord(ctx context.Context, in *pb.GetAllMSLoginRecordReq) (*pb.GetAllMSLoginRecordResp, error) {
 	l := logic.NewGetAllMSLoginRecordLogic(ctx, s.svcCtx)
 	return l.GetAllMSLoginRecord(in)
+}
+
+// 相册分类
+func (s *MgmtServiceServer) GetAllMSAlbumCate(ctx context.Context, in *pb.GetAllMSAlbumCateReq) (*pb.GetAllMSAlbumCateResp, error) {
+	l := logic.NewGetAllMSAlbumCateLogic(ctx, s.svcCtx)
+	return l.GetAllMSAlbumCate(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSAlbumCate(ctx context.Context, in *pb.DeleteMSAlbumCateReq) (*pb.DeleteMSAlbumCateResp, error) {
+	l := logic.NewDeleteMSAlbumCateLogic(ctx, s.svcCtx)
+	return l.DeleteMSAlbumCate(in)
+}
+
+func (s *MgmtServiceServer) AddMSAlbumCate(ctx context.Context, in *pb.AddMSAlbumCateReq) (*pb.AddMSAlbumCateResp, error) {
+	l := logic.NewAddMSAlbumCateLogic(ctx, s.svcCtx)
+	return l.AddMSAlbumCate(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSAlbumCate(ctx context.Context, in *pb.UpdateMSAlbumCateReq) (*pb.UpdateMSAlbumCateResp, error) {
+	l := logic.NewUpdateMSAlbumCateLogic(ctx, s.svcCtx)
+	return l.UpdateMSAlbumCate(in)
+}
+
+// 相册
+func (s *MgmtServiceServer) GetAllMSAlbum(ctx context.Context, in *pb.GetAllMSAlbumReq) (*pb.GetAllMSAlbumResp, error) {
+	l := logic.NewGetAllMSAlbumLogic(ctx, s.svcCtx)
+	return l.GetAllMSAlbum(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSAlbum(ctx context.Context, in *pb.DeleteMSAlbumReq) (*pb.DeleteMSAlbumResp, error) {
+	l := logic.NewDeleteMSAlbumLogic(ctx, s.svcCtx)
+	return l.DeleteMSAlbum(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSAlbum(ctx context.Context, in *pb.UpdateMSAlbumReq) (*pb.UpdateMSAlbumResp, error) {
+	l := logic.NewUpdateMSAlbumLogic(ctx, s.svcCtx)
+	return l.UpdateMSAlbum(in)
+}
+
+func (s *MgmtServiceServer) StatsMS(ctx context.Context, in *pb.StatsMSReq) (*pb.StatsMSResp, error) {
+	l := logic.NewStatsMSLogic(ctx, s.svcCtx)
+	return l.StatsMS(in)
 }

@@ -47,12 +47,13 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			l.Errorf("GetFriendCount failed, err: %v", err)
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx) {
+		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx, in.CommonReq.UserId) {
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
-	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
-	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
+	now := time.Now().UnixMilli()
+	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId, CreateTime: now}
+	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId, CreateTime: now}
 	{
 		// 添加好友
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
@@ -84,7 +85,7 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 					Title:    "",
 					Ext:      nil,
 				}
-				err := notice.Insert(l.ctx, tx)
+				err := notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 				if err != nil {
 					l.Errorf("insert notice failed, err: %v", err)
 					return err
@@ -163,6 +164,10 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 			selfInfo, ok := userByIds.Users[in.CommonReq.UserId]
 			if ok {
 				self := usermodel.UserFromBytes(selfInfo)
+				text := "我们已经是好友了，快来聊天吧"
+				if in.SendTextMsg != nil && *in.SendTextMsg != "" {
+					text = *in.SendTextMsg
+				}
 				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
 					msgmodel.CreateTextMsgToUser(
 						&pb.UserBaseInfo{
@@ -171,20 +176,21 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 							Avatar:   self.Avatar,
 							Xb:       self.Xb,
 							Birthday: self.Birthday,
+							Role:     int32(self.Role),
 						},
 						in.ApplyUserId,
-						l.svcCtx.T(in.CommonReq.Language, "我们已经是好友了，快来聊天吧"),
+						l.svcCtx.T(in.CommonReq.Language, text),
 						msgmodel.MsgOptions{
 							OfflinePush:       true,
 							StorageForServer:  true,
 							StorageForClient:  true,
-							UpdateUnreadCount: false,
+							UpdateUnreadCount: true,
 							NeedDecrypt:       false,
 							UpdateConvMsg:     true,
 						},
 						&msgmodel.MsgOfflinePush{
 							Title:   self.Nickname,
-							Content: "我们已经是好友了，快来聊天吧",
+							Content: text,
 							Payload: "",
 						},
 						nil,

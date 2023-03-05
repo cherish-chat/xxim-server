@@ -91,16 +91,21 @@ type (
 		DiscovType    string // default: endpoints, options: k8s|endpoints
 		K8sNamespace  string // default: xxim
 		Endpoints     []string
-		Port          int64 // default: 6700
-		WebsocketPort int64 // default: 6701
+		Port          int64  // default: 6700
+		WebsocketPort int64  // default: 6701
+		RsaPublicKey  string // 客户端使用公钥来加密
+		RsaPrivateKey string // 服务端使用私钥来解密
 	}
 	ImRpcConfig struct {
 		Port int64 // default: 6702
 	}
 	MsgRpcConfig struct {
-		Port    int64 // default: 6703
-		MobPush MobPushConfig
-		Pulsar  MsgPulsarConfig
+		DiscovType   string // default: endpoints, options: k8s|endpoints
+		K8sNamespace string // default: xxim
+		Endpoints    []string
+		Port         int64 // default: 6703
+		MobPush      MobPushConfig
+		Pulsar       MsgPulsarConfig
 	}
 	MobPushConfig struct {
 		Enabled        bool // default: false
@@ -121,12 +126,28 @@ type (
 	}
 	UserRpcConfig struct {
 		Port int64 // default: 6704
+		Sms  SmsConfig
+	}
+	SmsConfig struct {
+		Enabled    bool   // default: false
+		Type       string // default: tencent, options: tencent
+		TencentSms TencentSmsConfig
+	}
+	TencentSmsConfig struct {
+		AppId      string
+		SecretId   string
+		SecretKey  string
+		Region     string // default: ap-guangzhou
+		Sign       string
+		TemplateId string
 	}
 	RelationRpcConfig struct {
 		Port int64 // default: 6705
 	}
 	GroupRpcConfig struct {
-		Port int64 // default: 6706
+		Port                int64 // default: 6706
+		MaxGroupCount       int64 // default: 100
+		MaxGroupMemberCount int64 // default: 1000
 	}
 	NoticeRpcConfig struct {
 		Port int64 // default: 6707
@@ -167,11 +188,18 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			},
 			Port:          6700,
 			WebsocketPort: 6701,
+			RsaPublicKey:  "",
+			RsaPrivateKey: "",
 		},
 		ImRpc: ImRpcConfig{
 			Port: 6702,
 		},
 		MsgRpc: MsgRpcConfig{
+			DiscovType:   "endpoints",
+			K8sNamespace: "xxim",
+			Endpoints: []string{
+				"127.0.0.1:6703",
+			},
 			Port: 6703,
 			MobPush: MobPushConfig{
 				Enabled:        false,
@@ -193,12 +221,19 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 		},
 		UserRpc: UserRpcConfig{
 			Port: 6704,
+			Sms: SmsConfig{
+				Enabled:    false,
+				Type:       "tencent",
+				TencentSms: TencentSmsConfig{},
+			},
 		},
 		RelationRpc: RelationRpcConfig{
 			Port: 6705,
 		},
 		GroupRpc: GroupRpcConfig{
-			Port: 6706,
+			Port:                6706,
+			MaxGroupCount:       2000,
+			MaxGroupMemberCount: 200000,
 		},
 		NoticeRpc: NoticeRpcConfig{
 			Port: 6707,

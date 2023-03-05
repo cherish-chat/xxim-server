@@ -36,6 +36,8 @@ definitions:
         type: string
       platform:
         type: string
+      podIp:
+        type: string
       userId:
         type: string
     type: object
@@ -54,6 +56,18 @@ definitions:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
+    type: object
+  mshandler.cateRenameReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        minimum: 0
+        type: integer
+      name:
+        type: string
+    required:
+    - name
     type: object
   mshandler.getAllMSRoleListResp:
     properties:
@@ -147,12 +161,27 @@ definitions:
       role:
         description: 角色
         type: string
+      roleId:
+        description: 角色ID
+        type: string
       updateTime:
         description: 更新时间
         type: string
       username:
         description: 账号
         type: string
+    type: object
+  mshandler.renameMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        minimum: 0
+        type: integer
+      name:
+        type: string
+    required:
+    - name
     type: object
   mshandler.updateMSRoleReq:
     properties:
@@ -199,6 +228,36 @@ definitions:
         description: 排序
         type: integer
     type: object
+  mshandler.uploadImageResp:
+    properties:
+      aid:
+        description: 管理ID
+        type: string
+      cid:
+        description: 类目ID
+        type: integer
+      ext:
+        description: 文件扩展
+        type: string
+      id:
+        description: 主键
+        type: integer
+      name:
+        description: 文件名称
+        type: string
+      path:
+        description: 访问地址
+        type: string
+      size:
+        description: 文件大小
+        type: integer
+      type:
+        description: '文件类型: [10=图片, 20=视频]'
+        type: integer
+      url:
+        description: 文件路径
+        type: string
+    type: object
   pb.AddAppMgmtEmojiReq:
     properties:
       appMgmtEmoji:
@@ -207,6 +266,18 @@ definitions:
         $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.AddAppMgmtEmojiResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddAppMgmtLinkReq:
+    properties:
+      appMgmtLink:
+        $ref: '#/definitions/pb.AppMgmtLink'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddAppMgmtLinkResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -257,6 +328,18 @@ definitions:
         $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.AddAppMgmtVpnResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.AddMSAlbumCateReq:
+    properties:
+      albumCate:
+        $ref: '#/definitions/pb.MSAlbumCate'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.AddMSAlbumCateResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -376,6 +459,100 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.AllMuterType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - AllMuterType_ALL
+    - AllMuterType_NORMAL
+  pb.AppLineConfig:
+    properties:
+      aesIv:
+        type: string
+      aesKey:
+        type: string
+      config:
+        type: string
+      storage:
+        $ref: '#/definitions/pb.AppLineConfig_Storage'
+    type: object
+  pb.AppLineConfig_Storage:
+    properties:
+      cos:
+        $ref: '#/definitions/pb.AppLineConfig_Storage_Cos'
+      kodo:
+        $ref: '#/definitions/pb.AppLineConfig_Storage_Kodo'
+      minio:
+        $ref: '#/definitions/pb.AppLineConfig_Storage_Minio'
+      objectId:
+        type: string
+      oss:
+        $ref: '#/definitions/pb.AppLineConfig_Storage_Oss'
+      type:
+        type: string
+    type: object
+  pb.AppLineConfig_Storage_Cos:
+    properties:
+      appId:
+        type: string
+      bucketName:
+        type: string
+      bucketUrl:
+        type: string
+      region:
+        type: string
+      secretId:
+        type: string
+      secretKey:
+        type: string
+    type: object
+  pb.AppLineConfig_Storage_Kodo:
+    properties:
+      accessKey:
+        type: string
+      bucketName:
+        type: string
+      bucketUrl:
+        type: string
+      region:
+        type: string
+      secretKey:
+        type: string
+      useHTTPS:
+        type: boolean
+    type: object
+  pb.AppLineConfig_Storage_Minio:
+    properties:
+      accessKeyId:
+        type: string
+      bucketName:
+        type: string
+      bucketUrl:
+        type: string
+      endpoint:
+        type: string
+      region:
+        type: string
+      secretAccessKey:
+        type: string
+      ssl:
+        type: boolean
+    type: object
+  pb.AppLineConfig_Storage_Oss:
+    properties:
+      accessKeyId:
+        type: string
+      accessKeySecret:
+        type: string
+      bucketName:
+        type: string
+      bucketUrl:
+        type: string
+      endpoint:
+        type: string
+    type: object
   pb.AppMgmtConfig:
     properties:
       group:
@@ -431,6 +608,25 @@ definitions:
       isEnable:
         type: boolean
       name:
+        type: string
+    type: object
+  pb.AppMgmtLink:
+    properties:
+      createdAt:
+        type: integer
+      createdAtStr:
+        type: string
+      icon:
+        type: string
+      id:
+        type: string
+      isEnable:
+        type: boolean
+      name:
+        type: string
+      sort:
+        type: integer
+      url:
         type: string
     type: object
   pb.AppMgmtNotice:
@@ -532,6 +728,8 @@ definitions:
       language:
         type: string
       osVersion:
+        type: string
+      packageId:
         type: string
       platform:
         type: string
@@ -640,6 +838,20 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.DeleteAppMgmtLinkReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteAppMgmtLinkResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.DeleteAppMgmtNoticeReq:
     properties:
       commonReq:
@@ -697,6 +909,34 @@ definitions:
         $ref: '#/definitions/pb.CommonResp'
     type: object
   pb.DeleteFriendResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSAlbumCateReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSAlbumCateResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSAlbumResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -873,7 +1113,8 @@ definitions:
     properties:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
-      scopePlatform:
+      userId:
+        description: 用户id 获取哪个用户的配置
         type: string
     type: object
   pb.GetAllAppMgmtConfigResp:
@@ -923,6 +1164,28 @@ definitions:
       appMgmtEmojis:
         items:
           $ref: '#/definitions/pb.AppMgmtEmoji'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      total:
+        type: integer
+    type: object
+  pb.GetAllAppMgmtLinkReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllAppMgmtLinkResp:
+    properties:
+      appMgmtLinks:
+        items:
+          $ref: '#/definitions/pb.AppMgmtLink'
         type: array
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -1058,6 +1321,42 @@ definitions:
         items:
           $ref: '#/definitions/pb.LoginRecord'
         type: array
+      total:
+        type: integer
+    type: object
+  pb.GetAllMSAlbumCateReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.GetAllMSAlbumCateResp:
+    properties:
+      albumCates:
+        items:
+          $ref: '#/definitions/pb.MSAlbumCate'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAllMSAlbumReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSAlbumResp:
+    properties:
+      albums:
+        items:
+          $ref: '#/definitions/pb.MSAlbum'
+        type: array
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
       total:
         type: integer
     type: object
@@ -1331,6 +1630,13 @@ definitions:
           $ref: '#/definitions/pb.UserModel'
         type: array
     type: object
+  pb.GetAppLineConfigResp:
+    properties:
+      appLineConfig:
+        $ref: '#/definitions/pb.AppLineConfig'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.GetAppMgmtEmojiDetailReq:
     properties:
       commonReq:
@@ -1356,6 +1662,20 @@ definitions:
     properties:
       appMgmtEmojiGroup:
         $ref: '#/definitions/pb.AppMgmtEmojiGroup'
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.GetAppMgmtLinkDetailReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetAppMgmtLinkDetailResp:
+    properties:
+      appMgmtLink:
+        $ref: '#/definitions/pb.AppMgmtLink'
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
@@ -1695,11 +2015,19 @@ definitions:
         type: string
       port:
         type: integer
+      rsaPrivateKey:
+        type: string
+      rsaPublicKey:
+        type: string
       websocketPort:
         type: integer
     type: object
   pb.GetServerAllConfigResp_GroupRpcConfig:
     properties:
+      maxGroupCount:
+        type: integer
+      maxGroupMemberCount:
+        type: integer
       port:
         type: integer
     type: object
@@ -1753,6 +2081,14 @@ definitions:
     type: object
   pb.GetServerAllConfigResp_MsgRpcConfig:
     properties:
+      discovType:
+        type: string
+      endpoints:
+        items:
+          type: string
+        type: array
+      k8sNamespace:
+        type: string
       mobPush:
         $ref: '#/definitions/pb.GetServerAllConfigResp_MobPushConfig'
       port:
@@ -1792,6 +2128,15 @@ definitions:
       port:
         type: integer
     type: object
+  pb.GetServerAllConfigResp_SmsConfig:
+    properties:
+      enabled:
+        type: boolean
+      tencentSms:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_TencentSmsConfig'
+      type:
+        type: string
+    type: object
   pb.GetServerAllConfigResp_TelemetryConfig:
     properties:
       batcher:
@@ -1801,10 +2146,27 @@ definitions:
       sampler:
         type: number
     type: object
+  pb.GetServerAllConfigResp_TencentSmsConfig:
+    properties:
+      appId:
+        type: string
+      region:
+        type: string
+      secretId:
+        type: string
+      secretKey:
+        type: string
+      sign:
+        type: string
+      templateId:
+        type: string
+    type: object
   pb.GetServerAllConfigResp_UserRpcConfig:
     properties:
       port:
         type: integer
+      sms:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_SmsConfig'
     type: object
   pb.GetUserDefaultConvDetailReq:
     properties:
@@ -1883,6 +2245,8 @@ definitions:
       allMute:
         description: 全体禁言开关
         type: boolean
+      allMuterType:
+        $ref: '#/definitions/pb.AllMuterType'
       anonymousChat:
         description: 是否开启匿名聊天
         type: boolean
@@ -2013,6 +2377,60 @@ definitions:
       userId:
         type: string
     type: object
+  pb.MSAlbum:
+    properties:
+      aid:
+        type: string
+      cid:
+        type: string
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      deleteTime:
+        type: integer
+      deleteTimeStr:
+        type: string
+      ext:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
+      type:
+        type: integer
+      updateTime:
+        type: integer
+      updateTimeStr:
+        type: string
+      url:
+        type: string
+    type: object
+  pb.MSAlbumCate:
+    properties:
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      deleteTime:
+        type: integer
+      deleteTimeStr:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      pid:
+        type: string
+      type:
+        type: integer
+      updateTime:
+        type: integer
+      updateTimeStr:
+        type: string
+    type: object
   pb.MSApiPath:
     properties:
       createdAt:
@@ -2116,6 +2534,9 @@ definitions:
       menuIcon:
         description: 菜单图标
         type: string
+      menuIconElement2:
+        description: 菜单图标Element v2
+        type: string
       menuName:
         description: 菜单名称
         type: string
@@ -2204,6 +2625,8 @@ definitions:
       password:
         type: string
       role:
+        type: string
+      roleId:
         type: string
       updatedAt:
         type: integer
@@ -2308,6 +2731,66 @@ definitions:
       size:
         type: integer
     type: object
+  pb.StatsMSReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      endTime:
+        type: string
+      startTime:
+        type: string
+    type: object
+  pb.StatsMSResp:
+    properties:
+      dates:
+        items:
+          type: string
+        type: array
+      legend:
+        items:
+          type: string
+        type: array
+      series:
+        items:
+          $ref: '#/definitions/pb.StatsMSResp_Series'
+        type: array
+      today:
+        $ref: '#/definitions/pb.StatsMSResp_Today'
+    type: object
+  pb.StatsMSResp_Series:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      stack:
+        type: string
+      type:
+        type: string
+    type: object
+  pb.StatsMSResp_Today:
+    properties:
+      newGroup:
+        type: integer
+      newUser:
+        type: integer
+      time:
+        type: string
+      todayAliveGroup:
+        type: integer
+      todayAliveSingle:
+        type: integer
+      todayAliveUser:
+        type: integer
+      todayMsg:
+        type: integer
+      todayMsgUser:
+        type: integer
+      todayNewFriend:
+        type: integer
+    type: object
   pb.SwitchMSUserStatusReq:
     properties:
       commonReq:
@@ -2336,6 +2819,18 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.UpdateAppLineConfigReq:
+    properties:
+      appLineConfig:
+        $ref: '#/definitions/pb.AppLineConfig'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppLineConfigResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.UpdateAppMgmtConfigReq:
     properties:
       appMgmtConfigs:
@@ -2344,6 +2839,9 @@ definitions:
         type: array
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
+      userId:
+        description: 用户id 更新哪个用户的配置
+        type: string
     type: object
   pb.UpdateAppMgmtConfigResp:
     properties:
@@ -2370,6 +2868,18 @@ definitions:
         $ref: '#/definitions/pb.CommonReq'
     type: object
   pb.UpdateAppMgmtEmojiResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateAppMgmtLinkReq:
+    properties:
+      appMgmtLink:
+        $ref: '#/definitions/pb.AppMgmtLink'
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.UpdateAppMgmtLinkResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -2430,6 +2940,16 @@ definitions:
         $ref: '#/definitions/pb.GroupModel'
     type: object
   pb.UpdateGroupModelResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSAlbumCateResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.UpdateMSAlbumResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -2586,6 +3106,8 @@ definitions:
         type: string
       invitationCode:
         type: string
+      textMsg:
+        type: string
     type: object
   pb.UserInvitationCode:
     properties:
@@ -2601,10 +3123,15 @@ definitions:
         type: string
       creatorType:
         type: integer
+      defaultConvMode:
+        description: 默认会话模式 0:添加所有预设会话 1:只添加一个会话(轮询) 2:只添加一个会话(随机) 3:不添加会话
+        type: integer
       isEnable:
         type: boolean
       remark:
         type: string
+      successUserCount:
+        type: integer
     type: object
   pb.UserIpList:
     properties:
@@ -3092,6 +3619,38 @@ paths:
       summary: 新增用户ip白名单
       tags:
       - 用户ip白名单管理
+  /ms/add/link:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口新增app外链
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddAppMgmtLinkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddAppMgmtLinkResp'
+      summary: 新增app外链
+      tags:
+      - app外链管理
   /ms/add/menu:
     post:
       consumes:
@@ -3316,6 +3875,230 @@ paths:
       summary: 新增appVPN
       tags:
       - appVPN管理
+  /ms/album/cate/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSAlbumCateResp'
+      summary: 添加类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSAlbumCateResp'
+      summary: 删除类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/list:
+    post:
+      consumes:
+      - application/json
+      description: 获取类目列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSAlbumCateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSAlbumCateResp'
+      summary: 获取类目列表
+      tags:
+      - 管理系统相关接口
+  /ms/album/cate/rename:
+    post:
+      consumes:
+      - application/json
+      description: 重命名类目
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/mshandler.cateRenameReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSAlbumCateResp'
+      summary: 重命名类目
+      tags:
+      - 管理系统相关接口
+  /ms/album/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除相册
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSAlbumResp'
+      summary: 删除相册
+      tags:
+      - 管理系统相关接口
+  /ms/album/list:
+    post:
+      consumes:
+      - application/json
+      description: 获取相册列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSAlbumResp'
+      summary: 获取相册列表
+      tags:
+      - 管理系统相关接口
+  /ms/album/rename:
+    post:
+      consumes:
+      - application/json
+      description: 重命名相册
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求数据
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/mshandler.renameMSAlbumReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSAlbumResp'
+      summary: 重命名相册
+      tags:
+      - 管理系统相关接口
   /ms/config:
     post:
       consumes:
@@ -3619,6 +4402,38 @@ paths:
       summary: 删除用户ip白名单
       tags:
       - 用户ip白名单管理
+  /ms/delete/link:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除app外链
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteAppMgmtLinkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteAppMgmtLinkResp'
+      summary: 删除app外链
+      tags:
+      - app外链管理
   /ms/delete/menu:
     post:
       consumes:
@@ -4541,6 +5356,70 @@ paths:
       summary: 获取全部用户ip白名单列表
       tags:
       - 用户ip白名单管理
+  /ms/get/link/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app外链详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAppMgmtLinkDetailReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAppMgmtLinkDetailResp'
+      summary: 获取app外链详情
+      tags:
+      - app外链管理
+  /ms/get/link/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部app外链列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllAppMgmtLinkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllAppMgmtLinkResp'
+      summary: 获取全部app外链列表
+      tags:
+      - app外链管理
   /ms/get/loginlog/list/all:
     post:
       consumes:
@@ -5229,6 +6108,38 @@ paths:
       summary: 登录managersystem管理系统
       tags:
       - 管理系统相关接口
+  /ms/stats:
+    post:
+      consumes:
+      - application/json
+      description: 统计
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.StatsMSReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.StatsMSResp'
+      summary: 统计
+      tags:
+      - 管理系统相关接口
   /ms/switch/admin/status:
     post:
       consumes:
@@ -5549,6 +6460,38 @@ paths:
       summary: 更新用户ip白名单
       tags:
       - 用户ip白名单管理
+  /ms/update/link:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app外链
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppMgmtLinkReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateAppMgmtLinkResp'
+      summary: 更新app外链
+      tags:
+      - app外链管理
   /ms/update/menu:
     post:
       consumes:
@@ -5773,6 +6716,63 @@ paths:
       summary: 更新appVPN
       tags:
       - appVPN管理
+  /ms/upload/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 通过表单上传文件视频
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 类目ID
+        in: formData
+        name: cid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/mshandler.uploadImageResp'
+      summary: 通过表单上传文件视频
+      tags:
+      - 管理系统相关接口
+  /server/get/app/line:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取app线路配置
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: app线路配置
+          schema:
+            $ref: '#/definitions/pb.GetAppLineConfigResp'
+      summary: 获取app线路配置
+      tags:
+      - 服务端相关接口
   /server/get/config/all:
     post:
       consumes:
@@ -5811,6 +6811,33 @@ paths:
           schema:
             type: string
       summary: 获取服务器在线人数
+      tags:
+      - 服务端相关接口
+  /server/update/app/line:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新app线路配置
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: app线路配置
+        in: body
+        name: config
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateAppLineConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新结果
+          schema:
+            $ref: '#/definitions/pb.UpdateAppLineConfigResp'
+      summary: 更新app线路配置
       tags:
       - 服务端相关接口
   /server/update/config:

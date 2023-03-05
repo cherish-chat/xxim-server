@@ -24,7 +24,7 @@ func NewKeepAliveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *KeepAli
 }
 
 func (l *KeepAliveLogic) KeepAlive(in *pb.KeepAliveReq) (*pb.KeepAliveResp, error) {
-	_, err := NewFlushUsersSubConvLogic(l.ctx, l.svcCtx).FlushUsersSubConv(&pb.FlushUsersSubConvReq{UserIds: []string{in.CommonReq.UserId}})
+	_, err := NewFlushUsersSubConvLogic(l.ctx, l.svcCtx).FlushUsersSubConv(&pb.FlushUsersSubConvReq{UserIds: []string{in.CommonReq.UserId}, CompareConvIds: in.GetConvIdList()})
 	if err != nil {
 		return &pb.KeepAliveResp{}, err
 	}

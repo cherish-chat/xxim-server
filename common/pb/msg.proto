@@ -174,6 +174,8 @@ message GetConvOnlineCountResp {
 message FlushUsersSubConvReq {
   CommonReq commonReq = 1;
   repeated string userIds = 2;
+  // 对比的convIds 如果是单聊并且不是好友 也加入到订阅的会话里
+  repeated string compareConvIds = 3;
 }
 
 //GetAllMsgListReq 获取所有消息
@@ -219,6 +221,15 @@ message EditMsgResp {
   CommonResp commonResp = 1;
 }
 
+//FlushShieldWordTireTreeReq 刷新屏蔽词
+message FlushShieldWordTireTreeReq {
+  CommonReq commonReq = 1;
+}
+
+message FlushShieldWordTireTreeResp {
+  CommonResp commonResp = 1;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -251,4 +262,7 @@ service msgService {
   rpc ReadMsg(ReadMsgReq) returns (ReadMsgResp) {}
   //EditMsg 编辑消息
   rpc EditMsg(EditMsgReq) returns (EditMsgResp) {}
+
+  //FlushShieldWordTireTree 刷新屏蔽词
+  rpc FlushShieldWordTireTree(FlushShieldWordTireTreeReq) returns (FlushShieldWordTireTreeResp) {}
 }

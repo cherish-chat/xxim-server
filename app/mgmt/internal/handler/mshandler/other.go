@@ -75,3 +75,28 @@ func (r *MSHandler) config(ctx *gin.Context) {
 	}
 	handler.ReturnOk(ctx, out)
 }
+
+// stats 统计
+// @Summary 统计
+// @Description 统计
+// @Tags 管理系统相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
+// @Param object body pb.StatsMSReq true "请求参数"
+// @Success 200 {object} pb.StatsMSResp "响应数据"
+// @Router /ms/stats [post]
+func (r *MSHandler) stats(ctx *gin.Context) {
+	in := &pb.StatsMSReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewStatsMSLogic(ctx, r.svcCtx).StatsMS(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
+}

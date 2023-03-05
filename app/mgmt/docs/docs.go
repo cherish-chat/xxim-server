@@ -545,6 +545,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/add/link": {
+            "post": {
+                "description": "使用此接口新增app外链",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app外链管理"
+                ],
+                "summary": "新增app外链",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtLinkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/menu": {
             "post": {
                 "description": "使用此接口新增菜单",
@@ -876,6 +924,342 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.AddAppMgmtVpnResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/cate/add": {
+            "post": {
+                "description": "添加类目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "添加类目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSAlbumCateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSAlbumCateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/cate/delete": {
+            "post": {
+                "description": "删除类目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "删除类目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSAlbumCateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSAlbumCateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/cate/list": {
+            "post": {
+                "description": "获取类目列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "获取类目列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSAlbumCateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSAlbumCateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/cate/rename": {
+            "post": {
+                "description": "重命名类目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "重命名类目",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.cateRenameReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSAlbumCateResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/delete": {
+            "post": {
+                "description": "删除相册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "删除相册",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSAlbumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSAlbumResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/list": {
+            "post": {
+                "description": "获取相册列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "获取相册列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSAlbumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSAlbumResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/album/rename": {
+            "post": {
+                "description": "重命名相册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "重命名相册",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求数据",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.renameMSAlbumReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSAlbumResp"
                         }
                     }
                 }
@@ -1331,6 +1715,54 @@ const docTemplate = `{
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.DeleteUserIpWhiteListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/link": {
+            "post": {
+                "description": "使用此接口删除app外链",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app外链管理"
+                ],
+                "summary": "删除app外链",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtLinkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteAppMgmtLinkResp"
                         }
                     }
                 }
@@ -2719,6 +3151,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/get/link/detail": {
+            "post": {
+                "description": "使用此接口获取app外链详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app外链管理"
+                ],
+                "summary": "获取app外链详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtLinkDetailReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppMgmtLinkDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/link/list/all": {
+            "post": {
+                "description": "使用此接口获取全部app外链列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app外链管理"
+                ],
+                "summary": "获取全部app外链列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtLinkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/loginlog/list/all": {
             "post": {
                 "description": "使用此接口获取全部登录日志列表",
@@ -3752,6 +4280,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/stats": {
+            "post": {
+                "description": "统计",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.StatsMSReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.StatsMSResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/switch/admin/status": {
             "post": {
                 "description": "使用此接口切换管理员状态",
@@ -4232,6 +4808,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/update/link": {
+            "post": {
+                "description": "使用此接口更新app外链",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "app外链管理"
+                ],
+                "summary": "更新app外链",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtLinkReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/update/menu": {
             "post": {
                 "description": "使用此接口更新菜单",
@@ -4568,6 +5192,91 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/upload/image": {
+            "post": {
+                "description": "通过表单上传文件视频",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "通过表单上传文件视频",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "类目ID",
+                        "name": "cid",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/mshandler.uploadImageResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/get/app/line": {
+            "post": {
+                "description": "使用此接口获取app线路配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "获取app线路配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "app线路配置",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAppLineConfigResp"
+                        }
+                    }
+                }
+            }
+        },
         "/server/get/config/all": {
             "post": {
                 "description": "使用此接口获取服务端的所有配置信息, 比如redis的配置信息",
@@ -4624,6 +5333,47 @@ const docTemplate = `{
                         "description": "在线人数",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/server/update/app/line": {
+            "post": {
+                "description": "使用此接口更新app线路配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务端相关接口"
+                ],
+                "summary": "更新app线路配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "app线路配置",
+                        "name": "config",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppLineConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新结果",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateAppLineConfigResp"
                         }
                     }
                 }
@@ -4727,6 +5477,9 @@ const docTemplate = `{
                 "platform": {
                     "type": "string"
                 },
+                "podIp": {
+                    "type": "string"
+                },
                 "userId": {
                     "type": "string"
                 }
@@ -4754,6 +5507,24 @@ const docTemplate = `{
             "properties": {
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "mshandler.cateRenameReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -4887,12 +5658,34 @@ const docTemplate = `{
                     "description": "角色",
                     "type": "string"
                 },
+                "roleId": {
+                    "description": "角色ID",
+                    "type": "string"
+                },
                 "updateTime": {
                     "description": "更新时间",
                     "type": "string"
                 },
                 "username": {
                     "description": "账号",
+                    "type": "string"
+                }
+            }
+        },
+        "mshandler.renameMSAlbumReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "name": {
                     "type": "string"
                 }
             }
@@ -4965,6 +5758,47 @@ const docTemplate = `{
                 }
             }
         },
+        "mshandler.uploadImageResp": {
+            "type": "object",
+            "properties": {
+                "aid": {
+                    "description": "管理ID",
+                    "type": "string"
+                },
+                "cid": {
+                    "description": "类目ID",
+                    "type": "integer"
+                },
+                "ext": {
+                    "description": "文件扩展",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "文件名称",
+                    "type": "string"
+                },
+                "path": {
+                    "description": "访问地址",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "文件大小",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "文件类型: [10=图片, 20=视频]",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "文件路径",
+                    "type": "string"
+                }
+            }
+        },
         "pb.AddAppMgmtEmojiReq": {
             "type": "object",
             "properties": {
@@ -4977,6 +5811,25 @@ const docTemplate = `{
             }
         },
         "pb.AddAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddAppMgmtLinkReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtLink": {
+                    "$ref": "#/definitions/pb.AppMgmtLink"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddAppMgmtLinkResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -5056,6 +5909,25 @@ const docTemplate = `{
             }
         },
         "pb.AddAppMgmtVpnResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.AddMSAlbumCateReq": {
+            "type": "object",
+            "properties": {
+                "albumCate": {
+                    "$ref": "#/definitions/pb.MSAlbumCate"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.AddMSAlbumCateResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -5245,6 +6117,149 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AllMuterType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "AllMuterType_ALL",
+                "AllMuterType_NORMAL"
+            ]
+        },
+        "pb.AppLineConfig": {
+            "type": "object",
+            "properties": {
+                "aesIv": {
+                    "type": "string"
+                },
+                "aesKey": {
+                    "type": "string"
+                },
+                "config": {
+                    "type": "string"
+                },
+                "storage": {
+                    "$ref": "#/definitions/pb.AppLineConfig_Storage"
+                }
+            }
+        },
+        "pb.AppLineConfig_Storage": {
+            "type": "object",
+            "properties": {
+                "cos": {
+                    "$ref": "#/definitions/pb.AppLineConfig_Storage_Cos"
+                },
+                "kodo": {
+                    "$ref": "#/definitions/pb.AppLineConfig_Storage_Kodo"
+                },
+                "minio": {
+                    "$ref": "#/definitions/pb.AppLineConfig_Storage_Minio"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "oss": {
+                    "$ref": "#/definitions/pb.AppLineConfig_Storage_Oss"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppLineConfig_Storage_Cos": {
+            "type": "object",
+            "properties": {
+                "appId": {
+                    "type": "string"
+                },
+                "bucketName": {
+                    "type": "string"
+                },
+                "bucketUrl": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secretId": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppLineConfig_Storage_Kodo": {
+            "type": "object",
+            "properties": {
+                "accessKey": {
+                    "type": "string"
+                },
+                "bucketName": {
+                    "type": "string"
+                },
+                "bucketUrl": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                },
+                "useHTTPS": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pb.AppLineConfig_Storage_Minio": {
+            "type": "object",
+            "properties": {
+                "accessKeyId": {
+                    "type": "string"
+                },
+                "bucketName": {
+                    "type": "string"
+                },
+                "bucketUrl": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secretAccessKey": {
+                    "type": "string"
+                },
+                "ssl": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "pb.AppLineConfig_Storage_Oss": {
+            "type": "object",
+            "properties": {
+                "accessKeyId": {
+                    "type": "string"
+                },
+                "accessKeySecret": {
+                    "type": "string"
+                },
+                "bucketName": {
+                    "type": "string"
+                },
+                "bucketUrl": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.AppMgmtConfig": {
             "type": "object",
             "properties": {
@@ -5328,6 +6343,35 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.AppMgmtLink": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdAtStr": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isEnable": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "url": {
                     "type": "string"
                 }
             }
@@ -5484,6 +6528,9 @@ const docTemplate = `{
                 "osVersion": {
                     "type": "string"
                 },
+                "packageId": {
+                    "type": "string"
+                },
                 "platform": {
                     "type": "string"
                 },
@@ -5632,6 +6679,28 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.DeleteAppMgmtLinkReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteAppMgmtLinkResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.DeleteAppMgmtNoticeReq": {
             "type": "object",
             "properties": {
@@ -5721,6 +6790,50 @@ const docTemplate = `{
             }
         },
         "pb.DeleteFriendResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSAlbumCateReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSAlbumCateResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSAlbumReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSAlbumResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -5998,7 +7111,8 @@ const docTemplate = `{
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
                 },
-                "scopePlatform": {
+                "userId": {
+                    "description": "用户id 获取哪个用户的配置",
                     "type": "string"
                 }
             }
@@ -6075,6 +7189,40 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/pb.AppMgmtEmoji"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtLinkReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllAppMgmtLinkResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtLinks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.AppMgmtLink"
                     }
                 },
                 "commonResp": {
@@ -6283,6 +7431,62 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/pb.LoginRecord"
                     }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pb.GetAllMSAlbumCateReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.GetAllMSAlbumCateResp": {
+            "type": "object",
+            "properties": {
+                "albumCates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSAlbumCate"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAllMSAlbumReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSAlbumResp": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.MSAlbum"
+                    }
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
                 },
                 "total": {
                     "type": "integer"
@@ -6706,6 +7910,17 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetAppLineConfigResp": {
+            "type": "object",
+            "properties": {
+                "appLineConfig": {
+                    "$ref": "#/definitions/pb.AppLineConfig"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.GetAppMgmtEmojiDetailReq": {
             "type": "object",
             "properties": {
@@ -6744,6 +7959,28 @@ const docTemplate = `{
             "properties": {
                 "appMgmtEmojiGroup": {
                     "$ref": "#/definitions/pb.AppMgmtEmojiGroup"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.GetAppMgmtLinkDetailReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetAppMgmtLinkDetailResp": {
+            "type": "object",
+            "properties": {
+                "appMgmtLink": {
+                    "$ref": "#/definitions/pb.AppMgmtLink"
                 },
                 "commonResp": {
                     "$ref": "#/definitions/pb.CommonResp"
@@ -7269,6 +8506,12 @@ const docTemplate = `{
                 "port": {
                     "type": "integer"
                 },
+                "rsaPrivateKey": {
+                    "type": "string"
+                },
+                "rsaPublicKey": {
+                    "type": "string"
+                },
                 "websocketPort": {
                     "type": "integer"
                 }
@@ -7277,6 +8520,12 @@ const docTemplate = `{
         "pb.GetServerAllConfigResp_GroupRpcConfig": {
             "type": "object",
             "properties": {
+                "maxGroupCount": {
+                    "type": "integer"
+                },
+                "maxGroupMemberCount": {
+                    "type": "integer"
+                },
                 "port": {
                     "type": "integer"
                 }
@@ -7359,6 +8608,18 @@ const docTemplate = `{
         "pb.GetServerAllConfigResp_MsgRpcConfig": {
             "type": "object",
             "properties": {
+                "discovType": {
+                    "type": "string"
+                },
+                "endpoints": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "k8sNamespace": {
+                    "type": "string"
+                },
                 "mobPush": {
                     "$ref": "#/definitions/pb.GetServerAllConfigResp_MobPushConfig"
                 },
@@ -7420,6 +8681,20 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetServerAllConfigResp_SmsConfig": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "tencentSms": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_TencentSmsConfig"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.GetServerAllConfigResp_TelemetryConfig": {
             "type": "object",
             "properties": {
@@ -7434,11 +8709,37 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.GetServerAllConfigResp_TencentSmsConfig": {
+            "type": "object",
+            "properties": {
+                "appId": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secretId": {
+                    "type": "string"
+                },
+                "secretKey": {
+                    "type": "string"
+                },
+                "sign": {
+                    "type": "string"
+                },
+                "templateId": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.GetServerAllConfigResp_UserRpcConfig": {
             "type": "object",
             "properties": {
                 "port": {
                     "type": "integer"
+                },
+                "sms": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_SmsConfig"
                 }
             }
         },
@@ -7561,6 +8862,9 @@ const docTemplate = `{
                 "allMute": {
                     "description": "全体禁言开关",
                     "type": "boolean"
+                },
+                "allMuterType": {
+                    "$ref": "#/definitions/pb.AllMuterType"
                 },
                 "anonymousChat": {
                     "description": "是否开启匿名聊天",
@@ -7745,6 +9049,88 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.MSAlbum": {
+            "type": "object",
+            "properties": {
+                "aid": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "deleteTime": {
+                    "type": "integer"
+                },
+                "deleteTimeStr": {
+                    "type": "string"
+                },
+                "ext": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "updateTimeStr": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.MSAlbumCate": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "deleteTime": {
+                    "type": "integer"
+                },
+                "deleteTimeStr": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pid": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "updateTimeStr": {
+                    "type": "string"
+                }
+            }
+        },
         "pb.MSApiPath": {
             "type": "object",
             "properties": {
@@ -7898,6 +9284,10 @@ const docTemplate = `{
                     "description": "菜单图标",
                     "type": "string"
                 },
+                "menuIconElement2": {
+                    "description": "菜单图标Element v2",
+                    "type": "string"
+                },
                 "menuName": {
                     "description": "菜单名称",
                     "type": "string"
@@ -8027,6 +9417,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
+                    "type": "string"
+                },
+                "roleId": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -8184,6 +9577,98 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.StatsMSReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "endTime": {
+                    "type": "string"
+                },
+                "startTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.StatsMSResp": {
+            "type": "object",
+            "properties": {
+                "dates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "legend": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "series": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.StatsMSResp_Series"
+                    }
+                },
+                "today": {
+                    "$ref": "#/definitions/pb.StatsMSResp_Today"
+                }
+            }
+        },
+        "pb.StatsMSResp_Series": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.StatsMSResp_Today": {
+            "type": "object",
+            "properties": {
+                "newGroup": {
+                    "type": "integer"
+                },
+                "newUser": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "todayAliveGroup": {
+                    "type": "integer"
+                },
+                "todayAliveSingle": {
+                    "type": "integer"
+                },
+                "todayAliveUser": {
+                    "type": "integer"
+                },
+                "todayMsg": {
+                    "type": "integer"
+                },
+                "todayMsgUser": {
+                    "type": "integer"
+                },
+                "todayNewFriend": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.SwitchMSUserStatusReq": {
             "type": "object",
             "properties": {
@@ -8228,6 +9713,25 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.UpdateAppLineConfigReq": {
+            "type": "object",
+            "properties": {
+                "appLineConfig": {
+                    "$ref": "#/definitions/pb.AppLineConfig"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppLineConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.UpdateAppMgmtConfigReq": {
             "type": "object",
             "properties": {
@@ -8239,6 +9743,10 @@ const docTemplate = `{
                 },
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userId": {
+                    "description": "用户id 更新哪个用户的配置",
+                    "type": "string"
                 }
             }
         },
@@ -8281,6 +9789,25 @@ const docTemplate = `{
             }
         },
         "pb.UpdateAppMgmtEmojiResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtLinkReq": {
+            "type": "object",
+            "properties": {
+                "appMgmtLink": {
+                    "$ref": "#/definitions/pb.AppMgmtLink"
+                },
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.UpdateAppMgmtLinkResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -8376,6 +9903,22 @@ const docTemplate = `{
             }
         },
         "pb.UpdateGroupModelResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSAlbumCateResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.UpdateMSAlbumResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -8621,6 +10164,9 @@ const docTemplate = `{
                 },
                 "invitationCode": {
                     "type": "string"
+                },
+                "textMsg": {
+                    "type": "string"
                 }
             }
         },
@@ -8645,11 +10191,18 @@ const docTemplate = `{
                 "creatorType": {
                     "type": "integer"
                 },
+                "defaultConvMode": {
+                    "description": "默认会话模式 0:添加所有预设会话 1:只添加一个会话(轮询) 2:只添加一个会话(随机) 3:不添加会话",
+                    "type": "integer"
+                },
                 "isEnable": {
                     "type": "boolean"
                 },
                 "remark": {
                     "type": "string"
+                },
+                "successUserCount": {
+                    "type": "integer"
                 }
             }
         },

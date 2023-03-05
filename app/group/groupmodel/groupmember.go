@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
@@ -23,10 +24,8 @@ type (
 		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index;comment:加入时间"`
 		// 角色
 		Role RoleType `bson:"role" json:"role" gorm:"column:role;type:int;not null;default:0;comment:角色;index;"` // 0:普通成员 1:管理员 2:群主
-		// 我设置的我的备注
-		Remark string `bson:"remark" json:"remark" gorm:"column:remark;type:varchar(255);not null;default:'';comment:我设置的我的备注"`
-		// 我设置的群的备注
-		GroupRemark string `bson:"groupRemark" json:"groupRemark" gorm:"column:groupRemark;type:varchar(255);not null;default:'';comment:我设置的群的备注"`
+		// 我设置的我的备注（群昵称）
+		Remark string `bson:"remark" json:"remark" gorm:"column:remark;type:varchar(255);not null;default:'';comment:我设置的我的备注;index;"`
 		// 解禁时间
 		UnbanTime int64 `bson:"unbanTime" json:"unbanTime" gorm:"column:unbanTime;type:bigint;not null;default:0;comment:解禁时间"`
 	}
@@ -49,11 +48,11 @@ func (m *GroupMember) Bytes() []byte {
 
 func (m *GroupMember) Pb() *pb.GroupMemberInfo {
 	return &pb.GroupMemberInfo{
-		GroupId:     m.GroupId,
-		MemberId:    m.UserId,
-		Remark:      m.Remark,
-		GroupRemark: m.GroupRemark,
-		Role:        pb.GroupRole(m.Role),
+		GroupId:   m.GroupId,
+		MemberId:  m.UserId,
+		Remark:    m.Remark,
+		Role:      pb.GroupRole(m.Role),
+		UnbanTime: m.UnbanTime,
 	}
 }
 
@@ -114,7 +113,10 @@ func FlushGroupsByUserIdCache(ctx context.Context, rc *redis.Redis, userIds ...s
 	for _, userId := range userIds {
 		keys = append(keys, rediskey.GroupMemberListByUserId(userId))
 	}
-	_, err := rc.DelCtx(ctx, keys...)
+	var err error
+	xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "FlushGroupsByUserIdCache", func(ctx context.Context) {
+		_, err = rc.DelCtx(ctx, keys...)
+	}, nil)
 	return err
 }
 
@@ -236,5 +238,22 @@ func FlushGroupMemberCache(ctx context.Context, rc *redis.Redis, groupId string,
 		keys = append(keys, rediskey.GroupMemberKey(groupId, userId))
 	}
 	_, err := rc.DelCtx(ctx, keys...)
+	return err
+}
+
+func FlushGroupMemberListCache(ctx context.Context, rc *redis.Redis, groupId string) error {
+	// 查询 keys
+	keyListKey := rediskey.GroupMemberSearchKeyList(groupId)
+	var keys = []string{keyListKey}
+	// hgetall keyListKey
+	val, err := rc.HgetallCtx(ctx, keyListKey)
+	if err != nil {
+		return err
+	}
+	for _, v := range val {
+		keys = append(keys, v)
+	}
+	// del keys
+	_, err = rc.DelCtx(ctx, keys...)
 	return err
 }

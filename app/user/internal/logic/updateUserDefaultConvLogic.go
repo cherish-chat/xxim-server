@@ -38,6 +38,7 @@ func (l *UpdateUserDefaultConvLogic) UpdateUserDefaultConv(in *pb.UpdateUserDefa
 		updateMap["filterType"] = in.UserDefaultConv.FilterType
 		updateMap["invitationCode"] = in.UserDefaultConv.InvitationCode
 		updateMap["convId"] = in.UserDefaultConv.ConvId
+		updateMap["textMsg"] = in.UserDefaultConv.TextMsg
 	}
 	if len(updateMap) > 0 {
 		err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.UserDefaultConv.Id).Updates(updateMap).Error

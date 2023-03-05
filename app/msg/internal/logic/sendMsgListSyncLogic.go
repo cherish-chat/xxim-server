@@ -35,11 +35,11 @@ func (l *SendMsgListSyncLogic) SendMsgListSync(in *pb.SendMsgListReq) (*pb.SendM
 		return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 推送给相关的在线用户
-	xtrace.StartFuncSpan(l.ctx, "PushMsgList", func(ctx context.Context) {
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "PushMsgList", func(ctx context.Context) {
 		_, err := NewPushMsgListLogic(ctx, l.svcCtx).PushMsgList(&pb.PushMsgListReq{MsgDataList: resp.MsgDataList})
 		if err != nil {
 			l.Errorf("PushMsgList error: %v", err)
 		}
-	})
+	}, nil)
 	return &pb.SendMsgListResp{}, nil
 }

@@ -105,4 +105,17 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		// 删除app内表情
 		group.POST("/delete/emoji", r.deleteEmoji)
 	}
+	// 外链列表
+	{
+		// 获取全部VPN列表
+		group.POST("/get/link/list/all", r.getAllLinkList)
+		// 获取VPN详情
+		group.POST("/get/link/detail", r.getLinkDetail)
+		// 增加VPN
+		group.POST("/add/link", r.addLink)
+		// 更新VPN
+		group.POST("/update/link", r.updateLink)
+		// 删除VPN
+		group.POST("/delete/link", r.deleteLink)
+	}
 }

@@ -27,7 +27,10 @@ func upsert(tx *gorm.DB, id string, model interface{}) {
 }
 
 func InitData(tx *gorm.DB) {
+	// restore
 	initMenu(tx)
+	restoreMenu(tx)
+	insertMenu(tx)
 	initRole(tx)
 	initApiPath(tx)
 	initMSIPWhitelist(tx)
@@ -35,6 +38,8 @@ func InitData(tx *gorm.DB) {
 	initRoleMenu(tx)
 	// 设置角色接口关联
 	initRoleApiPath(tx)
+	// 相册分类
+	initAlbumCate(tx)
 }
 
 func initRoleMenu(tx *gorm.DB) {

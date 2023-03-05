@@ -40,6 +40,7 @@ func (s *ServiceContext) Redis() *redis.Redis {
 func (s *ServiceContext) Mysql() *gorm.DB {
 	if s.mysql == nil {
 		s.mysql = xorm.NewClient(s.Config.Mysql)
+		s.mysql.AutoMigrate(&immodel.ConvSetting{})
 	}
 	return s.mysql
 }

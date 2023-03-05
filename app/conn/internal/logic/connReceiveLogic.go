@@ -6,6 +6,9 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
+	"github.com/cherish-chat/xxim-server/common/utils/xaes"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -32,6 +35,19 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 	switch websocket.MessageType(typ) {
 	case websocket.MessageBinary:
 		// 接收到消息
+		{
+			// 解密
+			if c.ConnParam.AesKey != nil && c.ConnParam.AesIv != nil {
+				// aes解密
+				var err error
+				msg, err = xaes.Decrypt([]byte(*c.ConnParam.AesIv), []byte(*c.ConnParam.AesKey), msg)
+				if err != nil {
+					l.Errorf("【疑似攻击】userId: %s, ip: %s, ip2region: %s", c.ConnParam.UserId, c.ConnParam.Ips, ip2region.Ip2Region(c.ConnParam.Ips).String())
+					c.Conn.Close(int(websocket.StatusPolicyViolation), "protocol error")
+					return
+				}
+			}
+		}
 		body := &pb.RequestBody{}
 		var bodyData []byte
 		err := proto.Unmarshal(msg, body)
@@ -49,16 +65,18 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 				code = pb.ResponseBody_RequestError
 				logx.WithContext(ctx).Infof("OnReceiveBody error: %s", err.Error())
 			} else {
-				logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
+				logx.WithContext(ctx).Errorf("OnReceiveBody method: %s, conn: %s, ip: %s, error: %s", body.Method, utils.AnyToString(c.ConnParam), ip2region.Ip2Region(c.ConnParam.Ips).String(), err.Error())
 			}
+			var data []byte
 			if respBody != nil {
 				code = respBody.Code
+				data = respBody.Data
 			}
 			bodyData, _ = proto.Marshal(&pb.ResponseBody{
 				ReqId:  body.ReqId,
 				Method: body.Method,
 				Code:   code,
-				Data:   nil,
+				Data:   data,
 			})
 		}
 		data, _ := proto.Marshal(&pb.PushBody{

@@ -3,6 +3,7 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 import "im.proto";
+import "user.proto";
 enum GroupDisturbOpt {
   // 接收消息但不提醒
   DisturbReceive = 0;
@@ -35,6 +36,7 @@ message CreateGroupResp {
   CommonResp commonResp = 1;
   // 群ID
   optional string groupId = 2;
+  optional GroupBaseInfo info = 3;
 }
 
 //GetGroupHomeReq 获取群聊首页
@@ -168,16 +170,12 @@ message SetGroupMemberInfoReq {
   string groupId = 2;
   // 群成员ID
   string memberId = 3;
-  // notice content
-  string notice = 4;
   // 群备注
   optional string remark = 11;
   // 群角色
   optional GroupRole role = 12;
   // 解除禁言时间
   optional int64 unbanTime = 13;
-  // 群备注
-  optional string groupRemark = 14;
 }
 
 //SetGroupMemberInfoResp 设置群成员信息
@@ -201,18 +199,34 @@ message GroupMemberInfo {
   string memberId = 2;
   // 群内显示的昵称
   string remark = 3;
-  // 群聊的备注
-  string groupRemark = 4;
-  // 置顶选项
-  bool top = 5;
-  // 免打扰选项
-  bool disturb = 6;
-  // 免打扰选项更多设置
-  GroupDisturbOpt disturbMore = 7;
-  // 聊天背景图
-  string chatBg = 8;
   // 群角色
-  GroupRole role = 9;
+  GroupRole role = 4;
+  // 解封时间
+  int64 unbanTime = 5;
+  // 用户基本信息
+  optional UserBaseInfo userBaseInfo = 11;
+}
+
+//MapGroupMemberInfoByIdsReq 批量获取群成员信息
+message MapGroupMemberInfoByIdsReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  repeated string memberIds = 3;
+  // Opt
+  message Opt {
+    // 是否获取用户基本信息
+    bool userBaseInfo = 1;
+  }
+  Opt opt = 4;
+}
+
+//MapGroupMemberInfoByIdsResp 批量获取群成员信息
+message MapGroupMemberInfoByIdsResp {
+  CommonResp commonResp = 1;
+  // 群成员信息
+  map<string, GroupMemberInfo> groupMemberInfoMap = 2;
 }
 
 //GetGroupMemberInfoResp 获取群成员信息
@@ -279,13 +293,17 @@ message GetGroupMemberListReq {
   message GetGroupMemberListFilter {
     // 是否接受离线推送
     optional bool noDisturb = 1;
+    // 只包含群主
+    optional bool onlyOwner = 2;
+    // 只包含管理员
+    optional bool onlyAdmin = 3;
+    // 只包含成员
+    optional bool onlyMember = 4;
   }
   GetGroupMemberListFilter filter = 4;
   message GetGroupMemberListOpt {
     // 是否只获取id
     optional bool onlyId = 1;
-    // 是否获取消息接收选项
-    optional bool getNotifyOpt = 2;
   }
   GetGroupMemberListOpt opt = 5;
 }
@@ -293,12 +311,8 @@ message GetGroupMemberListReq {
 //GetGroupMemberListResp 获取群成员列表
 message GetGroupMemberListResp {
   CommonResp commonResp = 1;
-  message GroupMember {
-    string userId = 1;
-    MsgNotifyOpt notifyOpt = 2;
-  }
   // 群成员列表
-  repeated GroupMember groupMemberList = 2;
+  repeated GroupMemberInfo groupMemberList = 2;
 }
 
 //GetMyGroupListReq 获取我的群聊列表
@@ -397,6 +411,53 @@ message HandleGroupApplyResp {
   CommonResp commonResp = 1;
 }
 
+//getGroupApplyList 获取群聊申请列表
+message GetGroupApplyListReq {
+  CommonReq commonReq = 1;
+  // 分页
+  Page page = 2;
+  // 过滤
+  message Filter {
+    // 申请状态
+    optional GroupApplyHandleResult result = 1;
+  }
+  Filter filter = 3;
+}
+message GroupApplyInfo {
+  // 申请ID
+  string applyId = 1;
+  // 群ID
+  string groupId = 2;
+  // 申请人
+  string userId = 3;
+  // 申请状态
+  GroupApplyHandleResult result = 4;
+  // 申请理由
+  string reason = 5;
+  // 申请时间
+  int64 applyTime = 6;
+  string applyTimeStr = 7;
+  // 处理时间
+  int64 handleTime = 8;
+  string handleTimeStr = 9;
+  // 处理人
+  string handleUserId = 10;
+
+  // 申请人的baseInfo
+  optional UserBaseInfo userBaseInfo = 11;
+  // 处理人的baseInfo
+  optional UserBaseInfo handleUserBaseInfo = 12;
+
+  // 群的baseInfo
+  optional GroupBaseInfo groupBaseInfo = 13;
+}
+message GetGroupApplyListResp {
+  CommonResp commonResp = 1;
+  // 申请列表
+  repeated GroupApplyInfo groupApplyList = 2;
+  // 总数
+  int64 total = 3;
+}
 
 //分页获取某人的群列表
 message GetGroupListByUserIdReq {
@@ -478,6 +539,11 @@ type (
 	}
 )
  */
+enum AllMuterType {
+  // 0:禁言所有人 1:只禁言普通用户
+  ALL = 0;
+  NORMAL = 1;
+}
 //GroupModel 群组
 message GroupModel {
   message JoinGroupOption {
@@ -527,6 +593,8 @@ message GroupModel {
   JoinGroupOption joinGroupOption = 19;
 
   string adminRemark = 20;
+
+  AllMuterType allMuterType = 21;
 }
 
 //GetAllGroupModelReq 获取所有群组
@@ -577,6 +645,42 @@ message DismissGroupModelResp {
   CommonResp commonResp = 1;
 }
 
+//SearchGroupsByKeywordReq 搜索群组
+message SearchGroupsByKeywordReq {
+  CommonReq commonReq = 1;
+  string keyword = 2;
+}
+
+message SearchGroupsByKeywordResp {
+  CommonResp commonResp = 1;
+  repeated GroupBaseInfo groups = 2;
+}
+
+//AddGroupMemberReq 添加群成员
+message AddGroupMemberReq {
+  CommonReq commonReq = 1;
+  string groupId = 2;
+  string userId = 3;
+}
+
+//AddGroupMemberResp 添加群成员
+message AddGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+// 举报群
+// ReportGroupReq
+message ReportGroupReq {
+  CommonReq commonReq = 1;
+  string groupId = 2;
+  string reason = 3;
+}
+
+// ReportGroupResp 举报群
+message ReportGroupResp {
+  CommonResp commonResp = 1;
+}
+
 service groupService {
   //CreateGroup 创建群聊
   rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp) {}
@@ -594,6 +698,8 @@ service groupService {
   rpc SetGroupMemberInfo(SetGroupMemberInfoReq) returns (SetGroupMemberInfoResp) {}
   //GetGroupMemberInfo 获取群成员信息
   rpc GetGroupMemberInfo(GetGroupMemberInfoReq) returns (GetGroupMemberInfoResp) {}
+  // MapGroupMemberInfoByIds 批量获取群成员信息
+  rpc MapGroupMemberInfoByIds(MapGroupMemberInfoByIdsReq) returns (MapGroupMemberInfoByIdsResp) {}
   //EditGroupInfo 编辑群信息
   rpc EditGroupInfo(EditGroupInfoReq) returns (EditGroupInfoResp) {}
   //TransferGroupOwner 转让群主
@@ -612,6 +718,8 @@ service groupService {
   rpc ApplyToBeGroupMember(ApplyToBeGroupMemberReq) returns (ApplyToBeGroupMemberResp) {}
   //HandleGroupApply 处理群聊申请
   rpc HandleGroupApply(HandleGroupApplyReq) returns (HandleGroupApplyResp) {}
+  //GetGroupApplyList 获取群聊申请列表
+  rpc GetGroupApplyList(GetGroupApplyListReq) returns (GetGroupApplyListResp) {}
 
   //GetGroupListByUserId 分页获取某人的群列表
   rpc GetGroupListByUserId(GetGroupListByUserIdReq) returns (GetGroupListByUserIdResp) {}
@@ -624,4 +732,13 @@ service groupService {
   rpc UpdateGroupModel(UpdateGroupModelReq) returns (UpdateGroupModelResp) {}
   //DismissGroupModel 解散群组
   rpc DismissGroupModel(DismissGroupModelReq) returns (DismissGroupModelResp) {}
+
+  //SearchGroupsByKeyword 搜索群组
+  rpc SearchGroupsByKeyword(SearchGroupsByKeywordReq) returns (SearchGroupsByKeywordResp) {}
+
+  //AddGroupMember 添加群成员
+  rpc AddGroupMember(AddGroupMemberReq) returns (AddGroupMemberResp) {}
+
+  // ReportGroup
+  rpc ReportGroup(ReportGroupReq) returns (ReportGroupResp) {}
 }

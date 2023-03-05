@@ -67,16 +67,6 @@ func (s *RelationServiceServer) DeleteFriend(ctx context.Context, in *pb.DeleteF
 	return l.DeleteFriend(in)
 }
 
-func (s *RelationServiceServer) SetSingleConvSetting(ctx context.Context, in *pb.SetSingleConvSettingReq) (*pb.SetSingleConvSettingResp, error) {
-	l := logic.NewSetSingleConvSettingLogic(ctx, s.svcCtx)
-	return l.SetSingleConvSetting(in)
-}
-
-func (s *RelationServiceServer) GetSingleConvSetting(ctx context.Context, in *pb.GetSingleConvSettingReq) (*pb.GetSingleConvSettingResp, error) {
-	l := logic.NewGetSingleConvSettingLogic(ctx, s.svcCtx)
-	return l.GetSingleConvSetting(in)
-}
-
 func (s *RelationServiceServer) GetFriendList(ctx context.Context, in *pb.GetFriendListReq) (*pb.GetFriendListResp, error) {
 	l := logic.NewGetFriendListLogic(ctx, s.svcCtx)
 	return l.GetFriendList(in)

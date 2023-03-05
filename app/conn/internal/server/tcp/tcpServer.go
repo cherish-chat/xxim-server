@@ -80,11 +80,14 @@ type zinxHandler struct {
 func (l *zinxHandler) Handle(request ziface.IRequest) {
 	msg := request.GetData()
 	uc := l.server.iConnection2UserConn(request.GetConnection())
+	if uc == nil {
+		return
+	}
 	go xtrace.RunWithTrace("", "ReadFromConn", func(ctx context.Context) {
 		if uc == nil {
 			return
 		}
-		l.server.onReceive(uc.Ctx, uc, 2, msg)
+		l.server.onReceive(ctx, uc, 2, msg)
 	}, propagation.MapCarrier{
 		"length":      strconv.Itoa(len(msg)),
 		"userId":      uc.ConnParam.UserId,

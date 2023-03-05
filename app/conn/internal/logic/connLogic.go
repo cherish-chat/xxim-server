@@ -7,124 +7,31 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/xaes"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
+	"strings"
 	"sync"
 	"time"
 )
 
-type ConnMap = sync.Map // map[string]*DeviceMap // key: platform, value: deviceMap
-
-type DeviceMap = sync.Map // map[string]*types.UserConn // key: deviceId, value: *types.UserConn
-
 type ConnLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
-	userConnMap sync.Map // key: userId value: *ConnMap
 	// 未认证的连接
 	unknownConnMap sync.Map // key: *types.UserConn
-}
-
-func (l *ConnLogic) LoadOk(userId string) (*ConnMap, bool) {
-	if v, ok := l.userConnMap.Load(userId); ok {
-		return v.(*ConnMap), true
-	}
-	return nil, false
-}
-
-func (l *ConnLogic) Load(userId string) *ConnMap {
-	if v, ok := l.userConnMap.Load(userId); ok {
-		return v.(*ConnMap)
-	}
-	cm := &ConnMap{}
-	l.Store(userId, cm)
-	return cm
-}
-
-func (l *ConnLogic) Store(userId string, cm *ConnMap) {
-	l.userConnMap.Store(userId, cm)
-}
-
-func (l *ConnLogic) LoadPlatform(userId, platform string) *DeviceMap {
-	connMap := l.Load(userId)
-	if dm, ok := connMap.Load(platform); ok {
-		return dm.(*DeviceMap)
-	}
-	deviceMap := &DeviceMap{}
-	l.UpdatePlatform(userId, platform, deviceMap)
-	return deviceMap
-}
-
-func (l *ConnLogic) LoadPlatformOk(userId, platform string) (*DeviceMap, bool) {
-	connMap := l.Load(userId)
-	if dm, ok := connMap.Load(platform); ok {
-		return dm.(*DeviceMap), true
-	}
-	return nil, false
-}
-
-func (l *ConnLogic) UpdatePlatform(userId string, platform string, dm *DeviceMap) {
-	connMap := l.Load(userId)
-	connMap.Store(platform, dm)
-	l.Store(userId, connMap)
-}
-
-func (l *ConnLogic) LoadDeviceOk(userId, platform, deviceId string) (*types.UserConn, bool) {
-	dm := l.LoadPlatform(userId, platform)
-	if connI, ok := dm.Load(deviceId); ok {
-		return connI.(*types.UserConn), true
-	}
-	return nil, false
-}
-
-func (l *ConnLogic) UpdateDevice(userId, platform, deviceId string, userConn *types.UserConn) {
-	dm := l.LoadPlatform(userId, platform)
-	dm.Store(deviceId, userConn)
-	l.UpdatePlatform(userId, platform, dm)
-}
-
-func (l *ConnLogic) DeleteDevice(userId string, platform string, deviceId string) {
-	dm := l.LoadPlatform(userId, platform)
-	dm.Delete(deviceId)
-	l.UpdatePlatform(userId, platform, dm)
-}
-
-func (l *ConnLogic) CheckNoUser(userId string) {
-	if connMap, ok := l.LoadOk(userId); !ok {
-		// 不在线
-		return
-	} else if utils.SyncMapLength(connMap) == 0 {
-		// 不在线
-		l.userConnMap.Delete(userId)
-	} else {
-		// 遍历所有平台
-		connMap.Range(func(key, value interface{}) bool {
-			platform := key.(string)
-			dm := value.(*DeviceMap)
-			if utils.SyncMapLength(dm) == 0 {
-				// 不在线
-				connMap.Delete(platform)
-			}
-			return true
-		})
-		if utils.SyncMapLength(connMap) == 0 {
-			l.userConnMap.Delete(userId)
-		} else {
-			l.Store(userId, connMap)
-		}
-	}
 }
 
 var singletonConnLogic *ConnLogic
 
 func InitConnLogic(svcCtx *svc.ServiceContext) *ConnLogic {
+	InitUserConnStorage(svcCtx)
 	if singletonConnLogic == nil {
 		l := &ConnLogic{svcCtx: svcCtx}
 		l.Logger = logx.WithContext(context.Background())
-		l.userConnMap = sync.Map{}
 		singletonConnLogic = l
 	}
 	return singletonConnLogic
@@ -148,6 +55,8 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 			Ips:         param.Ips,
 			NetworkUsed: param.NetworkUsed,
 			Headers:     param.Headers,
+			AesKey:      param.AesKey,
+			AesIv:       param.AesIv,
 		},
 	})
 	if err != nil {
@@ -161,7 +70,8 @@ func (l *ConnLogic) BeforeConnect(ctx context.Context, param types.ConnParam) (i
 
 func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	param := c.ConnParam
-	l.Debugf("user %s connected", utils.AnyToString(param))
+	// 打印堆栈
+	l.Debugf("user %s connected", utils.AnyToString(param.UserId))
 	// 是否未认证的连接
 	if param.UserId == "" || param.Token == "" {
 		l.unknownConnMap.Store(c, struct{}{})
@@ -173,15 +83,25 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	l.unknownConnMap.Delete(c)
 	// 加入用户连接
 	{
-		if userConn, ok := l.LoadDeviceOk(param.UserId, param.Platform, param.DeviceId); ok {
+		if userConn, ok := singletonUserConnStorage.LoadDeviceOk(param.UserId, param.Platform, param.DeviceId); ok {
 			// 是不是同一条连接
 			if userConn.Conn == c.Conn {
 				// 是同一条连接
 				return
 			}
-			userConn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+			// 踢掉老的连接
+			if userConn.ConnectedAt.Before(c.ConnectedAt) {
+				// userConn 比 c 连接时间早，说明 userConn 是老连接，需要踢掉
+				userConn.Conn.Close(int(websocket.StatusNormalClosure), "duplicate connection")
+			} else {
+				// 打印两个连接
+				logx.WithContext(context.Background()).Infof("duplicate connection: %s, %s", utils.AnyToString(userConn.ConnParam), utils.AnyToString(c.ConnParam))
+			}
 		}
-		l.UpdateDevice(param.UserId, param.Platform, param.DeviceId, c)
+		err := singletonUserConnStorage.UpdateDevice(param.UserId, param.Platform, param.DeviceId, c)
+		if err != nil {
+			return
+		}
 	}
 	go func() {
 		for {
@@ -195,6 +115,8 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 					NetworkUsed: param.NetworkUsed,
 					Headers:     param.Headers,
 					PodIp:       l.svcCtx.PodIp,
+					AesKey:      param.AesKey,
+					AesIv:       param.AesIv,
 				},
 				ConnectedAt: utils.AnyToString(c.ConnectedAt.UnixMilli()),
 			})
@@ -222,16 +144,7 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 	}
 	// 删除用户连接
 	{
-		if _, ok := l.LoadOk(c.ConnParam.UserId); !ok {
-			return
-		}
-		if _, ok := l.LoadPlatformOk(c.ConnParam.UserId, c.ConnParam.Platform); !ok {
-		}
-		if _, ok := l.LoadDeviceOk(c.ConnParam.UserId, c.ConnParam.Platform, c.ConnParam.DeviceId); !ok {
-			return
-		}
-		l.DeleteDevice(c.ConnParam.UserId, c.ConnParam.Platform, c.ConnParam.DeviceId)
-		l.CheckNoUser(c.ConnParam.UserId)
+		singletonUserConnStorage.DeleteDevice(c.ConnParam.UserId, c.ConnParam.Platform, c.ConnParam.DeviceId)
 	}
 	l.stats()
 	go func() {
@@ -246,6 +159,8 @@ func (l *ConnLogic) DeleteSubscriber(c *types.UserConn) {
 					NetworkUsed: c.ConnParam.NetworkUsed,
 					Headers:     c.ConnParam.Headers,
 					PodIp:       l.svcCtx.PodIp,
+					AesKey:      c.ConnParam.AesKey,
+					AesIv:       c.ConnParam.AesIv,
 				},
 				ConnectedAt:    utils.AnyToString(c.ConnectedAt.UnixMilli()),
 				DisconnectedAt: utils.AnyToString(time.Now().UnixMilli()),
@@ -279,15 +194,15 @@ func (l *ConnLogic) stats() {
 	// 统计在线用户数
 	onlineUserCount := 0
 	onlineDeviceCount := 0
-	l.userConnMap.Range(func(key, value any) bool {
-		onlineUserCount++
-		connMap := value.(*ConnMap)
-		connMap.Range(func(key, value any) bool {
-			onlineDeviceCount++
-			return true
-		})
+	var onlineUserIds []string
+	var onlineDeviceIds []string
+	singletonUserConnStorage.Range(func(id string, conn *types.UserConn) bool {
+		onlineUserIds = append(onlineUserIds, conn.ConnParam.UserId)
+		onlineDeviceIds = append(onlineDeviceIds, conn.ConnParam.DeviceId)
 		return true
 	})
+	onlineUserCount = len(utils.Set(onlineUserIds))
+	onlineDeviceCount = len(utils.Set(onlineDeviceIds))
 	l.Infof("online user count: %d, online device count: %d", onlineUserCount, onlineDeviceCount)
 }
 
@@ -362,20 +277,10 @@ func (l *ConnLogic) SendMsg(in *pb.SendMsgReq) error {
 func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*types.UserConn {
 	conns := make([]*types.UserConn, 0)
 	{
-		l.userConnMap.Range(func(key, value any) bool {
-			//userId := key.(string)
-			cm := value.(*ConnMap)
-			cm.Range(func(key, value any) bool {
-				dm := value.(*DeviceMap)
-				dm.Range(func(key, value any) bool {
-					c := value.(*types.UserConn)
-					if filter(c) {
-						conns = append(conns, c)
-					}
-					return true
-				})
-				return true
-			})
+		singletonUserConnStorage.Range(func(id string, conn *types.UserConn) bool {
+			if filter(conn) {
+				conns = append(conns, conn)
+			}
 			return true
 		})
 	}
@@ -383,5 +288,19 @@ func (l *ConnLogic) GetConnsByFilter(filter func(c *types.UserConn) bool) []*typ
 }
 
 func (l *ConnLogic) SendMsgToConn(c *types.UserConn, data []byte) error {
-	return c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)
+	// 加密
+	{
+		if c.ConnParam.AesKey != nil && c.ConnParam.AesIv != nil {
+			// aes加密
+			data = xaes.Encrypt([]byte(*c.ConnParam.AesIv), []byte(*c.ConnParam.AesKey), data)
+		}
+	}
+	err := c.Conn.Write(c.Ctx, int(websocket.MessageBinary), data)
+	if err != nil {
+		if strings.Contains(err.Error(), "close") {
+			c.Conn.Close(int(websocket.StatusNormalClosure), "kick")
+		}
+		logx.Errorf("SendMsgToConn error: %s", err.Error())
+	}
+	return err
 }
