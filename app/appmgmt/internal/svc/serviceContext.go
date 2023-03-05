@@ -54,6 +54,7 @@ func (s *ServiceContext) Mysql() *gorm.DB {
 		s.mysql.AutoMigrate(&appmgmtmodel.Version{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Vpn{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Link{})
+		s.mysql.AutoMigrate(&appmgmtmodel.Stats{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

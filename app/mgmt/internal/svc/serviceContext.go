@@ -99,7 +99,7 @@ func (s *ServiceContext) AppMgmtService() appmgmtservice.AppMgmtService {
 			App:       s.Config.AppMgmtRpc.App,
 			Token:     s.Config.AppMgmtRpc.Token,
 			NonBlock:  true,
-			Timeout:   10 * 1000,
+			Timeout:   60 * 1000,
 		},
 			utils.Zrpc.Options()...))
 	}

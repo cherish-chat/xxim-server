@@ -120,6 +120,10 @@ type (
 	MSOperationLog                           = pb.MSOperationLog
 	MSRole                                   = pb.MSRole
 	MSUser                                   = pb.MSUser
+	StatsMSReq                               = pb.StatsMSReq
+	StatsMSResp                              = pb.StatsMSResp
+	StatsMSResp_Series                       = pb.StatsMSResp_Series
+	StatsMSResp_Today                        = pb.StatsMSResp_Today
 	SwitchMSUserStatusReq                    = pb.SwitchMSUserStatusReq
 	SwitchMSUserStatusResp                   = pb.SwitchMSUserStatusResp
 	UpdateAppLineConfigReq                   = pb.UpdateAppLineConfigReq
@@ -194,6 +198,7 @@ type (
 		GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error)
 		DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error)
 		UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error)
+		StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -457,4 +462,9 @@ func (m *defaultMgmtService) DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbu
 func (m *defaultMgmtService) UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.UpdateMSAlbum(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.StatsMS(ctx, in, opts...)
 }

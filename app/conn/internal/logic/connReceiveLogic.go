@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/utils/xaes"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
@@ -64,7 +65,7 @@ func (l *ConnLogic) OnReceive(ctx context.Context, c *types.UserConn, typ int, m
 				code = pb.ResponseBody_RequestError
 				logx.WithContext(ctx).Infof("OnReceiveBody error: %s", err.Error())
 			} else {
-				logx.WithContext(ctx).Errorf("OnReceiveBody error: %s", err.Error())
+				logx.WithContext(ctx).Errorf("OnReceiveBody method: %s, conn: %s, ip: %s, error: %s", body.Method, utils.AnyToString(c.ConnParam), ip2region.Ip2Region(c.ConnParam.Ips).String(), err.Error())
 			}
 			var data []byte
 			if respBody != nil {

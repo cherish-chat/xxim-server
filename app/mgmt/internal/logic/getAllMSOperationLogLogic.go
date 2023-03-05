@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
@@ -30,9 +31,32 @@ func (l *GetAllMSOperationLogLogic) GetAllMSOperationLog(in *pb.GetAllMSOperatio
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
 		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
 			switch k {
 			case "id":
 				wheres = append(wheres, xorm.Where("id = ?", v))
+			case "operationType":
+				wheres = append(wheres, xorm.Where("operationType = ?", v))
+			case "operationTitle":
+				wheres = append(wheres, xorm.Where("operationTitle LIKE ?", v+"%"))
+			case "resultSuccess":
+				if v == "1" || v == "true" {
+					wheres = append(wheres, xorm.Where("resultSuccess = ?", true))
+				} else {
+					wheres = append(wheres, xorm.Where("resultSuccess = ?", false))
+				}
+			case "reqIp":
+				wheres = append(wheres, xorm.Where("reqIp LIKE ?", v+"%"))
+			case "operator":
+				wheres = append(wheres, xorm.Where("operator = ?", v))
+			case "reqTime_gte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("reqTime >= ?", val))
+			case "reqTime_lte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("reqTime <= ?", val))
 			}
 		}
 	}

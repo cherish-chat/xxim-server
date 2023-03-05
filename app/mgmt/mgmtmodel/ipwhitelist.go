@@ -11,7 +11,7 @@ type MSIPWhitelist struct {
 	Id         string `gorm:"column:id;primarykey;comment:'主键'"`
 	StartIp    string `gorm:"column:startIp;not null;default:'';comment:'起始IP';"`
 	EndIp      string `gorm:"column:endIp;not null;default:'';comment:'结束IP';"`
-	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注';"`
+	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注';index;"`
 	UserId     string `gorm:"column:userId;not null;default:'';comment:'用户ID';"` // 如果为空，则表示针对所有用户
 	IsEnable   bool   `gorm:"column:isEnable;not null;default:0;comment:'是否启用';index;"`
 	CreateTime int64  `gorm:"column:createTime;not null;default:0;comment:'创建时间';index;"`

@@ -17,4 +17,14 @@ func RegisterAppMgmt(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/appmgmt/white/appGetAllConfig", route)
 	}
+	// GetLatestVersionReq GetLatestVersionResp
+	{
+		route := conngateway.Route[*pb.GetLatestVersionReq, *pb.GetLatestVersionResp]{
+			NewRequest: func() *pb.GetLatestVersionReq {
+				return &pb.GetLatestVersionReq{}
+			},
+			Do: svcCtx.AppMgmtService().GetLatestVersion,
+		}
+		conngateway.AddRoute("/v1/appmgmt/white/getLatestVersion", route)
+	}
 }

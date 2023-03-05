@@ -273,6 +273,7 @@ message MSMenu {
   bool isCache = 21; // 是否缓存
   bool isShow = 22; // 是否显示
   bool isDisable = 23; // 是否禁用
+  string menuIconElement2 = 24; // 菜单图标Element v2
   repeated MSMenu children = 30; // 子菜单
 }
 
@@ -922,6 +923,38 @@ message UpdateMSAlbumCateResp {
   CommonResp commonResp = 1;
 }
 
+//StatsMSReq 统计请求
+message StatsMSReq {
+  CommonReq commonReq = 1;
+  string startTime = 2;
+  string endTime = 3;
+}
+
+//StatsMSResp 统计响应
+message StatsMSResp {
+  message Today {
+    string time = 1;
+    int32 newUser = 2;
+    int32 newGroup = 4;
+    int32 todayMsg = 6;
+    int32 todayMsgUser = 8;
+    int32 todayAliveGroup = 9;
+    int32 todayAliveSingle = 10;
+    int32 todayAliveUser = 11;
+    int32 todayNewFriend = 12;
+  }
+  Today today = 1;
+  repeated string dates = 2;
+  repeated string legend = 3;
+  message Series {
+    string name = 1;
+    repeated int32 data = 2;
+    string type = 3;
+    string stack = 4;
+  }
+  repeated Series series = 4;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
@@ -986,4 +1019,6 @@ service mgmtService {
   rpc GetAllMSAlbum(GetAllMSAlbumReq) returns (GetAllMSAlbumResp);
   rpc DeleteMSAlbum(DeleteMSAlbumReq) returns (DeleteMSAlbumResp);
   rpc UpdateMSAlbum(UpdateMSAlbumReq) returns (UpdateMSAlbumResp);
+
+  rpc StatsMS(StatsMSReq) returns (StatsMSResp);
 }

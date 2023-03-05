@@ -25,10 +25,10 @@ func NewConfigMSLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConfigMS
 
 func (l *ConfigMSLogic) ConfigMS(in *pb.CommonReq) (*pb.ConfigMSResp, error) {
 	return &pb.ConfigMSResp{
-		WebName:     "XXIM管理系统",
-		WebLogo:     "https://www.cherish.chat/img/logo.10a3eca0.webp",
-		WebFavicon:  "https://www.cherish.chat/img/logo.10a3eca0.webp",
-		WebBackdrop: "https://www.cherish.chat/img/phone.551165e4.png",
+		WebName:     "惺惺后台管理系统",
+		WebLogo:     "https://www.cherish.chat/logo.png",
+		WebFavicon:  "https://www.cherish.chat/logo.png",
+		WebBackdrop: "https://www.cherish.chat/assets/%E6%89%8B%E6%9C%BA_waifu2x_art_noise1_scale-7f74d4be.webp",
 		PubDomain:   "",
 		Copyright: []*pb.MStr{
 			{

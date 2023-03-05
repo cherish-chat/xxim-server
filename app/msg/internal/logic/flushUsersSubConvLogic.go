@@ -68,29 +68,61 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string, compareConv
 	latestGetConvIdsRedisKey := rediskey.LatestGetConvIds(userId)
 	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, latestGetConvIdsRedisKey)
 	latestGetConvIds := strings.Split(val, ",")
-	// 取消上次会话的订阅
+	latestGetConvIdsTTl := 0
 	if len(latestGetConvIds) > 0 {
+		// 获取这个key的过期秒数
+		ttl, err := l.svcCtx.Redis().TtlCtx(l.ctx, latestGetConvIdsRedisKey)
+		if err != nil {
+			l.Errorf("ttl error: %v", err)
+			return err
+		}
+		if ttl <= 0 {
+			// 说明这个key永不过期
+			ttl = 60 * 30 // 30分钟
+		}
+		latestGetConvIdsTTl = ttl
+	}
+	// 对比两次convIds  获取应该删除的  和 应该添加的
+	var delConvIds []string
+	for _, id := range latestGetConvIds {
+		if !utils.InSlice(convIds, id) {
+			delConvIds = append(delConvIds, id)
+		}
+	}
+	// 取消上次会话的订阅
+	if len(delConvIds) > 0 {
 		var keys []string
-		for _, id := range latestGetConvIds {
+		for _, id := range delConvIds {
 			keys = append(keys, rediskey.ConvMembersSubscribed(id))
 		}
-		err := xredis.MZRem(l.svcCtx.RedisSub(), l.ctx, keys, rediskey.ConvMemberPodIp(userId))
+		err := xredis.MZRem(l.svcCtx.Redis(), l.ctx, keys, rediskey.ConvMemberPodIp(userId))
 		if err != nil {
 			l.Errorf("mzrem error: %v", err)
 			return err
 		}
 	}
-	// mzadd and setex
+
+	// 更新最新的会话ids
+	if len(convIds) > 0 {
+		err := l.svcCtx.Redis().SetexCtx(l.ctx, latestGetConvIdsRedisKey, strings.Join(convIds, ","), latestGetConvIdsTTl)
+		if err != nil {
+			l.Errorf("setex error: %v", err)
+			return err
+		}
+	}
+
+	// 新增订阅
 	if len(convIds) > 0 {
 		var keys []string
 		for _, id := range convIds {
 			keys = append(keys, rediskey.ConvMembersSubscribed(id))
 		}
-		err := xredis.MZAddEx(l.svcCtx.RedisSub(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*5)
+		err := xredis.MZAddEx(l.svcCtx.Redis(), l.ctx, keys, time.Now().UnixMilli(), rediskey.ConvMemberPodIp(userId), 60*60*24*30)
 		if err != nil {
-			l.Errorf("mzaddex error: %v", err)
+			l.Errorf("mzadd error: %v", err)
 			return err
 		}
 	}
+
 	return nil
 }

@@ -38,7 +38,7 @@ func (l *TimerCleanSubscriptionLogic) cleanSubscription() {
 	regKey := rediskey.ConvMembersSubscribed("*")
 	keysChan := make(chan []string)
 	stopChan := make(chan struct{})
-	go xredis.Scan(l.svcCtx.RedisSub(), l.ctx, regKey, keysChan, stopChan)
+	go xredis.Scan(l.svcCtx.Redis(), l.ctx, regKey, keysChan, stopChan)
 	var keys []string
 GETKEY:
 	for {
@@ -54,7 +54,7 @@ GETKEY:
 	}
 	for _, key := range keys {
 		// 	ZREMRANGEBYSCORE key 0 time.Now().Add(time.Second * 60 * 3).UnixMilli()
-		_, err := l.svcCtx.RedisSub().ZremrangebyscoreCtx(l.ctx, key, 0, time.Now().Add(time.Second*60*3).UnixMilli())
+		_, err := l.svcCtx.Redis().ZremrangebyscoreCtx(l.ctx, key, 0, time.Now().Add(time.Second*60*3).UnixMilli())
 		if err != nil {
 			l.Errorf("ZremrangebyscoreCtx error: %s", err.Error())
 		}

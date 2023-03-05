@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/config"
+	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/server"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtservice"
@@ -33,6 +34,7 @@ func main() {
 		}
 	})
 	defer s.Stop()
+	logic.NewStatsLogic(ctx).Start()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

@@ -25,6 +25,7 @@ type AppMgmtServiceClient interface {
 	GetAllAppMgmtConfig(ctx context.Context, in *GetAllAppMgmtConfigReq, opts ...grpc.CallOption) (*GetAllAppMgmtConfigResp, error)
 	UpdateAppMgmtConfig(ctx context.Context, in *UpdateAppMgmtConfigReq, opts ...grpc.CallOption) (*UpdateAppMgmtConfigResp, error)
 	GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error)
+	GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error)
 	GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error)
 	AddAppMgmtVersion(ctx context.Context, in *AddAppMgmtVersionReq, opts ...grpc.CallOption) (*AddAppMgmtVersionResp, error)
 	UpdateAppMgmtVersion(ctx context.Context, in *UpdateAppMgmtVersionReq, opts ...grpc.CallOption) (*UpdateAppMgmtVersionResp, error)
@@ -91,6 +92,15 @@ func (c *appMgmtServiceClient) UpdateAppMgmtConfig(ctx context.Context, in *Upda
 func (c *appMgmtServiceClient) GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error) {
 	out := new(GetAllAppMgmtVersionResp)
 	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAllAppMgmtVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error) {
+	out := new(GetLatestVersionResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetLatestVersion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -419,6 +429,7 @@ type AppMgmtServiceServer interface {
 	GetAllAppMgmtConfig(context.Context, *GetAllAppMgmtConfigReq) (*GetAllAppMgmtConfigResp, error)
 	UpdateAppMgmtConfig(context.Context, *UpdateAppMgmtConfigReq) (*UpdateAppMgmtConfigResp, error)
 	GetAllAppMgmtVersion(context.Context, *GetAllAppMgmtVersionReq) (*GetAllAppMgmtVersionResp, error)
+	GetLatestVersion(context.Context, *GetLatestVersionReq) (*GetLatestVersionResp, error)
 	GetAppMgmtVersionDetail(context.Context, *GetAppMgmtVersionDetailReq) (*GetAppMgmtVersionDetailResp, error)
 	AddAppMgmtVersion(context.Context, *AddAppMgmtVersionReq) (*AddAppMgmtVersionResp, error)
 	UpdateAppMgmtVersion(context.Context, *UpdateAppMgmtVersionReq) (*UpdateAppMgmtVersionResp, error)
@@ -469,6 +480,9 @@ func (UnimplementedAppMgmtServiceServer) UpdateAppMgmtConfig(context.Context, *U
 }
 func (UnimplementedAppMgmtServiceServer) GetAllAppMgmtVersion(context.Context, *GetAllAppMgmtVersionReq) (*GetAllAppMgmtVersionResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllAppMgmtVersion not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetLatestVersion(context.Context, *GetLatestVersionReq) (*GetLatestVersionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatestVersion not implemented")
 }
 func (UnimplementedAppMgmtServiceServer) GetAppMgmtVersionDetail(context.Context, *GetAppMgmtVersionDetailReq) (*GetAppMgmtVersionDetailResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppMgmtVersionDetail not implemented")
@@ -638,6 +652,24 @@ func _AppMgmtService_GetAllAppMgmtVersion_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AppMgmtServiceServer).GetAllAppMgmtVersion(ctx, req.(*GetAllAppMgmtVersionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_GetLatestVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLatestVersionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetLatestVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetLatestVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetLatestVersion(ctx, req.(*GetLatestVersionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1290,6 +1322,10 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllAppMgmtVersion",
 			Handler:    _AppMgmtService_GetAllAppMgmtVersion_Handler,
+		},
+		{
+			MethodName: "GetLatestVersion",
+			Handler:    _AppMgmtService_GetLatestVersion_Handler,
 		},
 		{
 			MethodName: "GetAppMgmtVersionDetail",

@@ -21,6 +21,7 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 	group.POST("/health", r.health)
 	// 管理系统的配置
 	group.POST("/config", r.config)
+	group.POST("/stats", r.stats)
 	// album 相册
 	{
 		// 上传文件 通过 form-data 方式上传

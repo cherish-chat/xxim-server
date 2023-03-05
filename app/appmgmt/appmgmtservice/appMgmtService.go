@@ -81,6 +81,8 @@ type (
 	GetAppMgmtVersionDetailResp    = pb.GetAppMgmtVersionDetailResp
 	GetAppMgmtVpnDetailReq         = pb.GetAppMgmtVpnDetailReq
 	GetAppMgmtVpnDetailResp        = pb.GetAppMgmtVpnDetailResp
+	GetLatestVersionReq            = pb.GetLatestVersionReq
+	GetLatestVersionResp           = pb.GetLatestVersionResp
 	UpdateAppMgmtConfigReq         = pb.UpdateAppMgmtConfigReq
 	UpdateAppMgmtConfigResp        = pb.UpdateAppMgmtConfigResp
 	UpdateAppMgmtEmojiGroupReq     = pb.UpdateAppMgmtEmojiGroupReq
@@ -102,6 +104,7 @@ type (
 		GetAllAppMgmtConfig(ctx context.Context, in *GetAllAppMgmtConfigReq, opts ...grpc.CallOption) (*GetAllAppMgmtConfigResp, error)
 		UpdateAppMgmtConfig(ctx context.Context, in *UpdateAppMgmtConfigReq, opts ...grpc.CallOption) (*UpdateAppMgmtConfigResp, error)
 		GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error)
+		GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error)
 		GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error)
 		AddAppMgmtVersion(ctx context.Context, in *AddAppMgmtVersionReq, opts ...grpc.CallOption) (*AddAppMgmtVersionResp, error)
 		UpdateAppMgmtVersion(ctx context.Context, in *UpdateAppMgmtVersionReq, opts ...grpc.CallOption) (*UpdateAppMgmtVersionResp, error)
@@ -163,6 +166,11 @@ func (m *defaultAppMgmtService) UpdateAppMgmtConfig(ctx context.Context, in *Upd
 func (m *defaultAppMgmtService) GetAllAppMgmtVersion(ctx context.Context, in *GetAllAppMgmtVersionReq, opts ...grpc.CallOption) (*GetAllAppMgmtVersionResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.GetAllAppMgmtVersion(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetLatestVersion(ctx context.Context, in *GetLatestVersionReq, opts ...grpc.CallOption) (*GetLatestVersionResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetLatestVersion(ctx, in, opts...)
 }
 
 func (m *defaultAppMgmtService) GetAppMgmtVersionDetail(ctx context.Context, in *GetAppMgmtVersionDetailReq, opts ...grpc.CallOption) (*GetAppMgmtVersionDetailResp, error) {

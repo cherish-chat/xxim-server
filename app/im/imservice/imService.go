@@ -19,8 +19,11 @@ type (
 	BeforeConnectResp          = pb.BeforeConnectResp
 	BeforeRequestReq           = pb.BeforeRequestReq
 	BeforeRequestResp          = pb.BeforeRequestResp
+	ConvSetting                = pb.ConvSetting
 	GetAllConvIdOfUserReq      = pb.GetAllConvIdOfUserReq
 	GetAllConvIdOfUserResp     = pb.GetAllConvIdOfUserResp
+	GetConvSettingReq          = pb.GetConvSettingReq
+	GetConvSettingResp         = pb.GetConvSettingResp
 	GetUserLatestConnReq       = pb.GetUserLatestConnReq
 	GetUserLatestConnResp      = pb.GetUserLatestConnResp
 	ImMQBody                   = pb.ImMQBody
@@ -41,6 +44,7 @@ type (
 		SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 		GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
 		UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
+		GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
 	}
 
 	defaultImService struct {
@@ -112,4 +116,9 @@ func (m *defaultImService) GetAllConvIdOfUser(ctx context.Context, in *GetAllCon
 func (m *defaultImService) UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.UpdateConvSetting(ctx, in, opts...)
+}
+
+func (m *defaultImService) GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.GetConvSetting(ctx, in, opts...)
 }

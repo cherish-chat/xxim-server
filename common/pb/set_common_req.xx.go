@@ -84,15 +84,15 @@ func (x *DeleteFriendReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
-func (x *SetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
-	x.CommonReq = r
-}
-
-func (x *GetSingleConvSettingReq) SetCommonReq(r *CommonReq) {
+func (x *GetConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
 func (x *GetFriendListReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetLatestVersionReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 

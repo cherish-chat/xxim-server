@@ -4280,6 +4280,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/ms/stats": {
+            "post": {
+                "description": "统计",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.StatsMSReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.StatsMSResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/switch/admin/status": {
             "post": {
                 "description": "使用此接口切换管理员状态",
@@ -6069,6 +6117,17 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.AllMuterType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "AllMuterType_ALL",
+                "AllMuterType_NORMAL"
+            ]
+        },
         "pb.AppLineConfig": {
             "type": "object",
             "properties": {
@@ -7052,7 +7111,8 @@ const docTemplate = `{
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
                 },
-                "scopePlatform": {
+                "userId": {
+                    "description": "用户id 获取哪个用户的配置",
                     "type": "string"
                 }
             }
@@ -8446,6 +8506,12 @@ const docTemplate = `{
                 "port": {
                     "type": "integer"
                 },
+                "rsaPrivateKey": {
+                    "type": "string"
+                },
+                "rsaPublicKey": {
+                    "type": "string"
+                },
                 "websocketPort": {
                     "type": "integer"
                 }
@@ -8796,6 +8862,9 @@ const docTemplate = `{
                 "allMute": {
                     "description": "全体禁言开关",
                     "type": "boolean"
+                },
+                "allMuterType": {
+                    "$ref": "#/definitions/pb.AllMuterType"
                 },
                 "anonymousChat": {
                     "description": "是否开启匿名聊天",
@@ -9215,6 +9284,10 @@ const docTemplate = `{
                     "description": "菜单图标",
                     "type": "string"
                 },
+                "menuIconElement2": {
+                    "description": "菜单图标Element v2",
+                    "type": "string"
+                },
                 "menuName": {
                     "description": "菜单名称",
                     "type": "string"
@@ -9504,6 +9577,98 @@ const docTemplate = `{
                 }
             }
         },
+        "pb.StatsMSReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "endTime": {
+                    "type": "string"
+                },
+                "startTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.StatsMSResp": {
+            "type": "object",
+            "properties": {
+                "dates": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "legend": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "series": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.StatsMSResp_Series"
+                    }
+                },
+                "today": {
+                    "$ref": "#/definitions/pb.StatsMSResp_Today"
+                }
+            }
+        },
+        "pb.StatsMSResp_Series": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stack": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.StatsMSResp_Today": {
+            "type": "object",
+            "properties": {
+                "newGroup": {
+                    "type": "integer"
+                },
+                "newUser": {
+                    "type": "integer"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "todayAliveGroup": {
+                    "type": "integer"
+                },
+                "todayAliveSingle": {
+                    "type": "integer"
+                },
+                "todayAliveUser": {
+                    "type": "integer"
+                },
+                "todayMsg": {
+                    "type": "integer"
+                },
+                "todayMsgUser": {
+                    "type": "integer"
+                },
+                "todayNewFriend": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.SwitchMSUserStatusReq": {
             "type": "object",
             "properties": {
@@ -9578,6 +9743,10 @@ const docTemplate = `{
                 },
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
+                },
+                "userId": {
+                    "description": "用户id 更新哪个用户的配置",
+                    "type": "string"
                 }
             }
         },

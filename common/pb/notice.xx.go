@@ -30,7 +30,8 @@ func HiddenConvIdSingle(selfId string, userId string) string {
 
 const (
 	// command
-	NoticeContentType_SyncFriendList = 101 // 同步好友列表
+	NoticeContentType_SyncFriendList  = 101 // 同步好友列表
+	NoticeContentType_SyncConvSetting = 102 // 同步会话设置
 
 	// friend@
 	NoticeContentType_UpdateUserInfo = 201 // 更新用户信息
@@ -51,6 +52,10 @@ const (
 )
 
 type (
+	NoticeContent_SyncConvSetting struct {
+		ConvIds []string `json:"convIds"`
+		UserId  string   `json:"userId"`
+	}
 	NoticeContent_UpdateUserInfo struct {
 		UserId    string                 `json:"userId"`
 		UpdateMap map[string]interface{} `json:"updateMap"`

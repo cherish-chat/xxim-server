@@ -46,6 +46,9 @@ func (l *UpdateMSMenuLogic) UpdateMSMenu(in *pb.UpdateMSMenuReq) (*pb.UpdateMSMe
 	if in.Menu.MenuIcon != "" {
 		updateMap["menuIcon"] = in.Menu.MenuIcon
 	}
+	if in.Menu.MenuIconElement2 != "" {
+		updateMap["menuIconElement2"] = in.Menu.MenuIconElement2
+	}
 	updateMap["menuSort"] = in.Menu.MenuSort
 	updateMap["perms"] = in.Menu.Perms
 	updateMap["paths"] = in.Menu.Paths

@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -28,6 +29,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	ip2region.Init(c.Ip2RegionUrl)
 	s := &ServiceContext{
 		Config: c,
 		PodIp:  utils.GetPodIp(),

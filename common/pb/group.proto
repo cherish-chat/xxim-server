@@ -170,18 +170,12 @@ message SetGroupMemberInfoReq {
   string groupId = 2;
   // 群成员ID
   string memberId = 3;
-  // notice content
-  string notice = 4;
   // 群备注
   optional string remark = 11;
   // 群角色
   optional GroupRole role = 12;
   // 解除禁言时间
   optional int64 unbanTime = 13;
-  // 群备注
-  optional string groupRemark = 14;
-  // 置顶
-  optional bool isTop = 15;
 }
 
 //SetGroupMemberInfoResp 设置群成员信息
@@ -205,24 +199,12 @@ message GroupMemberInfo {
   string memberId = 2;
   // 群内显示的昵称
   string remark = 3;
-  // 群聊的备注
-  string groupRemark = 4;
-  // 置顶选项
-  bool top = 5;
-  // 免打扰选项
-  bool noDisturb = 6;
-  // 免打扰选项更多设置
-  GroupDisturbOpt disturbMore = 7;
-  // 聊天背景图
-  string chatBg = 8;
   // 群角色
-  GroupRole role = 9;
+  GroupRole role = 4;
   // 解封时间
-  int64 unbanTime = 10;
-  // 预览
-  bool preview = 11;
+  int64 unbanTime = 5;
   // 用户基本信息
-  UserBaseInfo userBaseInfo = 12;
+  optional UserBaseInfo userBaseInfo = 11;
 }
 
 //MapGroupMemberInfoByIdsReq 批量获取群成员信息

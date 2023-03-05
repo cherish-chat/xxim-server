@@ -37,6 +37,11 @@ func (s *AppMgmtServiceServer) GetAllAppMgmtVersion(ctx context.Context, in *pb.
 	return l.GetAllAppMgmtVersion(in)
 }
 
+func (s *AppMgmtServiceServer) GetLatestVersion(ctx context.Context, in *pb.GetLatestVersionReq) (*pb.GetLatestVersionResp, error) {
+	l := logic.NewGetLatestVersionLogic(ctx, s.svcCtx)
+	return l.GetLatestVersion(in)
+}
+
 func (s *AppMgmtServiceServer) GetAppMgmtVersionDetail(ctx context.Context, in *pb.GetAppMgmtVersionDetailReq) (*pb.GetAppMgmtVersionDetailResp, error) {
 	l := logic.NewGetAppMgmtVersionDetailLogic(ctx, s.svcCtx)
 	return l.GetAppMgmtVersionDetail(in)

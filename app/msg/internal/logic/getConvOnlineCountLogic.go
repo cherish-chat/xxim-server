@@ -57,7 +57,7 @@ func (l *GetConvOnlineCountLogic) GetConvOnlineCount(in *pb.GetConvOnlineCountRe
 		userIds = pb.ParseSingleConv(in.ConvId)
 	} else if pb.IsGroupConv(in.ConvId) {
 		key := rediskey.ConvMembersSubscribed(in.ConvId)
-		val, err := l.svcCtx.RedisSub().ZrangebyscoreWithScoresCtx(l.ctx, key, 0, time.Now().UnixMilli())
+		val, err := l.svcCtx.Redis().ZrangebyscoreWithScoresCtx(l.ctx, key, 0, time.Now().UnixMilli())
 		if err != nil {
 			l.Errorf("get conv members subscribed error: %v", err)
 			return &pb.GetConvOnlineCountResp{CommonResp: pb.NewRetryErrorResp()}, err

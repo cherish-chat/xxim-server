@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterIm(svcCtx *svc.ServiceContext) {
-	// group
+	// im
 	{
 		// UpdateConvSettingReq UpdateConvSettingResp
 		{
@@ -18,6 +18,16 @@ func RegisterIm(svcCtx *svc.ServiceContext) {
 				Do: svcCtx.ImService().UpdateConvSetting,
 			}
 			conngateway.AddRoute("/v1/im/updateConvSetting", route)
+		}
+		// GetConvSettingReq GetConvSettingResp
+		{
+			route := conngateway.Route[*pb.GetConvSettingReq, *pb.GetConvSettingResp]{
+				NewRequest: func() *pb.GetConvSettingReq {
+					return &pb.GetConvSettingReq{}
+				},
+				Do: svcCtx.ImService().GetConvSetting,
+			}
+			conngateway.AddRoute("/v1/im/getConvSetting", route)
 		}
 	}
 }

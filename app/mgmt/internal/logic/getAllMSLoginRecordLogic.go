@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
@@ -30,9 +31,22 @@ func (l *GetAllMSLoginRecordLogic) GetAllMSLoginRecord(in *pb.GetAllMSLoginRecor
 	wheres := xorm.NewGormWhere()
 	if in.Filter != nil {
 		for k, v := range in.Filter {
+			if v == "" {
+				continue
+			}
 			switch k {
 			case "id":
 				wheres = append(wheres, xorm.Where("id = ?", v))
+			case "userId":
+				wheres = append(wheres, xorm.Where("userId = ?", v))
+			case "ip":
+				wheres = append(wheres, xorm.Where("ip LIKE ?", v+"%"))
+			case "time_gte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("time >= ?", val))
+			case "time_lte":
+				val := utils.AnyToInt64(v)
+				wheres = append(wheres, xorm.Where("time <= ?", val))
 			}
 		}
 	}

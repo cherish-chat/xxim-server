@@ -9,10 +9,6 @@ func (s *MsgServiceServer) Start() {
 			go l.Start()
 		}
 	}
-	{
-		l := logic.NewTimerCleanSubscriptionLogic(s.svcCtx)
-		go l.Start()
-	}
 	// 开启80端口的http服务
 	{
 		l := logic.NewHttpLogic(s.svcCtx)

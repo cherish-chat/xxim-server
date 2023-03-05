@@ -87,7 +87,7 @@ func (l *zinxHandler) Handle(request ziface.IRequest) {
 		if uc == nil {
 			return
 		}
-		l.server.onReceive(uc.Ctx, uc, 2, msg)
+		l.server.onReceive(ctx, uc, 2, msg)
 	}, propagation.MapCarrier{
 		"length":      strconv.Itoa(len(msg)),
 		"userId":      uc.ConnParam.UserId,

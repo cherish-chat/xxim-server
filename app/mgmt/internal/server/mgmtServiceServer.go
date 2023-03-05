@@ -273,3 +273,8 @@ func (s *MgmtServiceServer) UpdateMSAlbum(ctx context.Context, in *pb.UpdateMSAl
 	l := logic.NewUpdateMSAlbumLogic(ctx, s.svcCtx)
 	return l.UpdateMSAlbum(in)
 }
+
+func (s *MgmtServiceServer) StatsMS(ctx context.Context, in *pb.StatsMSReq) (*pb.StatsMSResp, error) {
+	l := logic.NewStatsMSLogic(ctx, s.svcCtx)
+	return l.StatsMS(in)
+}

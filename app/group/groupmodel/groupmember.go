@@ -24,18 +24,10 @@ type (
 		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index;comment:加入时间"`
 		// 角色
 		Role RoleType `bson:"role" json:"role" gorm:"column:role;type:int;not null;default:0;comment:角色;index;"` // 0:普通成员 1:管理员 2:群主
-		// 我设置的我的备注
+		// 我设置的我的备注（群昵称）
 		Remark string `bson:"remark" json:"remark" gorm:"column:remark;type:varchar(255);not null;default:'';comment:我设置的我的备注;index;"`
-		// 我设置的群的备注
-		GroupRemark string `bson:"groupRemark" json:"groupRemark" gorm:"column:groupRemark;type:varchar(255);not null;default:'';comment:我设置的群的备注"`
 		// 解禁时间
 		UnbanTime int64 `bson:"unbanTime" json:"unbanTime" gorm:"column:unbanTime;type:bigint;not null;default:0;comment:解禁时间"`
-		// 是否免打扰
-		NoDisturb bool `bson:"noDisturb" json:"noDisturb" gorm:"column:noDisturb;type:tinyint(1);not null;index;default:0;comment:是否免打扰"`
-		// 预览
-		Preview bool `bson:"preview" json:"preview" gorm:"column:preview;type:tinyint(1);not null;default:0;comment:预览"`
-		// 置顶
-		IsTop bool `bson:"isTop" json:"isTop" gorm:"column:isTop;type:tinyint(1);not null;default:0;comment:置顶"`
 	}
 )
 
@@ -56,17 +48,11 @@ func (m *GroupMember) Bytes() []byte {
 
 func (m *GroupMember) Pb() *pb.GroupMemberInfo {
 	return &pb.GroupMemberInfo{
-		GroupId:     m.GroupId,
-		MemberId:    m.UserId,
-		Remark:      m.Remark,
-		GroupRemark: m.GroupRemark,
-		Top:         false,
-		NoDisturb:   m.NoDisturb,
-		Preview:     m.Preview,
-		DisturbMore: 0,
-		ChatBg:      "",
-		Role:        pb.GroupRole(m.Role),
-		UnbanTime:   m.UnbanTime,
+		GroupId:   m.GroupId,
+		MemberId:  m.UserId,
+		Remark:    m.Remark,
+		Role:      pb.GroupRole(m.Role),
+		UnbanTime: m.UnbanTime,
 	}
 }
 

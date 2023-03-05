@@ -51,8 +51,9 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
-	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId}
-	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId}
+	now := time.Now().UnixMilli()
+	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId, CreateTime: now}
+	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId, CreateTime: now}
 	{
 		// 添加好友
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {

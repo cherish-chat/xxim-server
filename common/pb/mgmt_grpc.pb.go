@@ -74,6 +74,7 @@ type MgmtServiceClient interface {
 	GetAllMSAlbum(ctx context.Context, in *GetAllMSAlbumReq, opts ...grpc.CallOption) (*GetAllMSAlbumResp, error)
 	DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error)
 	UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error)
+	StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error)
 }
 
 type mgmtServiceClient struct {
@@ -534,6 +535,15 @@ func (c *mgmtServiceClient) UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbum
 	return out, nil
 }
 
+func (c *mgmtServiceClient) StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error) {
+	out := new(StatsMSResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/StatsMS", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MgmtServiceServer is the server API for MgmtService service.
 // All implementations must embed UnimplementedMgmtServiceServer
 // for forward compatibility
@@ -590,6 +600,7 @@ type MgmtServiceServer interface {
 	GetAllMSAlbum(context.Context, *GetAllMSAlbumReq) (*GetAllMSAlbumResp, error)
 	DeleteMSAlbum(context.Context, *DeleteMSAlbumReq) (*DeleteMSAlbumResp, error)
 	UpdateMSAlbum(context.Context, *UpdateMSAlbumReq) (*UpdateMSAlbumResp, error)
+	StatsMS(context.Context, *StatsMSReq) (*StatsMSResp, error)
 	mustEmbedUnimplementedMgmtServiceServer()
 }
 
@@ -746,6 +757,9 @@ func (UnimplementedMgmtServiceServer) DeleteMSAlbum(context.Context, *DeleteMSAl
 }
 func (UnimplementedMgmtServiceServer) UpdateMSAlbum(context.Context, *UpdateMSAlbumReq) (*UpdateMSAlbumResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSAlbum not implemented")
+}
+func (UnimplementedMgmtServiceServer) StatsMS(context.Context, *StatsMSReq) (*StatsMSResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatsMS not implemented")
 }
 func (UnimplementedMgmtServiceServer) mustEmbedUnimplementedMgmtServiceServer() {}
 
@@ -1660,6 +1674,24 @@ func _MgmtService_UpdateMSAlbum_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_StatsMS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatsMSReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).StatsMS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/StatsMS",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).StatsMS(ctx, req.(*StatsMSReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MgmtService_ServiceDesc is the grpc.ServiceDesc for MgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1866,6 +1898,10 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateMSAlbum",
 			Handler:    _MgmtService_UpdateMSAlbum_Handler,
+		},
+		{
+			MethodName: "StatsMS",
+			Handler:    _MgmtService_StatsMS_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

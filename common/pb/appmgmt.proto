@@ -51,6 +51,17 @@ message AppMgmtVersion {
   string createdAtStr = 8;
 }
 
+//App获取最新版本
+message GetLatestVersionReq {
+  CommonReq commonReq = 1;
+}
+
+//App获取最新版本
+message GetLatestVersionResp {
+  CommonResp commonResp = 1;
+  AppMgmtVersion appMgmtVersion = 2;
+}
+
 //GetAllAppMgmtVersionReq 获取所有版本
 message GetAllAppMgmtVersionReq {
   CommonReq commonReq = 1;
@@ -614,6 +625,7 @@ service appMgmtService {
   rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
 
   rpc GetAllAppMgmtVersion(GetAllAppMgmtVersionReq) returns (GetAllAppMgmtVersionResp);
+  rpc GetLatestVersion(GetLatestVersionReq) returns (GetLatestVersionResp);
   rpc GetAppMgmtVersionDetail(GetAppMgmtVersionDetailReq) returns (GetAppMgmtVersionDetailResp);
   rpc AddAppMgmtVersion(AddAppMgmtVersionReq) returns (AddAppMgmtVersionResp);
   rpc UpdateAppMgmtVersion(UpdateAppMgmtVersionReq) returns (UpdateAppMgmtVersionResp);

@@ -459,6 +459,14 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.AllMuterType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - AllMuterType_ALL
+    - AllMuterType_NORMAL
   pb.AppLineConfig:
     properties:
       aesIv:
@@ -1105,7 +1113,8 @@ definitions:
     properties:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
-      scopePlatform:
+      userId:
+        description: 用户id 获取哪个用户的配置
         type: string
     type: object
   pb.GetAllAppMgmtConfigResp:
@@ -2006,6 +2015,10 @@ definitions:
         type: string
       port:
         type: integer
+      rsaPrivateKey:
+        type: string
+      rsaPublicKey:
+        type: string
       websocketPort:
         type: integer
     type: object
@@ -2232,6 +2245,8 @@ definitions:
       allMute:
         description: 全体禁言开关
         type: boolean
+      allMuterType:
+        $ref: '#/definitions/pb.AllMuterType'
       anonymousChat:
         description: 是否开启匿名聊天
         type: boolean
@@ -2519,6 +2534,9 @@ definitions:
       menuIcon:
         description: 菜单图标
         type: string
+      menuIconElement2:
+        description: 菜单图标Element v2
+        type: string
       menuName:
         description: 菜单名称
         type: string
@@ -2713,6 +2731,66 @@ definitions:
       size:
         type: integer
     type: object
+  pb.StatsMSReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      endTime:
+        type: string
+      startTime:
+        type: string
+    type: object
+  pb.StatsMSResp:
+    properties:
+      dates:
+        items:
+          type: string
+        type: array
+      legend:
+        items:
+          type: string
+        type: array
+      series:
+        items:
+          $ref: '#/definitions/pb.StatsMSResp_Series'
+        type: array
+      today:
+        $ref: '#/definitions/pb.StatsMSResp_Today'
+    type: object
+  pb.StatsMSResp_Series:
+    properties:
+      data:
+        items:
+          type: integer
+        type: array
+      name:
+        type: string
+      stack:
+        type: string
+      type:
+        type: string
+    type: object
+  pb.StatsMSResp_Today:
+    properties:
+      newGroup:
+        type: integer
+      newUser:
+        type: integer
+      time:
+        type: string
+      todayAliveGroup:
+        type: integer
+      todayAliveSingle:
+        type: integer
+      todayAliveUser:
+        type: integer
+      todayMsg:
+        type: integer
+      todayMsgUser:
+        type: integer
+      todayNewFriend:
+        type: integer
+    type: object
   pb.SwitchMSUserStatusReq:
     properties:
       commonReq:
@@ -2761,6 +2839,9 @@ definitions:
         type: array
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
+      userId:
+        description: 用户id 更新哪个用户的配置
+        type: string
     type: object
   pb.UpdateAppMgmtConfigResp:
     properties:
@@ -6025,6 +6106,38 @@ paths:
           schema:
             $ref: '#/definitions/pb.LoginMSResp'
       summary: 登录managersystem管理系统
+      tags:
+      - 管理系统相关接口
+  /ms/stats:
+    post:
+      consumes:
+      - application/json
+      description: 统计
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.StatsMSReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.StatsMSResp'
+      summary: 统计
       tags:
       - 管理系统相关接口
   /ms/switch/admin/status:

@@ -14,7 +14,7 @@ xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是�
 [![Go Reference](https://pkg.go.dev/badge/github.com/cherish-chat/xxim-server.svg)](https://pkg.go.dev/github.com/cherish-chat/xxim-server)
 [![Awesome Go](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![XXIM](https://api.cherish.chat/api/server/onlineshield/202301311756)](https://xxim.cherish.chat)
+[![XXIM](https://api.cherish.chat/api/server/onlineshield/202303051934)](https://xxim.cherish.chat)
 
 </div>
 
@@ -24,15 +24,18 @@ xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是�
 
 xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-server只是一个简单的im服务器，但它具备了一个IM应有的全部功能。
 
+在线体验：[https://xxim.cherish.chat](https://xxim.cherish.chat)
+
 #### 包括但不限于：
 
 * [x] 发送消息（可定时的、可群发），包括：文本、图片、语音、视频、文件、位置、名片、撤回、转发、@、表情、对方正在输入、自定义消息等
 * [x] 按需拉取离线消息，且没有消息数量/天数限制
 * [x] 当用户不在线时，通过厂商推送（极光、腾讯、Mob）将消息推送给用户
 * [x] 群聊20万成员上限
-* [x] 一条长连接通讯
+* [x] 一条长连接通讯、无http
 * [x] 🔐通讯层加密
-* [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/chatgpt.git)
+* [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/xxim-bot-chatgpt)
+* [x] 开源后台管理系统，可自定义配置[xxim-mgmt-app](https://github.com/cherish-chat/xxim-mgmt-app.git)
 * [ ] 音视频通话、IOS支持`Callkit`
 
 

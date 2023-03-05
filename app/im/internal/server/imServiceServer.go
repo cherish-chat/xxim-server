@@ -81,3 +81,8 @@ func (s *ImServiceServer) UpdateConvSetting(ctx context.Context, in *pb.UpdateCo
 	l := logic.NewUpdateConvSettingLogic(ctx, s.svcCtx)
 	return l.UpdateConvSetting(in)
 }
+
+func (s *ImServiceServer) GetConvSetting(ctx context.Context, in *pb.GetConvSettingReq) (*pb.GetConvSettingResp, error) {
+	l := logic.NewGetConvSettingLogic(ctx, s.svcCtx)
+	return l.GetConvSetting(in)
+}

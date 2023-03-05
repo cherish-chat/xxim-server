@@ -31,11 +31,11 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 	var fs []func()
 	var failedConnParams []*pb.ConnParam
 	var successConnParams []*pb.ConnParam
-	for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
-		podValue := *pod
-		fs = append(fs, func() {
-			xtrace.StartFuncSpan(l.ctx, "SendMsgToConnection", func(ctx context.Context) {
-				resp, err := podValue.SendMsg(l.ctx, in)
+	xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendMsgToConnection", func(ctx context.Context) {
+		for _, pod := range l.svcCtx.ConnPodsMgr.AllConnServices() {
+			podValue := *pod
+			fs = append(fs, func() {
+				resp, err := podValue.SendMsg(ctx, in)
 				if err != nil {
 					l.Errorf("SendMsg error: %v", err)
 					return
@@ -44,13 +44,13 @@ func (l *SendMsgLogic) SendMsg(in *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 				l.Debugf("resp.FailedConnParams.length: %v", len(resp.FailedConnParams))
 				failedConnParams = append(failedConnParams, resp.FailedConnParams...)
 				successConnParams = append(successConnParams, resp.SuccessConnParams...)
-			}, xtrace.StartFuncSpanWithCarrier(propagation.MapCarrier{
-				"userIds.length": strconv.Itoa(len(in.GetUserConnReq.UserIds)),
-				"event":          in.Event.String(),
-			}))
-		})
-	}
-	mr.FinishVoid(fs...)
+			})
+		}
+		mr.FinishVoid(fs...)
+	}, propagation.MapCarrier{
+		"userIds.length": strconv.Itoa(len(in.GetUserConnReq.UserIds)),
+		"event":          in.Event.String(),
+	})
 
 	return &pb.SendMsgResp{
 		CommonResp:        pb.NewSuccessResp(),
