@@ -1,7 +1,7 @@
 # xxim
 
 <p align="center">
-<img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docs/images/xxim.1x.webp">
+<img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docs/images/logo.1x.webp">
 </p>
 
 xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是为了让每个人都能使用自己的IM APP，不需要再使用令人不爽的第三方IM APP。xxim-server是一个开源项目，欢迎大家一起来完善它。
