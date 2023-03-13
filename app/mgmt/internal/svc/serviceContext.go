@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtmodel"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtservice"
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
@@ -50,6 +51,7 @@ func (s *ServiceContext) Redis() *redis.Redis {
 func (s *ServiceContext) Mysql() *gorm.DB {
 	if s.mysql == nil {
 		s.mysql = xorm.NewClient(s.Config.Mysql)
+		s.mysql.AutoMigrate(&appmgmtmodel.Config{})
 		s.mysql.AutoMigrate(&mgmtmodel.AutoIncrement{})
 		s.mysql.AutoMigrate(&mgmtmodel.User{})
 		s.mysql.AutoMigrate(&mgmtmodel.LoginRecord{})
