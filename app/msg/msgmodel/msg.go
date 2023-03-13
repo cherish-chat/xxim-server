@@ -14,6 +14,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	zedis "github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
@@ -214,8 +215,10 @@ func CreateMsgTable(tx *gorm.DB, tableName string) error {
 	}
 	err := tx.Table(tableName).Migrator().CreateTable(&Msg{})
 	if err != nil {
-		logx.Errorf("CreateMsgTable error: %v", err)
-		return err
+		if !strings.Contains(err.Error(), "already exists") {
+			logx.Errorf("CreateMsgTable error: %v", err)
+			return err
+		}
 	}
 	tableNameExists[tableName] = true
 	return nil

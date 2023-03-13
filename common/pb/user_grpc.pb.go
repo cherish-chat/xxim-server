@@ -69,6 +69,7 @@ type UserServiceClient interface {
 	SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
 	VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 	ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
+	BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 }
 
 type userServiceClient struct {
@@ -484,6 +485,15 @@ func (c *userServiceClient) ReportUser(ctx context.Context, in *ReportUserReq, o
 	return out, nil
 }
 
+func (c *userServiceClient) BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error) {
+	out := new(BatchCreateZombieUserResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/BatchCreateZombieUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -535,6 +545,7 @@ type UserServiceServer interface {
 	SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error)
 	VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error)
 	ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error)
+	BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -676,6 +687,9 @@ func (UnimplementedUserServiceServer) VerifySms(context.Context, *VerifySmsReq) 
 }
 func (UnimplementedUserServiceServer) ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportUser not implemented")
+}
+func (UnimplementedUserServiceServer) BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCreateZombieUser not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -1500,6 +1514,24 @@ func _UserService_ReportUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_BatchCreateZombieUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCreateZombieUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).BatchCreateZombieUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/BatchCreateZombieUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).BatchCreateZombieUser(ctx, req.(*BatchCreateZombieUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1686,6 +1718,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReportUser",
 			Handler:    _UserService_ReportUser_Handler,
+		},
+		{
+			MethodName: "BatchCreateZombieUser",
+			Handler:    _UserService_BatchCreateZombieUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -81,6 +81,8 @@ func (r *UserHandler) Register(g *gin.RouterGroup) {
 		group.POST("/delete/model", r.deleteModel)
 		// 切换状态
 		group.POST("/switch/model", r.switchModel)
+		// 批量创建僵尸号
+		group.POST("/batch/create/zombie", r.batchCreateZombie)
 	}
 	{
 		// LoginRecord 登录记录

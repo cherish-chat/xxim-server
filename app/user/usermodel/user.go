@@ -18,8 +18,9 @@ import (
 
 const (
 	RoleUser    Role = 0 // 普通用户
-	RoleService Role = 1 //客服
+	RoleService Role = 1 // 客服
 	RoleGuest   Role = 2 // 游客
+	RoleZombie  Role = 3 // 僵尸用户
 )
 
 func (r Role) String() string {
@@ -30,6 +31,8 @@ func (r Role) String() string {
 		return "客服"
 	case RoleGuest:
 		return "游客"
+	case RoleZombie:
+		return "僵尸"
 	}
 	return "未知"
 }

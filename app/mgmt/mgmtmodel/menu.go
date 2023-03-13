@@ -241,6 +241,13 @@ func initMenu(tx *gorm.DB) {
 			genMenu2("160", "100", "登录日志", "el-icon-CameraFilled", 0,
 				"system:loginlog:list", "loginlog", "permission/loginlog/index",
 			),
+			genMenu3("171", "0", "上传图片", "common:upload:image"),
+			genMenu3("172", "0", "上传视频", "common:upload:video"),
+			genMenu3("173", "0", "相册重命名", "common:album:cateRename"),
+			genMenu3("174", "0", "相册删除", "common:album:cateDel"),
+			genMenu3("175", "0", "相册创建", "common:album:cateAdd"),
+			genMenu3("176", "0", "媒体删除", "common:album:albumDel"),
+			genMenu3("177", "0", "媒体移动", "common:album:albumMove"),
 		),
 		genMenu1("200", "运维管理", "local-icon-KMSguanli", 49, "devops",
 			// config 配置管理
@@ -386,18 +393,55 @@ func restoreMenu(tx *gorm.DB) {
 	for _, menu := range defaultMenus {
 		menu := *menu
 		tx.Model(&Menu{}).Where("id = ?", menu.Id).Updates(map[string]any{
-			"pid":        menu.Pid,
-			"menuType":   menu.MenuType,
-			"menuIcon":   menu.MenuIcon,
-			"menuSort":   menu.MenuSort,
-			"perms":      menu.Perms,
-			"paths":      menu.Paths,
-			"component":  menu.Component,
-			"selected":   menu.Selected,
-			"params":     menu.Params,
-			"updateTime": time.Now().UnixMilli(),
+			"pid":              menu.Pid,
+			"menuType":         menu.MenuType,
+			"menuIcon":         menu.MenuIcon,
+			"menuIconElement2": getIconElement2(menu.MenuIcon),
+			"menuSort":         menu.MenuSort,
+			"perms":            menu.Perms,
+			"paths":            menu.Paths,
+			"component":        menu.Component,
+			"selected":         menu.Selected,
+			"params":           menu.Params,
+			"updateTime":       time.Now().UnixMilli(),
 		})
 	}
+}
+
+var IconElement2Map = map[string]string{
+	"el-icon-Monitor":         "el-icon-s-grid",
+	"el-icon-Lock":            "el-icon-receiving",
+	"el-icon-link":            "el-icon-paperclip",
+	"el-icon-tickets":         "el-icon-edit-outline",
+	"local-icon-wode":         "el-icon-user-solid",
+	"el-icon-Female":          "el-icon-user",
+	"el-icon-Operation":       "el-icon-s-fold",
+	"el-icon-Key":             "el-icon-s-data",
+	"el-icon-List":            "el-icon-document-add",
+	"el-icon-Notebook":        "el-icon-document",
+	"el-icon-CameraFilled":    "el-icon-date",
+	"local-icon-KMSguanli":    "el-icon-setting",
+	"el-icon-Setting":         "el-icon-s-tools",
+	"el-icon-Connection":      "el-icon-files",
+	"el-icon-Apple":           "el-icon-mobile-phone",
+	"el-icon-UserFilled":      "el-icon-s-check",
+	"el-icon-ChatLineRound":   "el-icon-tickets",
+	"el-icon-ElementPlus":     "el-icon-help",
+	"el-icon-LocationFilled":  "el-icon-folder-remove",
+	"el-icon-Location":        "el-icon-folder-checked",
+	"local-icon-xiangji":      "el-icon-tickets",
+	"local-icon-weixin":       "el-icon-video-camera-solid",
+	"local-icon-kezizhongxin": "el-icon-s-order",
+}
+
+func getIconElement2(icon string) string {
+	if icon == "" {
+		return ""
+	}
+	if iconElement2, ok := IconElement2Map[icon]; ok {
+		return iconElement2
+	}
+	return ""
 }
 
 // insertMenu 插入menu

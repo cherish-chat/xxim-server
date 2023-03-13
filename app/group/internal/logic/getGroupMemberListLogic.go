@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/common/xredis"
@@ -142,11 +143,23 @@ func (l *GetGroupMemberListLogic) GetGroupMemberList(in *pb.GetGroupMemberListRe
 func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMemberListReq, whereMap map[string]interface{}, orMap map[string][]interface{}, offset int32, limit int32, rdsKey string, saveKeysKey string) ([]string, error) {
 	// 先把 key 保存起来
 	// hset
-	err := l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, rdsKey)
+	// 加锁
+	lockKey := "lock:" + saveKeysKey
+	// setnx lockKey 1
+	acquire, err := redis.NewRedisLock(l.svcCtx.Redis(), lockKey).Acquire()
+	if err != nil {
+		return []string{}, err
+	}
+	if !acquire {
+		// 没有获取到锁
+		return []string{}, errors.New("正在获取群成员列表，请稍后再试")
+	}
+	err = l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, rdsKey)
 	if err != nil {
 		l.Errorf("redis hset %s error: %v", saveKeysKey, err)
 		return make([]string, 0), err
 	}
+	_, _ = redis.NewRedisLock(l.svcCtx.Redis(), lockKey).Release()
 	tx := l.svcCtx.Mysql().Model(&groupmodel.GroupMember{})
 	if len(whereMap) > 0 {
 		tx = tx.Where(whereMap)

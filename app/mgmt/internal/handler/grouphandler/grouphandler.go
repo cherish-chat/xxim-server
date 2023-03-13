@@ -26,4 +26,11 @@ func (r *GroupHandler) Register(g *gin.RouterGroup) {
 		// 删除
 		group.POST("/dismiss/model", r.dismissModel)
 	}
+	{
+		// Member 群成员
+		// 批量插入僵尸号
+		group.POST("/insert/member/zombie", r.insertMemberZombie)
+		// 清除僵尸号
+		group.POST("/clear/member/zombie", r.clearMemberZombie)
+	}
 }

@@ -81,3 +81,8 @@ func (s *RelationServiceServer) GetFriendListByUserId(ctx context.Context, in *p
 	l := logic.NewGetFriendListByUserIdLogic(ctx, s.svcCtx)
 	return l.GetFriendListByUserId(in)
 }
+
+func (s *RelationServiceServer) BatchMakeFriend(ctx context.Context, in *pb.BatchMakeFriendReq) (*pb.BatchMakeFriendResp, error) {
+	l := logic.NewBatchMakeFriendLogic(ctx, s.svcCtx)
+	return l.BatchMakeFriend(in)
+}

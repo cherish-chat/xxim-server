@@ -6,7 +6,6 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
-	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -19,21 +18,24 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type AcceptAddFriendLogic struct {
+type BatchMakeFriendLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewAcceptAddFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AcceptAddFriendLogic {
-	return &AcceptAddFriendLogic{
+func NewBatchMakeFriendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchMakeFriendLogic {
+	return &BatchMakeFriendLogic{
 		ctx:    xtrace.NewContext(ctx),
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.AcceptAddFriendResp, error) {
+func (l *BatchMakeFriendLogic) BatchMakeFriend(in *pb.BatchMakeFriendReq) (*pb.BatchMakeFriendResp, error) {
+	if len(in.UserIdBList) == 0 {
+		return &pb.BatchMakeFriendResp{}, nil
+	}
 	// 我的好友总数是否已达上限
 	{
 		var getFriendCountResp *pb.GetFriendCountResp
@@ -45,31 +47,46 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		})
 		if err != nil {
 			l.Errorf("GetFriendCount failed, err: %v", err)
-			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
+			return &pb.BatchMakeFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx, in.CommonReq.UserId) {
-			return &pb.AcceptAddFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
+		if int64(getFriendCountResp.Count) >= l.svcCtx.ConfigMgr.FriendMaxCount(l.ctx, in.UserIdA) {
+			return &pb.BatchMakeFriendResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "好友数量已达上限"))}, nil
 		}
 	}
 	now := time.Now().UnixMilli()
-	friend1 := &relationmodel.Friend{FriendId: in.CommonReq.UserId, UserId: in.ApplyUserId, CreateTime: now}
-	friend2 := &relationmodel.Friend{FriendId: in.ApplyUserId, UserId: in.CommonReq.UserId, CreateTime: now}
+	friends := make([]*relationmodel.Friend, 0)
+	for _, bId := range in.UserIdBList {
+		friends = append(friends, &relationmodel.Friend{
+			UserId:     in.UserIdA,
+			FriendId:   bId,
+			CreateTime: now,
+		}, &relationmodel.Friend{
+			UserId:     bId,
+			FriendId:   in.UserIdA,
+			CreateTime: now,
+		})
+	}
 	{
 		// 添加好友
 		err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-			err := xorm.Upsert(tx, friend1, []string{"friendId", "userId"}, []string{"friendId", "userId"})
+			err := tx.Model(&relationmodel.Friend{}).Where("userId = ? AND friendId IN (?)", in.UserIdA, in.UserIdBList).Delete(&relationmodel.Friend{}).Error
 			if err != nil {
-				l.Errorf("Save friend1 failed, err: %v", err)
+				l.Errorf("DeleteOne failed, err: %v", err)
 				return err
 			}
-			err = xorm.Upsert(tx, friend2, []string{"friendId", "userId"}, []string{"friendId", "userId"})
+			err = tx.Model(&relationmodel.Friend{}).Where("userId IN (?) AND friendId = ?", in.UserIdBList, in.UserIdA).Delete(&relationmodel.Friend{}).Error
 			if err != nil {
-				l.Errorf("Save friend2 failed, err: %v", err)
+				l.Errorf("DeleteOne failed, err: %v", err)
+				return err
+			}
+			err = tx.Model(&relationmodel.Friend{}).CreateInBatches(friends, 100).Error
+			if err != nil {
+				l.Errorf("InsertOne failed, err: %v", err)
 				return err
 			}
 			return nil
 		}, func(tx *gorm.DB) error {
-			for _, userId := range []string{in.CommonReq.UserId, in.ApplyUserId} {
+			for _, userId := range append(in.UserIdBList, in.UserIdA) {
 				notice := &noticemodel.Notice{
 					ConvId: pb.HiddenConvIdCommand(),
 					UserId: userId,
@@ -95,48 +112,23 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		})
 		if err != nil {
 			l.Errorf("InsertOne failed, err: %v", err)
-			return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
-		}
-	}
-	{
-		// 设置申请状态
-		if in.RequestId != nil {
-			err := l.svcCtx.Mysql().Model(&relationmodel.RequestAddFriend{}).
-				Where("status = ? AND ((fromUserId = ? AND toUserId = ?) OR (fromUserId = ? AND toUserId = ?))",
-					pb.RequestAddFriendStatus_Unhandled,
-					in.CommonReq.UserId, in.ApplyUserId,
-					in.ApplyUserId, in.CommonReq.UserId).
-				Updates(map[string]interface{}{
-					"status":     pb.RequestAddFriendStatus_Agreed,
-					"updateTime": time.Now().UnixMilli(),
-				}).Error
-			if err != nil {
-				l.Errorf("UpdateOne failed, err: %v", err)
-				return &pb.AcceptAddFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
-			}
+			return &pb.BatchMakeFriendResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 	}
 	{
 		// 删除缓存
-		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), in.ApplyUserId, in.CommonReq.UserId)
+		err := relationmodel.FlushFriendList(l.ctx, l.svcCtx.Redis(), append(in.UserIdBList, in.UserIdA)...)
 		if err != nil {
 			l.Errorf("FlushFriendList failed, err: %v", err)
 		}
-		// 预热缓存
-		xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarm", func(ctx context.Context) {
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.ApplyUserId)
-			_, _ = relationmodel.GetMyFriendList(ctx, l.svcCtx.Redis(), l.svcCtx.Mysql(), in.CommonReq.UserId)
-		}, nil)
 		// 刷新订阅
 		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
-			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{
-				friend1.UserId, friend1.FriendId,
-			}})
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: append(in.UserIdBList, in.UserIdA)})
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			for _, userId := range []string{friend1.UserId, friend1.FriendId} {
+			for _, userId := range append(in.UserIdBList, in.UserIdA) {
 				_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 					UserId: userId,
 					ConvId: pb.HiddenConvIdCommand(),
@@ -151,34 +143,31 @@ func (l *AcceptAddFriendLogic) AcceptAddFriend(in *pb.AcceptAddFriendReq) (*pb.A
 		// 接受者发送消息：我们已经是好友了，快来聊天吧
 		l.sendMsg(in)
 	}
-	return &pb.AcceptAddFriendResp{}, nil
+	return &pb.BatchMakeFriendResp{}, nil
 }
 
-func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
+func (l *BatchMakeFriendLogic) sendMsg(in *pb.BatchMakeFriendReq) {
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendMsg", func(ctx context.Context) {
 		// 获取接受者info
-		userByIds, err := l.svcCtx.UserService().MapUserByIds(ctx, &pb.MapUserByIdsReq{Ids: []string{in.CommonReq.UserId}})
+		var userByIds = make(map[string]*pb.UserBaseInfo)
+		batchGetUserBaseInfoResp, err := l.svcCtx.UserService().BatchGetUserBaseInfo(ctx, &pb.BatchGetUserBaseInfoReq{Ids: []string{in.UserIdA}})
 		if err != nil {
 			l.Errorf("MapUserByIds failed, err: %v", err)
 		} else {
-			selfInfo, ok := userByIds.Users[in.CommonReq.UserId]
+			for _, info := range batchGetUserBaseInfoResp.UserBaseInfos {
+				userByIds[info.Id] = info
+			}
+			selfInfo, ok := userByIds[in.UserIdA]
 			if ok {
-				self := usermodel.UserFromBytes(selfInfo)
 				text := "我们已经是好友了，快来聊天吧"
-				if in.SendTextMsg != nil && *in.SendTextMsg != "" {
-					text = *in.SendTextMsg
+				if in.SendTextMsgA != nil && *in.SendTextMsgA != "" {
+					text = *in.SendTextMsgA
 				}
-				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
-					msgmodel.CreateTextMsgToUser(
-						&pb.UserBaseInfo{
-							Id:       self.Id,
-							Nickname: self.Nickname,
-							Avatar:   self.Avatar,
-							Xb:       self.Xb,
-							Birthday: self.Birthday,
-							Role:     int32(self.Role),
-						},
-						in.ApplyUserId,
+				var msgDatas []*pb.MsgData
+				for _, bId := range in.UserIdBList {
+					data := msgmodel.CreateTextMsgToUser(
+						selfInfo,
+						bId,
 						l.svcCtx.T(in.CommonReq.Language, text),
 						msgmodel.MsgOptions{
 							OfflinePush:       true,
@@ -189,13 +178,15 @@ func (l *AcceptAddFriendLogic) sendMsg(in *pb.AcceptAddFriendReq) {
 							UpdateConvMsg:     true,
 						},
 						&msgmodel.MsgOfflinePush{
-							Title:   self.Nickname,
+							Title:   selfInfo.Nickname,
 							Content: text,
 							Payload: "",
 						},
 						nil,
-					).ToMsgData(),
-				})
+					).ToMsgData()
+					msgDatas = append(msgDatas, data)
+				}
+				_, err = msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, msgDatas)
 				if err != nil {
 					l.Errorf("SendMsgSync failed, err: %v", err)
 					err = nil

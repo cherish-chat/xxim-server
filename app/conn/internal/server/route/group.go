@@ -139,5 +139,15 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/editGroupInfo", route)
 		}
+		// /v1/group/batchKickGroupMember BatchKickGroupMemberReq
+		{
+			route := conngateway.Route[*pb.BatchKickGroupMemberReq, *pb.BatchKickGroupMemberResp]{
+				NewRequest: func() *pb.BatchKickGroupMemberReq {
+					return &pb.BatchKickGroupMemberReq{}
+				},
+				Do: svcCtx.GroupService().BatchKickGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/batchKickGroupMember", route)
+		}
 	}
 }

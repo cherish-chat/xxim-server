@@ -94,6 +94,12 @@ func (s *GroupServiceServer) KickGroupMember(ctx context.Context, in *pb.KickGro
 	return l.KickGroupMember(in)
 }
 
+// BatchKickGroupMember 批量踢出群成员
+func (s *GroupServiceServer) BatchKickGroupMember(ctx context.Context, in *pb.BatchKickGroupMemberReq) (*pb.BatchKickGroupMemberResp, error) {
+	l := logic.NewBatchKickGroupMemberLogic(ctx, s.svcCtx)
+	return l.BatchKickGroupMember(in)
+}
+
 // GetGroupMemberList 获取群成员列表
 func (s *GroupServiceServer) GetGroupMemberList(ctx context.Context, in *pb.GetGroupMemberListReq) (*pb.GetGroupMemberListResp, error) {
 	l := logic.NewGetGroupMemberListLogic(ctx, s.svcCtx)
@@ -182,4 +188,16 @@ func (s *GroupServiceServer) AddGroupMember(ctx context.Context, in *pb.AddGroup
 func (s *GroupServiceServer) ReportGroup(ctx context.Context, in *pb.ReportGroupReq) (*pb.ReportGroupResp, error) {
 	l := logic.NewReportGroupLogic(ctx, s.svcCtx)
 	return l.ReportGroup(in)
+}
+
+//  RandInsertZombieMember 随机插入僵尸用户
+func (s *GroupServiceServer) RandInsertZombieMember(ctx context.Context, in *pb.RandInsertZombieMemberReq) (*pb.RandInsertZombieMemberResp, error) {
+	l := logic.NewRandInsertZombieMemberLogic(ctx, s.svcCtx)
+	return l.RandInsertZombieMember(in)
+}
+
+//  ClearZombieMember 清除僵尸用户
+func (s *GroupServiceServer) ClearZombieMember(ctx context.Context, in *pb.ClearZombieMemberReq) (*pb.ClearZombieMemberResp, error) {
+	l := logic.NewClearZombieMemberLogic(ctx, s.svcCtx)
+	return l.ClearZombieMember(in)
 }

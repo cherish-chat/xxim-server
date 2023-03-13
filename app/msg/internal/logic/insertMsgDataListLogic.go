@@ -5,7 +5,6 @@ import (
 	"github.com/cherish-chat/xxim-server/app/msg/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -59,18 +58,18 @@ func (l *InsertMsgDataListLogic) InsertMsgDataList(in *pb.MsgDataList) (*pb.MsgD
 	}
 	// 只能单条修改消息 多条不支持
 	if len(models) > 0 {
-		{
-			var err error
-			xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
-				err = xorm.InsertMany(l.svcCtx.Mysql(), &msgmodel.Msg{}, models)
-				if err != nil {
-					l.Errorf("InsertMsgDataList.InsertManyMsg err:%v", err)
-				}
-			})
-			if err != nil {
-				return respMsgDataList, err
-			}
-		}
+		//{
+		//	var err error
+		//	xtrace.StartFuncSpan(l.ctx, "InsertManyMsg", func(ctx context.Context) {
+		//		err = xorm.InsertMany(l.svcCtx.Mysql(), &msgmodel.Msg{}, models)
+		//		if err != nil {
+		//			l.Errorf("InsertMsgDataList.InsertManyMsg err:%v", err)
+		//		}
+		//	})
+		//	if err != nil {
+		//		return respMsgDataList, err
+		//	}
+		//}
 		{
 			// 双写到分表库
 			var err error

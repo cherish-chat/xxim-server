@@ -890,6 +890,19 @@ message ReportUserResp {
   CommonResp commonResp = 1;
 }
 
+// BatchCreateZombieUserReq 批量创建僵尸用户请求
+message BatchCreateZombieUserReq {
+  CommonReq commonReq = 1;
+  int32 count = 2;
+  string password = 3;
+  string idPrefix = 4;
+  string nicknamePrefix = 5;
+}
+
+// BatchCreateZombieUserResp 批量创建僵尸用户响应
+message BatchCreateZombieUserResp {
+  CommonResp commonResp = 1;
+}
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -947,4 +960,5 @@ service userService {
   rpc VerifySms(VerifySmsReq) returns (VerifySmsResp) {}
 
   rpc ReportUser(ReportUserReq) returns (ReportUserResp) {}
+  rpc BatchCreateZombieUser(BatchCreateZombieUserReq) returns (BatchCreateZombieUserResp) {}
 }

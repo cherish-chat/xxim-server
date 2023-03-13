@@ -197,6 +197,18 @@ message GetFriendListByUserIdResp {
   int64 total = 3;
 }
 
+//BatchMakeFriendReq 批量成为好友
+message BatchMakeFriendReq {
+  CommonReq commonReq = 1;
+  string userIdA = 2;
+  repeated string userIdBList = 3;
+  optional string sendTextMsgA = 4; // 用户A发送的文本消息
+}
+
+message BatchMakeFriendResp {
+  CommonResp commonResp = 1;
+}
+
 service relationService {
   rpc AreFriends(AreFriendsReq) returns (AreFriendsResp) {}
   rpc AreBlackList(AreBlackListReq) returns (AreBlackListResp) {}
@@ -211,4 +223,5 @@ service relationService {
   rpc GetMyFriendEventList(GetMyFriendEventListReq) returns (GetMyFriendEventListResp) {}
 
   rpc GetFriendListByUserId(GetFriendListByUserIdReq) returns (GetFriendListByUserIdResp) {}
+  rpc BatchMakeFriend(BatchMakeFriendReq) returns (BatchMakeFriendResp) {}
 }

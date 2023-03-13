@@ -46,6 +46,8 @@ type GroupServiceClient interface {
 	TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error)
 	//KickGroupMember 踢出群成员
 	KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error)
+	//BatchKickGroupMember 批量踢出群成员
+	BatchKickGroupMember(ctx context.Context, in *BatchKickGroupMemberReq, opts ...grpc.CallOption) (*BatchKickGroupMemberResp, error)
 	//GetGroupMemberList 获取群成员列表
 	GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error)
 	//GetMyGroupList 获取我的群聊列表
@@ -76,6 +78,10 @@ type GroupServiceClient interface {
 	AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
 	// ReportGroup
 	ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
+	// RandInsertZombieMember 随机插入僵尸用户
+	RandInsertZombieMember(ctx context.Context, in *RandInsertZombieMemberReq, opts ...grpc.CallOption) (*RandInsertZombieMemberResp, error)
+	// ClearZombieMember 清除僵尸用户
+	ClearZombieMember(ctx context.Context, in *ClearZombieMemberReq, opts ...grpc.CallOption) (*ClearZombieMemberResp, error)
 }
 
 type groupServiceClient struct {
@@ -188,6 +194,15 @@ func (c *groupServiceClient) TransferGroupOwner(ctx context.Context, in *Transfe
 func (c *groupServiceClient) KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error) {
 	out := new(KickGroupMemberResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/KickGroupMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) BatchKickGroupMember(ctx context.Context, in *BatchKickGroupMemberReq, opts ...grpc.CallOption) (*BatchKickGroupMemberResp, error) {
+	out := new(BatchKickGroupMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/BatchKickGroupMember", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -329,6 +344,24 @@ func (c *groupServiceClient) ReportGroup(ctx context.Context, in *ReportGroupReq
 	return out, nil
 }
 
+func (c *groupServiceClient) RandInsertZombieMember(ctx context.Context, in *RandInsertZombieMemberReq, opts ...grpc.CallOption) (*RandInsertZombieMemberResp, error) {
+	out := new(RandInsertZombieMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/RandInsertZombieMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) ClearZombieMember(ctx context.Context, in *ClearZombieMemberReq, opts ...grpc.CallOption) (*ClearZombieMemberResp, error) {
+	out := new(ClearZombieMemberResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ClearZombieMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -357,6 +390,8 @@ type GroupServiceServer interface {
 	TransferGroupOwner(context.Context, *TransferGroupOwnerReq) (*TransferGroupOwnerResp, error)
 	//KickGroupMember 踢出群成员
 	KickGroupMember(context.Context, *KickGroupMemberReq) (*KickGroupMemberResp, error)
+	//BatchKickGroupMember 批量踢出群成员
+	BatchKickGroupMember(context.Context, *BatchKickGroupMemberReq) (*BatchKickGroupMemberResp, error)
 	//GetGroupMemberList 获取群成员列表
 	GetGroupMemberList(context.Context, *GetGroupMemberListReq) (*GetGroupMemberListResp, error)
 	//GetMyGroupList 获取我的群聊列表
@@ -387,6 +422,10 @@ type GroupServiceServer interface {
 	AddGroupMember(context.Context, *AddGroupMemberReq) (*AddGroupMemberResp, error)
 	// ReportGroup
 	ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error)
+	// RandInsertZombieMember 随机插入僵尸用户
+	RandInsertZombieMember(context.Context, *RandInsertZombieMemberReq) (*RandInsertZombieMemberResp, error)
+	// ClearZombieMember 清除僵尸用户
+	ClearZombieMember(context.Context, *ClearZombieMemberReq) (*ClearZombieMemberResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -429,6 +468,9 @@ func (UnimplementedGroupServiceServer) TransferGroupOwner(context.Context, *Tran
 }
 func (UnimplementedGroupServiceServer) KickGroupMember(context.Context, *KickGroupMemberReq) (*KickGroupMemberResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method KickGroupMember not implemented")
+}
+func (UnimplementedGroupServiceServer) BatchKickGroupMember(context.Context, *BatchKickGroupMemberReq) (*BatchKickGroupMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchKickGroupMember not implemented")
 }
 func (UnimplementedGroupServiceServer) GetGroupMemberList(context.Context, *GetGroupMemberListReq) (*GetGroupMemberListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupMemberList not implemented")
@@ -474,6 +516,12 @@ func (UnimplementedGroupServiceServer) AddGroupMember(context.Context, *AddGroup
 }
 func (UnimplementedGroupServiceServer) ReportGroup(context.Context, *ReportGroupReq) (*ReportGroupResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportGroup not implemented")
+}
+func (UnimplementedGroupServiceServer) RandInsertZombieMember(context.Context, *RandInsertZombieMemberReq) (*RandInsertZombieMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RandInsertZombieMember not implemented")
+}
+func (UnimplementedGroupServiceServer) ClearZombieMember(context.Context, *ClearZombieMemberReq) (*ClearZombieMemberResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearZombieMember not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -700,6 +748,24 @@ func _GroupService_KickGroupMember_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).KickGroupMember(ctx, req.(*KickGroupMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_BatchKickGroupMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchKickGroupMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).BatchKickGroupMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/BatchKickGroupMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).BatchKickGroupMember(ctx, req.(*BatchKickGroupMemberReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -974,6 +1040,42 @@ func _GroupService_ReportGroup_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_RandInsertZombieMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RandInsertZombieMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).RandInsertZombieMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/RandInsertZombieMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).RandInsertZombieMember(ctx, req.(*RandInsertZombieMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_ClearZombieMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearZombieMemberReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ClearZombieMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ClearZombieMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ClearZombieMember(ctx, req.(*ClearZombieMemberReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1028,6 +1130,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "KickGroupMember",
 			Handler:    _GroupService_KickGroupMember_Handler,
+		},
+		{
+			MethodName: "BatchKickGroupMember",
+			Handler:    _GroupService_BatchKickGroupMember_Handler,
 		},
 		{
 			MethodName: "GetGroupMemberList",
@@ -1088,6 +1194,14 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReportGroup",
 			Handler:    _GroupService_ReportGroup_Handler,
+		},
+		{
+			MethodName: "RandInsertZombieMember",
+			Handler:    _GroupService_RandInsertZombieMember_Handler,
+		},
+		{
+			MethodName: "ClearZombieMember",
+			Handler:    _GroupService_ClearZombieMember_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

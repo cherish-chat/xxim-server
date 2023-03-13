@@ -136,12 +136,37 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				},
 				ContentType: pb.NoticeContentType_GroupMemberLeave,
 				Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
-					GroupId: in.GroupId,
-					Tip:     tip,
+					GroupId:  in.GroupId,
+					Tip:      tip,
+					MemberId: in.MemberId,
 				}),
-				UniqueId: "member",
+				UniqueId: utils.GenId(),
 				Title:    "",
 				Ext:      nil,
+			}
+			err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
+			if err != nil {
+				l.Errorf("insert notice failed, err: %v", err)
+				return err
+			}
+			return nil
+		}, func(tx *gorm.DB) error {
+			notice := &noticemodel.Notice{
+				ConvId:   pb.HiddenConvIdCommand(),
+				UserId:   in.MemberId,
+				UniqueId: utils.GenId(),
+				Options: noticemodel.NoticeOption{
+					StorageForClient: false,
+					UpdateConvNotice: false,
+				},
+				ContentType: pb.NoticeContentType_GroupMemberLeave,
+				Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
+					GroupId:  in.GroupId,
+					Tip:      tip,
+					MemberId: in.MemberId,
+				}),
+				Title: "",
+				Ext:   nil,
 			}
 			err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
 			if err != nil {
@@ -194,6 +219,14 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
 				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
+			}
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+				CommonReq: in.CommonReq,
+				ConvId:    pb.HiddenConvIdCommand(),
+				UserId:    in.MemberId,
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)

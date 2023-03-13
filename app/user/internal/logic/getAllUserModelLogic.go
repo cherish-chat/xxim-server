@@ -48,9 +48,17 @@ func (l *GetAllUserModelLogic) GetAllUserModel(in *pb.GetAllUserModelReq) (*pb.G
 				wheres = append(wheres, xorm.Where("nickname LIKE ?", v+"%"))
 			case "role":
 				role := int32(utils.AnyToInt64(v))
-				if role > 0 {
-					wheres = append(wheres, xorm.Where("role = ?", role))
+				switch role {
+				case 1:
+					role = int32(usermodel.RoleUser)
+				case 2:
+					role = int32(usermodel.RoleService)
+				case 3:
+					role = int32(usermodel.RoleGuest)
+				case 4:
+					role = int32(usermodel.RoleZombie)
 				}
+				wheres = append(wheres, xorm.Where("role = ?", role))
 			case "invitationCode":
 				wheres = append(wheres, xorm.Where("invitation_code = ?", v))
 			case "status":

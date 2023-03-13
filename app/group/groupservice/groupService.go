@@ -17,6 +17,10 @@ type (
 	AddGroupMemberResp                             = pb.AddGroupMemberResp
 	ApplyToBeGroupMemberReq                        = pb.ApplyToBeGroupMemberReq
 	ApplyToBeGroupMemberResp                       = pb.ApplyToBeGroupMemberResp
+	BatchKickGroupMemberReq                        = pb.BatchKickGroupMemberReq
+	BatchKickGroupMemberResp                       = pb.BatchKickGroupMemberResp
+	ClearZombieMemberReq                           = pb.ClearZombieMemberReq
+	ClearZombieMemberResp                          = pb.ClearZombieMemberResp
 	CreateGroupNoticeReq                           = pb.CreateGroupNoticeReq
 	CreateGroupNoticeResp                          = pb.CreateGroupNoticeResp
 	CreateGroupReq                                 = pb.CreateGroupReq
@@ -70,6 +74,8 @@ type (
 	MapGroupMemberInfoByIdsReq                     = pb.MapGroupMemberInfoByIdsReq
 	MapGroupMemberInfoByIdsReq_Opt                 = pb.MapGroupMemberInfoByIdsReq_Opt
 	MapGroupMemberInfoByIdsResp                    = pb.MapGroupMemberInfoByIdsResp
+	RandInsertZombieMemberReq                      = pb.RandInsertZombieMemberReq
+	RandInsertZombieMemberResp                     = pb.RandInsertZombieMemberResp
 	ReportGroupReq                                 = pb.ReportGroupReq
 	ReportGroupResp                                = pb.ReportGroupResp
 	SearchGroupsByKeywordReq                       = pb.SearchGroupsByKeywordReq
@@ -108,6 +114,8 @@ type (
 		TransferGroupOwner(ctx context.Context, in *TransferGroupOwnerReq, opts ...grpc.CallOption) (*TransferGroupOwnerResp, error)
 		// KickGroupMember 踢出群成员
 		KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error)
+		// BatchKickGroupMember 批量踢出群成员
+		BatchKickGroupMember(ctx context.Context, in *BatchKickGroupMemberReq, opts ...grpc.CallOption) (*BatchKickGroupMemberResp, error)
 		// GetGroupMemberList 获取群成员列表
 		GetGroupMemberList(ctx context.Context, in *GetGroupMemberListReq, opts ...grpc.CallOption) (*GetGroupMemberListResp, error)
 		// GetMyGroupList 获取我的群聊列表
@@ -138,6 +146,10 @@ type (
 		AddGroupMember(ctx context.Context, in *AddGroupMemberReq, opts ...grpc.CallOption) (*AddGroupMemberResp, error)
 		//  ReportGroup
 		ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error)
+		//  RandInsertZombieMember 随机插入僵尸用户
+		RandInsertZombieMember(ctx context.Context, in *RandInsertZombieMemberReq, opts ...grpc.CallOption) (*RandInsertZombieMemberResp, error)
+		//  ClearZombieMember 清除僵尸用户
+		ClearZombieMember(ctx context.Context, in *ClearZombieMemberReq, opts ...grpc.CallOption) (*ClearZombieMemberResp, error)
 	}
 
 	defaultGroupService struct {
@@ -221,6 +233,12 @@ func (m *defaultGroupService) TransferGroupOwner(ctx context.Context, in *Transf
 func (m *defaultGroupService) KickGroupMember(ctx context.Context, in *KickGroupMemberReq, opts ...grpc.CallOption) (*KickGroupMemberResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.KickGroupMember(ctx, in, opts...)
+}
+
+// BatchKickGroupMember 批量踢出群成员
+func (m *defaultGroupService) BatchKickGroupMember(ctx context.Context, in *BatchKickGroupMemberReq, opts ...grpc.CallOption) (*BatchKickGroupMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.BatchKickGroupMember(ctx, in, opts...)
 }
 
 // GetGroupMemberList 获取群成员列表
@@ -311,4 +329,16 @@ func (m *defaultGroupService) AddGroupMember(ctx context.Context, in *AddGroupMe
 func (m *defaultGroupService) ReportGroup(ctx context.Context, in *ReportGroupReq, opts ...grpc.CallOption) (*ReportGroupResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.ReportGroup(ctx, in, opts...)
+}
+
+//  RandInsertZombieMember 随机插入僵尸用户
+func (m *defaultGroupService) RandInsertZombieMember(ctx context.Context, in *RandInsertZombieMemberReq, opts ...grpc.CallOption) (*RandInsertZombieMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.RandInsertZombieMember(ctx, in, opts...)
+}
+
+//  ClearZombieMember 清除僵尸用户
+func (m *defaultGroupService) ClearZombieMember(ctx context.Context, in *ClearZombieMemberReq, opts ...grpc.CallOption) (*ClearZombieMemberResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ClearZombieMember(ctx, in, opts...)
 }

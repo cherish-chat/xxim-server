@@ -3,6 +3,7 @@ package groupmodel
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
@@ -244,6 +245,21 @@ func FlushGroupMemberCache(ctx context.Context, rc *redis.Redis, groupId string,
 func FlushGroupMemberListCache(ctx context.Context, rc *redis.Redis, groupId string) error {
 	// 查询 keys
 	keyListKey := rediskey.GroupMemberSearchKeyList(groupId)
+	// 加锁
+	lockKey := "lock:" + keyListKey
+	// setnx lockKey 1
+	acquire, err := redis.NewRedisLock(rc, lockKey).Acquire()
+	if err != nil {
+		return err
+	}
+	if !acquire {
+		// 没有获取到锁
+		return errors.New("没有获取到锁")
+	}
+	defer func() {
+		// 释放锁
+		_, _ = redis.NewRedisLock(rc, lockKey).Release()
+	}()
 	var keys = []string{keyListKey}
 	// hgetall keyListKey
 	val, err := rc.HgetallCtx(ctx, keyListKey)

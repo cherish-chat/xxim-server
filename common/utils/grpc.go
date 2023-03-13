@@ -3,6 +3,7 @@ package utils
 import (
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
+	"time"
 )
 
 type ZrpcConfig struct {
@@ -19,5 +20,6 @@ func (c ZrpcConfig) Options() []zrpc.ClientOption {
 		zrpc.WithDialOption(grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(
 			c.MaxCallRecvMsgSize(),
 		))),
+		zrpc.WithTimeout(time.Minute),
 	}
 }

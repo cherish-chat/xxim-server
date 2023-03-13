@@ -11,6 +11,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	"io"
+	"math"
 	"net"
 	"net/http"
 	"strconv"
@@ -166,6 +167,7 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancelFunc := context.WithCancel(r.Context())
 	//ctx := c.CloseRead(r.Context())
+	c.SetReadLimit(math.MaxInt32)
 	userConn := &types.UserConn{
 		Conn: &userConn{
 			ws: c,

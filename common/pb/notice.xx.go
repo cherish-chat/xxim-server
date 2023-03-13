@@ -82,8 +82,9 @@ type (
 		MemberId string `json:"memberId"`
 	}
 	NoticeContent_GroupMemberLeave struct {
-		GroupId string `json:"groupId"`
-		Tip     string `json:"tip"`
+		GroupId  string `json:"groupId"`
+		Tip      string `json:"tip"`
+		MemberId string `json:"memberId"`
 	}
 	NoticeContent_DismissGroup struct {
 		GroupId string `json:"groupId"`

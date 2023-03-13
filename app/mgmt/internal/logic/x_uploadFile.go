@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils/xstorage"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/logx"
+	"strings"
 )
 
 type UploadFileLogic struct {
@@ -75,6 +76,61 @@ func (l *UploadFileLogic) UploadFile(key string, data []byte) (string, error) {
 		return storage.GetObjectUrl(key), nil
 	}
 	return storage.PutObject(l.ctx, key, data)
+}
+
+func (l *UploadFileLogic) MayGetUrl(key string) string {
+	if strings.HasPrefix(key, "http") {
+		return key
+	}
+	var configResp *pb.GetAppLineConfigResp
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "GetAppLineConfig", func(ctx context.Context) {
+		configResp, err = NewGetAppLineConfigLogic(l.ctx, l.svcCtx).GetAppLineConfig(&pb.GetAppLineConfigReq{})
+	})
+	if err != nil {
+		l.Errorf("GetAppLineConfig failed: %v", err)
+		return key
+	}
+	appLineConfigClass := &mgmtmodel.AppLineConfigClass{}
+	err = json.Unmarshal([]byte(configResp.AppLineConfig.Config), appLineConfigClass)
+	if err != nil {
+		l.Errorf("json.Unmarshal failed: %v", err)
+		return key
+	}
+	var storage xstorage.Storage
+	// 验证对象存储配置
+	switch appLineConfigClass.ObjectStorage.Type {
+	case "cos":
+		storage, err = xstorage.NewCosStorage(&pb.AppLineConfig_Storage_Cos{
+			AppId:      appLineConfigClass.ObjectStorage.Cos.AppId,
+			SecretId:   appLineConfigClass.ObjectStorage.Cos.SecretId,
+			SecretKey:  appLineConfigClass.ObjectStorage.Cos.SecretKey,
+			BucketName: appLineConfigClass.ObjectStorage.Cos.BucketName,
+			Region:     appLineConfigClass.ObjectStorage.Cos.Region,
+			BucketUrl:  appLineConfigClass.ObjectStorage.Cos.BucketUrl,
+		})
+	case "oss":
+		storage, err = xstorage.NewOssStorage(&pb.AppLineConfig_Storage_Oss{
+			Endpoint:        appLineConfigClass.ObjectStorage.Oss.Endpoint,
+			AccessKeyId:     appLineConfigClass.ObjectStorage.Oss.AccessKeyId,
+			AccessKeySecret: appLineConfigClass.ObjectStorage.Oss.AccessKeySecret,
+			BucketName:      appLineConfigClass.ObjectStorage.Oss.BucketName,
+			BucketUrl:       appLineConfigClass.ObjectStorage.Oss.BucketUrl,
+		})
+	case "minio":
+		storage, err = xstorage.NewMinioStorage(&pb.AppLineConfig_Storage_Minio{
+			Endpoint:        appLineConfigClass.ObjectStorage.Minio.Endpoint,
+			AccessKeyId:     appLineConfigClass.ObjectStorage.Minio.AccessKeyId,
+			SecretAccessKey: appLineConfigClass.ObjectStorage.Minio.SecretAccessKey,
+			BucketName:      appLineConfigClass.ObjectStorage.Minio.BucketName,
+			Ssl:             appLineConfigClass.ObjectStorage.Minio.SSL,
+			BucketUrl:       appLineConfigClass.ObjectStorage.Minio.BucketUrl,
+		})
+	default:
+		l.Errorf("请配置app对象存储")
+		return key
+	}
+	return storage.GetObjectUrl(key)
 }
 
 func (l *UploadFileLogic) AlbumAdd(cid uint, filename string, url string, suffix string, size int64, adminId string, typ int) (*mgmtmodel.Album, error) {

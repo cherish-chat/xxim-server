@@ -39,7 +39,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 func (s *ServiceContext) ImService() imservice.ImService {
 	if s.imService == nil {
-		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc))
+		s.imService = imservice.NewImService(zrpc.MustNewClient(s.Config.ImRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.imService
 }
@@ -53,35 +54,40 @@ func (s *ServiceContext) Redis() *redis.Redis {
 
 func (s *ServiceContext) MsgService() msgservice.MsgService {
 	if s.msgService == nil {
-		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc))
+		s.msgService = msgservice.NewMsgService(zrpc.MustNewClient(s.Config.MsgRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.msgService
 }
 
 func (s *ServiceContext) NoticeService() noticeservice.NoticeService {
 	if s.noticeService == nil {
-		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc))
+		s.noticeService = noticeservice.NewNoticeService(zrpc.MustNewClient(s.Config.NoticeRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.noticeService
 }
 
 func (s *ServiceContext) RelationService() relationservice.RelationService {
 	if s.relationService == nil {
-		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc))
+		s.relationService = relationservice.NewRelationService(zrpc.MustNewClient(s.Config.RelationRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.relationService
 }
 
 func (s *ServiceContext) UserService() userservice.UserService {
 	if s.userService == nil {
-		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc))
+		s.userService = userservice.NewUserService(zrpc.MustNewClient(s.Config.UserRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.userService
 }
 
 func (s *ServiceContext) GroupService() groupservice.GroupService {
 	if s.groupService == nil {
-		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc))
+		s.groupService = groupservice.NewGroupService(zrpc.MustNewClient(s.Config.GroupRpc,
+			utils.Zrpc.Options()...))
 	}
 	return s.groupService
 }

@@ -34,6 +34,7 @@ type RelationServiceClient interface {
 	GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 	GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error)
+	BatchMakeFriend(ctx context.Context, in *BatchMakeFriendReq, opts ...grpc.CallOption) (*BatchMakeFriendResp, error)
 }
 
 type relationServiceClient struct {
@@ -152,6 +153,15 @@ func (c *relationServiceClient) GetFriendListByUserId(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *relationServiceClient) BatchMakeFriend(ctx context.Context, in *BatchMakeFriendReq, opts ...grpc.CallOption) (*BatchMakeFriendResp, error) {
+	out := new(BatchMakeFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/BatchMakeFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RelationServiceServer is the server API for RelationService service.
 // All implementations must embed UnimplementedRelationServiceServer
 // for forward compatibility
@@ -168,6 +178,7 @@ type RelationServiceServer interface {
 	GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error)
 	GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(context.Context, *GetFriendListByUserIdReq) (*GetFriendListByUserIdResp, error)
+	BatchMakeFriend(context.Context, *BatchMakeFriendReq) (*BatchMakeFriendResp, error)
 	mustEmbedUnimplementedRelationServiceServer()
 }
 
@@ -210,6 +221,9 @@ func (UnimplementedRelationServiceServer) GetMyFriendEventList(context.Context, 
 }
 func (UnimplementedRelationServiceServer) GetFriendListByUserId(context.Context, *GetFriendListByUserIdReq) (*GetFriendListByUserIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendListByUserId not implemented")
+}
+func (UnimplementedRelationServiceServer) BatchMakeFriend(context.Context, *BatchMakeFriendReq) (*BatchMakeFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchMakeFriend not implemented")
 }
 func (UnimplementedRelationServiceServer) mustEmbedUnimplementedRelationServiceServer() {}
 
@@ -440,6 +454,24 @@ func _RelationService_GetFriendListByUserId_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationService_BatchMakeFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchMakeFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).BatchMakeFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/BatchMakeFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).BatchMakeFriend(ctx, req.(*BatchMakeFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RelationService_ServiceDesc is the grpc.ServiceDesc for RelationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -494,6 +526,10 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendListByUserId",
 			Handler:    _RelationService_GetFriendListByUserId_Handler,
+		},
+		{
+			MethodName: "BatchMakeFriend",
+			Handler:    _RelationService_BatchMakeFriend_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

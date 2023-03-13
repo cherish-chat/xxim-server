@@ -23,6 +23,8 @@ type (
 	AddUserIpWhiteListResp                = pb.AddUserIpWhiteListResp
 	AddUserModelReq                       = pb.AddUserModelReq
 	AddUserModelResp                      = pb.AddUserModelResp
+	BatchCreateZombieUserReq              = pb.BatchCreateZombieUserReq
+	BatchCreateZombieUserResp             = pb.BatchCreateZombieUserResp
 	BatchGetUserAllDevicesReq             = pb.BatchGetUserAllDevicesReq
 	BatchGetUserAllDevicesResp            = pb.BatchGetUserAllDevicesResp
 	BatchGetUserAllDevicesResp_AllDevices = pb.BatchGetUserAllDevicesResp_AllDevices
@@ -162,6 +164,7 @@ type (
 		SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
 		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 		ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
+		BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 	}
 
 	defaultUserService struct {
@@ -400,4 +403,9 @@ func (m *defaultUserService) VerifySms(ctx context.Context, in *VerifySmsReq, op
 func (m *defaultUserService) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.ReportUser(ctx, in, opts...)
+}
+
+func (m *defaultUserService) BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.BatchCreateZombieUser(ctx, in, opts...)
 }

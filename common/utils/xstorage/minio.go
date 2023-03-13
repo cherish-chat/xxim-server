@@ -64,3 +64,12 @@ func (s *MinioStorage) PutObject(ctx context.Context, objectName string, data []
 func (s *MinioStorage) GetObjectUrl(key string) string {
 	return fmt.Sprintf("%s/%s", s.Config.BucketUrl, key)
 }
+
+func (s *MinioStorage) setDownloadPolicy() error {
+	// mc policy set download xxim
+	err := s.Client.SetBucketPolicy(context.Background(), s.Config.BucketName, `{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::`+s.Config.BucketName+`/*"]}]}`)
+	if err != nil {
+		return err
+	}
+	return nil
+}

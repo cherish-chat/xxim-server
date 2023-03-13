@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -44,7 +45,7 @@ func (l *UpdateUserModelLogic) UpdateUserModel(in *pb.UpdateUserModelReq) (*pb.U
 		updateMap["adminRemark"] = in.UserModel.AdminRemark
 	}
 	if in.Password != "" {
-		updateMap["password"] = xpwd.GeneratePwd(in.Password, model.PasswordSalt)
+		updateMap["password"] = xpwd.GeneratePwd(utils.Md5(in.Password), model.PasswordSalt)
 	}
 	if len(updateMap) > 0 {
 		err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.UserModel.Id).Updates(updateMap).Error

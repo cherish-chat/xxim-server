@@ -140,6 +140,7 @@ func (l *UpdateAppLineConfigLogic) UpdateAppLineConfig(in *pb.UpdateAppLineConfi
 		return &pb.UpdateAppLineConfigResp{CommonResp: pb.NewRetryErrorResp()}, errors.New("参数错误")
 	}
 	if err != nil {
+		l.Errorf("storage.NewStorage error(%v)", err)
 		return &pb.UpdateAppLineConfigResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	// 加密 config
@@ -147,6 +148,7 @@ func (l *UpdateAppLineConfigLogic) UpdateAppLineConfig(in *pb.UpdateAppLineConfi
 	// 保存到redis
 	err = l.svcCtx.Redis().Set(rediskey.AppLineConfigKey(), utils.AnyToString(in.AppLineConfig))
 	if err != nil {
+		l.Errorf("redis.Set error(%v)", err)
 		return &pb.UpdateAppLineConfigResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	cfg := xorm.M{
@@ -156,6 +158,7 @@ func (l *UpdateAppLineConfigLogic) UpdateAppLineConfig(in *pb.UpdateAppLineConfi
 	// 上传 config
 	_, err = storage.PutObject(l.ctx, in.AppLineConfig.Storage.ObjectId, bytes)
 	if err != nil {
+		l.Errorf("storage.PutObject error(%v)", err)
 		return &pb.UpdateAppLineConfigResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	return &pb.UpdateAppLineConfigResp{}, nil

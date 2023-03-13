@@ -248,3 +248,8 @@ func (s *UserServiceServer) ReportUser(ctx context.Context, in *pb.ReportUserReq
 	l := logic.NewReportUserLogic(ctx, s.svcCtx)
 	return l.ReportUser(in)
 }
+
+func (s *UserServiceServer) BatchCreateZombieUser(ctx context.Context, in *pb.BatchCreateZombieUserReq) (*pb.BatchCreateZombieUserResp, error) {
+	l := logic.NewBatchCreateZombieUserLogic(ctx, s.svcCtx)
+	return l.BatchCreateZombieUser(in)
+}

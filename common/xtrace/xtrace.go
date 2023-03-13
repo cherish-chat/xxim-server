@@ -78,7 +78,21 @@ func RunWithTrace(
 		oteltrace.WithAttributes(attributes...),
 	)
 	defer span.End()
+	defer func() {
+		if err := recover(); err != nil {
+			span.SetAttributes(attribute.String("error", GetStackInfo()))
+			panic(err)
+		}
+	}()
 	f(spanCtx)
+}
+
+func NewContext(ctx context.Context) context.Context {
+	traceId := TraceIdFromContext(ctx)
+	traceIDFromHex, _ := oteltrace.TraceIDFromHex(traceId)
+	return oteltrace.ContextWithSpanContext(ctx, oteltrace.NewSpanContext(oteltrace.SpanContextConfig{
+		TraceID: traceIDFromHex,
+	}))
 }
 
 func TraceIdFromContext(ctx context.Context) string {

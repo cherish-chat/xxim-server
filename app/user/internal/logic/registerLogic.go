@@ -272,11 +272,6 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "用户名已存在"))}, nil
 	} else {
 		_ = usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{user.Id})
-		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterRegister", func(ctx context.Context) {
-			NewAfterLogic(ctx, l.svcCtx).AfterRegister(user.Id, in.CommonReq)
-		}, propagation.MapCarrier{
-			"user_id": user.Id,
-		})
 	}
 	var resp *pb.LoginResp
 	// 密码正确
@@ -382,7 +377,7 @@ func (l *RegisterLogic) afterRegister(ctx context.Context, in *pb.RegisterReq, u
 			_, err := l.svcCtx.GroupService().AddGroupMember(ctx, &pb.AddGroupMemberReq{
 				CommonReq: in.CommonReq,
 				GroupId:   conv.ConvId,
-				UserId:    user.Id,
+				UserIds:   []string{user.Id},
 			})
 			if err != nil {
 				l.Errorf("自动加入群组失败: %s", err.Error())

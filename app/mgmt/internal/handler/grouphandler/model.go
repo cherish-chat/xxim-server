@@ -2,6 +2,7 @@ package grouphandler
 
 import (
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +28,10 @@ func (r *GroupHandler) getAllModel(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatus(500)
 		return
+	}
+	fileLogic := logic.NewUploadFileLogic(ctx, r.svcCtx)
+	for _, model := range out.GroupModels {
+		model.Avatar = fileLogic.MayGetUrl(model.Avatar)
 	}
 	handler.ReturnOk(ctx, out)
 }

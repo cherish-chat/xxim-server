@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/handler"
+	"github.com/cherish-chat/xxim-server/app/mgmt/internal/logic"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +28,10 @@ func (r *UserHandler) getAllModel(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatus(500)
 		return
+	}
+	fileLogic := logic.NewUploadFileLogic(ctx, r.svcCtx)
+	for _, model := range out.UserModelList {
+		model.Avatar = fileLogic.MayGetUrl(model.Avatar)
 	}
 	handler.ReturnOk(ctx, out)
 }
@@ -149,6 +154,31 @@ func (r *UserHandler) switchModel(ctx *gin.Context) {
 		return
 	}
 	out, err := r.svcCtx.UserService().SwitchUserModel(ctx, in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
+}
+
+// batchCreateZombie 批量创建僵尸用户
+// @Summary 批量创建僵尸用户
+// @Description 使用此接口批量创建僵尸用户
+// @Tags 用户模型管理
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
+// @Param object body pb.BatchCreateZombieUserReq true "请求参数"
+// @Success 200 {object} pb.BatchCreateZombieUserResp "响应数据"
+// @Router /ms/batch/create/zombie [post]
+func (r *UserHandler) batchCreateZombie(ctx *gin.Context) {
+	in := &pb.BatchCreateZombieUserReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := r.svcCtx.UserService().BatchCreateZombieUser(ctx, in)
 	if err != nil {
 		ctx.AbortWithStatus(500)
 		return

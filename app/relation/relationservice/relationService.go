@@ -19,6 +19,8 @@ type (
 	AreBlackListResp          = pb.AreBlackListResp
 	AreFriendsReq             = pb.AreFriendsReq
 	AreFriendsResp            = pb.AreFriendsResp
+	BatchMakeFriendReq        = pb.BatchMakeFriendReq
+	BatchMakeFriendResp       = pb.BatchMakeFriendResp
 	BlockUserReq              = pb.BlockUserReq
 	BlockUserResp             = pb.BlockUserResp
 	DeleteBlockUserReq        = pb.DeleteBlockUserReq
@@ -54,6 +56,7 @@ type (
 		GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
 		GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 		GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error)
+		BatchMakeFriend(ctx context.Context, in *BatchMakeFriendReq, opts ...grpc.CallOption) (*BatchMakeFriendResp, error)
 	}
 
 	defaultRelationService struct {
@@ -125,4 +128,9 @@ func (m *defaultRelationService) GetMyFriendEventList(ctx context.Context, in *G
 func (m *defaultRelationService) GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error) {
 	client := pb.NewRelationServiceClient(m.cli.Conn())
 	return client.GetFriendListByUserId(ctx, in, opts...)
+}
+
+func (m *defaultRelationService) BatchMakeFriend(ctx context.Context, in *BatchMakeFriendReq, opts ...grpc.CallOption) (*BatchMakeFriendResp, error) {
+	client := pb.NewRelationServiceClient(m.cli.Conn())
+	return client.BatchMakeFriend(ctx, in, opts...)
 }
