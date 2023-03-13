@@ -8,7 +8,7 @@ import (
 type Config struct {
 	Group string `gorm:"column:group;type:varchar(255);"`
 	K     string `gorm:"column:k;type:varchar(255);not null;index:uk,unique;" json:"k"`
-	V     string `gorm:"column:v;type:varchar(255);"`
+	V     string `gorm:"column:v;type:text;"`
 	Type  string `gorm:"column:type;type:varchar(255);"` // 1: string, 2: number, 3: bool, 4: json, 5: stringArray
 	Name  string `gorm:"column:name;type:varchar(255);"`
 	// 作用平台

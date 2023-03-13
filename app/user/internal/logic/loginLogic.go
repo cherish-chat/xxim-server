@@ -125,10 +125,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		xjwt.WithDeviceModel(in.CommonReq.DeviceModel),
 	)
 	// 断开设备连接
-	_, err = l.svcCtx.ImService().KickUserConn(l.ctx, &pb.KickUserConnReq{GetUserConnReq: &pb.GetUserConnReq{
+	getUserConnReq := &pb.GetUserConnReq{
 		UserIds:   []string{user.Id},
 		Platforms: []string{in.CommonReq.Platform},
-	}})
+	}
+	if l.svcCtx.Config.EnableMultiDeviceLogin {
+		getUserConnReq.Devices = []string{in.CommonReq.DeviceId}
+	}
+	_, err = l.svcCtx.ImService().KickUserConn(l.ctx, &pb.KickUserConnReq{GetUserConnReq: getUserConnReq})
 	if err != nil {
 		l.Errorf("kick user conn failed, err: %v", err)
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err

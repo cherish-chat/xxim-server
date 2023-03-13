@@ -44,6 +44,7 @@ const (
 	NoticeContentType_SetGroupMemberInfo = 305 // 设置群成员信息
 	NoticeContentType_SetGroupInfo       = 306 // 设置群信息
 	NoticeContentType_RecoverGroup       = 307 // 恢复群
+	NoticeContentType_UpdateGroupInfo    = 308 // 更新群信息
 
 	// groupMember
 	NoticeContentType_ApplyToBeGroupMember = 401 // 申请加入群
@@ -90,6 +91,10 @@ type (
 	NoticeContent_SetGroupMemberInfo struct {
 		GroupId   string                 `json:"groupId"`
 		MemberId  string                 `json:"memberId"`
+		UpdateMap map[string]interface{} `json:"updateMap"`
+	}
+	NoticeContent_UpdateGroupInfo struct {
+		GroupId   string                 `json:"groupId"`
 		UpdateMap map[string]interface{} `json:"updateMap"`
 	}
 )

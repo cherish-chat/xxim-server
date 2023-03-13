@@ -90,6 +90,7 @@ func (l *GetMyFriendEventListLogic) GetMyFriendEventList(in *pb.GetMyFriendEvent
 			CreateTime:    utils.AnyToString(v.CreateTime),
 			UpdateTime:    utils.AnyToString(v.UpdateTime),
 			Extra:         extra,
+			RequestId:     v.Id,
 		})
 		if v.CreateTime < pageIndex {
 			pageIndex = v.CreateTime

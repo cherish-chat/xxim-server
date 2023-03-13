@@ -23,7 +23,7 @@ func (o *CosStorage) GetObjectUrl(key string) string {
 func (o *CosStorage) ExistObject(ctx context.Context, key string) (exists bool, err error) {
 	response, err := o.bucket.Object.Head(ctx, key, nil)
 	if err != nil {
-		return false, err
+		return false, nil
 	}
 	return response.StatusCode == http.StatusOK, nil
 }

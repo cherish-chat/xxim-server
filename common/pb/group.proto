@@ -61,6 +61,8 @@ message GetGroupHomeResp {
   int32 memberCount = 6;
   // 群介绍
   string introduction = 7;
+  // 群主id
+  string owner = 8;
   // 成员统计
   message MemberStatistics {
     // 统计标题
@@ -343,6 +345,7 @@ message GroupBaseInfo {
   string id = 1;
   string name = 2;
   string avatar = 3;
+  string owner = 4;
 }
 
 //GetMyGroupListResp 获取我的群聊列表

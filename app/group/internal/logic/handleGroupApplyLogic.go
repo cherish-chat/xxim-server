@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
+	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
@@ -217,6 +219,51 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 			}
 			return nil
 		})
+	}, propagation.MapCarrier{
+		"groupId":  apply.GroupId,
+		"userId":   in.CommonReq.UserId,
+		"noticeId": apply.Id,
+	})
+	// 申请人发一条消息 自我介绍
+	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "SendMyInfo", func(ctx context.Context) {
+		if in.Result == pb.GroupApplyHandleResult_AGREE {
+			// 获取我自己的信息
+			var sender *pb.UserBaseInfo
+			{
+				userBaseInfo, err := l.svcCtx.UserService().BatchGetUserBaseInfo(ctx, &pb.BatchGetUserBaseInfoReq{
+					CommonReq: in.CommonReq,
+					Ids:       []string{apply.UserId},
+				})
+				if err != nil {
+					l.Errorf("SendMsg failed, err: %v", err)
+					return
+				}
+				if len(userBaseInfo.UserBaseInfos) == 0 {
+					l.Errorf("SendMsg failed, err: %v", err)
+					return
+				}
+				sender = userBaseInfo.UserBaseInfos[0]
+			}
+			_, err := msgservice.SendMsgSync(l.svcCtx.MsgService(), ctx, []*pb.MsgData{
+				msgmodel.CreateTextMsgToGroup(
+					sender,
+					apply.GroupId,
+					"大家好，我是"+sender.Nickname+"。", msgmodel.MsgOptions{
+						OfflinePush:       false,
+						StorageForServer:  true,
+						StorageForClient:  true,
+						UpdateUnreadCount: true,
+						NeedDecrypt:       false,
+						UpdateConvMsg:     true,
+					},
+					nil,
+					nil,
+				).ToMsgData(),
+			})
+			if err != nil {
+				l.Errorf("SendMsg failed, err: %v", err)
+			}
+		}
 	}, propagation.MapCarrier{
 		"groupId":  apply.GroupId,
 		"userId":   in.CommonReq.UserId,

@@ -163,6 +163,8 @@ message FriendEvent {
   string updateTime = 6;
   // 附加信息
   RequestAddFriendExtra extra = 7;
+  // 请求记录id
+  string requestId = 8;
 }
 
 message GetMyFriendEventListResp {

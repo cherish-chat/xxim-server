@@ -16,6 +16,10 @@ func (x *UpdateConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *EditGroupInfoReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *BatchGetMsgListByConvIdReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

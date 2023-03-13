@@ -63,7 +63,10 @@ func CreateCustomMsgToGroup(
 		ClientMsgId: utils.GenId(),
 		ClientTime:  time.Now().UnixMilli(),
 		SenderId:    sender.Id,
-		SenderInfo:  make([]byte, 0),
+		SenderInfo: utils.AnyToBytes(map[string]any{
+			"nickname": sender.Nickname,
+			"avatar":   sender.Avatar,
+		}),
 		ConvId:      pb.GroupConvId(groupId),
 		ContentType: contentType,
 		Content:     utils.AnyToBytes(content),

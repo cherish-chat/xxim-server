@@ -73,6 +73,7 @@ func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {
 		Id:     m.Id,
 		Name:   m.Name,
 		Avatar: m.Avatar,
+		Owner:  m.Owner,
 	}
 }
 
