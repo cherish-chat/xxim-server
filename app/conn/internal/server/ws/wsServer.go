@@ -157,6 +157,7 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Errorf("failed to accept websocket connection: %v", err)
 		return
 	}
+	c.SetReadLimit(math.MaxInt32)
 	code, err := s.beforeConnect(r.Context(), param)
 	if err != nil {
 		logger.Errorf("beforeConnect error: %v, code:", err, code)
@@ -167,7 +168,6 @@ func (s *Server) subscribeHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancelFunc := context.WithCancel(r.Context())
 	//ctx := c.CloseRead(r.Context())
-	c.SetReadLimit(math.MaxInt32)
 	userConn := &types.UserConn{
 		Conn: &userConn{
 			ws: c,
