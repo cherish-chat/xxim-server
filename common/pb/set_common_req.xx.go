@@ -12,6 +12,10 @@ func (x *ReportGroupReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *InviteFriendToGroupReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *UpdateConvSettingReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

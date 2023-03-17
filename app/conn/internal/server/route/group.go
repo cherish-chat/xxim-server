@@ -149,5 +149,15 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/batchKickGroupMember", route)
 		}
+		// /v1/group/inviteFriendToGroup InviteFriendToGroupReq
+		{
+			route := conngateway.Route[*pb.InviteFriendToGroupReq, *pb.InviteFriendToGroupResp]{
+				NewRequest: func() *pb.InviteFriendToGroupReq {
+					return &pb.InviteFriendToGroupReq{}
+				},
+				Do: svcCtx.GroupService().InviteFriendToGroup,
+			}
+			conngateway.AddRoute("/v1/group/inviteFriendToGroup", route)
+		}
 	}
 }

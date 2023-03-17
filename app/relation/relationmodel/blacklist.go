@@ -50,7 +50,7 @@ func getMyBlacklistListFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.
 	if err != nil {
 		return nil, err
 	}
-	var kvs = make(map[string]any, len(blacklists))
+	var kvs = make(map[string]string, len(blacklists))
 	var blacklistIds []string
 	for _, blacklist := range blacklists {
 		blacklistIds = append(blacklistIds, blacklist.BlacklistId)
@@ -71,12 +71,16 @@ func AreMyBlacklist(ctx context.Context, rc *redis.Redis, tx *gorm.DB, userId st
 	existMap, err := xredis.HMExist(rc, ctx, rediskey.BlacklistList(userId), blacklistIds...)
 	if err != nil {
 		listFromMysql, err := getMyBlacklistListFromMysql(ctx, rc, tx, userId)
+		listFromMysqlMap := make(map[string]bool, len(listFromMysql))
+		for _, friendId := range listFromMysql {
+			listFromMysqlMap[friendId] = true
+		}
 		if err != nil {
 			return nil, err
 		}
 		m := make(map[string]bool, len(blacklistIds))
 		for _, blacklistId := range blacklistIds {
-			m[blacklistId] = utils.InSlice(listFromMysql, blacklistId)
+			_, m[blacklistId] = listFromMysqlMap[blacklistId]
 		}
 		return m, nil
 	}

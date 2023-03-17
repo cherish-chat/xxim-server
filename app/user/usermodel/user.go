@@ -52,8 +52,9 @@ type (
 		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';index:mobile_mobilecountrycode;"`
 
 		// 基本信息
-		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
-		Avatar   string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
+		Nickname  string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
+		Avatar    string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
+		Signature string `bson:"signature" json:"signature" gorm:"column:signature;type:varchar(255);"`
 		// 注册信息
 		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json;"`
 		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`

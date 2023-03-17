@@ -50,7 +50,7 @@ func getMyFriendListFromMysql(ctx context.Context, rc *redis.Redis, tx *gorm.DB,
 	if err != nil {
 		return nil, err
 	}
-	var kvs = make(map[string]any, len(friends))
+	var kvs = make(map[string]string, len(friends))
 	var friendIds []string
 	for _, friend := range friends {
 		friendIds = append(friendIds, friend.FriendId)
@@ -71,12 +71,16 @@ func AreMyFriend(ctx context.Context, rc *redis.Redis, tx *gorm.DB, userId strin
 	existMap, err := xredis.HMExist(rc, ctx, rediskey.FriendList(userId), friendIds...)
 	if err != nil {
 		listFromMysql, err := getMyFriendListFromMysql(ctx, rc, tx, userId)
+		listFromMysqlMap := make(map[string]bool, len(listFromMysql))
+		for _, friendId := range listFromMysql {
+			listFromMysqlMap[friendId] = true
+		}
 		if err != nil {
 			return nil, err
 		}
 		m := make(map[string]bool, len(friendIds))
 		for _, friendId := range friendIds {
-			m[friendId] = utils.InSlice(listFromMysql, friendId)
+			_, m[friendId] = listFromMysqlMap[friendId]
 		}
 		return m, nil
 	}

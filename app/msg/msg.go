@@ -15,11 +15,17 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+
+	"net/http"
+	_ "net/http/pprof"
 )
 
 var mgmtRpcAddress = flag.String("a", "127.0.0.1:6708", "mgmt rpc address")
 
 func main() {
+	go func() {
+		http.ListenAndServe(":6060", nil)
+	}()
 	flag.Parse()
 
 	var c config.Config

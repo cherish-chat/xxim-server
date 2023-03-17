@@ -207,21 +207,33 @@ func (l *ConnLogic) stats() {
 }
 
 func (l *ConnLogic) BuildSearchUserConnFilter(in *pb.GetUserConnReq) func(conn *types.UserConn) bool {
+	inUserMap := make(map[string]bool)
+	for _, userId := range in.UserIds {
+		inUserMap[userId] = true
+	}
+	inPlatformMap := make(map[string]bool)
+	for _, platform := range in.Platforms {
+		inPlatformMap[platform] = true
+	}
+	inDeviceMap := make(map[string]bool)
+	for _, deviceId := range in.Devices {
+		inDeviceMap[deviceId] = true
+	}
 	return func(conn *types.UserConn) bool {
 		if len(in.UserIds) > 0 {
-			in := utils.InSlice(in.UserIds, conn.ConnParam.UserId)
+			_, in := inUserMap[conn.ConnParam.UserId]
 			if !in {
 				return false
 			}
 		}
 		if len(in.Platforms) > 0 {
-			in := utils.InSlice(in.Platforms, conn.ConnParam.Platform)
+			_, in := inPlatformMap[conn.ConnParam.Platform]
 			if !in {
 				return false
 			}
 		}
 		if len(in.Devices) > 0 {
-			in := utils.InSlice(in.Devices, conn.ConnParam.DeviceId)
+			_, in := inDeviceMap[conn.ConnParam.DeviceId]
 			if !in {
 				return false
 			}

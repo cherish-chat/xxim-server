@@ -85,7 +85,14 @@ func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string, compareConv
 	// 对比两次convIds  获取应该删除的  和 应该添加的
 	var delConvIds []string
 	for _, id := range latestGetConvIds {
-		if !utils.InSlice(convIds, id) {
+		var in bool
+		for _, id2 := range convIds {
+			if id == id2 {
+				in = true
+				break
+			}
+		}
+		if !in {
 			delConvIds = append(delConvIds, id)
 		}
 	}

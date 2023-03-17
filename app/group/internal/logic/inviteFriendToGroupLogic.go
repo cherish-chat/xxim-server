@@ -2,6 +2,12 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
@@ -47,10 +53,107 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "只能邀请好友加入群聊"))}, err
 		}
 	}
-	return l.inviteFriendToGroup(in)
+	// 自己是不是管理员或群主
+	// 获取群里所有的管理员
+	groupManagers, err := getAllGroupManager(l.ctx, l.svcCtx, in.GroupId, true)
+	if err != nil {
+		l.Errorf("getAllGroupManager error: %v", err)
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	// 判断是否是管理员
+	isManager := false
+	for _, manager := range groupManagers {
+		if manager.UserId == in.CommonReq.UserId {
+			isManager = true
+			break
+		}
+	}
+	if !isManager {
+		return l.inviteFriendToGroup(in)
+	} else {
+		// 直接进
+		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
+			var members []*groupmodel.GroupMember
+			for _, user := range in.FriendIds {
+				members = append(members, &groupmodel.GroupMember{
+					GroupId:    in.GroupId,
+					UserId:     user,
+					CreateTime: time.Now().UnixMilli(),
+					Role:       groupmodel.RoleType_MEMBER,
+					Remark:     "",
+					UnbanTime:  0,
+				})
+			}
+			// 忽略唯一索引冲突
+			err := tx.Clauses(clause.Insert{Modifier: "IGNORE"}).CreateInBatches(members, 100).Error
+			if err != nil {
+				l.Errorf("RandInsertZombieMember error: %v", err)
+				return err
+			}
+			return nil
+		})
+		if err != nil {
+			l.Errorf("RandInsertZombieMember error: %v", err)
+			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+			// 删除缓存
+			{
+				err = groupmodel.FlushGroupsByUserIdCache(l.ctx, l.svcCtx.Redis(), in.FriendIds...)
+				if err != nil {
+					l.Errorf("InviteFriendToGroup FlushGroupsByUserIdCache error: %v", err)
+					return err
+				}
+			}
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: in.FriendIds})
+			if err != nil {
+				l.Errorf("FlushUsersSubConv failed, err: %v", err)
+				return err
+			}
+			_, err = NewSyncGroupMemberCountLogic(l.ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
+				CommonReq: in.GetCommonReq(),
+				GroupId:   in.GroupId,
+			})
+			if err != nil {
+				l.Errorf("SyncGroupMemberCount failed, err: %v", err)
+				return err
+			}
+			return nil
+		})
+		return &pb.InviteFriendToGroupResp{}, nil
+	}
 }
 
 func (l *InviteFriendToGroupLogic) inviteFriendToGroup(in *pb.InviteFriendToGroupReq) (*pb.InviteFriendToGroupResp, error) {
-	//TODO implement the business logic of InviteFriendToGroup
+	myBaseInfo, err := l.svcCtx.UserService().BatchGetUserBaseInfo(l.ctx, &pb.BatchGetUserBaseInfoReq{
+		CommonReq: in.CommonReq,
+		Ids:       []string{in.CommonReq.UserId},
+	})
+	if err != nil {
+		l.Errorf("InviteFriendToGroup BatchGetUserBaseInfo error: %v", err)
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	if len(myBaseInfo.UserBaseInfos) == 0 {
+		l.Errorf("InviteFriendToGroup BatchGetUserBaseInfo error: %v", err)
+		return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户不存在"))}, err
+	}
+	logic := NewApplyToBeGroupMemberLogic(l.ctx, l.svcCtx)
+	for _, id := range in.FriendIds {
+		resp, err := logic.ApplyToBeGroupMember(&pb.ApplyToBeGroupMemberReq{
+			CommonReq: &pb.CommonReq{
+				UserId: id,
+			},
+			GroupId: in.GroupId,
+			Reason:  fmt.Sprintf("[%s]%s邀请我加入群聊", myBaseInfo.UserBaseInfos[0].Id, myBaseInfo.UserBaseInfos[0].Nickname),
+		})
+		if err != nil {
+			l.Errorf("InviteFriendToGroup ApplyToBeGroupMember error: %v", err)
+			if resp != nil {
+				return &pb.InviteFriendToGroupResp{CommonResp: resp.GetCommonResp()}, err
+			} else {
+				return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+		}
+	}
 	return &pb.InviteFriendToGroupResp{}, nil
 }
