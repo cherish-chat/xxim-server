@@ -89,6 +89,10 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("read_msg_task_interval", num("消息", "read_msg_task_interval", 100, "插入已读消息 任务 时间间隔"))
 	//read_msg_task_batch_size 插入已读消息 任务 批量大小
 	m.insertIfNotFound("read_msg_task_batch_size", num("消息", "read_msg_task_batch_size", 500, "插入已读消息 任务 批量大小"))
+	// enable_msg_cleaner 是否开启消息清理器
+	m.insertIfNotFound("enable_msg_cleaner", boolean("消息", "enable_msg_cleaner", false, "是否开启消息清理器"))
+	// msg_keep_hour 消息保留时间
+	m.insertIfNotFound("msg_keep_hour", num("消息", "msg_keep_hour", 24*30, "消息保留时间"))
 
 	// 好友
 	// friend_max_count 好友最大数量
@@ -497,4 +501,14 @@ func (m *ConfigMgr) ReadMsgTaskInterval(ctx context.Context) time.Duration {
 // ReadMsgTaskBatchSize 已读消息任务批量大小
 func (m *ConfigMgr) ReadMsgTaskBatchSize(ctx context.Context) int {
 	return int(utils.AnyToInt64(m.GetOrDefaultCtx(ctx, "read_msg_task_batch_size", "500", "")))
+}
+
+// EnableMsgCleaner 是否开启消息清理
+func (m *ConfigMgr) EnableMsgCleaner() bool {
+	return m.GetCtx(context.Background(), "enable_msg_cleaner", "") == "1"
+}
+
+// GetMsgKeepHour 消息保留时间
+func (m *ConfigMgr) GetMsgKeepHour() int64 {
+	return utils.AnyToInt64(m.GetCtx(context.Background(), "msg_keep_hour", ""))
 }

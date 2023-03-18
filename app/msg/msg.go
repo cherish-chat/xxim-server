@@ -33,6 +33,8 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	logic.InitShieldWordTrieTree(ctx)
 
+	go logic.NewTimerCleaner(ctx).Start()
+
 	svr := server.NewMsgServiceServer(ctx)
 	svr.Start()
 

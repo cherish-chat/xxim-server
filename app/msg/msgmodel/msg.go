@@ -191,23 +191,33 @@ func GetMsgTableNameById(id string) string {
 
 var tableNameExists = make(map[string]bool)
 
-func CreateMsgTable(tx *gorm.DB, tableName string) error {
-	if len(tableNameExists) == 0 {
-		// 获取所有表名
-		rows, err := tx.Raw("show tables").Rows()
+func GetAllTableName(tx *gorm.DB) ([]string, error) {
+	// 获取所有表名
+	rows, err := tx.Raw("show tables").Rows()
+	if err != nil {
+		logx.Errorf("CreateMsgTable error: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+	var tableNames []string
+	for rows.Next() {
+		var name string
+		err = rows.Scan(&name)
 		if err != nil {
 			logx.Errorf("CreateMsgTable error: %v", err)
-			return err
+			return nil, err
 		}
-		defer rows.Close()
-		for rows.Next() {
-			var name string
-			err = rows.Scan(&name)
-			if err != nil {
-				logx.Errorf("CreateMsgTable error: %v", err)
-				return err
-			}
-			tableNameExists[name] = true
+		tableNameExists[name] = true
+		tableNames = append(tableNames, name)
+	}
+	return tableNames, nil
+}
+
+func CreateMsgTable(tx *gorm.DB, tableName string) error {
+	if len(tableNameExists) == 0 {
+		_, err := GetAllTableName(tx)
+		if err != nil {
+			return err
 		}
 	}
 	if _, ok := tableNameExists[tableName]; ok {
