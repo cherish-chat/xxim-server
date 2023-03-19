@@ -389,5 +389,7 @@ func (m *User) ToPB() *pb.UserModel {
 		CreateTime:     m.CreateTime,
 		CreatedAt:      m.CreateTime,
 		CreatedAtStr:   utils.If(m.CreateTime > 0, utils.TimeFormat(m.CreateTime), utils.TimeFormat(m.RegInfo.Time)),
+		DestroyedAt:    m.DestroyTime,
+		DestroyedAtStr: utils.If(m.DestroyTime > 0, utils.TimeFormat(m.DestroyTime), ""),
 	}
 }

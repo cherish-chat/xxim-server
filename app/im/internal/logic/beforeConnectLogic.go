@@ -43,6 +43,11 @@ func (l *BeforeConnectLogic) BeforeConnect(in *pb.BeforeConnectReq) (*pb.BeforeC
 		l.Infof("查询用户失败: %v", err)
 		return &pb.BeforeConnectResp{Msg: "连接失败"}, status.Error(codes.Unauthenticated, "用户被删除")
 	}
+	// 查询用户是否已注销账号
+	if detail.UserModel.DestroyedAt > 0 {
+		l.Errorf("用户被删除: %v", err)
+		return &pb.BeforeConnectResp{Msg: "您的账号已被注销"}, status.Error(codes.Unauthenticated, "您的账号已注销")
+	}
 	if detail.UserModel.UnblockTime > 0 {
 		// 和当前时间比较
 		if detail.UserModel.UnblockTime > time.Now().UnixMilli() {

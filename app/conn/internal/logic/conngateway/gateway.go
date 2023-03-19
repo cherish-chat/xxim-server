@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils/xerr"
+	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -38,9 +39,25 @@ type Route[REQ IReq, RESP IResp] struct {
 
 var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error){}
 
+var httpRouteMap = map[string]gin.HandlerFunc{}
+
 func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 	routeMap[method] = func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
 		return OnReceiveCustom(ctx, method, c, body, route.NewRequest(), route.Do, route.Callback)
+	}
+	httpRouteMap[method] = func(ctx *gin.Context) {
+		commonResp, err := OnHttpReceiveCustom(ctx, route.NewRequest(), route.Do)
+		if err != nil {
+			logx.WithContext(ctx.Request.Context()).Errorf("OnHttpReceiveCustom: %s, error: %v", method, err)
+			if commonResp == nil {
+				commonResp = pb.NewInternalErrorResp()
+			}
+			protobuf, _ := proto.Marshal(commonResp)
+			ctx.Data(200, "application/x-protobuf", protobuf)
+			return
+		}
+		protobuf, _ := proto.Marshal(commonResp)
+		ctx.Data(200, "application/x-protobuf", protobuf)
 	}
 }
 

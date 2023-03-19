@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/app/conn/internal/logic/conngateway"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/conn/internal/types"
 	"github.com/cherish-chat/xxim-server/common/xhttp"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel/propagation"
 	"io"
 	"math"
-	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,7 +24,8 @@ import (
 
 // Server enables broadcasting to a set of subscribers.
 type Server struct {
-	serveMux         http.ServeMux
+	//serveMux         http.ServeMux
+	engine           *gin.Engine
 	svcCtx           *svc.ServiceContext
 	addSubscriber    func(c *types.UserConn)
 	deleteSubscriber func(c *types.UserConn)
@@ -57,38 +59,23 @@ func NewServer(
 		deleteSubscriber: func(c *types.UserConn) {},
 		beforeConnect:    func(ctx context.Context, param types.ConnParam) (int, error) { return 0, nil },
 	}
-	// 跨域配置
-	s.serveMux.Handle("/", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
-	s.serveMux.Handle("/ws", s.corsMiddleware(http.HandlerFunc(s.subscribeHandler)))
+	s.engine = gin.New()
+	if svcCtx.Config.Log.Level == "debug" || svcCtx.Config.Log.Level == "info" {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	s.engine.Use(gin.Recovery())
+	s.engine.Use(xhttp.Cors())
+	s.engine.Use(gin.Logger())
+	s.engine.GET("/", gin.WrapH(http.HandlerFunc(s.subscribeHandler)))
+	s.engine.GET("/ws", gin.WrapH(http.HandlerFunc(s.subscribeHandler)))
+	conngateway.HttpGateway(s.engine)
 	return s
 }
 
 func (s *Server) Start() error {
-	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", s.svcCtx.Config.Websocket.Host, s.svcCtx.Config.Websocket.Port))
-	if err != nil {
-		return err
-	}
-	logx.Infof("listening on http://%v", l.Addr())
-
-	hs := &http.Server{
-		Handler:      s,
-		ReadTimeout:  time.Second * 10,
-		WriteTimeout: time.Second * 10,
-	}
-	errc := make(chan error, 1)
-	go func() {
-		errc <- hs.Serve(l)
-	}()
-
-	select {
-	case err := <-errc:
-		logx.Errorf("failed to serve: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	return hs.Shutdown(ctx)
+	return s.engine.Run(fmt.Sprintf("%s:%d", s.svcCtx.Config.Websocket.Host, s.svcCtx.Config.Websocket.Port))
 }
 
 type userConn struct {
@@ -200,10 +187,6 @@ func (s *Server) subscribe(ctx context.Context, c *types.UserConn) error {
 			return ctx.Err()
 		}
 	}
-}
-
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.serveMux.ServeHTTP(w, r)
 }
 
 func (s *Server) loopRead(ctx context.Context, cancelFunc context.CancelFunc, conn *types.UserConn) {

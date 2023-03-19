@@ -707,6 +707,8 @@ message UserModel {
 
   int64 createdAt = 21;
   string createdAtStr = 22;
+  int64 destroyedAt = 23;
+  string destroyedAtStr = 24;
 }
 
 //GetAllUserModelReq 获取所有用户信息请求

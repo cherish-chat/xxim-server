@@ -22,14 +22,6 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 	logic.InitConnLogic(svcCtx)
 	l := logic.GetConnLogic()
 
-	var servers = []types.IServer{ws.NewServer(svcCtx), tcp.NewServer(svcCtx)}
-	for _, server := range servers {
-		server.SetBeforeConnect(l.BeforeConnect)
-		server.SetAddSubscriber(l.AddSubscriber)
-		server.SetDeleteSubscriber(l.DeleteSubscriber)
-		server.SetOnReceive(l.OnReceive)
-	}
-	s.Servers = servers
 	{
 		conngateway.Init(s.svcCtx)
 		route.RegisterAppMgmt(s.svcCtx)
@@ -42,6 +34,15 @@ func NewConnServer(svcCtx *svc.ServiceContext) *ConnServer {
 		route.RegisterUser(s.svcCtx)
 		conngateway.PrintRoutes()
 	}
+
+	var servers = []types.IServer{ws.NewServer(svcCtx), tcp.NewServer(svcCtx)}
+	for _, server := range servers {
+		server.SetBeforeConnect(l.BeforeConnect)
+		server.SetAddSubscriber(l.AddSubscriber)
+		server.SetDeleteSubscriber(l.DeleteSubscriber)
+		server.SetOnReceive(l.OnReceive)
+	}
+	s.Servers = servers
 	go l.Stats()
 	return s
 }
