@@ -6,6 +6,9 @@ import (
 )
 
 func GetRequestIP(r *http.Request) string {
+	if cdn := r.Header.Get("Tencent-Acceleration-Domain-Name"); cdn != "" {
+		return r.Header.Get("X-Forwarded-For") + ", " + cdn
+	}
 	ip := r.Header.Get("X-Forwarded-For")
 	if ip == "" {
 		ip = r.Header.Get("X-Real-Ip")
