@@ -75,6 +75,9 @@ type (
 		AdminRemark string `bson:"adminRemark" json:"adminRemark" gorm:"column:adminRemark;type:varchar(64);default:'';"`
 		// 创建时间
 		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
+
+		// 账号注销时间
+		DestroyTime int64 `bson:"destroyTime" json:"destroyTime" gorm:"column:destroyTime;type:bigint(13);index;default:0;"`
 	}
 	LoginInfo struct {
 		// 13位时间戳

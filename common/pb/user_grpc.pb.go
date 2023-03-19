@@ -70,6 +70,8 @@ type UserServiceClient interface {
 	VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 	ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 	BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
+	DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
+	RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error)
 }
 
 type userServiceClient struct {
@@ -494,6 +496,24 @@ func (c *userServiceClient) BatchCreateZombieUser(ctx context.Context, in *Batch
 	return out, nil
 }
 
+func (c *userServiceClient) DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error) {
+	out := new(DestroyAccountResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/DestroyAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error) {
+	out := new(RecoverAccountResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/RecoverAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -546,6 +566,8 @@ type UserServiceServer interface {
 	VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error)
 	ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error)
 	BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error)
+	DestroyAccount(context.Context, *DestroyAccountReq) (*DestroyAccountResp, error)
+	RecoverAccount(context.Context, *RecoverAccountReq) (*RecoverAccountResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -690,6 +712,12 @@ func (UnimplementedUserServiceServer) ReportUser(context.Context, *ReportUserReq
 }
 func (UnimplementedUserServiceServer) BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchCreateZombieUser not implemented")
+}
+func (UnimplementedUserServiceServer) DestroyAccount(context.Context, *DestroyAccountReq) (*DestroyAccountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DestroyAccount not implemented")
+}
+func (UnimplementedUserServiceServer) RecoverAccount(context.Context, *RecoverAccountReq) (*RecoverAccountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecoverAccount not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -1532,6 +1560,42 @@ func _UserService_BatchCreateZombieUser_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_DestroyAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DestroyAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DestroyAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/DestroyAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DestroyAccount(ctx, req.(*DestroyAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RecoverAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecoverAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RecoverAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/RecoverAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RecoverAccount(ctx, req.(*RecoverAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1722,6 +1786,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchCreateZombieUser",
 			Handler:    _UserService_BatchCreateZombieUser_Handler,
+		},
+		{
+			MethodName: "DestroyAccount",
+			Handler:    _UserService_DestroyAccount_Handler,
+		},
+		{
+			MethodName: "RecoverAccount",
+			Handler:    _UserService_RecoverAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

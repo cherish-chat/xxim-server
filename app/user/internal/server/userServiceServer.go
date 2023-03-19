@@ -253,3 +253,13 @@ func (s *UserServiceServer) BatchCreateZombieUser(ctx context.Context, in *pb.Ba
 	l := logic.NewBatchCreateZombieUserLogic(ctx, s.svcCtx)
 	return l.BatchCreateZombieUser(in)
 }
+
+func (s *UserServiceServer) DestroyAccount(ctx context.Context, in *pb.DestroyAccountReq) (*pb.DestroyAccountResp, error) {
+	l := logic.NewDestroyAccountLogic(ctx, s.svcCtx)
+	return l.DestroyAccount(in)
+}
+
+func (s *UserServiceServer) RecoverAccount(ctx context.Context, in *pb.RecoverAccountReq) (*pb.RecoverAccountResp, error) {
+	l := logic.NewRecoverAccountLogic(ctx, s.svcCtx)
+	return l.RecoverAccount(in)
+}

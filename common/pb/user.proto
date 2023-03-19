@@ -70,6 +70,8 @@ message LoginResp {
   // token
   string token = 3; // 如果是新用户，token为空
   string userId = 4;
+  // 是否已注销
+  bool isDestroyed = 5;
 }
 
 // 确认注册
@@ -903,6 +905,27 @@ message BatchCreateZombieUserReq {
 message BatchCreateZombieUserResp {
   CommonResp commonResp = 1;
 }
+
+//DestroyAccountReq 销毁账号请求
+message DestroyAccountReq {
+  CommonReq commonReq = 1;
+}
+
+//DestroyAccountResp 销毁账号响应
+message DestroyAccountResp {
+  CommonResp commonResp = 1;
+}
+
+//RecoverAccountReq 恢复账号请求
+message RecoverAccountReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+}
+
+//RecoverAccountResp 恢复账号响应
+message RecoverAccountResp {
+  CommonResp commonResp = 1;
+}
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -961,4 +984,7 @@ service userService {
 
   rpc ReportUser(ReportUserReq) returns (ReportUserResp) {}
   rpc BatchCreateZombieUser(BatchCreateZombieUserReq) returns (BatchCreateZombieUserResp) {}
+
+  rpc DestroyAccount(DestroyAccountReq) returns (DestroyAccountResp) {}
+  rpc RecoverAccount(RecoverAccountReq) returns (RecoverAccountResp) {}
 }

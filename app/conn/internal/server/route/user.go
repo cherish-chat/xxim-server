@@ -142,5 +142,25 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/reportUser", route)
 		}
+		// DestroyAccountReq DestroyAccountResp
+		{
+			route := conngateway.Route[*pb.DestroyAccountReq, *pb.DestroyAccountResp]{
+				NewRequest: func() *pb.DestroyAccountReq {
+					return &pb.DestroyAccountReq{}
+				},
+				Do: svcCtx.UserService().DestroyAccount,
+			}
+			conngateway.AddRoute("/v1/user/destroyAccount", route)
+		}
+		// RecoverAccountReq RecoverAccountResp
+		{
+			route := conngateway.Route[*pb.RecoverAccountReq, *pb.RecoverAccountResp]{
+				NewRequest: func() *pb.RecoverAccountReq {
+					return &pb.RecoverAccountReq{}
+				},
+				Do: svcCtx.UserService().RecoverAccount,
+			}
+			conngateway.AddRoute("/v1/user/white/recoverAccount", route)
+		}
 	}
 }

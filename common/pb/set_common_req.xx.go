@@ -12,6 +12,14 @@ func (x *ReportGroupReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *DestroyAccountReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *RecoverAccountReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *InviteFriendToGroupReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

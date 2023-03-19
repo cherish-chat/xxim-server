@@ -43,6 +43,8 @@ type (
 	DeleteUserIpWhiteListResp             = pb.DeleteUserIpWhiteListResp
 	DeleteUserModelReq                    = pb.DeleteUserModelReq
 	DeleteUserModelResp                   = pb.DeleteUserModelResp
+	DestroyAccountReq                     = pb.DestroyAccountReq
+	DestroyAccountResp                    = pb.DestroyAccountResp
 	GetAllLoginRecordReq                  = pb.GetAllLoginRecordReq
 	GetAllLoginRecordResp                 = pb.GetAllLoginRecordResp
 	GetAllUserDefaultConvReq              = pb.GetAllUserDefaultConvReq
@@ -75,6 +77,8 @@ type (
 	LoginResp                             = pb.LoginResp
 	MapUserByIdsReq                       = pb.MapUserByIdsReq
 	MapUserByIdsResp                      = pb.MapUserByIdsResp
+	RecoverAccountReq                     = pb.RecoverAccountReq
+	RecoverAccountResp                    = pb.RecoverAccountResp
 	RegisterReq                           = pb.RegisterReq
 	RegisterResp                          = pb.RegisterResp
 	ReportUserReq                         = pb.ReportUserReq
@@ -165,6 +169,8 @@ type (
 		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
 		ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 		BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
+		DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
+		RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error)
 	}
 
 	defaultUserService struct {
@@ -408,4 +414,14 @@ func (m *defaultUserService) ReportUser(ctx context.Context, in *ReportUserReq, 
 func (m *defaultUserService) BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.BatchCreateZombieUser(ctx, in, opts...)
+}
+
+func (m *defaultUserService) DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.DestroyAccount(ctx, in, opts...)
+}
+
+func (m *defaultUserService) RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.RecoverAccount(ctx, in, opts...)
 }

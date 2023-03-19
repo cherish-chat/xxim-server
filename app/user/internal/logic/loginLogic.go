@@ -113,6 +113,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		}
 	}
 	// 密码正确
+	if user.DestroyTime > 0 {
+		return &pb.LoginResp{
+			IsNewUser:   false,
+			Token:       "",
+			UserId:      user.Id,
+			IsDestroyed: true,
+		}, nil
+	}
 	// 生成token
 	// 是否允许同平台多设备登录
 	uniqueSuffix := fmt.Sprintf("%s", in.CommonReq.Platform)
