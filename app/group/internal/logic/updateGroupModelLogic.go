@@ -31,9 +31,14 @@ func NewUpdateGroupModelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // UpdateGroupModel 更新群组
 func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*pb.UpdateGroupModelResp, error) {
+	err := groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), in.GroupModel.Id)
+	if err != nil {
+		l.Errorf("flush group cache failed, err: %v", err)
+		return &pb.UpdateGroupModelResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	// 查询原模型
 	model := &groupmodel.Group{}
-	err := l.svcCtx.Mysql().Model(model).Where("id = ?", in.GroupModel.Id).First(model).Error
+	err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.GroupModel.Id).First(model).Error
 	if err != nil {
 		l.Errorf("查询失败: %v", err)
 		return &pb.UpdateGroupModelResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -102,6 +107,7 @@ func (l *UpdateGroupModelLogic) UpdateGroupModel(in *pb.UpdateGroupModelReq) (*p
 		{
 			// 刷新订阅
 			utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
+				groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), in.GroupModel.Id)
 				_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
 					CommonReq: in.CommonReq,
 					ConvId:    pb.HiddenConvIdGroup(in.GroupModel.Id),

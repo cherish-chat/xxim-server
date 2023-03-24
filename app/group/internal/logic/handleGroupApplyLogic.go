@@ -159,6 +159,10 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 			return nil
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), apply.GroupId)
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), apply.GroupId, apply.UserId)
 	})
 	if err != nil {
 		l.Errorf("HandleGroupApply Transaction error: %v", err)

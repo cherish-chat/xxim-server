@@ -12,6 +12,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
+	"regexp"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -35,6 +36,17 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	// id是否符合规则 只能包含字母数字 不能超过24位
+	{
+		reg := `^[a-zA-Z0-9]+$`
+		mustCompile := regexp.MustCompile(reg)
+		if !mustCompile.MatchString(in.Id) {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号只能包含字母和数字")}, nil
+		}
+		if len(in.Id) > 24 {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
+		}
+	}
 	// ip频率限制
 	period, quota := l.svcCtx.ConfigMgr.RegisterIpLimit(l.ctx)
 	if period == 0 || quota == 0 {

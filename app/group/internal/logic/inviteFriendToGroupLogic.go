@@ -118,6 +118,10 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 				return err
 			}
 			return nil
+		}, func(tx *gorm.DB) error {
+			return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
+		}, func(tx *gorm.DB) error {
+			return groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), in.GroupId, in.FriendIds...)
 		})
 		if err != nil {
 			l.Errorf("RandInsertZombieMember error: %v", err)

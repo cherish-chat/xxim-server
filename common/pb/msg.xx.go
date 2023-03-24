@@ -70,6 +70,17 @@ func ParseSingleConv(convId string) []string {
 	return arr
 }
 
+func GetSingleConvOtherId(convId string, selfId string) string {
+	arr := ParseSingleConv(convId)
+	if len(arr) == 2 {
+		if arr[0] == selfId {
+			return arr[1]
+		}
+		return arr[0]
+	}
+	return ""
+}
+
 func ParseServerNoticeId(noticeId string) (convId string, seq int64, userId string) {
 	// notice:convId-seq-uid
 	noticeId = strings.TrimPrefix(noticeId, NoticePrefix)

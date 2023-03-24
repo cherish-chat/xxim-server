@@ -36,6 +36,17 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
+	// id是否符合规则 只能包含字母数字 不能超过24位
+	{
+		reg := `^[a-zA-Z0-9]+$`
+		mustCompile := regexp.MustCompile(reg)
+		if !mustCompile.MatchString(in.Id) {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号只能包含字母和数字")}, nil
+		}
+		if len(in.Id) > 24 {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
+		}
+	}
 	user := &usermodel.User{}
 	// 使用id查询用户信息
 	err := xorm.DetailByWhere(l.svcCtx.Mysql(), user, xorm.Where("id = ?", in.Id))

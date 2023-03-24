@@ -3,8 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
-	"gorm.io/gorm"
-
 	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -36,7 +34,7 @@ func (l *GetGroupMemberInfoLogic) GetGroupMemberInfo(in *pb.GetGroupMemberInfoRe
 		return &pb.GetGroupMemberInfoResp{CommonResp: pb.NewAlertErrorResp(
 			l.svcCtx.T(in.CommonReq.Language, "操作失败"),
 			l.svcCtx.T(in.CommonReq.Language, "群成员不存在"),
-		)}, gorm.ErrRecordNotFound
+		)}, nil
 	}
 	return &pb.GetGroupMemberInfoResp{
 		GroupMemberInfo: members[0].Pb(),

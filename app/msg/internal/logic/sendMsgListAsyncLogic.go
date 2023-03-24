@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xtdmq"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
@@ -37,6 +38,74 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 				return resp, err
 			} else if resp.GetCommonResp().GetCode() != pb.CommonResp_Success {
 				return resp, nil
+			}
+		}
+		// 会话是单聊还是群聊
+		if pb.IsSingleConv(msgData.ConvId) {
+			otherId := pb.GetSingleConvOtherId(msgData.ConvId, msgData.SenderId)
+			// 俩人是否是好友
+			areFriendsResp, err := l.svcCtx.RelationService().AreFriends(l.ctx, &pb.AreFriendsReq{
+				CommonReq: in.CommonReq,
+				A:         msgData.SenderId,
+				BList:     []string{otherId},
+			})
+			if err != nil {
+				l.Errorf("RelationService.AreFriends error: %v", err)
+				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+			if len(areFriendsResp.GetFriendList()) == 0 {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "对方不是你的好友")}, nil
+			}
+			if is, ok := areFriendsResp.GetFriendList()[otherId]; !ok || !is {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "对方不是你的好友")}, nil
+			}
+		} else if pb.IsGroupConv(msgData.ConvId) {
+			groupId := pb.ParseGroupConv(msgData.ConvId)
+			// 是否是群成员
+			memberInfo, err := l.svcCtx.GroupService().GetGroupMemberInfo(l.ctx, &pb.GetGroupMemberInfoReq{
+				CommonReq: in.CommonReq,
+				GroupId:   groupId,
+				MemberId:  msgData.SenderId,
+			})
+			if err != nil {
+				l.Errorf("GroupService.GetGroupMemberInfo error: %v", err)
+				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+			if memberInfo.GroupMemberInfo == nil {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "你不是群成员")}, nil
+			}
+			if memberInfo.GroupMemberInfo.UnbanTime > time.Now().UnixMilli() {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "你已被禁言")}, nil
+			}
+			mapGroupByIdsResp, err := l.svcCtx.GroupService().MapGroupByIds(l.ctx, &pb.MapGroupByIdsReq{
+				CommonReq: in.CommonReq,
+				Ids:       []string{groupId},
+			})
+			if err != nil {
+				l.Errorf("GroupService.MapGroupByIds error: %v", err)
+				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
+			}
+			if len(mapGroupByIdsResp.GetGroupMap()) == 0 {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+			}
+			if group, ok := mapGroupByIdsResp.GetGroupMap()[groupId]; !ok || group == nil {
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+			} else {
+				groupModel := groupmodel.GroupFromBytes(group)
+				if groupModel.DismissTime > 0 {
+					return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+				}
+				if groupModel.AllMute {
+					switch groupModel.AllMuterType {
+					case pb.AllMuterType_ALL:
+						return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已全员禁言")}, nil
+					case pb.AllMuterType_NORMAL:
+						// 判断我的身份
+						if memberInfo.GroupMemberInfo.Role == pb.GroupRole_MEMBER {
+							return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已全员禁言")}, nil
+						}
+					}
+				}
 			}
 		}
 	}

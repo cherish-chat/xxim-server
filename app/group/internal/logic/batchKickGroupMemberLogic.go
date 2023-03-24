@@ -135,6 +135,8 @@ func (l *BatchKickGroupMemberLogic) kickGroupMember(in *pb.BatchKickGroupMemberR
 			return nil
 		}, func(tx *gorm.DB) error {
 			return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
+		}, func(tx *gorm.DB) error {
+			return groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), in.GroupId, in.MemberIds...)
 		})
 	})
 	if err != nil {

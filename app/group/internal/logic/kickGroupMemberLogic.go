@@ -178,6 +178,7 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			}
 			return nil
 		}, func(tx *gorm.DB) error {
+			groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), in.GroupId, in.MemberId)
 			return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 		})
 	})
@@ -342,6 +343,10 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), group.Id)
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), group.Id, in.MemberId)
 	})
 	if err != nil {
 		l.Errorf("Transaction error: %v", err)

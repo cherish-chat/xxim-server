@@ -76,6 +76,8 @@ func (l *RandInsertZombieMemberLogic) RandInsertZombieMember(in *pb.RandInsertZo
 			return err
 		}
 		return nil
+	}, func(tx *gorm.DB) error {
+		return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 	})
 	if err != nil {
 		l.Errorf("RandInsertZombieMember error: %v", err)

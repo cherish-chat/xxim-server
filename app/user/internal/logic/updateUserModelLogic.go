@@ -27,9 +27,14 @@ func NewUpdateUserModelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 func (l *UpdateUserModelLogic) UpdateUserModel(in *pb.UpdateUserModelReq) (*pb.UpdateUserModelResp, error) {
+	err := usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{in.CommonReq.UserId})
+	if err != nil {
+		l.Errorf("flush user cache failed, err: %v", err)
+		return &pb.UpdateUserModelResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
 	// 查询原模型
 	model := &usermodel.User{}
-	err := l.svcCtx.Mysql().Model(model).Where("id = ?", in.UserModel.Id).First(model).Error
+	err = l.svcCtx.Mysql().Model(model).Where("id = ?", in.UserModel.Id).First(model).Error
 	if err != nil {
 		l.Errorf("查询失败: %v", err)
 		return &pb.UpdateUserModelResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -53,6 +58,7 @@ func (l *UpdateUserModelLogic) UpdateUserModel(in *pb.UpdateUserModelReq) (*pb.U
 			l.Errorf("更新失败: %v", err)
 			return &pb.UpdateUserModelResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
+		usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{in.CommonReq.UserId})
 	}
 	return &pb.UpdateUserModelResp{}, nil
 }
