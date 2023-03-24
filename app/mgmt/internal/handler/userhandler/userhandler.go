@@ -100,5 +100,7 @@ func (r *UserHandler) Register(g *gin.RouterGroup) {
 		// Group 群组
 		// 列表
 		group.POST("/get/group/list/all", r.getAllGroup)
+		// 删除
+		group.POST("/delete/group", r.deleteGroup)
 	}
 }

@@ -8,6 +8,8 @@ enum PushEvent {
   PushNoticeData = 1;
   // 响应返回
   PushResponseBody = 2;
+  // 连接成功后的回调
+  PushAfterConnect = 3;
 }
 
 message PushBody {
@@ -39,6 +41,10 @@ message ResponseBody {
   string method = 2;
   Code code = 3;
   bytes data = 4;
+}
+
+message AfterConnectBody {
+  string aesIv = 1;
 }
 
 message SetCxnParamsReq {

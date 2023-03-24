@@ -12,6 +12,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"gorm.io/gorm"
 	"math"
+	"time"
 )
 
 type (
@@ -242,23 +243,31 @@ func FlushGroupMemberCache(ctx context.Context, rc *redis.Redis, groupId string,
 	return err
 }
 
-func FlushGroupMemberListCache(ctx context.Context, rc *redis.Redis, groupId string) error {
+func FlushGroupMemberListCache(ctx context.Context, rc *redis.Redis, groupId string, retryTimes ...int) error {
+	retryTime := 0
+	if len(retryTimes) > 0 {
+		retryTime = retryTimes[0]
+	}
+	if retryTime > 3 {
+		return errors.New("重试次数过多")
+	}
 	// 查询 keys
 	keyListKey := rediskey.GroupMemberSearchKeyList(groupId)
 	// 加锁
 	lockKey := "lock:" + keyListKey
 	// setnx lockKey 1
-	acquire, err := redis.NewRedisLock(rc, lockKey).Acquire()
+	acquire, err := rc.SetnxEx(lockKey, lockKey, 10)
 	if err != nil {
 		return err
 	}
 	if !acquire {
 		// 没有获取到锁
-		return errors.New("没有获取到锁")
+		time.Sleep(time.Millisecond * 100)
+		return FlushGroupMemberListCache(ctx, rc, groupId, retryTime+1)
 	}
 	defer func() {
 		// 释放锁
-		_, _ = redis.NewRedisLock(rc, lockKey).Release()
+		_, _ = rc.Del(lockKey)
 	}()
 	var keys = []string{keyListKey}
 	// hgetall keyListKey

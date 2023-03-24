@@ -172,6 +172,15 @@ func (c *Client) readMessage() {
 							c.ackNoticeData(noticeData)
 						}
 					}()
+				case pb.PushEvent_PushAfterConnect:
+					afterConnectBody := &pb.AfterConnectBody{}
+					err = proto.Unmarshal(pushBody.Data, afterConnectBody)
+					if err != nil {
+						// close and return
+						c.Close(websocket.StatusInternalError, "read message error")
+						return
+					}
+					c.aesIv = []byte(afterConnectBody.AesIv)
 				case pb.PushEvent_PushResponseBody:
 					// 解析消息
 					respBody := &pb.ResponseBody{}
@@ -264,7 +273,7 @@ func (c *Client) SetCxnParams() error {
 			return err
 		}
 		aesIvEncrypted = bytes
-		c.aesIv = aesIv
+		//c.aesIv = aesIv
 	}
 	err = c.RequestX("/v1/conn/white/setCxnParams", &pb.SetCxnParamsReq{
 		PackageId:   c.Config.DeviceConfig.PackageId,

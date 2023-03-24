@@ -33,6 +33,7 @@ func InitConnLogic(svcCtx *svc.ServiceContext) *ConnLogic {
 		l := &ConnLogic{svcCtx: svcCtx}
 		l.Logger = logx.WithContext(context.Background())
 		singletonConnLogic = l
+		go singletonConnLogic.cleanUnknownConn()
 	}
 	return singletonConnLogic
 }
@@ -76,7 +77,15 @@ func (l *ConnLogic) AddSubscriber(c *types.UserConn) {
 	if param.UserId == "" || param.Token == "" {
 		l.unknownConnMap.Store(c, struct{}{})
 		// 告知客户端连接成功
+		aesIv := utils.GenId()
+		c.SetAesIv(aesIv)
+		data, _ := proto.Marshal(&pb.AfterConnectBody{AesIv: aesIv})
+		data, _ = proto.Marshal(&pb.PushBody{
+			Event: pb.PushEvent_PushAfterConnect,
+			Data:  data,
+		})
 		_ = c.Conn.Write(context.Background(), int(websocket.MessageText), []byte("connected"))
+		_ = c.Conn.Write(context.Background(), int(websocket.MessageBinary), data)
 		return
 	}
 	// 删除未认证的连接
@@ -315,4 +324,31 @@ func (l *ConnLogic) SendMsgToConn(c *types.UserConn, data []byte) error {
 		logx.Errorf("SendMsgToConn error: %s", err.Error())
 	}
 	return err
+}
+
+func (l *ConnLogic) cleanUnknownConn() {
+	ticker := time.NewTicker(time.Second * 30)
+	for {
+		select {
+		case <-ticker.C:
+			l.cleanUnknownConn_()
+		}
+	}
+}
+
+func (l *ConnLogic) cleanUnknownConn_() {
+	// 清理未知连接
+	var unknownConns []*types.UserConn
+	l.unknownConnMap.Range(func(connI any, _ any) bool {
+		conn := connI.(*types.UserConn)
+		// 如果超过了 10s 还没有握手成功，就断开连接
+		if conn.ConnectedAt.Add(time.Second * 10).Before(time.Now()) {
+			unknownConns = append(unknownConns, conn)
+		}
+		return true
+	})
+	for _, c := range unknownConns {
+		c.Conn.Close(int(websocket.StatusNormalClosure), "shake hand timeout")
+	}
+	logx.Infof("clean unknown conn count: %d", len(unknownConns))
 }

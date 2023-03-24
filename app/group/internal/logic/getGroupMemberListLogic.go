@@ -2,16 +2,14 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/xredis"
 	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"github.com/zeromicro/go-zero/core/stores/redis"
-
-	"github.com/cherish-chat/xxim-server/app/group/internal/svc"
-	"github.com/cherish-chat/xxim-server/common/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -146,20 +144,22 @@ func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMember
 	// 加锁
 	lockKey := "lock:" + saveKeysKey
 	// setnx lockKey 1
-	acquire, err := redis.NewRedisLock(l.svcCtx.Redis(), lockKey).Acquire()
+	acquire, err := l.svcCtx.Redis().SetnxEx(lockKey, lockKey, 10)
 	if err != nil {
+		l.Errorf("redis setnx %s error: %v", lockKey, err)
 		return []string{}, err
 	}
-	if !acquire {
-		// 没有获取到锁
-		return []string{}, errors.New("正在获取群成员列表，请稍后再试")
+	if acquire {
+		// 获取到锁
+		err = l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, rdsKey)
+		if err != nil {
+			l.Errorf("redis hset %s error: %v", saveKeysKey, err)
+			return make([]string, 0), err
+		}
+		// 立刻释放锁
+		// del lockKey
+		_, _ = l.svcCtx.Redis().Del(lockKey)
 	}
-	err = l.svcCtx.Redis().HsetCtx(l.ctx, saveKeysKey, rdsKey, rdsKey)
-	if err != nil {
-		l.Errorf("redis hset %s error: %v", saveKeysKey, err)
-		return make([]string, 0), err
-	}
-	_, _ = redis.NewRedisLock(l.svcCtx.Redis(), lockKey).Release()
 	tx := l.svcCtx.Mysql().Model(&groupmodel.GroupMember{})
 	if len(whereMap) > 0 {
 		tx = tx.Where(whereMap)
@@ -188,30 +188,32 @@ func (l *GetGroupMemberListLogic) getGroupMemberListFromDb(in *pb.GetGroupMember
 	}
 	// 保存到缓存
 	// zadd
-	var pairs []redis.Pair
-	for i, userId := range userIds {
-		pairs = append(pairs, redis.Pair{
-			Key:   userId,
-			Score: int64(i),
-		})
-	}
-	if len(pairs) > 0 {
-		_, err = l.svcCtx.Redis().ZaddsCtx(l.ctx, rdsKey, pairs...)
-		if err != nil {
-			l.Errorf("redis zadd %s error: %v", rdsKey, err)
-			return userIds, nil
+	if acquire {
+		var pairs []redis.Pair
+		for i, userId := range userIds {
+			pairs = append(pairs, redis.Pair{
+				Key:   userId,
+				Score: int64(i),
+			})
 		}
-	} else {
-		// 保存空值
-		_, err = l.svcCtx.Redis().ZaddsCtx(l.ctx, rdsKey, redis.Pair{
-			Key:   xredis.NotFound,
-			Score: 0,
-		})
-		if err != nil {
-			l.Errorf("redis zadd %s error: %v", rdsKey, err)
-			return userIds, nil
+		if len(pairs) > 0 {
+			_, err = l.svcCtx.Redis().ZaddsCtx(l.ctx, rdsKey, pairs...)
+			if err != nil {
+				l.Errorf("redis zadd %s error: %v", rdsKey, err)
+				return userIds, nil
+			}
+		} else {
+			// 保存空值
+			_, err = l.svcCtx.Redis().ZaddsCtx(l.ctx, rdsKey, redis.Pair{
+				Key:   xredis.NotFound,
+				Score: 0,
+			})
+			if err != nil {
+				l.Errorf("redis zadd %s error: %v", rdsKey, err)
+				return userIds, nil
+			}
 		}
+		_ = l.svcCtx.Redis().ExpireCtx(l.ctx, rdsKey, rediskey.GroupMemberSearchKeyExpire())
 	}
-	_ = l.svcCtx.Redis().ExpireCtx(l.ctx, rdsKey, rediskey.GroupMemberSearchKeyExpire())
 	return userIds, nil
 }

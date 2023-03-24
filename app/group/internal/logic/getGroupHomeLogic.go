@@ -55,5 +55,6 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 		Introduction:     "群主很懒，什么都没写",
 		Owner:            group.Owner,
 		MemberStatistics: nil,
+		DismissTime:      group.DismissTime,
 	}, nil
 }

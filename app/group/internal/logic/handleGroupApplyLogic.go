@@ -115,7 +115,7 @@ func (l *HandleGroupApplyLogic) HandleGroupApply(in *pb.HandleGroupApplyReq) (*p
 					GroupId:  apply.GroupId,
 					MemberId: apply.UserId,
 				}),
-				UniqueId: "member",
+				UniqueId: utils.GenId(),
 				Title:    "",
 				Ext:      nil,
 			}

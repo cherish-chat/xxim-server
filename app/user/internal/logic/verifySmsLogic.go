@@ -29,6 +29,8 @@ func (l *VerifySmsLogic) VerifySms(in *pb.VerifySmsReq) (*pb.VerifySmsResp, erro
 	mobile := in.Phone
 	if in.CountryCode != nil && *in.CountryCode != "" {
 		mobile = *in.CountryCode + mobile
+	} else {
+		mobile = "+86" + mobile
 	}
 	smsCodeErrorKey := rediskey.SmsCodeErrorKey(in.Scene, mobile)
 	// 验证码错误次数

@@ -56,7 +56,7 @@ func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.ResetPa
 		l.Errorf("verify sms failed, err: %v", err)
 		return &pb.ResetPasswordResp{}, err
 	}
-	if verifySmsResp.GetCommonResp().Code != pb.CommonResp_Success {
+	if verifySmsResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
 		return &pb.ResetPasswordResp{CommonResp: verifySmsResp.CommonResp}, nil
 	}
 	err = usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{in.CommonReq.UserId})
@@ -68,14 +68,14 @@ func (l *ResetPasswordLogic) ResetPassword(in *pb.ResetPasswordReq) (*pb.ResetPa
 	updateMap := map[string]interface{}{}
 	updateMap["password"] = xpwd.GeneratePwd(in.NewPassword, user.PasswordSalt)
 	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-		err = tx.Model(user).Where("id = ?", in.CommonReq.UserId).Updates(updateMap).Error
+		err = tx.Model(user).Where("id = ?", user.Id).Updates(updateMap).Error
 		if err != nil {
 			l.Errorf("update user failed, err: %v", err)
 			return err
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
-		err := usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{in.CommonReq.UserId})
+		err := usermodel.FlushUserCache(l.ctx, l.svcCtx.Redis(), []string{user.Id})
 		if err != nil {
 			l.Errorf("flush user cache failed, err: %v", err)
 			return err

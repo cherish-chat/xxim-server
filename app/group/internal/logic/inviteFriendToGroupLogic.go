@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"gorm.io/gorm"
@@ -91,6 +92,32 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 				return err
 			}
 			return nil
+		}, func(tx *gorm.DB) error {
+			var notices []*noticemodel.Notice
+			for _, user := range in.FriendIds {
+				notice := &noticemodel.Notice{
+					ConvId: pb.HiddenConvIdGroup(in.GroupId),
+					Options: noticemodel.NoticeOption{
+						StorageForClient: false,
+						UpdateConvNotice: false,
+					},
+					ContentType: pb.NoticeContentType_NewGroupMember,
+					Content: utils.AnyToBytes(pb.NoticeContent_NewGroupMember{
+						GroupId:  in.GroupId,
+						MemberId: user,
+					}),
+					UniqueId: utils.GenId(),
+					Title:    "",
+					Ext:      nil,
+				}
+				notices = append(notices, notice)
+			}
+			err := noticemodel.BatchInsert(tx, notices, l.svcCtx.Redis())
+			if err != nil {
+				l.Errorf("RandInsertZombieMember error: %v", err)
+				return err
+			}
+			return nil
 		})
 		if err != nil {
 			l.Errorf("RandInsertZombieMember error: %v", err)
@@ -109,6 +136,13 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
+			}
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+				CommonReq: in.CommonReq,
+				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
 			}
 			_, err = NewSyncGroupMemberCountLogic(l.ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
 				CommonReq: in.GetCommonReq(),

@@ -70,10 +70,11 @@ func (m *Group) TableName() string {
 
 func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {
 	return &pb.GroupBaseInfo{
-		Id:     m.Id,
-		Name:   m.Name,
-		Avatar: m.Avatar,
-		Owner:  m.Owner,
+		Id:          m.Id,
+		Name:        m.Name,
+		Avatar:      m.Avatar,
+		Owner:       m.Owner,
+		DismissTime: m.DismissTime,
 	}
 }
 

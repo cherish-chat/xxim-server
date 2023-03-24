@@ -89,8 +89,6 @@ func OnHttpReceiveCustom[REQ IReq, RESP IResp](
 	var respBuff []byte
 	if resp.GetCommonResp().GetCode() == pb.CommonResp_Success {
 		respBuff, _ = proto.Marshal(resp)
-	} else {
-		respBuff, _ = proto.Marshal(resp.GetCommonResp())
 	}
 	// 请求日志
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "log", func(c context.Context) {
@@ -99,5 +97,6 @@ func OnHttpReceiveCustom[REQ IReq, RESP IResp](
 	return &pb.CommonResp{
 		Code: resp.GetCommonResp().GetCode(),
 		Data: respBuff,
+		Msg:  utils.AnyPtr(resp.GetCommonResp().GetMsg()),
 	}, err
 }

@@ -61,7 +61,11 @@ func (c *UserConn) SetConnParams(connParam *pb.ConnParam) {
 	c.ConnParam.NetworkUsed = connParam.NetworkUsed
 	c.ConnParam.Headers = connParam.Headers
 	c.ConnParam.AesKey = connParam.AesKey
-	c.ConnParam.AesIv = connParam.AesIv
+	//c.ConnParam.AesIv = connParam.AesIv
+}
+
+func (c *UserConn) SetAesIv(aesIv string) {
+	c.ConnParam.AesIv = &aesIv
 }
 
 func WebsocketStatusCodeAuthFailed(code int) int {

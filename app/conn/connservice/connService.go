@@ -13,6 +13,7 @@ import (
 )
 
 type (
+	AfterConnectBody   = pb.AfterConnectBody
 	AfterConnectReq    = pb.AfterConnectReq
 	AfterDisconnectReq = pb.AfterDisconnectReq
 	ConnMQBody         = pb.ConnMQBody

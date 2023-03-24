@@ -49,6 +49,22 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 		}
 	}
 	var self *usermodel.User
+	{
+		userByIds, err := l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
+			CommonReq: in.CommonReq,
+			Ids:       []string{in.MemberId},
+		})
+		if err != nil {
+			l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
+			return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		userBuf, ok := userByIds.Users[in.MemberId]
+		if !ok {
+			l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
+			return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		self = usermodel.UserFromBytes(userBuf)
+	}
 	if !isManager {
 		// 如果要踢自己，可以直接踢
 		if in.MemberId != in.CommonReq.UserId {
@@ -59,21 +75,6 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 		} else {
 			// 说明是退群
 			// 判断是否是普通用户
-			userByIds, err := l.svcCtx.UserService().MapUserByIds(l.ctx, &pb.MapUserByIdsReq{
-				CommonReq: in.CommonReq,
-				Ids:       []string{in.MemberId},
-			})
-			if err != nil {
-				l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
-				return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
-			}
-			userBuf, ok := userByIds.Users[in.MemberId]
-			if !ok {
-				l.Errorf("HandleGroupApply MapUserByIds error: %v", err)
-				return &pb.KickGroupMemberResp{CommonResp: pb.NewRetryErrorResp()}, err
-			}
-			self = usermodel.UserFromBytes(userBuf)
-
 			if self.Role == usermodel.RoleUser {
 				// 普通用户是否允许退群
 				if !l.svcCtx.ConfigMgr.GroupAllowUserQuit(l.ctx, in.MemberId) {
@@ -116,7 +117,9 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 	xtrace.StartFuncSpan(l.ctx, "KickGroupMember.Transaction", func(ctx context.Context) {
 		tip := ""
 		if in.CommonReq.UserId != in.MemberId {
-			tip = in.MemberId + l.svcCtx.T(in.CommonReq.Language, "被移出群聊")
+			tip = self.Nickname + l.svcCtx.T(in.CommonReq.Language, "被移出群聊")
+		} else {
+			tip = self.Nickname + l.svcCtx.T(in.CommonReq.Language, "退出群聊")
 		}
 		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			// groupmember表
@@ -185,8 +188,9 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 	{
 		// 预热缓存
 		// 刷新订阅
+		ctx := xtrace.NewContext(l.ctx)
 		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
-			_, err = NewSyncGroupMemberCountLogic(l.ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
+			_, err = NewSyncGroupMemberCountLogic(ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
 				CommonReq: in.GetCommonReq(),
 				GroupId:   in.GroupId,
 			})
@@ -196,14 +200,14 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			}
 			// 删除缓存
 			{
-				err = groupmodel.FlushGroupsByUserIdCache(l.ctx, l.svcCtx.Redis(), in.MemberId)
+				err = groupmodel.FlushGroupsByUserIdCache(ctx, l.svcCtx.Redis(), in.MemberId)
 				if err != nil {
 					l.Errorf("InviteFriendToGroup FlushGroupsByUserIdCache error: %v", err)
 					return err
 				}
 			}
 			// 预热缓存
-			go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "CacheWarmUp", func(ctx context.Context) {
+			go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "CacheWarmUp", func(ctx context.Context) {
 				_, err = groupmodel.ListGroupsByUserIdFromMysql(ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.MemberId)
 				if err != nil {
 					l.Errorf("CreateGroup ListGroupsByUserIdFromMysql error: %v", err)
@@ -211,19 +215,19 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			}, propagation.MapCarrier{
 				"group_id": in.GroupId,
 			})
-			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{in.MemberId}})
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(ctx, &pb.FlushUsersSubConvReq{UserIds: []string{in.MemberId}})
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
 				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)
 			}
-			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
 				ConvId:    pb.HiddenConvIdCommand(),
 				UserId:    in.MemberId,
@@ -267,14 +271,25 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 		contentType = pb.NoticeContentType_DismissGroup
 	)
 	if group.DismissTime > 0 {
-		dismissTime = 0
-		contentType = pb.NoticeContentType_RecoverGroup
+		return pb.NewAlertErrorResp(
+			l.svcCtx.T(in.CommonReq.Language, "操作失败"),
+			l.svcCtx.T(in.CommonReq.Language, "群组已解散"),
+		), nil
 	}
 	err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 		// update dismissTime
 		return xorm.Update(tx, group, map[string]interface{}{
 			"dismissTime": dismissTime,
 		})
+	}, func(tx *gorm.DB) error {
+		// groupmember表
+		member := &groupmodel.GroupMember{}
+		err := tx.Model(member).Where("groupId = ? and userId = ?", in.GroupId, in.MemberId).Delete(member).Error
+		if err != nil {
+			l.Errorf("KickGroupMember groupmember delete error: %v", err)
+			return err
+		}
+		return nil
 	}, func(tx *gorm.DB) error {
 		notice := &noticemodel.Notice{
 			ConvId: pb.HiddenConvIdGroup(group.Id),
@@ -297,6 +312,30 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 		}
 		return nil
 	}, func(tx *gorm.DB) error {
+		notice := &noticemodel.Notice{
+			ConvId:   pb.HiddenConvIdCommand(),
+			UserId:   in.MemberId,
+			UniqueId: utils.GenId(),
+			Options: noticemodel.NoticeOption{
+				StorageForClient: false,
+				UpdateConvNotice: false,
+			},
+			ContentType: pb.NoticeContentType_GroupMemberLeave,
+			Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
+				GroupId:  in.GroupId,
+				Tip:      "您解散了群组",
+				MemberId: in.MemberId,
+			}),
+			Title: "",
+			Ext:   nil,
+		}
+		err = notice.Insert(l.ctx, tx, l.svcCtx.Redis())
+		if err != nil {
+			l.Errorf("insert notice failed, err: %v", err)
+			return err
+		}
+		return nil
+	}, func(tx *gorm.DB) error {
 		err = groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), group.Id)
 		if err != nil {
 			l.Errorf("CreateGroup CleanGroupCache error: %v", err)
@@ -310,15 +349,49 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 	}
 	{
 		// 刷新订阅
+		ctx := xtrace.NewContext(l.ctx)
 		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
-			_, err := l.svcCtx.MsgService().FlushUsersSubConv(l.ctx, &pb.FlushUsersSubConvReq{UserIds: []string{in.MemberId}})
+			_, err = NewSyncGroupMemberCountLogic(ctx, l.svcCtx).SyncGroupMemberCount(&pb.SyncGroupMemberCountReq{
+				CommonReq: in.GetCommonReq(),
+				GroupId:   in.GroupId,
+			})
+			if err != nil {
+				l.Errorf("SyncGroupMemberCount failed, err: %v", err)
+				return err
+			}
+			// 删除缓存
+			{
+				err = groupmodel.FlushGroupsByUserIdCache(ctx, l.svcCtx.Redis(), in.MemberId)
+				if err != nil {
+					l.Errorf("InviteFriendToGroup FlushGroupsByUserIdCache error: %v", err)
+					return err
+				}
+			}
+			// 预热缓存
+			go xtrace.RunWithTrace(xtrace.TraceIdFromContext(ctx), "CacheWarmUp", func(ctx context.Context) {
+				_, err = groupmodel.ListGroupsByUserIdFromMysql(ctx, l.svcCtx.Mysql(), l.svcCtx.Redis(), in.MemberId)
+				if err != nil {
+					l.Errorf("CreateGroup ListGroupsByUserIdFromMysql error: %v", err)
+				}
+			}, propagation.MapCarrier{
+				"group_id": in.GroupId,
+			})
+			_, err := l.svcCtx.MsgService().FlushUsersSubConv(ctx, &pb.FlushUsersSubConvReq{UserIds: []string{in.MemberId}})
 			if err != nil {
 				l.Errorf("FlushUsersSubConv failed, err: %v", err)
 				return err
 			}
-			_, err = l.svcCtx.NoticeService().GetUserNoticeData(l.ctx, &pb.GetUserNoticeDataReq{
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(ctx, &pb.GetUserNoticeDataReq{
 				CommonReq: in.CommonReq,
 				ConvId:    pb.HiddenConvIdGroup(in.GroupId),
+			})
+			if err != nil {
+				l.Errorf("SendNoticeData failed, err: %v", err)
+			}
+			_, err = l.svcCtx.NoticeService().GetUserNoticeData(ctx, &pb.GetUserNoticeDataReq{
+				CommonReq: in.CommonReq,
+				ConvId:    pb.HiddenConvIdCommand(),
+				UserId:    in.MemberId,
 			})
 			if err != nil {
 				l.Errorf("SendNoticeData failed, err: %v", err)
