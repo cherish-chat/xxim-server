@@ -124,6 +124,11 @@ message GetServerAllConfigResp {
     int64 httpPort = 2;
     string superAdminId = 3;
     string superAdminPass = 4;
+    string aesIv = 5;
+    string aesKey = 6;
+  }
+  message XosConfig {
+    int64 httpPort = 1;
   }
   CommonConfig common = 2;
   ConnRpcConfig connRpc = 3;
@@ -135,6 +140,7 @@ message GetServerAllConfigResp {
   NoticeRpcConfig noticeRpc = 9;
   AppMgmtRpcConfig appMgmtRpc = 10;
   MgmtConfig mgmt = 11;
+  XosConfig xos = 12;
 }
 
 //UpdateServerConfigReq 更新服务器配置请求
@@ -923,6 +929,100 @@ message UpdateMSAlbumCateResp {
   CommonResp commonResp = 1;
 }
 
+/*
+type LuaConfig struct {
+	Id string `gorm:"primary_key;column:id" json:"id"`
+	// 名称
+	Name string `gorm:"column:name;index;type:varchar(64)" json:"name"`
+	// 描述
+	Desc string `gorm:"column:desc;type:varchar(255)" json:"desc"`
+	// 脚本代码
+	Code string `gorm:"column:code;type:text" json:"code"`
+	// 类型
+	Type pb.LuaConfigType `gorm:"column:type;type:tinyint;index;" json:"type"`
+	// 是否启用
+	Enable bool `gorm:"column:enable;type:tinyint;index;" json:"enable"`
+	// 创建时间
+	CreateTime int64 `gorm:"column:create_time;type:bigint;index;" json:"create_time"`
+}
+ */
+enum LuaConfigType {
+  UnknownLuaConfig = 0;
+  // 1 生成僵尸号的信息 id,nickname,avatar  json字符串的结果
+  GenerateZombieInfo = 1;
+}
+//LuaConfig lua配置
+message LuaConfig {
+  string id = 1;
+  string name = 2;
+  string desc = 3;
+  string code = 4;
+  LuaConfigType type = 5;
+  bool enable = 6;
+  int64 createTime = 7;
+
+  string createTimeStr = 8;
+}
+
+//GetAllMSLuaConfigReq 获取所有lua配置列表请求
+message GetAllMSLuaConfigReq {
+  CommonReq commonReq = 1;
+  Page page = 2;
+  map<string, string> filter = 3;
+}
+
+//GetAllMSLuaConfigResp 获取所有lua配置列表响应
+message GetAllMSLuaConfigResp {
+  CommonResp commonResp = 1;
+  repeated LuaConfig luaConfigs = 2;
+  int64 total = 3;
+}
+
+//AddMSLuaConfigReq 添加lua配置请求
+message AddMSLuaConfigReq {
+  CommonReq commonReq = 1;
+  LuaConfig luaConfig = 2;
+}
+
+//AddMSLuaConfigResp 添加lua配置响应
+message AddMSLuaConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//DeleteMSLuaConfigReq 删除lua配置请求
+message DeleteMSLuaConfigReq {
+  CommonReq commonReq = 1;
+  repeated string ids = 2;
+}
+
+//DeleteMSLuaConfigResp 删除lua配置响应
+message DeleteMSLuaConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//UpdateMSLuaConfigReq 更新lua配置请求
+message UpdateMSLuaConfigReq {
+  CommonReq commonReq = 1;
+  LuaConfig luaConfig = 2;
+}
+
+//UpdateMSLuaConfigResp 更新lua配置响应
+message UpdateMSLuaConfigResp {
+  CommonResp commonResp = 1;
+}
+
+//GetMSLuaConfigReq 获取lua配置请求
+message GetMSLuaConfigReq {
+  CommonReq commonReq = 1;
+  string id = 2;
+}
+
+//GetMSLuaConfigResp 获取lua配置响应
+message GetMSLuaConfigResp {
+  CommonResp commonResp = 1;
+  LuaConfig luaConfig = 2;
+}
+
 //StatsMSReq 统计请求
 message StatsMSReq {
   CommonReq commonReq = 1;
@@ -1002,6 +1102,12 @@ service mgmtService {
   rpc AddMSIpWhiteList(AddMSIpWhiteListReq) returns (AddMSIpWhiteListResp);
   rpc UpdateMSIpWhiteList(UpdateMSIpWhiteListReq) returns (UpdateMSIpWhiteListResp);
   rpc DeleteMSIpWhiteList(DeleteMSIpWhiteListReq) returns (DeleteMSIpWhiteListResp);
+
+  rpc GetAllMSLuaConfig(GetAllMSLuaConfigReq) returns (GetAllMSLuaConfigResp);
+  rpc GetMSLuaConfigDetail(GetMSLuaConfigReq) returns (GetMSLuaConfigResp);
+  rpc AddMSLuaConfig(AddMSLuaConfigReq) returns (AddMSLuaConfigResp);
+  rpc UpdateMSLuaConfig(UpdateMSLuaConfigReq) returns (UpdateMSLuaConfigResp);
+  rpc DeleteMSLuaConfig(DeleteMSLuaConfigReq) returns (DeleteMSLuaConfigResp);
 
   rpc GetAllMSOperationLog(GetAllMSOperationLogReq) returns (GetAllMSOperationLogResp);
   rpc GetMSOperationLogDetail(GetMSOperationLogDetailReq) returns (GetMSOperationLogDetailResp);

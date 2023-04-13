@@ -170,6 +170,17 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 		}
 	}
 	switch name {
+	case "xos":
+		c["Gin"] = map[string]any{
+			"Cors": map[string]any{
+				"AllowOrigins":     []string{"*"},
+				"AllowHeaders":     []string{"*"},
+				"AllowMethods":     []string{"*"},
+				"ExposeHeaders":    []string{"*"},
+				"AllowCredentials": true,
+			},
+			"Addr": fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Xos.HttpPort),
+		}
 	case "mgmt":
 		c["Gin"] = map[string]any{
 			"Cors": map[string]any{
@@ -179,7 +190,9 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 				"ExposeHeaders":    []string{"*"},
 				"AllowCredentials": true,
 			},
-			"Addr": fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Mgmt.HttpPort),
+			"Addr":   fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Mgmt.HttpPort),
+			"AesIv":  serverConfig.Mgmt.AesIv,
+			"AesKey": serverConfig.Mgmt.AesKey,
 		}
 		c["ListenOn"] = fmt.Sprintf("%s:%d", serverConfig.Common.Host, serverConfig.Mgmt.RpcPort)
 		c["SuperAdmin"] = map[string]any{

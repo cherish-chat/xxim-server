@@ -620,6 +620,21 @@ message AppGetAllConfigResp {
   map<string, string> configMap = 2;
 }
 
+//GetUploadInfoReq 获取上传信息
+message GetUploadInfoReq {
+  CommonReq commonReq = 1;
+  string objectId = 2;
+  // 过期秒数
+  int32 expireSeconds = 3;
+}
+
+//GetUploadInfoResp 获取上传信息
+message GetUploadInfoResp {
+  CommonResp commonResp = 1;
+  string uploadUrl = 2;
+  map<string, string> headers = 3;
+}
+
 service appMgmtService {
   rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
   rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
@@ -668,4 +683,5 @@ service appMgmtService {
   rpc DeleteAppMgmtLink(DeleteAppMgmtLinkReq) returns (DeleteAppMgmtLinkResp);
 
   rpc AppGetAllConfig(AppGetAllConfigReq) returns (AppGetAllConfigResp);
+  rpc GetUploadInfo(GetUploadInfoReq) returns (GetUploadInfoResp);
 }

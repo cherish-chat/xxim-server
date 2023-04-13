@@ -63,13 +63,40 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 获取用户密码输入错误次数
 	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
 	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx, in.CommonReq.UserId) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，密码输入错误次数超过限制")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "用户名未注册或密码错误")}, nil
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
 		// 记录用户密码输入错误次数
 		_, _ = l.svcCtx.Redis().IncrbyCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id), 1)
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "密码错误"))}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户名未注册或密码错误"))}, nil
+	}
+	// LoginMustCaptchaCode 是否必须要图形验证码
+	if l.svcCtx.ConfigMgr.LoginMustCaptchaCode(l.ctx) {
+		// 请求中必须带图形验证码
+		if in.CaptchaCode == nil {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
+		if *in.CaptchaCode == "" {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
+		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "checkCaptchaCode", func(ctx context.Context) {
+			verifyCaptchaResp, err = NewVerifyCaptchaCodeLogic(ctx, l.svcCtx).VerifyCaptchaCode(&pb.VerifyCaptchaCodeReq{
+				DeviceId: in.CommonReq.DeviceId,
+				Code:     *in.CaptchaCode,
+				Scene:    "login",
+				Delete:   true,
+			})
+		})
+		if err != nil {
+			l.Errorf("check captcha code err: %v", err)
+			return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if verifyCaptchaResp.GetCommonResp().Code != pb.CommonResp_Success {
+			return &pb.LoginResp{CommonResp: verifyCaptchaResp.GetCommonResp()}, nil
+		}
 	}
 	// 判断用户角色
 	{

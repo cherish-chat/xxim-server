@@ -122,6 +122,26 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/white/verifySms", route)
 		}
+		// GetCaptchaCodeReq GetCaptchaCodeResp
+		{
+			route := conngateway.Route[*pb.GetCaptchaCodeReq, *pb.GetCaptchaCodeResp]{
+				NewRequest: func() *pb.GetCaptchaCodeReq {
+					return &pb.GetCaptchaCodeReq{}
+				},
+				Do: svcCtx.UserService().GetCaptchaCode,
+			}
+			conngateway.AddRoute("/v1/user/white/getCaptchaCode", route)
+		}
+		// VerifyCaptchaCodeReq VerifyCaptchaCodeResp
+		{
+			route := conngateway.Route[*pb.VerifyCaptchaCodeReq, *pb.VerifyCaptchaCodeResp]{
+				NewRequest: func() *pb.VerifyCaptchaCodeReq {
+					return &pb.VerifyCaptchaCodeReq{}
+				},
+				Do: svcCtx.UserService().VerifyCaptchaCode,
+			}
+			conngateway.AddRoute("/v1/user/white/verifyCaptchaCode", route)
+		}
 		// ResetPasswordReq ResetPasswordResp
 		{
 			route := conngateway.Route[*pb.ResetPasswordReq, *pb.ResetPasswordResp]{

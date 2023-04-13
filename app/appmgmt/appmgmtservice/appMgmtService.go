@@ -83,6 +83,8 @@ type (
 	GetAppMgmtVpnDetailResp        = pb.GetAppMgmtVpnDetailResp
 	GetLatestVersionReq            = pb.GetLatestVersionReq
 	GetLatestVersionResp           = pb.GetLatestVersionResp
+	GetUploadInfoReq               = pb.GetUploadInfoReq
+	GetUploadInfoResp              = pb.GetUploadInfoResp
 	UpdateAppMgmtConfigReq         = pb.UpdateAppMgmtConfigReq
 	UpdateAppMgmtConfigResp        = pb.UpdateAppMgmtConfigResp
 	UpdateAppMgmtEmojiGroupReq     = pb.UpdateAppMgmtEmojiGroupReq
@@ -140,6 +142,7 @@ type (
 		UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error)
 		DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
 		AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
+		GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -346,4 +349,9 @@ func (m *defaultAppMgmtService) DeleteAppMgmtLink(ctx context.Context, in *Delet
 func (m *defaultAppMgmtService) AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.AppGetAllConfig(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetUploadInfo(ctx, in, opts...)
 }

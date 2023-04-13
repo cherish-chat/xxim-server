@@ -178,6 +178,11 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 			}
 			return nil
 		}, func(tx *gorm.DB) error {
+			err := noticemodel.CleanAckRecord(l.ctx, l.svcCtx.Redis(), pb.HiddenConvIdGroup(in.GroupId), in.MemberId)
+			if err != nil {
+				l.Errorf("CleanAckRecord error: %v", err)
+				return err
+			}
 			groupmodel.FlushGroupMemberCache(l.ctx, l.svcCtx.Redis(), in.GroupId, in.MemberId)
 			return groupmodel.FlushGroupMemberListCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 		})

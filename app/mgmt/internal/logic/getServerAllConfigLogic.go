@@ -109,6 +109,11 @@ func (l *GetServerAllConfigLogic) GetServerAllConfig(in *pb.GetServerAllConfigRe
 			HttpPort:       config.Mgmt.HttpPort,
 			SuperAdminId:   config.Mgmt.SuperAdminId,
 			SuperAdminPass: config.Mgmt.SuperAdminPass,
+			AesIv:          config.Mgmt.AesIv,
+			AesKey:         config.Mgmt.AesKey,
+		},
+		Xos: &pb.GetServerAllConfigResp_XosConfig{
+			HttpPort: config.Xos.HttpPort,
 		},
 	}, nil
 }

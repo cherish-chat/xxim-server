@@ -19,6 +19,8 @@ type (
 	AddMSApiPathResp                         = pb.AddMSApiPathResp
 	AddMSIpWhiteListReq                      = pb.AddMSIpWhiteListReq
 	AddMSIpWhiteListResp                     = pb.AddMSIpWhiteListResp
+	AddMSLuaConfigReq                        = pb.AddMSLuaConfigReq
+	AddMSLuaConfigResp                       = pb.AddMSLuaConfigResp
 	AddMSMenuReq                             = pb.AddMSMenuReq
 	AddMSMenuResp                            = pb.AddMSMenuResp
 	AddMSRoleReq                             = pb.AddMSRoleReq
@@ -40,6 +42,8 @@ type (
 	DeleteMSApiPathResp                      = pb.DeleteMSApiPathResp
 	DeleteMSIpWhiteListReq                   = pb.DeleteMSIpWhiteListReq
 	DeleteMSIpWhiteListResp                  = pb.DeleteMSIpWhiteListResp
+	DeleteMSLuaConfigReq                     = pb.DeleteMSLuaConfigReq
+	DeleteMSLuaConfigResp                    = pb.DeleteMSLuaConfigResp
 	DeleteMSMenuReq                          = pb.DeleteMSMenuReq
 	DeleteMSMenuResp                         = pb.DeleteMSMenuResp
 	DeleteMSOperationLogReq                  = pb.DeleteMSOperationLogReq
@@ -58,6 +62,8 @@ type (
 	GetAllMSIpWhiteListResp                  = pb.GetAllMSIpWhiteListResp
 	GetAllMSLoginRecordReq                   = pb.GetAllMSLoginRecordReq
 	GetAllMSLoginRecordResp                  = pb.GetAllMSLoginRecordResp
+	GetAllMSLuaConfigReq                     = pb.GetAllMSLuaConfigReq
+	GetAllMSLuaConfigResp                    = pb.GetAllMSLuaConfigResp
 	GetAllMSMenuListReq                      = pb.GetAllMSMenuListReq
 	GetAllMSMenuListResp                     = pb.GetAllMSMenuListResp
 	GetAllMSOperationLogReq                  = pb.GetAllMSOperationLogReq
@@ -73,6 +79,8 @@ type (
 	GetMSApiPathDetailResp                   = pb.GetMSApiPathDetailResp
 	GetMSIpWhiteListDetailReq                = pb.GetMSIpWhiteListDetailReq
 	GetMSIpWhiteListDetailResp               = pb.GetMSIpWhiteListDetailResp
+	GetMSLuaConfigReq                        = pb.GetMSLuaConfigReq
+	GetMSLuaConfigResp                       = pb.GetMSLuaConfigResp
 	GetMSMenuDetailReq                       = pb.GetMSMenuDetailReq
 	GetMSMenuDetailResp                      = pb.GetMSMenuDetailResp
 	GetMSOperationLogDetailReq               = pb.GetMSOperationLogDetailReq
@@ -106,11 +114,13 @@ type (
 	GetServerAllConfigResp_TelemetryConfig   = pb.GetServerAllConfigResp_TelemetryConfig
 	GetServerAllConfigResp_TencentSmsConfig  = pb.GetServerAllConfigResp_TencentSmsConfig
 	GetServerAllConfigResp_UserRpcConfig     = pb.GetServerAllConfigResp_UserRpcConfig
+	GetServerAllConfigResp_XosConfig         = pb.GetServerAllConfigResp_XosConfig
 	GetServerConfigReq                       = pb.GetServerConfigReq
 	GetServerConfigResp                      = pb.GetServerConfigResp
 	HealthMSResp                             = pb.HealthMSResp
 	LoginMSReq                               = pb.LoginMSReq
 	LoginMSResp                              = pb.LoginMSResp
+	LuaConfig                                = pb.LuaConfig
 	MSAlbum                                  = pb.MSAlbum
 	MSAlbumCate                              = pb.MSAlbumCate
 	MSApiPath                                = pb.MSApiPath
@@ -136,6 +146,8 @@ type (
 	UpdateMSApiPathResp                      = pb.UpdateMSApiPathResp
 	UpdateMSIpWhiteListReq                   = pb.UpdateMSIpWhiteListReq
 	UpdateMSIpWhiteListResp                  = pb.UpdateMSIpWhiteListResp
+	UpdateMSLuaConfigReq                     = pb.UpdateMSLuaConfigReq
+	UpdateMSLuaConfigResp                    = pb.UpdateMSLuaConfigResp
 	UpdateMSMenuReq                          = pb.UpdateMSMenuReq
 	UpdateMSMenuResp                         = pb.UpdateMSMenuResp
 	UpdateMSRoleReq                          = pb.UpdateMSRoleReq
@@ -185,6 +197,11 @@ type (
 		AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
 		UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error)
 		DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error)
+		GetAllMSLuaConfig(ctx context.Context, in *GetAllMSLuaConfigReq, opts ...grpc.CallOption) (*GetAllMSLuaConfigResp, error)
+		GetMSLuaConfigDetail(ctx context.Context, in *GetMSLuaConfigReq, opts ...grpc.CallOption) (*GetMSLuaConfigResp, error)
+		AddMSLuaConfig(ctx context.Context, in *AddMSLuaConfigReq, opts ...grpc.CallOption) (*AddMSLuaConfigResp, error)
+		UpdateMSLuaConfig(ctx context.Context, in *UpdateMSLuaConfigReq, opts ...grpc.CallOption) (*UpdateMSLuaConfigResp, error)
+		DeleteMSLuaConfig(ctx context.Context, in *DeleteMSLuaConfigReq, opts ...grpc.CallOption) (*DeleteMSLuaConfigResp, error)
 		GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
 		GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 		DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
@@ -405,6 +422,31 @@ func (m *defaultMgmtService) UpdateMSIpWhiteList(ctx context.Context, in *Update
 func (m *defaultMgmtService) DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.DeleteMSIpWhiteList(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetAllMSLuaConfig(ctx context.Context, in *GetAllMSLuaConfigReq, opts ...grpc.CallOption) (*GetAllMSLuaConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetAllMSLuaConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) GetMSLuaConfigDetail(ctx context.Context, in *GetMSLuaConfigReq, opts ...grpc.CallOption) (*GetMSLuaConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.GetMSLuaConfigDetail(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) AddMSLuaConfig(ctx context.Context, in *AddMSLuaConfigReq, opts ...grpc.CallOption) (*AddMSLuaConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.AddMSLuaConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) UpdateMSLuaConfig(ctx context.Context, in *UpdateMSLuaConfigReq, opts ...grpc.CallOption) (*UpdateMSLuaConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.UpdateMSLuaConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) DeleteMSLuaConfig(ctx context.Context, in *DeleteMSLuaConfigReq, opts ...grpc.CallOption) (*DeleteMSLuaConfigResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.DeleteMSLuaConfig(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error) {

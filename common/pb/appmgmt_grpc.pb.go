@@ -61,6 +61,7 @@ type AppMgmtServiceClient interface {
 	UpdateAppMgmtLink(ctx context.Context, in *UpdateAppMgmtLinkReq, opts ...grpc.CallOption) (*UpdateAppMgmtLinkResp, error)
 	DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
 	AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
+	GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error)
 }
 
 type appMgmtServiceClient struct {
@@ -422,6 +423,15 @@ func (c *appMgmtServiceClient) AppGetAllConfig(ctx context.Context, in *AppGetAl
 	return out, nil
 }
 
+func (c *appMgmtServiceClient) GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error) {
+	out := new(GetUploadInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetUploadInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppMgmtServiceServer is the server API for AppMgmtService service.
 // All implementations must embed UnimplementedAppMgmtServiceServer
 // for forward compatibility
@@ -465,6 +475,7 @@ type AppMgmtServiceServer interface {
 	UpdateAppMgmtLink(context.Context, *UpdateAppMgmtLinkReq) (*UpdateAppMgmtLinkResp, error)
 	DeleteAppMgmtLink(context.Context, *DeleteAppMgmtLinkReq) (*DeleteAppMgmtLinkResp, error)
 	AppGetAllConfig(context.Context, *AppGetAllConfigReq) (*AppGetAllConfigResp, error)
+	GetUploadInfo(context.Context, *GetUploadInfoReq) (*GetUploadInfoResp, error)
 	mustEmbedUnimplementedAppMgmtServiceServer()
 }
 
@@ -588,6 +599,9 @@ func (UnimplementedAppMgmtServiceServer) DeleteAppMgmtLink(context.Context, *Del
 }
 func (UnimplementedAppMgmtServiceServer) AppGetAllConfig(context.Context, *AppGetAllConfigReq) (*AppGetAllConfigResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppGetAllConfig not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetUploadInfo(context.Context, *GetUploadInfoReq) (*GetUploadInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUploadInfo not implemented")
 }
 func (UnimplementedAppMgmtServiceServer) mustEmbedUnimplementedAppMgmtServiceServer() {}
 
@@ -1304,6 +1318,24 @@ func _AppMgmtService_AppGetAllConfig_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppMgmtService_GetUploadInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUploadInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetUploadInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetUploadInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetUploadInfo(ctx, req.(*GetUploadInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AppMgmtService_ServiceDesc is the grpc.ServiceDesc for AppMgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1466,6 +1498,10 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppGetAllConfig",
 			Handler:    _AppMgmtService_AppGetAllConfig_Handler,
+		},
+		{
+			MethodName: "GetUploadInfo",
+			Handler:    _AppMgmtService_GetUploadInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

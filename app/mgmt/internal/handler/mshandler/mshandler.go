@@ -116,6 +116,19 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 		// 批量删除ip白名单
 		group.POST("/delete/ipwhitelist", r.deleteIpWhiteListBatch)
 	}
+	// lua脚本
+	{
+		// 获取全部lua脚本列表
+		group.POST("/get/luaconfig/list/all", r.getAllLuaConfig)
+		// 获取详情
+		group.POST("/get/luaconfig/detail", r.getLuaConfigDetail)
+		// 增加lua脚本
+		group.POST("/add/luaconfig", r.addLuaConfig)
+		// 修改lua脚本
+		group.POST("/update/luaconfig", r.updateLuaConfig)
+		// 批量删除lua脚本
+		group.POST("/delete/luaconfig", r.deleteLuaConfigBatch)
+	}
 	// 操作日志管理
 	{
 		// 获取全部操作日志列表

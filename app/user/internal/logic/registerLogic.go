@@ -207,6 +207,33 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			return &pb.RegisterResp{CommonResp: verifySmsResp.GetCommonResp()}, nil
 		}
 	}
+	// RegisterMustCaptchaCode 是否必须要图形验证码
+	if l.svcCtx.ConfigMgr.RegisterMustCaptchaCode(l.ctx) {
+		// 请求中必须带图形验证码
+		if in.CaptchaCode == nil {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
+		if *in.CaptchaCode == "" {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
+		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
+		var err error
+		xtrace.StartFuncSpan(l.ctx, "checkCaptchaCode", func(ctx context.Context) {
+			verifyCaptchaResp, err = NewVerifyCaptchaCodeLogic(ctx, l.svcCtx).VerifyCaptchaCode(&pb.VerifyCaptchaCodeReq{
+				DeviceId: in.CommonReq.DeviceId,
+				Code:     *in.CaptchaCode,
+				Scene:    "register",
+				Delete:   true,
+			})
+		})
+		if err != nil {
+			l.Errorf("check captcha code err: %v", err)
+			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		if verifyCaptchaResp.GetCommonResp().Code != pb.CommonResp_Success {
+			return &pb.RegisterResp{CommonResp: verifyCaptchaResp.GetCommonResp()}, nil
+		}
+	}
 	// 是否必填头像
 	var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(l.ctx), "")
 	if in.Avatar != nil && *in.Avatar != "" {

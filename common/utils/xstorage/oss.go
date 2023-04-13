@@ -6,6 +6,7 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"golang.org/x/net/context"
+	"io"
 )
 
 // OssStorage 阿里云OSS存储 实现Storage接口
@@ -55,4 +56,13 @@ func (o *OssStorage) PutObject(ctx context.Context, objectName string, data []by
 
 func (o *OssStorage) GetObjectUrl(key string) string {
 	return fmt.Sprintf("%s/%s", o.Config.BucketUrl, key)
+}
+
+// PutObjectStream 上传文件流
+func (o *OssStorage) PutObjectStream(ctx context.Context, objectName string, reader io.Reader) (url string, err error) {
+	err = o.bucket.PutObject(objectName, reader)
+	if err != nil {
+		return "", err
+	}
+	return o.Config.BucketUrl + "/" + objectName, nil
 }

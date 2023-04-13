@@ -169,6 +169,37 @@ func GetMaxConvAutoId(ctx context.Context, rc *redis.Redis, convId string, incr 
 	return int64(val), nil
 }
 
+func CleanAckRecord(ctx context.Context, rc *redis.Redis, convId string, userId string) error {
+	logger := logx.WithContext(ctx)
+	key := rediskey.NoticeConvAutoId(convId)
+	hkeyParrten := fmt.Sprintf("%s:*", userId)
+	// hscan
+	cursor := uint64(0)
+	var hkeys []string
+	for {
+		var keys []string
+		var err error
+		keys, cursor, err = rc.HscanCtx(ctx, key, cursor, hkeyParrten, 300)
+		if err != nil {
+			logger.Errorf("hscan err: %v", err)
+			return err
+		}
+		hkeys = append(hkeys, keys...)
+		if cursor == 0 {
+			break
+		}
+	}
+	// hdel
+	if len(hkeys) > 0 {
+		_, err := rc.HdelCtx(ctx, key, hkeys...)
+		if err != nil {
+			logger.Errorf("hdel err: %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
 func GetMinConvAutoId(ctx context.Context, rc *redis.Redis, convId string, userId string, deviceId string) (int64, error) {
 	logger := logx.WithContext(ctx)
 	key := rediskey.NoticeConvAutoId(convId)

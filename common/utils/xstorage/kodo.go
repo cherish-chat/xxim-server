@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
+	"io"
 )
 
 // KodoStorage kodo存储 实现Storage接口
@@ -73,4 +74,13 @@ func (s *KodoStorage) PutObject(ctx context.Context, objectName string, data []b
 		return "", err
 	}
 	return s.Config.BucketUrl + "/" + objectName, nil
+}
+
+// PutObjectStream 上传文件流
+func (s *KodoStorage) PutObjectStream(ctx context.Context, objectName string, reader io.Reader) (url string, err error) {
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return "", err
+	}
+	return s.PutObject(ctx, objectName, data)
 }

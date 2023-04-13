@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
+	lua "github.com/yuin/gopher-lua"
 	"gorm.io/gorm"
 	"time"
 
@@ -42,11 +44,41 @@ func (l *BatchCreateZombieUserLogic) BatchCreateZombieUser(in *pb.BatchCreateZom
 	ip := in.CommonReq.Ip
 	region := ip2region.Ip2Region(ip)
 	var ids []string
+	// 获取生成规则
+	var luaConfig *mgmtmodel.LuaConfig
+	{
+		var ok bool
+		var err error
+		luaConfig, ok, err = mgmtmodel.GetLuaConfigByType(l.svcCtx.Mysql(), pb.LuaConfigType_GenerateZombieInfo)
+		if err != nil {
+			l.Errorf("BatchCreateZombieUser GetLuaConfigByType err: %v", err)
+			return &pb.BatchCreateZombieUserResp{CommonResp: pb.NewInternalErrorResp(err.Error())}, err
+		}
+		if !ok {
+			l.Errorf("BatchCreateZombieUser GetLuaConfigByType not found")
+			return &pb.BatchCreateZombieUserResp{CommonResp: pb.NewInternalErrorResp("BatchCreateZombieUser GetLuaConfigByType not found")}, err
+		}
+	}
 	for i := 0; i < int(in.Count); i++ {
-		var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(context.Background()), "")
+		L := lua.NewState()
+		results, err := utils.Lua.ExecLua(L, luaConfig.Code, "main", lua.LNumber(time.Now().UnixNano()))
+		L.Close()
+		if err != nil {
+			l.Errorf("exec lua err: %v", err)
+			return &pb.BatchCreateZombieUserResp{CommonResp: pb.NewInternalErrorResp(err.Error())}, err
+		}
+		if results.Type() != lua.LTTable {
+			l.Errorf("exec lua result type err: %v", results.Type())
+			return &pb.BatchCreateZombieUserResp{CommonResp: pb.NewInternalErrorResp("exec lua result type err")}, err
+		}
+		// 获取结果
+		var table = results.(*lua.LTable)
+		var nickname = table.RawGetString("name").String()
+		var avatar = table.RawGetString("avatar").String()
+		//var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(context.Background()), "")
+		//nickname := in.NicknamePrefix + "_" + utils.AnyToString(num)
 		num := i + 1
 		id := in.IdPrefix + "_" + utils.AnyToString(num)
-		nickname := in.NicknamePrefix + "_" + utils.AnyToString(num)
 		passwordSalt := utils.GenId()
 		password := xpwd.GeneratePwd(utils.Md5(in.Password), passwordSalt)
 		now := time.Now().UnixMilli()

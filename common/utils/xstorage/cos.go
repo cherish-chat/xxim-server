@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	cos "github.com/tencentyun/cos-go-sdk-v5"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -59,6 +60,15 @@ func NewCosStorage(config *pb.AppLineConfig_Storage_Cos) (*CosStorage, error) {
 func (o *CosStorage) PutObject(ctx context.Context, objectName string, data []byte) (url string, err error) {
 	ioReader := bytes.NewReader(data)
 	_, err = o.bucket.Object.Put(ctx, objectName, ioReader, nil)
+	if err != nil {
+		return "", err
+	}
+	return o.Config.BucketUrl + "/" + objectName, nil
+}
+
+// PutObjectStream 上传文件流
+func (o *CosStorage) PutObjectStream(ctx context.Context, objectName string, reader io.Reader) (url string, err error) {
+	_, err = o.bucket.Object.Put(ctx, objectName, reader, nil)
 	if err != nil {
 		return "", err
 	}

@@ -8,6 +8,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/docker/docker v20.10.21+incompatible
+	github.com/fogleman/gg v1.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/imroc/req/v3 v3.33.1
@@ -24,11 +25,13 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.593
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.519
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.41
+	github.com/yuin/gopher-lua v1.1.0
 	github.com/zeromicro/go-zero v1.4.2
 	go.mongodb.org/mongo-driver v1.10.3
 	go.opentelemetry.io/otel v1.11.0
 	go.opentelemetry.io/otel/trace v1.11.0
 	golang.org/x/crypto v0.4.0
+	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
 	golang.org/x/net v0.4.0
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
@@ -82,6 +85,7 @@ require (
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible // indirect
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect

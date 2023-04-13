@@ -57,6 +57,8 @@ type (
 	GetAllUserIpWhiteListResp             = pb.GetAllUserIpWhiteListResp
 	GetAllUserModelReq                    = pb.GetAllUserModelReq
 	GetAllUserModelResp                   = pb.GetAllUserModelResp
+	GetCaptchaCodeReq                     = pb.GetCaptchaCodeReq
+	GetCaptchaCodeResp                    = pb.GetCaptchaCodeResp
 	GetUserDefaultConvDetailReq           = pb.GetUserDefaultConvDetailReq
 	GetUserDefaultConvDetailResp          = pb.GetUserDefaultConvDetailResp
 	GetUserHomeReq                        = pb.GetUserHomeReq
@@ -117,6 +119,8 @@ type (
 	UserLoginRecord                       = pb.UserLoginRecord
 	UserModel                             = pb.UserModel
 	UserSetting                           = pb.UserSetting
+	VerifyCaptchaCodeReq                  = pb.VerifyCaptchaCodeReq
+	VerifyCaptchaCodeResp                 = pb.VerifyCaptchaCodeResp
 	VerifySmsReq                          = pb.VerifySmsReq
 	VerifySmsResp                         = pb.VerifySmsResp
 
@@ -167,6 +171,8 @@ type (
 		GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
 		SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
 		VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
+		GetCaptchaCode(ctx context.Context, in *GetCaptchaCodeReq, opts ...grpc.CallOption) (*GetCaptchaCodeResp, error)
+		VerifyCaptchaCode(ctx context.Context, in *VerifyCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyCaptchaCodeResp, error)
 		ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 		BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 		DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
@@ -404,6 +410,16 @@ func (m *defaultUserService) SendSms(ctx context.Context, in *SendSmsReq, opts .
 func (m *defaultUserService) VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.VerifySms(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetCaptchaCode(ctx context.Context, in *GetCaptchaCodeReq, opts ...grpc.CallOption) (*GetCaptchaCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetCaptchaCode(ctx, in, opts...)
+}
+
+func (m *defaultUserService) VerifyCaptchaCode(ctx context.Context, in *VerifyCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyCaptchaCodeResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.VerifyCaptchaCode(ctx, in, opts...)
 }
 
 func (m *defaultUserService) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {

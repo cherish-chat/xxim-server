@@ -44,6 +44,14 @@ func SmsCodeKey(scene string, mobile string) string {
 	return s
 }
 
+// CaptchaCodeKey 图形验证码
+func CaptchaCodeKey(scene string, deviceId string) string {
+	s := "captcha_code:" + scene + ":" + deviceId
+	// url编码
+	s = url.QueryEscape(s)
+	return s
+}
+
 // SmsCodeErrorKey 短信验证码错误次数
 func SmsCodeErrorKey(scene string, mobile string) string {
 	s := "sms_code_error:" + scene + ":" + mobile

@@ -35,7 +35,6 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * [x] 一条长连接通讯、无http
 * [x] 🔐通讯层加密
 * [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/xxim-bot-chatgpt)
-* [x] 开源后台管理系统，可自定义配置[xxim-mgmt-app](https://github.com/cherish-chat/xxim-mgmt-app.git)
 * [ ] 音视频通话、IOS支持`Callkit`
 
 

@@ -68,6 +68,8 @@ type UserServiceClient interface {
 	GetAllLoginRecord(ctx context.Context, in *GetAllLoginRecordReq, opts ...grpc.CallOption) (*GetAllLoginRecordResp, error)
 	SendSms(ctx context.Context, in *SendSmsReq, opts ...grpc.CallOption) (*SendSmsResp, error)
 	VerifySms(ctx context.Context, in *VerifySmsReq, opts ...grpc.CallOption) (*VerifySmsResp, error)
+	GetCaptchaCode(ctx context.Context, in *GetCaptchaCodeReq, opts ...grpc.CallOption) (*GetCaptchaCodeResp, error)
+	VerifyCaptchaCode(ctx context.Context, in *VerifyCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyCaptchaCodeResp, error)
 	ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error)
 	BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 	DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
@@ -478,6 +480,24 @@ func (c *userServiceClient) VerifySms(ctx context.Context, in *VerifySmsReq, opt
 	return out, nil
 }
 
+func (c *userServiceClient) GetCaptchaCode(ctx context.Context, in *GetCaptchaCodeReq, opts ...grpc.CallOption) (*GetCaptchaCodeResp, error) {
+	out := new(GetCaptchaCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetCaptchaCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) VerifyCaptchaCode(ctx context.Context, in *VerifyCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyCaptchaCodeResp, error) {
+	out := new(VerifyCaptchaCodeResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/VerifyCaptchaCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) ReportUser(ctx context.Context, in *ReportUserReq, opts ...grpc.CallOption) (*ReportUserResp, error) {
 	out := new(ReportUserResp)
 	err := c.cc.Invoke(ctx, "/pb.userService/ReportUser", in, out, opts...)
@@ -564,6 +584,8 @@ type UserServiceServer interface {
 	GetAllLoginRecord(context.Context, *GetAllLoginRecordReq) (*GetAllLoginRecordResp, error)
 	SendSms(context.Context, *SendSmsReq) (*SendSmsResp, error)
 	VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error)
+	GetCaptchaCode(context.Context, *GetCaptchaCodeReq) (*GetCaptchaCodeResp, error)
+	VerifyCaptchaCode(context.Context, *VerifyCaptchaCodeReq) (*VerifyCaptchaCodeResp, error)
 	ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error)
 	BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error)
 	DestroyAccount(context.Context, *DestroyAccountReq) (*DestroyAccountResp, error)
@@ -706,6 +728,12 @@ func (UnimplementedUserServiceServer) SendSms(context.Context, *SendSmsReq) (*Se
 }
 func (UnimplementedUserServiceServer) VerifySms(context.Context, *VerifySmsReq) (*VerifySmsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifySms not implemented")
+}
+func (UnimplementedUserServiceServer) GetCaptchaCode(context.Context, *GetCaptchaCodeReq) (*GetCaptchaCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCaptchaCode not implemented")
+}
+func (UnimplementedUserServiceServer) VerifyCaptchaCode(context.Context, *VerifyCaptchaCodeReq) (*VerifyCaptchaCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyCaptchaCode not implemented")
 }
 func (UnimplementedUserServiceServer) ReportUser(context.Context, *ReportUserReq) (*ReportUserResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportUser not implemented")
@@ -1524,6 +1552,42 @@ func _UserService_VerifySms_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetCaptchaCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCaptchaCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetCaptchaCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetCaptchaCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetCaptchaCode(ctx, req.(*GetCaptchaCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_VerifyCaptchaCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyCaptchaCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).VerifyCaptchaCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/VerifyCaptchaCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).VerifyCaptchaCode(ctx, req.(*VerifyCaptchaCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_ReportUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReportUserReq)
 	if err := dec(in); err != nil {
@@ -1778,6 +1842,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifySms",
 			Handler:    _UserService_VerifySms_Handler,
+		},
+		{
+			MethodName: "GetCaptchaCode",
+			Handler:    _UserService_GetCaptchaCode_Handler,
+		},
+		{
+			MethodName: "VerifyCaptchaCode",
+			Handler:    _UserService_VerifyCaptchaCode_Handler,
 		},
 		{
 			MethodName: "ReportUser",

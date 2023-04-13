@@ -244,6 +244,16 @@ func (s *UserServiceServer) VerifySms(ctx context.Context, in *pb.VerifySmsReq) 
 	return l.VerifySms(in)
 }
 
+func (s *UserServiceServer) GetCaptchaCode(ctx context.Context, in *pb.GetCaptchaCodeReq) (*pb.GetCaptchaCodeResp, error) {
+	l := logic.NewGetCaptchaCodeLogic(ctx, s.svcCtx)
+	return l.GetCaptchaCode(in)
+}
+
+func (s *UserServiceServer) VerifyCaptchaCode(ctx context.Context, in *pb.VerifyCaptchaCodeReq) (*pb.VerifyCaptchaCodeResp, error) {
+	l := logic.NewVerifyCaptchaCodeLogic(ctx, s.svcCtx)
+	return l.VerifyCaptchaCode(in)
+}
+
 func (s *UserServiceServer) ReportUser(ctx context.Context, in *pb.ReportUserReq) (*pb.ReportUserResp, error) {
 	l := logic.NewReportUserLogic(ctx, s.svcCtx)
 	return l.ReportUser(in)

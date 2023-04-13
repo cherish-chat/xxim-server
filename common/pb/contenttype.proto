@@ -22,3 +22,33 @@ enum MsgContentType {
 
   custom = 100; // 自定义消息
 }
+
+enum NoticeContentType {
+  unknownNotice = 0; // 未知类型
+
+  hasRead = 1; // 已读
+  hasEdited = 2; // 已编辑
+
+  // command
+  syncFriendList = 101; // 同步好友列表
+  syncConvSetting = 102; // 同步会话设置
+
+  // friend@
+  updateUserInfo = 201; // 更新用户信息
+
+  // group@
+  groupMemberLeave = 301; // 群成员离开
+  createGroup = 302; // 创建群
+  newGroupMember = 303; // 新群成员
+  dismissGroup = 304; // 解散群
+  setGroupMemberInfo = 305; // 设置群成员信息
+  setGroupInfo = 306; // 设置群信息
+  recoverGroup = 307; // 恢复群
+  updateGroupInfo = 308; // 更新群信息
+
+  // groupMember
+  applyToBeGroupMember = 401; // 申请加入群
+
+  // friendMember
+  applyToBeFriend = 501; // 申请加为好友
+}

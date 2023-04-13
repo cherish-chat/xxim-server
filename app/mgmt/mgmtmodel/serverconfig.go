@@ -65,6 +65,7 @@ type (
 		NoticeRpc   NoticeRpcConfig
 		AppMgmtRpc  AppMgmtRpcConfig
 		Mgmt        MgmtConfig
+		Xos         XosConfig
 	}
 	ServerCommonConfig struct {
 		Host         string // default: 0.0.0.0
@@ -160,6 +161,11 @@ type (
 		HttpPort       int64  // default: 6799
 		SuperAdminId   string // default: superadmin
 		SuperAdminPass string // default: superadmin
+		AesIv          string
+		AesKey         string
+	}
+	XosConfig struct {
+		HttpPort int64
 	}
 )
 
@@ -246,6 +252,11 @@ func defaultServerConfig(redisConfig redis.RedisConf) *ServerConfig {
 			HttpPort:       6799,
 			SuperAdminId:   "superadmin",
 			SuperAdminPass: "superadmin",
+			AesIv:          "",
+			AesKey:         "",
+		},
+		Xos: XosConfig{
+			HttpPort: 6800,
 		},
 	}
 }

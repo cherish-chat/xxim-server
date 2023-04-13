@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	minio "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"io"
 )
 
 // MinioStorage minio存储 实现Storage接口
@@ -72,4 +73,13 @@ func (s *MinioStorage) setDownloadPolicy() error {
 		return err
 	}
 	return nil
+}
+
+// PutObjectStream 上传文件流
+func (s *MinioStorage) PutObjectStream(ctx context.Context, objectName string, reader io.Reader) (url string, err error) {
+	_, err = s.Client.PutObject(ctx, s.Config.BucketName, objectName, reader, -1, minio.PutObjectOptions{})
+	if err != nil {
+		return "", err
+	}
+	return s.Config.BucketUrl + "/" + objectName, nil
 }

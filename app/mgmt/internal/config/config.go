@@ -24,6 +24,8 @@ type Config struct {
 	Ip2RegionUrl string
 }
 type GinConfig struct {
-	Cors middleware.CorsConfig
-	Addr string `json:",default=0.0.0.0:6799"`
+	Cors   middleware.CorsConfig
+	Addr   string `json:",default=0.0.0.0:6799"`
+	AesIv  string `json:",optional"`
+	AesKey string `json:",optional"`
 }

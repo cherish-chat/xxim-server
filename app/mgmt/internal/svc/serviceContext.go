@@ -62,6 +62,7 @@ func (s *ServiceContext) Mysql() *gorm.DB {
 		s.mysql.AutoMigrate(&mgmtmodel.MSIPWhitelist{})
 		s.mysql.AutoMigrate(&mgmtmodel.Album{})
 		s.mysql.AutoMigrate(&mgmtmodel.AlbumCate{})
+		s.mysql.AutoMigrate(&mgmtmodel.LuaConfig{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

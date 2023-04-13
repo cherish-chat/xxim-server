@@ -27,4 +27,14 @@ func RegisterAppMgmt(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/appmgmt/white/getLatestVersion", route)
 	}
+	// GetUploadInfoReq GetUploadInfoResp
+	{
+		route := conngateway.Route[*pb.GetUploadInfoReq, *pb.GetUploadInfoResp]{
+			NewRequest: func() *pb.GetUploadInfoReq {
+				return &pb.GetUploadInfoReq{}
+			},
+			Do: svcCtx.AppMgmtService().GetUploadInfo,
+		}
+		conngateway.AddRoute("/v1/appmgmt/getUploadInfo", route)
+	}
 }

@@ -217,6 +217,31 @@ func (s *MgmtServiceServer) DeleteMSIpWhiteList(ctx context.Context, in *pb.Dele
 	return l.DeleteMSIpWhiteList(in)
 }
 
+func (s *MgmtServiceServer) GetAllMSLuaConfig(ctx context.Context, in *pb.GetAllMSLuaConfigReq) (*pb.GetAllMSLuaConfigResp, error) {
+	l := logic.NewGetAllMSLuaConfigLogic(ctx, s.svcCtx)
+	return l.GetAllMSLuaConfig(in)
+}
+
+func (s *MgmtServiceServer) GetMSLuaConfigDetail(ctx context.Context, in *pb.GetMSLuaConfigReq) (*pb.GetMSLuaConfigResp, error) {
+	l := logic.NewGetMSLuaConfigDetailLogic(ctx, s.svcCtx)
+	return l.GetMSLuaConfigDetail(in)
+}
+
+func (s *MgmtServiceServer) AddMSLuaConfig(ctx context.Context, in *pb.AddMSLuaConfigReq) (*pb.AddMSLuaConfigResp, error) {
+	l := logic.NewAddMSLuaConfigLogic(ctx, s.svcCtx)
+	return l.AddMSLuaConfig(in)
+}
+
+func (s *MgmtServiceServer) UpdateMSLuaConfig(ctx context.Context, in *pb.UpdateMSLuaConfigReq) (*pb.UpdateMSLuaConfigResp, error) {
+	l := logic.NewUpdateMSLuaConfigLogic(ctx, s.svcCtx)
+	return l.UpdateMSLuaConfig(in)
+}
+
+func (s *MgmtServiceServer) DeleteMSLuaConfig(ctx context.Context, in *pb.DeleteMSLuaConfigReq) (*pb.DeleteMSLuaConfigResp, error) {
+	l := logic.NewDeleteMSLuaConfigLogic(ctx, s.svcCtx)
+	return l.DeleteMSLuaConfig(in)
+}
+
 func (s *MgmtServiceServer) GetAllMSOperationLog(ctx context.Context, in *pb.GetAllMSOperationLogReq) (*pb.GetAllMSOperationLogResp, error) {
 	l := logic.NewGetAllMSOperationLogLogic(ctx, s.svcCtx)
 	return l.GetAllMSOperationLog(in)

@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func MustLoadConfig(rpcAddr string, name string, dest interface{}) {
+func MustLoadConfig(rpcAddr string, name string, dest interface{}) MgmtService {
 	// 创建一个客户端
 	client := NewMgmtService(zrpc.MustNewClient(zrpc.RpcClientConf{
 		Endpoints: []string{rpcAddr},
@@ -21,4 +21,5 @@ func MustLoadConfig(rpcAddr string, name string, dest interface{}) {
 	if err := conf.LoadFromJsonBytes(resp.Config, dest); err != nil {
 		log.Fatalf("load config failed: %v", err)
 	}
+	return client
 }

@@ -40,6 +40,8 @@ func InitData(tx *gorm.DB) {
 	initRoleApiPath(tx)
 	// 相册分类
 	initAlbumCate(tx)
+	// lua配置
+	initLuaConfig(tx)
 }
 
 func initRoleMenu(tx *gorm.DB) {

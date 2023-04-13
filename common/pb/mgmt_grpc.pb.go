@@ -61,6 +61,11 @@ type MgmtServiceClient interface {
 	AddMSIpWhiteList(ctx context.Context, in *AddMSIpWhiteListReq, opts ...grpc.CallOption) (*AddMSIpWhiteListResp, error)
 	UpdateMSIpWhiteList(ctx context.Context, in *UpdateMSIpWhiteListReq, opts ...grpc.CallOption) (*UpdateMSIpWhiteListResp, error)
 	DeleteMSIpWhiteList(ctx context.Context, in *DeleteMSIpWhiteListReq, opts ...grpc.CallOption) (*DeleteMSIpWhiteListResp, error)
+	GetAllMSLuaConfig(ctx context.Context, in *GetAllMSLuaConfigReq, opts ...grpc.CallOption) (*GetAllMSLuaConfigResp, error)
+	GetMSLuaConfigDetail(ctx context.Context, in *GetMSLuaConfigReq, opts ...grpc.CallOption) (*GetMSLuaConfigResp, error)
+	AddMSLuaConfig(ctx context.Context, in *AddMSLuaConfigReq, opts ...grpc.CallOption) (*AddMSLuaConfigResp, error)
+	UpdateMSLuaConfig(ctx context.Context, in *UpdateMSLuaConfigReq, opts ...grpc.CallOption) (*UpdateMSLuaConfigResp, error)
+	DeleteMSLuaConfig(ctx context.Context, in *DeleteMSLuaConfigReq, opts ...grpc.CallOption) (*DeleteMSLuaConfigResp, error)
 	GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error)
 	GetMSOperationLogDetail(ctx context.Context, in *GetMSOperationLogDetailReq, opts ...grpc.CallOption) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(ctx context.Context, in *DeleteMSOperationLogReq, opts ...grpc.CallOption) (*DeleteMSOperationLogResp, error)
@@ -436,6 +441,51 @@ func (c *mgmtServiceClient) DeleteMSIpWhiteList(ctx context.Context, in *DeleteM
 	return out, nil
 }
 
+func (c *mgmtServiceClient) GetAllMSLuaConfig(ctx context.Context, in *GetAllMSLuaConfigReq, opts ...grpc.CallOption) (*GetAllMSLuaConfigResp, error) {
+	out := new(GetAllMSLuaConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSLuaConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) GetMSLuaConfigDetail(ctx context.Context, in *GetMSLuaConfigReq, opts ...grpc.CallOption) (*GetMSLuaConfigResp, error) {
+	out := new(GetMSLuaConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetMSLuaConfigDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) AddMSLuaConfig(ctx context.Context, in *AddMSLuaConfigReq, opts ...grpc.CallOption) (*AddMSLuaConfigResp, error) {
+	out := new(AddMSLuaConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/AddMSLuaConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) UpdateMSLuaConfig(ctx context.Context, in *UpdateMSLuaConfigReq, opts ...grpc.CallOption) (*UpdateMSLuaConfigResp, error) {
+	out := new(UpdateMSLuaConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/UpdateMSLuaConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mgmtServiceClient) DeleteMSLuaConfig(ctx context.Context, in *DeleteMSLuaConfigReq, opts ...grpc.CallOption) (*DeleteMSLuaConfigResp, error) {
+	out := new(DeleteMSLuaConfigResp)
+	err := c.cc.Invoke(ctx, "/pb.mgmtService/DeleteMSLuaConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mgmtServiceClient) GetAllMSOperationLog(ctx context.Context, in *GetAllMSOperationLogReq, opts ...grpc.CallOption) (*GetAllMSOperationLogResp, error) {
 	out := new(GetAllMSOperationLogResp)
 	err := c.cc.Invoke(ctx, "/pb.mgmtService/GetAllMSOperationLog", in, out, opts...)
@@ -587,6 +637,11 @@ type MgmtServiceServer interface {
 	AddMSIpWhiteList(context.Context, *AddMSIpWhiteListReq) (*AddMSIpWhiteListResp, error)
 	UpdateMSIpWhiteList(context.Context, *UpdateMSIpWhiteListReq) (*UpdateMSIpWhiteListResp, error)
 	DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error)
+	GetAllMSLuaConfig(context.Context, *GetAllMSLuaConfigReq) (*GetAllMSLuaConfigResp, error)
+	GetMSLuaConfigDetail(context.Context, *GetMSLuaConfigReq) (*GetMSLuaConfigResp, error)
+	AddMSLuaConfig(context.Context, *AddMSLuaConfigReq) (*AddMSLuaConfigResp, error)
+	UpdateMSLuaConfig(context.Context, *UpdateMSLuaConfigReq) (*UpdateMSLuaConfigResp, error)
+	DeleteMSLuaConfig(context.Context, *DeleteMSLuaConfigReq) (*DeleteMSLuaConfigResp, error)
 	GetAllMSOperationLog(context.Context, *GetAllMSOperationLogReq) (*GetAllMSOperationLogResp, error)
 	GetMSOperationLogDetail(context.Context, *GetMSOperationLogDetailReq) (*GetMSOperationLogDetailResp, error)
 	DeleteMSOperationLog(context.Context, *DeleteMSOperationLogReq) (*DeleteMSOperationLogResp, error)
@@ -724,6 +779,21 @@ func (UnimplementedMgmtServiceServer) UpdateMSIpWhiteList(context.Context, *Upda
 }
 func (UnimplementedMgmtServiceServer) DeleteMSIpWhiteList(context.Context, *DeleteMSIpWhiteListReq) (*DeleteMSIpWhiteListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSIpWhiteList not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetAllMSLuaConfig(context.Context, *GetAllMSLuaConfigReq) (*GetAllMSLuaConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSLuaConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) GetMSLuaConfigDetail(context.Context, *GetMSLuaConfigReq) (*GetMSLuaConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMSLuaConfigDetail not implemented")
+}
+func (UnimplementedMgmtServiceServer) AddMSLuaConfig(context.Context, *AddMSLuaConfigReq) (*AddMSLuaConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMSLuaConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) UpdateMSLuaConfig(context.Context, *UpdateMSLuaConfigReq) (*UpdateMSLuaConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMSLuaConfig not implemented")
+}
+func (UnimplementedMgmtServiceServer) DeleteMSLuaConfig(context.Context, *DeleteMSLuaConfigReq) (*DeleteMSLuaConfigResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMSLuaConfig not implemented")
 }
 func (UnimplementedMgmtServiceServer) GetAllMSOperationLog(context.Context, *GetAllMSOperationLogReq) (*GetAllMSOperationLogResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllMSOperationLog not implemented")
@@ -1476,6 +1546,96 @@ func _MgmtService_DeleteMSIpWhiteList_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MgmtService_GetAllMSLuaConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMSLuaConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetAllMSLuaConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetAllMSLuaConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetAllMSLuaConfig(ctx, req.(*GetAllMSLuaConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_GetMSLuaConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMSLuaConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).GetMSLuaConfigDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/GetMSLuaConfigDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).GetMSLuaConfigDetail(ctx, req.(*GetMSLuaConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_AddMSLuaConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMSLuaConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).AddMSLuaConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/AddMSLuaConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).AddMSLuaConfig(ctx, req.(*AddMSLuaConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_UpdateMSLuaConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMSLuaConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).UpdateMSLuaConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/UpdateMSLuaConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).UpdateMSLuaConfig(ctx, req.(*UpdateMSLuaConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MgmtService_DeleteMSLuaConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMSLuaConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MgmtServiceServer).DeleteMSLuaConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.mgmtService/DeleteMSLuaConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MgmtServiceServer).DeleteMSLuaConfig(ctx, req.(*DeleteMSLuaConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MgmtService_GetAllMSOperationLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllMSOperationLogReq)
 	if err := dec(in); err != nil {
@@ -1854,6 +2014,26 @@ var MgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMSIpWhiteList",
 			Handler:    _MgmtService_DeleteMSIpWhiteList_Handler,
+		},
+		{
+			MethodName: "GetAllMSLuaConfig",
+			Handler:    _MgmtService_GetAllMSLuaConfig_Handler,
+		},
+		{
+			MethodName: "GetMSLuaConfigDetail",
+			Handler:    _MgmtService_GetMSLuaConfigDetail_Handler,
+		},
+		{
+			MethodName: "AddMSLuaConfig",
+			Handler:    _MgmtService_AddMSLuaConfig_Handler,
+		},
+		{
+			MethodName: "UpdateMSLuaConfig",
+			Handler:    _MgmtService_UpdateMSLuaConfig_Handler,
+		},
+		{
+			MethodName: "DeleteMSLuaConfig",
+			Handler:    _MgmtService_DeleteMSLuaConfig_Handler,
 		},
 		{
 			MethodName: "GetAllMSOperationLog",

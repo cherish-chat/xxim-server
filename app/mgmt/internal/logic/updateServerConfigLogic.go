@@ -112,6 +112,11 @@ func (l *UpdateServerConfigLogic) UpdateServerConfig(in *pb.UpdateServerConfigRe
 			HttpPort:       in.Config.Mgmt.HttpPort,
 			SuperAdminId:   in.Config.Mgmt.SuperAdminId,
 			SuperAdminPass: in.Config.Mgmt.SuperAdminPass,
+			AesIv:          in.Config.Mgmt.AesIv,
+			AesKey:         in.Config.Mgmt.AesKey,
+		},
+		Xos: mgmtmodel.XosConfig{
+			HttpPort: in.Config.Xos.HttpPort,
 		},
 	}
 	err := l.svcCtx.Redis().SetCtx(l.ctx, key, utils.AnyToString(config))

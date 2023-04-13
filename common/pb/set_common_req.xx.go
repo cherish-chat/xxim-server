@@ -7,12 +7,23 @@ func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 func (x *ReportUserReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+func (x *GetCaptchaCodeReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *VerifyCaptchaCodeReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
 
 func (x *ReportGroupReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
 func (x *DestroyAccountReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetUploadInfoReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 

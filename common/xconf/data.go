@@ -2,6 +2,7 @@ package xconf
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/app/appmgmt/appmgmtmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -157,6 +158,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("register.mobile.required", boolean("注册", "register.mobile.required", false, "是否必填手机号"))
 	// register.mobile.sms 是否使用短信验证码
 	m.insertIfNotFound("register.mobile.sms", boolean("注册", "register.mobile.sms", false, "是否使用短信验证码"))
+	// register.mobile.captcha_code 是否使用图形验证码
+	m.insertIfNotFound("register.mobile.captcha_code", boolean("注册", "register.mobile.captcha_code", false, "是否使用图形验证码"))
 	// register.must.ip_in_white_list ip必须在白名单中
 	m.insertIfNotFound("register.must.ip_in_white_list", boolean("注册", "register.must.ip_in_white_list", false, "ip必须在白名单中"))
 
@@ -207,6 +210,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("login.must_guest.ip_in_white_list", boolean("登录", "login.must_guest.ip_in_white_list", false, "游客登录时ip必须在白名单中"))
 	// login.password_error_limit 登录密码错误上限
 	m.insertIfNotFound("login.password_error_limit", num("登录", "login.password_error_limit", 5, "登录密码错误上限"))
+	// login.captcha_code 是否使用图形验证码
+	m.insertIfNotFound("login.captcha_code", boolean("登录", "login.captcha_code", false, "是否使用图形验证码"))
 
 	// 好友
 	// friend.add.user 用户是否能添加用户为好友
@@ -280,6 +285,14 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("group.show_group_info.user.link_name", str("外部链接", "group.show_group_info.user.link_name", "发现", "外部链接底部导航按钮名称"))
 	// 是否显示外部链接按钮
 	m.insertIfNotFound("group.show_group_info.user.link_show", boolean("外部链接", "group.show_group_info.user.link_show", true, "是否显示外部链接按钮"))
+
+	// 文件上传
+	// upload_file_header 上传文件自定义header
+	m.insertIfNotFound("upload_file_header", str("文件上传", "upload_file_header", `{}`, "上传文件自定义header"))
+	// upload_file_token_secret 上传文件token密钥
+	m.insertIfNotFound("upload_file_token_secret", str("文件上传", "upload_file_token_secret", ``, "上传文件token密钥"))
+	// upload_file_server_endpoints 上传文件服务器地址
+	m.insertIfNotFound("upload_file_server_endpoints", str("文件上传", "upload_file_server_endpoints", `["http://xxx.xxx.xx:80"]`, "上传文件服务器地址"))
 }
 
 func (m *ConfigMgr) DefaultGroupDescription(ctx context.Context, userId string) string {
@@ -330,6 +343,33 @@ func (m *ConfigMgr) AvatarsDefault(ctx context.Context) []string {
 	return m.GetSliceCtx(ctx, "avatars_default", "")
 }
 
+// UploadFileHeader 上传文件附加header
+func (m *ConfigMgr) UploadFileHeader(ctx context.Context) map[string]string {
+	v := m.GetCtx(ctx, "upload_file_header", "")
+	if v == "" {
+		return map[string]string{}
+	}
+	mp := map[string]string{}
+	_ = json.Unmarshal([]byte(v), &mp)
+	return mp
+}
+
+// UploadFileTokenSecret 上传文件token secret
+func (m *ConfigMgr) UploadFileTokenSecret(ctx context.Context) string {
+	return m.GetCtx(ctx, "upload_file_token_secret", "")
+}
+
+// UploadFileServerEndpoints 上传文件服务器地址
+func (m *ConfigMgr) UploadFileServerEndpoints(ctx context.Context) []string {
+	v := m.GetCtx(ctx, "upload_file_server_endpoints", "")
+	if v == "" {
+		return []string{}
+	}
+	mp := []string{}
+	_ = json.Unmarshal([]byte(v), &mp)
+	return mp
+}
+
 // RegisterIpLimit register.ip_limit.period register.ip_limit.quota
 func (m *ConfigMgr) RegisterIpLimit(ctx context.Context) (int, int) {
 	period := utils.AnyToInt64(m.GetCtx(ctx, "register.ip_limit.period", ""))
@@ -364,6 +404,16 @@ func (m *ConfigMgr) RegisterMustMobile(ctx context.Context) bool {
 // RegisterMustSmsCode register.mobile.sms
 func (m *ConfigMgr) RegisterMustSmsCode(ctx context.Context) bool {
 	return m.GetCtx(ctx, "register.mobile.sms", "") == "1"
+}
+
+// RegisterMustCaptchaCode register.mobile.captcha_code 注册时是否需要填写图形验证码
+func (m *ConfigMgr) RegisterMustCaptchaCode(ctx context.Context) bool {
+	return m.GetCtx(ctx, "register.mobile.captcha_code", "") == "1"
+}
+
+// LoginMustCaptchaCode login.captcha_code 登录时是否需要填写图形验证码
+func (m *ConfigMgr) LoginMustCaptchaCode(ctx context.Context) bool {
+	return m.GetCtx(ctx, "login.captcha_code", "") == "1"
 }
 
 // RegisterMustAvatar register.avatar.required

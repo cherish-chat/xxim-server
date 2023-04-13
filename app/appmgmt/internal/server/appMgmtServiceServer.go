@@ -216,3 +216,8 @@ func (s *AppMgmtServiceServer) AppGetAllConfig(ctx context.Context, in *pb.AppGe
 	l := logic.NewAppGetAllConfigLogic(ctx, s.svcCtx)
 	return l.AppGetAllConfig(in)
 }
+
+func (s *AppMgmtServiceServer) GetUploadInfo(ctx context.Context, in *pb.GetUploadInfoReq) (*pb.GetUploadInfoResp, error) {
+	l := logic.NewGetUploadInfoLogic(ctx, s.svcCtx)
+	return l.GetUploadInfo(in)
+}
