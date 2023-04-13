@@ -75,26 +75,32 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	if l.svcCtx.ConfigMgr.LoginMustCaptchaCode(l.ctx) {
 		// 请求中必须带图形验证码
 		if in.CaptchaCode == nil {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
 		}
 		if *in.CaptchaCode == "" {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+		}
+		if in.CaptchaId == nil {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+		}
+		if *in.CaptchaId == "" {
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
 		}
 		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
 		var err error
 		xtrace.StartFuncSpan(l.ctx, "checkCaptchaCode", func(ctx context.Context) {
 			verifyCaptchaResp, err = NewVerifyCaptchaCodeLogic(ctx, l.svcCtx).VerifyCaptchaCode(&pb.VerifyCaptchaCodeReq{
-				DeviceId: in.CommonReq.DeviceId,
-				Code:     *in.CaptchaCode,
-				Scene:    "login",
-				Delete:   true,
+				CaptchaId: *in.CaptchaId,
+				Code:      *in.CaptchaCode,
+				Scene:     "login",
+				Delete:    true,
 			})
 		})
 		if err != nil {
 			l.Errorf("check captcha code err: %v", err)
 			return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if verifyCaptchaResp.GetCommonResp().Code != pb.CommonResp_Success {
+		if verifyCaptchaResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
 			return &pb.LoginResp{CommonResp: verifyCaptchaResp.GetCommonResp()}, nil
 		}
 	}

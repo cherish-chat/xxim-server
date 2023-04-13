@@ -33,7 +33,8 @@ func (l *GetCaptchaCodeLogic) GetCaptchaCode(in *pb.GetCaptchaCodeReq) (*pb.GetC
 		minute = int(*in.ExpireMinute)
 	}
 	// 保存验证码到redis
-	key := rediskey.CaptchaCodeKey(in.Scene, in.CommonReq.DeviceId)
+	captchaId := utils.GenId()
+	key := rediskey.CaptchaCodeKey(in.Scene, captchaId)
 	err := l.svcCtx.Redis().SetexCtx(l.ctx, key, code, minute*60)
 	if err != nil {
 		l.Errorf("SendSms failed: %v", err)
@@ -41,5 +42,5 @@ func (l *GetCaptchaCodeLogic) GetCaptchaCode(in *pb.GetCaptchaCodeReq) (*pb.GetC
 	}
 	// 生成图片
 	bytes := captcha.ImgText(300, 100, code)
-	return &pb.GetCaptchaCodeResp{Captcha: bytes}, nil
+	return &pb.GetCaptchaCodeResp{Captcha: bytes, CaptchaId: captchaId}, nil
 }

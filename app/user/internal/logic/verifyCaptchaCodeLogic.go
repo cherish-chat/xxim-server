@@ -25,11 +25,15 @@ func NewVerifyCaptchaCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *VerifyCaptchaCodeLogic) VerifyCaptchaCode(in *pb.VerifyCaptchaCodeReq) (*pb.VerifyCaptchaCodeResp, error) {
-	key := rediskey.CaptchaCodeKey(in.Scene, in.DeviceId)
+	key := rediskey.CaptchaCodeKey(in.Scene, in.CaptchaId)
 	code, err := l.svcCtx.Redis().GetCtx(l.ctx, key)
 	if err != nil {
 		l.Errorf("VerifyCaptchaCode failed: %v", err)
 		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewInternalErrorResp(err.Error())}, err
+	}
+	if code == "" {
+		l.Errorf("VerifyCaptchaCode failed: %v", err)
+		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp("图形验证码已失效")}, err
 	}
 	// 是否立刻删除
 	if in.Delete {
@@ -42,5 +46,5 @@ func (l *VerifyCaptchaCodeLogic) VerifyCaptchaCode(in *pb.VerifyCaptchaCodeReq) 
 	if code != in.Code {
 		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp("图形验证码错误")}, nil
 	}
-	return &pb.VerifyCaptchaCodeResp{}, nil
+	return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewSuccessResp()}, nil
 }

@@ -216,21 +216,27 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		if *in.CaptchaCode == "" {
 			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
 		}
+		if in.CaptchaId == nil {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
+		if *in.CaptchaId == "" {
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+		}
 		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
 		var err error
 		xtrace.StartFuncSpan(l.ctx, "checkCaptchaCode", func(ctx context.Context) {
 			verifyCaptchaResp, err = NewVerifyCaptchaCodeLogic(ctx, l.svcCtx).VerifyCaptchaCode(&pb.VerifyCaptchaCodeReq{
-				DeviceId: in.CommonReq.DeviceId,
-				Code:     *in.CaptchaCode,
-				Scene:    "register",
-				Delete:   true,
+				CaptchaId: *in.CaptchaId,
+				Code:      *in.CaptchaCode,
+				Scene:     "register",
+				Delete:    true,
 			})
 		})
 		if err != nil {
 			l.Errorf("check captcha code err: %v", err)
 			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
-		if verifyCaptchaResp.GetCommonResp().Code != pb.CommonResp_Success {
+		if verifyCaptchaResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
 			return &pb.RegisterResp{CommonResp: verifyCaptchaResp.GetCommonResp()}, nil
 		}
 	}
