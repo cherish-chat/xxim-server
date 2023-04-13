@@ -118,6 +118,8 @@ type (
 	GetServerConfigReq                       = pb.GetServerConfigReq
 	GetServerConfigResp                      = pb.GetServerConfigResp
 	HealthMSResp                             = pb.HealthMSResp
+	LoginMSCaptchaReq                        = pb.LoginMSCaptchaReq
+	LoginMSCaptchaResp                       = pb.LoginMSCaptchaResp
 	LoginMSReq                               = pb.LoginMSReq
 	LoginMSResp                              = pb.LoginMSResp
 	LuaConfig                                = pb.LuaConfig
@@ -156,6 +158,8 @@ type (
 	UpdateMSUserResp                         = pb.UpdateMSUserResp
 	UpdateServerConfigReq                    = pb.UpdateServerConfigReq
 	UpdateServerConfigResp                   = pb.UpdateServerConfigResp
+	VerifyLoginMSCaptchaCodeReq              = pb.VerifyLoginMSCaptchaCodeReq
+	VerifyLoginMSCaptchaCodeResp             = pb.VerifyLoginMSCaptchaCodeResp
 
 	MgmtService interface {
 		AfterConnect(ctx context.Context, in *AfterConnectReq, opts ...grpc.CallOption) (*CommonResp, error)
@@ -165,6 +169,8 @@ type (
 		UpdateServerConfig(ctx context.Context, in *UpdateServerConfigReq, opts ...grpc.CallOption) (*UpdateServerConfigResp, error)
 		GetAppLineConfig(ctx context.Context, in *GetAppLineConfigReq, opts ...grpc.CallOption) (*GetAppLineConfigResp, error)
 		UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error)
+		LoginMSCaptcha(ctx context.Context, in *LoginMSCaptchaReq, opts ...grpc.CallOption) (*LoginMSCaptchaResp, error)
+		VerifyLoginMSCaptchaCode(ctx context.Context, in *VerifyLoginMSCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyLoginMSCaptchaCodeResp, error)
 		LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error)
 		HealthMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*HealthMSResp, error)
 		ConfigMS(ctx context.Context, in *CommonReq, opts ...grpc.CallOption) (*ConfigMSResp, error)
@@ -262,6 +268,16 @@ func (m *defaultMgmtService) GetAppLineConfig(ctx context.Context, in *GetAppLin
 func (m *defaultMgmtService) UpdateAppLineConfig(ctx context.Context, in *UpdateAppLineConfigReq, opts ...grpc.CallOption) (*UpdateAppLineConfigResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.UpdateAppLineConfig(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) LoginMSCaptcha(ctx context.Context, in *LoginMSCaptchaReq, opts ...grpc.CallOption) (*LoginMSCaptchaResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.LoginMSCaptcha(ctx, in, opts...)
+}
+
+func (m *defaultMgmtService) VerifyLoginMSCaptchaCode(ctx context.Context, in *VerifyLoginMSCaptchaCodeReq, opts ...grpc.CallOption) (*VerifyLoginMSCaptchaCodeResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.VerifyLoginMSCaptchaCode(ctx, in, opts...)
 }
 
 func (m *defaultMgmtService) LoginMS(ctx context.Context, in *LoginMSReq, opts ...grpc.CallOption) (*LoginMSResp, error) {

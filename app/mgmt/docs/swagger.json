@@ -206,6 +206,102 @@
                 }
             }
         },
+        "/group/clear/member/zombie": {
+            "post": {
+                "description": "使用此接口清除群里的僵尸号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群聊成员管理"
+                ],
+                "summary": "清除群里的僵尸号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "群聊ID",
+                        "name": "GroupId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.ClearZombieMemberReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.ClearZombieMemberResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/group/insert/member/zombie": {
+            "post": {
+                "description": "使用此接口向群里插入僵尸号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "群聊成员管理"
+                ],
+                "summary": "向群里插入僵尸号",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "群聊ID",
+                        "name": "GroupId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.RandInsertZombieMemberReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.RandInsertZombieMemberResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/add/admin": {
             "post": {
                 "description": "使用此接口添加管理员",
@@ -585,6 +681,54 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.AddAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/add/luaconfig": {
+            "post": {
+                "description": "使用此接口添加lua脚本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统lua脚本相关接口"
+                ],
+                "summary": "添加lua脚本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSLuaConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.AddMSLuaConfigResp"
                         }
                     }
                 }
@@ -1262,6 +1406,54 @@
                 }
             }
         },
+        "/ms/batch/create/zombie": {
+            "post": {
+                "description": "使用此接口批量创建僵尸用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户模型管理"
+                ],
+                "summary": "批量创建僵尸用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.BatchCreateZombieUserReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.BatchCreateZombieUserResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/config": {
             "post": {
                 "description": "获取配置信息",
@@ -1760,6 +1952,54 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.DeleteAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/delete/luaconfig": {
+            "post": {
+                "description": "使用此接口删除lua脚本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统lua脚本相关接口"
+                ],
+                "summary": "删除lua脚本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSLuaConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.DeleteMSLuaConfigResp"
                         }
                     }
                 }
@@ -3340,6 +3580,102 @@
                 }
             }
         },
+        "/ms/get/luaconfig/detail": {
+            "post": {
+                "description": "使用此接口获取lua脚本详情",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统lua脚本相关接口"
+                ],
+                "summary": "获取lua脚本详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSLuaConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetMSLuaConfigResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/get/luaconfig/list/all": {
+            "post": {
+                "description": "使用此接口获取全部lua脚本列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统lua脚本相关接口"
+                ],
+                "summary": "获取全部lua脚本列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSLuaConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.GetAllMSLuaConfigResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/get/menu/detail": {
             "post": {
                 "description": "使用此接口获取菜单详情",
@@ -4277,6 +4613,40 @@
                 }
             }
         },
+        "/ms/login/captcha": {
+            "post": {
+                "description": "必须是管理员才能登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统相关接口"
+                ],
+                "summary": "登录managersystem管理系统",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.LoginMSCaptchaReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.LoginMSCaptchaResp"
+                        }
+                    }
+                }
+            }
+        },
         "/ms/stats": {
             "post": {
                 "description": "统计",
@@ -4848,6 +5218,54 @@
                         "description": "响应数据",
                         "schema": {
                             "$ref": "#/definitions/pb.UpdateAppMgmtLinkResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/ms/update/luaconfig": {
+            "post": {
+                "description": "使用此接口更新lua脚本",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理系统lua脚本相关接口"
+                ],
+                "summary": "更新lua脚本",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户令牌",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "UserId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "object",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSLuaConfigReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "响应数据",
+                        "schema": {
+                            "$ref": "#/definitions/pb.UpdateMSLuaConfigResp"
                         }
                     }
                 }
@@ -5970,6 +6388,25 @@
                 }
             }
         },
+        "pb.AddMSLuaConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "luaConfig": {
+                    "$ref": "#/definitions/pb.LuaConfig"
+                }
+            }
+        },
+        "pb.AddMSLuaConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.AddMSMenuReq": {
             "type": "object",
             "properties": {
@@ -6498,6 +6935,53 @@
                 }
             }
         },
+        "pb.BatchCreateZombieUserReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "idPrefix": {
+                    "type": "string"
+                },
+                "nicknamePrefix": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.BatchCreateZombieUserResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.ClearZombieMemberReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "groupId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.ClearZombieMemberResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.CommonReq": {
             "type": "object",
             "properties": {
@@ -6875,6 +7359,28 @@
             }
         },
         "pb.DeleteMSIpWhiteListResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.DeleteMSLuaConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pb.DeleteMSLuaConfigResp": {
             "type": "object",
             "properties": {
                 "commonResp": {
@@ -7592,6 +8098,40 @@
                 }
             }
         },
+        "pb.GetAllMSLuaConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "$ref": "#/definitions/pb.Page"
+                }
+            }
+        },
+        "pb.GetAllMSLuaConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "luaConfigs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pb.LuaConfig"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "pb.GetAllMSMenuListReq": {
             "type": "object",
             "properties": {
@@ -8282,6 +8822,28 @@
                 }
             }
         },
+        "pb.GetMSLuaConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.GetMSLuaConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                },
+                "luaConfig": {
+                    "$ref": "#/definitions/pb.LuaConfig"
+                }
+            }
+        },
         "pb.GetMSMenuDetailReq": {
             "type": "object",
             "properties": {
@@ -8445,6 +9007,9 @@
                 },
                 "userRpc": {
                     "$ref": "#/definitions/pb.GetServerAllConfigResp_UserRpcConfig"
+                },
+                "xos": {
+                    "$ref": "#/definitions/pb.GetServerAllConfigResp_XosConfig"
                 }
             }
         },
@@ -8539,6 +9104,12 @@
         "pb.GetServerAllConfigResp_MgmtConfig": {
             "type": "object",
             "properties": {
+                "aesIv": {
+                    "type": "string"
+                },
+                "aesKey": {
+                    "type": "string"
+                },
                 "httpPort": {
                     "type": "integer"
                 },
@@ -8737,6 +9308,14 @@
                 },
                 "sms": {
                     "$ref": "#/definitions/pb.GetServerAllConfigResp_SmsConfig"
+                }
+            }
+        },
+        "pb.GetServerAllConfigResp_XosConfig": {
+            "type": "object",
+            "properties": {
+                "httpPort": {
+                    "type": "integer"
                 }
             }
         },
@@ -8968,9 +9547,45 @@
                 }
             }
         },
+        "pb.KickGroupMemberResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
+        "pb.LoginMSCaptchaReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                }
+            }
+        },
+        "pb.LoginMSCaptchaResp": {
+            "type": "object",
+            "properties": {
+                "captchaB64": {
+                    "type": "string"
+                },
+                "captchaId": {
+                    "type": "string"
+                },
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.LoginMSReq": {
             "type": "object",
             "properties": {
+                "captchaCode": {
+                    "type": "string"
+                },
+                "captchaId": {
+                    "type": "string"
+                },
                 "commonReq": {
                     "$ref": "#/definitions/pb.CommonReq"
                 },
@@ -9045,6 +9660,46 @@
                     "type": "string"
                 }
             }
+        },
+        "pb.LuaConfig": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "createTimeStr": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/pb.LuaConfigType"
+                }
+            }
+        },
+        "pb.LuaConfigType": {
+            "type": "integer",
+            "enum": [
+                0,
+                1
+            ],
+            "x-enum-varnames": [
+                "LuaConfigType_UnknownLuaConfig",
+                "LuaConfigType_GenerateZombieInfo"
+            ]
         },
         "pb.MSAlbum": {
             "type": "object",
@@ -9574,6 +10229,28 @@
                 }
             }
         },
+        "pb.RandInsertZombieMemberReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "groupId": {
+                    "type": "string"
+                }
+            }
+        },
+        "pb.RandInsertZombieMemberResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.StatsMSReq": {
             "type": "object",
             "properties": {
@@ -9961,6 +10638,25 @@
                 }
             }
         },
+        "pb.UpdateMSLuaConfigReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "luaConfig": {
+                    "$ref": "#/definitions/pb.LuaConfig"
+                }
+            }
+        },
+        "pb.UpdateMSLuaConfigResp": {
+            "type": "object",
+            "properties": {
+                "commonResp": {
+                    "$ref": "#/definitions/pb.CommonResp"
+                }
+            }
+        },
         "pb.UpdateMSMenuReq": {
             "type": "object",
             "properties": {
@@ -10336,6 +11032,12 @@
                 "createdAtStr": {
                     "type": "string"
                 },
+                "destroyedAt": {
+                    "type": "integer"
+                },
+                "destroyedAtStr": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -10387,6 +11089,20 @@
                     "$ref": "#/definitions/pb.CommonReq"
                 },
                 "friendId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "userhandler.deleteGroupReq": {
+            "type": "object",
+            "properties": {
+                "commonReq": {
+                    "$ref": "#/definitions/pb.CommonReq"
+                },
+                "groupId": {
                     "type": "string"
                 },
                 "userId": {

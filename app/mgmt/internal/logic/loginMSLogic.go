@@ -7,6 +7,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xjwt"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/mgmt/internal/svc"
@@ -30,9 +31,27 @@ func NewLoginMSLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginMSLo
 }
 
 func (l *LoginMSLogic) LoginMS(in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
+	// 校验图片验证码
+	var verifyCaptchaResp *pb.VerifyLoginMSCaptchaCodeResp
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "checkCaptchaCode", func(ctx context.Context) {
+		verifyCaptchaResp, err = NewVerifyLoginMSCaptchaCodeLogic(ctx, l.svcCtx).VerifyLoginMSCaptchaCode(&pb.VerifyLoginMSCaptchaCodeReq{
+			CaptchaId: in.CaptchaId,
+			Code:      in.CaptchaCode,
+			Delete:    true,
+		})
+	})
+	if err != nil {
+		l.Errorf("check captcha code err: %v", err)
+		return &pb.LoginMSResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	if verifyCaptchaResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
+		l.Errorf("check captcha code err: %v", verifyCaptchaResp.GetCommonResp().GetMsg())
+		return &pb.LoginMSResp{CommonResp: pb.NewToastErrorResp("图形验证码错误")}, nil
+	}
 	// 查询原模型
 	user := &mgmtmodel.User{}
-	err := l.svcCtx.Mysql().Model(user).Where("id = ?", in.Id).First(user).Error
+	err = l.svcCtx.Mysql().Model(user).Where("id = ?", in.Id).First(user).Error
 	if err != nil {
 		l.Errorf("查询用户失败: %v", err)
 		return &pb.LoginMSResp{CommonResp: pb.NewRetryErrorResp()}, err

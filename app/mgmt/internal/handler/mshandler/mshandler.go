@@ -17,6 +17,8 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 	group := g.Group("/ms")
 	// 登录
 	group.POST("/login", r.login)
+	// 获取登录图片验证码
+	group.POST("/login/captcha", r.loginCaptcha)
 	// 定期检查健康
 	group.POST("/health", r.health)
 	// 管理系统的配置

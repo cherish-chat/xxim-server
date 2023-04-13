@@ -57,6 +57,16 @@ func (s *MgmtServiceServer) UpdateAppLineConfig(ctx context.Context, in *pb.Upda
 	return l.UpdateAppLineConfig(in)
 }
 
+func (s *MgmtServiceServer) LoginMSCaptcha(ctx context.Context, in *pb.LoginMSCaptchaReq) (*pb.LoginMSCaptchaResp, error) {
+	l := logic.NewLoginMSCaptchaLogic(ctx, s.svcCtx)
+	return l.LoginMSCaptcha(in)
+}
+
+func (s *MgmtServiceServer) VerifyLoginMSCaptchaCode(ctx context.Context, in *pb.VerifyLoginMSCaptchaCodeReq) (*pb.VerifyLoginMSCaptchaCodeResp, error) {
+	l := logic.NewVerifyLoginMSCaptchaCodeLogic(ctx, s.svcCtx)
+	return l.VerifyLoginMSCaptchaCode(in)
+}
+
 func (s *MgmtServiceServer) LoginMS(ctx context.Context, in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	l := logic.NewLoginMSLogic(ctx, s.svcCtx)
 	return l.LoginMS(in)

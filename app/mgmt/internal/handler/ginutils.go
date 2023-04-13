@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
 )
 
@@ -63,4 +64,15 @@ func GetClientIP(ctx *gin.Context) string {
 		}
 	}
 	return strings.Split(ip, ",")[0]
+}
+
+func ReturnError(ctx *gin.Context, commonResp *pb.CommonResp) {
+	logx.Infof("ReturnError: %+v", commonResp)
+	body := &ResponseBody{
+		Data: nil,
+		Code: commonResp.Code,
+		Msg:  utils.If(commonResp.Msg != nil, *commonResp.Msg, ""),
+		Show: false,
+	}
+	ctx.JSON(500, body)
 }

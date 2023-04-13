@@ -224,11 +224,40 @@ message UpdateAppLineConfigResp {
   CommonResp commonResp = 1;
 }
 
+//LoginMSCaptchaReq 登录管理系统验证码请求
+message LoginMSCaptchaReq {
+  CommonReq commonReq = 1;
+}
+
+//LoginMSCaptchaResp 登录管理系统验证码响应
+message LoginMSCaptchaResp {
+  CommonResp commonResp = 1;
+  string captchaId = 2;
+  string captchaB64 = 3;
+}
+
+//VerifyLoginMSCaptchaCodeReq 验证图形验证码请求
+message VerifyLoginMSCaptchaCodeReq {
+  CommonReq commonReq = 1;
+  string captchaId = 2;
+  // 验证码
+  string code = 3;
+  // 验证后是否删除
+  bool delete = 4;
+}
+
+//VerifyLoginMSCaptchaCodeResp 验证图形验证码响应
+message VerifyLoginMSCaptchaCodeResp {
+  CommonResp commonResp = 1;
+}
+
 //LoginMSReq 登录管理系统请求
 message LoginMSReq {
   CommonReq commonReq = 1;
   string id = 2;
   string password = 3;
+  string captchaId = 4;
+  string captchaCode = 5;
 }
 
 //LoginMSResp 登录管理系统响应
@@ -1065,6 +1094,8 @@ service mgmtService {
   rpc GetAppLineConfig(GetAppLineConfigReq) returns (GetAppLineConfigResp);
   rpc UpdateAppLineConfig(UpdateAppLineConfigReq) returns (UpdateAppLineConfigResp);
 
+  rpc LoginMSCaptcha(LoginMSCaptchaReq) returns (LoginMSCaptchaResp);
+  rpc VerifyLoginMSCaptchaCode(VerifyLoginMSCaptchaCodeReq) returns (VerifyLoginMSCaptchaCodeResp);
   rpc LoginMS(LoginMSReq) returns (LoginMSResp);
   rpc HealthMS(CommonReq) returns (HealthMSResp);
   rpc ConfigMS(CommonReq) returns (ConfigMSResp);

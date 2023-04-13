@@ -368,6 +368,18 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.AddMSLuaConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      luaConfig:
+        $ref: '#/definitions/pb.LuaConfig'
+    type: object
+  pb.AddMSLuaConfigResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.AddMSMenuReq:
     properties:
       commonReq:
@@ -711,6 +723,36 @@ definitions:
       username:
         type: string
     type: object
+  pb.BatchCreateZombieUserReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      count:
+        type: integer
+      idPrefix:
+        type: string
+      nicknamePrefix:
+        type: string
+      password:
+        type: string
+    type: object
+  pb.BatchCreateZombieUserResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.ClearZombieMemberReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      groupId:
+        type: string
+    type: object
+  pb.ClearZombieMemberResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.CommonReq:
     properties:
       appVersion:
@@ -965,6 +1007,20 @@ definitions:
         type: array
     type: object
   pb.DeleteMSIpWhiteListResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.DeleteMSLuaConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      ids:
+        items:
+          type: string
+        type: array
+    type: object
+  pb.DeleteMSLuaConfigResp:
     properties:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
@@ -1426,6 +1482,28 @@ definitions:
       total:
         type: integer
     type: object
+  pb.GetAllMSLuaConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      filter:
+        additionalProperties:
+          type: string
+        type: object
+      page:
+        $ref: '#/definitions/pb.Page'
+    type: object
+  pb.GetAllMSLuaConfigResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      luaConfigs:
+        items:
+          $ref: '#/definitions/pb.LuaConfig'
+        type: array
+      total:
+        type: integer
+    type: object
   pb.GetAllMSMenuListReq:
     properties:
       commonReq:
@@ -1872,6 +1950,20 @@ definitions:
       ipWhiteList:
         $ref: '#/definitions/pb.MSIpWhiteList'
     type: object
+  pb.GetMSLuaConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      id:
+        type: string
+    type: object
+  pb.GetMSLuaConfigResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+      luaConfig:
+        $ref: '#/definitions/pb.LuaConfig'
+    type: object
   pb.GetMSMenuDetailReq:
     properties:
       commonReq:
@@ -1978,6 +2070,8 @@ definitions:
         $ref: '#/definitions/pb.GetServerAllConfigResp_RelationRpcConfig'
       userRpc:
         $ref: '#/definitions/pb.GetServerAllConfigResp_UserRpcConfig'
+      xos:
+        $ref: '#/definitions/pb.GetServerAllConfigResp_XosConfig'
     type: object
   pb.GetServerAllConfigResp_AppMgmtRpcConfig:
     properties:
@@ -2038,6 +2132,10 @@ definitions:
     type: object
   pb.GetServerAllConfigResp_MgmtConfig:
     properties:
+      aesIv:
+        type: string
+      aesKey:
+        type: string
       httpPort:
         type: integer
       rpcPort:
@@ -2167,6 +2265,11 @@ definitions:
         type: integer
       sms:
         $ref: '#/definitions/pb.GetServerAllConfigResp_SmsConfig'
+    type: object
+  pb.GetServerAllConfigResp_XosConfig:
+    properties:
+      httpPort:
+        type: integer
     type: object
   pb.GetUserDefaultConvDetailReq:
     properties:
@@ -2326,8 +2429,31 @@ definitions:
       success:
         type: boolean
     type: object
+  pb.KickGroupMemberResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
+  pb.LoginMSCaptchaReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+    type: object
+  pb.LoginMSCaptchaResp:
+    properties:
+      captchaB64:
+        type: string
+      captchaId:
+        type: string
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.LoginMSReq:
     properties:
+      captchaCode:
+        type: string
+      captchaId:
+        type: string
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
       id:
@@ -2377,6 +2503,33 @@ definitions:
       userId:
         type: string
     type: object
+  pb.LuaConfig:
+    properties:
+      code:
+        type: string
+      createTime:
+        type: integer
+      createTimeStr:
+        type: string
+      desc:
+        type: string
+      enable:
+        type: boolean
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        $ref: '#/definitions/pb.LuaConfigType'
+    type: object
+  pb.LuaConfigType:
+    enum:
+    - 0
+    - 1
+    type: integer
+    x-enum-varnames:
+    - LuaConfigType_UnknownLuaConfig
+    - LuaConfigType_GenerateZombieInfo
   pb.MSAlbum:
     properties:
       aid:
@@ -2731,6 +2884,20 @@ definitions:
       size:
         type: integer
     type: object
+  pb.RandInsertZombieMemberReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      count:
+        type: integer
+      groupId:
+        type: string
+    type: object
+  pb.RandInsertZombieMemberResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.StatsMSReq:
     properties:
       commonReq:
@@ -2978,6 +3145,18 @@ definitions:
       commonResp:
         $ref: '#/definitions/pb.CommonResp'
     type: object
+  pb.UpdateMSLuaConfigReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      luaConfig:
+        $ref: '#/definitions/pb.LuaConfig'
+    type: object
+  pb.UpdateMSLuaConfigResp:
+    properties:
+      commonResp:
+        $ref: '#/definitions/pb.CommonResp'
+    type: object
   pb.UpdateMSMenuReq:
     properties:
       commonReq:
@@ -3221,6 +3400,10 @@ definitions:
         type: integer
       createdAtStr:
         type: string
+      destroyedAt:
+        type: integer
+      destroyedAtStr:
+        type: string
       id:
         type: string
       infoMap:
@@ -3255,6 +3438,15 @@ definitions:
       commonReq:
         $ref: '#/definitions/pb.CommonReq'
       friendId:
+        type: string
+      userId:
+        type: string
+    type: object
+  userhandler.deleteGroupReq:
+    properties:
+      commonReq:
+        $ref: '#/definitions/pb.CommonReq'
+      groupId:
         type: string
       userId:
         type: string
@@ -3395,6 +3587,70 @@ paths:
       summary: 更新全部配置列表
       tags:
       - app管理配置管理相关接口
+  /group/clear/member/zombie:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口清除群里的僵尸号
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 群聊ID
+        in: header
+        name: GroupId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.ClearZombieMemberReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.ClearZombieMemberResp'
+      summary: 清除群里的僵尸号
+      tags:
+      - 群聊成员管理
+  /group/insert/member/zombie:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口向群里插入僵尸号
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 群聊ID
+        in: header
+        name: GroupId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.RandInsertZombieMemberReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.RandInsertZombieMemberResp'
+      summary: 向群里插入僵尸号
+      tags:
+      - 群聊成员管理
   /ms/add/admin:
     post:
       consumes:
@@ -3651,6 +3907,38 @@ paths:
       summary: 新增app外链
       tags:
       - app外链管理
+  /ms/add/luaconfig:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口添加lua脚本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.AddMSLuaConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.AddMSLuaConfigResp'
+      summary: 添加lua脚本
+      tags:
+      - 管理系统lua脚本相关接口
   /ms/add/menu:
     post:
       consumes:
@@ -4099,6 +4387,38 @@ paths:
       summary: 重命名相册
       tags:
       - 管理系统相关接口
+  /ms/batch/create/zombie:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口批量创建僵尸用户
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.BatchCreateZombieUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.BatchCreateZombieUserResp'
+      summary: 批量创建僵尸用户
+      tags:
+      - 用户模型管理
   /ms/config:
     post:
       consumes:
@@ -4434,6 +4754,38 @@ paths:
       summary: 删除app外链
       tags:
       - app外链管理
+  /ms/delete/luaconfig:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口删除lua脚本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.DeleteMSLuaConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.DeleteMSLuaConfigResp'
+      summary: 删除lua脚本
+      tags:
+      - 管理系统lua脚本相关接口
   /ms/delete/menu:
     post:
       consumes:
@@ -5484,6 +5836,70 @@ paths:
       summary: 获取全部用户登录记录列表
       tags:
       - 用户登录记录管理
+  /ms/get/luaconfig/detail:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取lua脚本详情
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetMSLuaConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetMSLuaConfigResp'
+      summary: 获取lua脚本详情
+      tags:
+      - 管理系统lua脚本相关接口
+  /ms/get/luaconfig/list/all:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口获取全部lua脚本列表
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.GetAllMSLuaConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.GetAllMSLuaConfigResp'
+      summary: 获取全部lua脚本列表
+      tags:
+      - 管理系统lua脚本相关接口
   /ms/get/menu/detail:
     post:
       consumes:
@@ -6108,6 +6524,28 @@ paths:
       summary: 登录managersystem管理系统
       tags:
       - 管理系统相关接口
+  /ms/login/captcha:
+    post:
+      consumes:
+      - application/json
+      description: 必须是管理员才能登录
+      parameters:
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.LoginMSCaptchaReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.LoginMSCaptchaResp'
+      summary: 登录managersystem管理系统
+      tags:
+      - 管理系统相关接口
   /ms/stats:
     post:
       consumes:
@@ -6492,6 +6930,38 @@ paths:
       summary: 更新app外链
       tags:
       - app外链管理
+  /ms/update/luaconfig:
+    post:
+      consumes:
+      - application/json
+      description: 使用此接口更新lua脚本
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: Token
+        required: true
+        type: string
+      - description: 用户ID
+        in: header
+        name: UserId
+        required: true
+        type: string
+      - description: 请求参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UpdateMSLuaConfigReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 响应数据
+          schema:
+            $ref: '#/definitions/pb.UpdateMSLuaConfigResp'
+      summary: 更新lua脚本
+      tags:
+      - 管理系统lua脚本相关接口
   /ms/update/menu:
     post:
       consumes:

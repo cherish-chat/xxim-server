@@ -13,9 +13,10 @@ import (
 )
 
 var dontCheckTokenMap = map[string]bool{
-	"/api/ms/login":  true,
-	"/api/ms/health": true,
-	"/api/ms/config": true,
+	"/api/ms/login":         true,
+	"/api/ms/login/captcha": true,
+	"/api/ms/health":        true,
+	"/api/ms/config":        true,
 }
 
 func Auth(rc *redis.Redis) gin.HandlerFunc {

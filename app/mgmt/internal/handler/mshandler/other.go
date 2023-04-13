@@ -27,6 +27,33 @@ func (r *MSHandler) login(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
+	if out.GetCommonResp().GetCode() != pb.CommonResp_Success {
+		handler.ReturnError(ctx, out.GetCommonResp())
+		return
+	}
+	handler.ReturnOk(ctx, out)
+}
+
+// loginCaptcha 登录managersystem管理系统
+// @Summary 登录managersystem管理系统
+// @Description 必须是管理员才能登录
+// @Tags 管理系统相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param object body pb.LoginMSCaptchaReq true "请求参数"
+// @Success 200 {object} pb.LoginMSCaptchaResp "响应数据"
+// @Router /ms/login/captcha [post]
+func (r *MSHandler) loginCaptcha(ctx *gin.Context) {
+	in := &pb.LoginMSCaptchaReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewLoginMSCaptchaLogic(ctx, r.svcCtx).LoginMSCaptcha(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
 	handler.ReturnOk(ctx, out)
 }
 
