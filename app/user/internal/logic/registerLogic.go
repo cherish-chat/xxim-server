@@ -321,7 +321,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	var resp *pb.LoginResp
 	// 密码正确
 	xtrace.StartFuncSpan(l.ctx, "login", func(ctx context.Context) {
-		resp, err = NewLoginLogic(ctx, l.svcCtx).Login(&pb.LoginReq{
+		resp, err = NewLoginLogic(ctx, l.svcCtx).LoginGetToken(&pb.LoginReq{
 			CommonReq: in.CommonReq,
 			Id:        in.Id,
 			Password:  in.Password,

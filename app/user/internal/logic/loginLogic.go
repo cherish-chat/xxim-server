@@ -165,26 +165,30 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 			IsDestroyed: true,
 		}, nil
 	}
+	return l.LoginGetToken(in)
+}
+
+func (l *LoginLogic) LoginGetToken(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 生成token
 	// 是否允许同平台多设备登录
 	uniqueSuffix := fmt.Sprintf("%s", in.CommonReq.Platform)
 	if l.svcCtx.Config.EnableMultiDeviceLogin {
 		uniqueSuffix = fmt.Sprintf("%s:%s", in.CommonReq.Platform, in.CommonReq.DeviceId)
 	}
-	tokenObj := xjwt.GenerateToken(user.Id, uniqueSuffix,
+	tokenObj := xjwt.GenerateToken(in.Id, uniqueSuffix,
 		xjwt.WithPlatform(in.CommonReq.Platform),
 		xjwt.WithDeviceId(in.CommonReq.DeviceId),
 		xjwt.WithDeviceModel(in.CommonReq.DeviceModel),
 	)
 	// 断开设备连接
 	getUserConnReq := &pb.GetUserConnReq{
-		UserIds:   []string{user.Id},
+		UserIds:   []string{in.Id},
 		Platforms: []string{in.CommonReq.Platform},
 	}
 	if l.svcCtx.Config.EnableMultiDeviceLogin {
 		getUserConnReq.Devices = []string{in.CommonReq.DeviceId}
 	}
-	_, err = l.svcCtx.ImService().KickUserConn(l.ctx, &pb.KickUserConnReq{GetUserConnReq: getUserConnReq})
+	_, err := l.svcCtx.ImService().KickUserConn(l.ctx, &pb.KickUserConnReq{GetUserConnReq: getUserConnReq})
 	if err != nil {
 		l.Errorf("kick user conn failed, err: %v", err)
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
@@ -195,14 +199,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		return &pb.LoginResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "AfterLogin", func(ctx context.Context) {
-		NewAfterLogic(ctx, l.svcCtx).AfterLogin(user.Id, in.CommonReq)
+		NewAfterLogic(ctx, l.svcCtx).AfterLogin(in.Id, in.CommonReq)
 	}, propagation.MapCarrier{
-		"user_id": user.Id,
+		"user_id": in.Id,
 	})
 	return &pb.LoginResp{
 		IsNewUser: false,
 		Token:     tokenObj.Token,
-		UserId:    user.Id,
+		UserId:    in.Id,
 	}, nil
 }
 
