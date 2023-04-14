@@ -94,6 +94,14 @@ func (c *Client) setWs(ws *websocket.Conn) error {
 	if err != nil {
 		return err
 	}
+	appGetAllConfigResp := &pb.AppGetAllConfigResp{}
+	err = c.RequestX("/v1/appmgmt/white/appGetAllConfig", &pb.AppGetAllConfigReq{}, appGetAllConfigResp)
+	if err != nil {
+		logx.Errorf("appGetAllConfig error: %s", err.Error())
+		return err
+	} else {
+		logx.Infof("appGetAllConfig success: %s", utils.AnyToString(appGetAllConfigResp))
+	}
 	err = c.SetUserParams()
 	if err != nil {
 		return err
