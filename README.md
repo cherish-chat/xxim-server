@@ -69,3 +69,9 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 如果你喜欢或正在使用这个项目来学习或开始你的解决方案，请给它一个星。谢谢！
 
 [![Star History Chart](https://api.star-history.com/svg?repos=cherish-chat/xxim-server&type=Date)](#xxim-server)
+
+## 帮助我们 🙏
+
+如果你想帮助我们，可以投几个币给我们，你们的支持是我们开发的最大动力。
+
+[![Donate](https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docs/images/donate.jpeg)](https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docs/images/donate.jpeg)
