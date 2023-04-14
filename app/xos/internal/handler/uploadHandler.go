@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
-	"strings"
 )
 
 type UploadHandler struct {
@@ -59,13 +58,13 @@ func (h *UploadHandler) PutObject(ctx *gin.Context) {
 		return
 	}
 	// 获取md5
-	md5 := utils.Md5Bytes(data)
-	// objectId是否以md5为前缀
-	if !strings.HasPrefix(objectId, md5) {
-		logx.Errorf("objectId is not md5 prefix")
-		ctx.Status(404)
-		return
-	}
+	//md5 := utils.Md5Bytes(data)
+	//// objectId是否以md5为前缀
+	//if !strings.HasPrefix(objectId, md5) {
+	//	logx.Errorf("objectId is not md5 prefix")
+	//	ctx.Status(404)
+	//	return
+	//}
 	url, err := storage.PutObject(ctx.Request.Context(), objectId, data)
 	if err != nil {
 		logx.Errorf("PutObjectStream failed, err:%v", err)
@@ -128,13 +127,13 @@ func (h *UploadHandler) PostObject(ctx *gin.Context) {
 		})
 		return
 	}
-	md5 := utils.Md5Bytes(data)
-	// objectId是否以md5为前缀
-	if !strings.HasPrefix(objectId, md5) {
-		logx.Errorf("objectId is not md5 prefix")
-		ctx.Status(404)
-		return
-	}
+	//md5 := utils.Md5Bytes(data)
+	//// objectId是否以md5为前缀
+	//if !strings.HasPrefix(objectId, md5) {
+	//	logx.Errorf("objectId is not md5 prefix")
+	//	ctx.Status(404)
+	//	return
+	//}
 	url, err := storage.PutObject(ctx.Request.Context(), objectId, data)
 	if err != nil {
 		logx.Errorf("PutObjectStream failed, err:%v", err)
