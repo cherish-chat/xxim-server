@@ -285,6 +285,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("group.show_group_info.user.link_name", str("外部链接", "group.show_group_info.user.link_name", "发现", "外部链接底部导航按钮名称"))
 	// 是否显示外部链接按钮
 	m.insertIfNotFound("group.show_group_info.user.link_show", boolean("外部链接", "group.show_group_info.user.link_show", true, "是否显示外部链接按钮"))
+	// 外部链接地址
+	m.insertIfNotFound("group.show_group_info.user.link_url", str("外部链接", "group.show_group_info.user.link_url", "https://www.baidu.com", "外部链接地址"))
 
 	// 文件上传
 	// upload_file_header 上传文件自定义header
