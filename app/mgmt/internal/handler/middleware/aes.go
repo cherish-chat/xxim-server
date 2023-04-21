@@ -9,6 +9,12 @@ import (
 	"io"
 )
 
+// 不需要加解密的pathMap
+var unAesPathMap = map[string]bool{
+	"/api/ms/upload/image": true,
+	"/api/ms/upload/video": true,
+}
+
 // gin aes 加解密中间件
 // 用于对请求参数和响应数据进行加解密
 
@@ -26,6 +32,12 @@ func Aes(iv string, key string) gin.HandlerFunc {
 		// 如果不是post请求，不进行解密
 		if c.Request.Method != "POST" {
 			logx.Infof("not post request, not use aes")
+			c.Next()
+			return
+		}
+		// 如果path在白名单中，不进行解密
+		if _, ok := unAesPathMap[c.Request.URL.Path]; ok {
+			logx.Infof("path in white list, not use aes")
 			c.Next()
 			return
 		}
