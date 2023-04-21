@@ -49,11 +49,15 @@ func (l *SearchGroupsByKeywordLogic) SearchGroupsByKeyword(in *pb.SearchGroupsBy
 		}
 	}
 	if e != nil || len(groups) == 0 {
+		var distinctGroups []*groupmodel.Group
 		// 使用名字查询
-		err := l.svcCtx.Mysql().Model(&groupmodel.Group{}).Where("name like ?", in.Keyword+"%").Find(&groups).Error
+		err := l.svcCtx.Mysql().Model(&groupmodel.Group{}).Where("name like ?", in.Keyword+"%").Find(&distinctGroups).Error
 		if err != nil {
 			l.Errorf("search groups by keyword failed, err: %v", err)
 			return &pb.SearchGroupsByKeywordResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		for _, dist := range distinctGroups {
+			groups = append(groups, dist.GroupBaseInfo())
 		}
 	}
 	return &pb.SearchGroupsByKeywordResp{Groups: groups}, nil
