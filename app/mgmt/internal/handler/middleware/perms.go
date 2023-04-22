@@ -46,13 +46,13 @@ func Perms(tx *gorm.DB) gin.HandlerFunc {
 		// 查询用户
 		user := &mgmtmodel.User{}
 		if err := tx.Where("id = ?", userId).First(user).Error; err != nil {
-			c.AbortWithStatus(401)
+			c.AbortWithStatus(403)
 			return
 		}
 		// 查询role
 		role := &mgmtmodel.Role{}
 		if err := tx.Where("id = ?", user.RoleId).First(role).Error; err != nil {
-			c.AbortWithStatus(401)
+			c.AbortWithStatus(403)
 			return
 		}
 		if utils.InSlice(strings.Split(role.ApiPathIds, ","), pathId) {
@@ -60,6 +60,6 @@ func Perms(tx *gorm.DB) gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		c.AbortWithStatus(401)
+		c.AbortWithStatus(403)
 	}
 }
