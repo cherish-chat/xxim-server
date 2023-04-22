@@ -37,4 +37,14 @@ func RegisterAppMgmt(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/appmgmt/getUploadInfo", route)
 	}
+	// GetAllAppMgmtLinkReq GetAllAppMgmtLinkResp
+	{
+		route := conngateway.Route[*pb.GetAllAppMgmtLinkReq, *pb.GetAllAppMgmtLinkResp]{
+			NewRequest: func() *pb.GetAllAppMgmtLinkReq {
+				return &pb.GetAllAppMgmtLinkReq{}
+			},
+			Do: svcCtx.AppMgmtService().GetAllAppMgmtLink,
+		}
+		conngateway.AddRoute("/v1/appmgmt/getAllAppMgmtLink", route)
+	}
 }
