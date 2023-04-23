@@ -44,6 +44,9 @@ func (l *EditGroupInfoLogic) EditGroupInfo(in *pb.EditGroupInfoReq) (*pb.EditGro
 	if in.Avatar != nil {
 		updateMap["avatar"] = *in.Avatar
 	}
+	if in.Introduction != nil {
+		updateMap["description"] = *in.Introduction
+	}
 	if len(updateMap) == 0 {
 		return &pb.EditGroupInfoResp{CommonResp: pb.NewSuccessResp()}, nil
 	}

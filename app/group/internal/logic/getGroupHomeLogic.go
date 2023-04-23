@@ -52,7 +52,7 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 		Avatar:           group.Avatar,
 		CreatedAt:        utils.TimeFormat(group.CreateTime),
 		MemberCount:      int32(group.MemberCount),
-		Introduction:     "群主很懒，什么都没写",
+		Introduction:     group.Description,
 		Owner:            group.Owner,
 		MemberStatistics: nil,
 		DismissTime:      group.DismissTime,
