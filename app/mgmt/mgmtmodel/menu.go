@@ -440,6 +440,7 @@ var IconElement2Map = map[string]string{
 	"local-icon-weixin":       "building-line",
 	"local-icon-kezizhongxin": "calculator-fill",
 	"local-icon-zuliaoyuding": "file-code-line",
+	"el-icon-Link":            "link-unlink-m",
 }
 
 func getIconElement2(icon string) string {
