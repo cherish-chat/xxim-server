@@ -222,6 +222,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("friend.add.guest", boolean("好友申请", "friend.add.guest", true, "用户是否能添加游客为好友"))
 	// friend.add.robot 用户是否能添加机器人为好友
 	m.insertIfNotFound("friend.add.robot", boolean("好友申请", "friend.add.robot", true, "用户是否能添加机器人为好友"))
+	// friend_event.include_self 好友事件是否包含自己
+	m.insertIfNotFound("friend_event.include_self", boolean("好友申请", "friend_event.include_self", false, "好友事件是否包含自己"))
 
 	// 创建群聊
 	// group.create.user 用户是否能创建群聊
@@ -568,4 +570,9 @@ func (m *ConfigMgr) EnableMsgCleaner() bool {
 // GetMsgKeepHour 消息保留时间
 func (m *ConfigMgr) GetMsgKeepHour() int64 {
 	return utils.AnyToInt64(m.GetCtx(context.Background(), "msg_keep_hour", ""))
+}
+
+// FriendEventIncludeSelf 好友事件是否包含自己
+func (m *ConfigMgr) FriendEventIncludeSelf(ctx context.Context) bool {
+	return m.GetCtx(ctx, "friend_event.include_self", "") == "1"
 }
