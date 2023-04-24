@@ -34,7 +34,7 @@ func NewEditMsgLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditMsgLo
 func (l *EditMsgLogic) EditMsg(in *pb.EditMsgReq) (*pb.EditMsgResp, error) {
 	convId, _ := pb.ParseConvServerMsgId(in.ServerMsgId)
 	err := xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
-		return tx.Model(&msgmodel.Msg{}).Where("id = ?", in.ServerMsgId).Updates(map[string]interface{}{
+		return tx.Model(&msgmodel.Msg{}).Table(msgmodel.GetMsgTableNameById(in.ServerMsgId)).Where("id = ?", in.ServerMsgId).Updates(map[string]interface{}{
 			"contentType": in.ContentType,
 			"content":     in.Content,
 			"ext":         in.Ext,
