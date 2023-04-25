@@ -13,6 +13,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -47,6 +48,8 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
 		}
 	}
+	// 字母全小写
+	in.Id = strings.ToLower(in.Id)
 	user := &usermodel.User{}
 	// 使用id查询用户信息
 	err := xorm.DetailByWhere(l.svcCtx.Mysql(), user, xorm.Where("id = ?", in.Id))

@@ -13,6 +13,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -47,6 +48,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
 		}
 	}
+	// 字母全部转小写
+	in.Id = strings.ToLower(in.Id)
 	// ip频率限制
 	period, quota := l.svcCtx.ConfigMgr.RegisterIpLimit(l.ctx)
 	if period == 0 || quota == 0 {
