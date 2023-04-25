@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	lua "github.com/yuin/gopher-lua"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -78,7 +79,7 @@ func (l *BatchCreateZombieUserLogic) BatchCreateZombieUser(in *pb.BatchCreateZom
 		//var avatar = utils.AnyRandomInSlice(l.svcCtx.ConfigMgr.AvatarsDefault(context.Background()), "")
 		//nickname := in.NicknamePrefix + "_" + utils.AnyToString(num)
 		num := i + 1
-		id := in.IdPrefix + "_" + utils.AnyToString(num)
+		id := strings.ToLower(in.IdPrefix) + "_" + utils.AnyToString(num)
 		passwordSalt := utils.GenId()
 		password := xpwd.GeneratePwd(utils.Md5(in.Password), passwordSalt)
 		now := time.Now().UnixMilli()

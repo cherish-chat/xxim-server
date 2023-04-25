@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"gorm.io/gorm"
+	"strings"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -39,7 +40,7 @@ func (l *AddUserModelLogic) AddUserModel(in *pb.AddUserModelReq) (*pb.AddUserMod
 	ip := in.CommonReq.Ip
 	region := ip2region.Ip2Region(ip)
 	model := &usermodel.User{
-		Id:                in.UserModel.Id,
+		Id:                strings.ToLower(in.UserModel.Id),
 		Password:          pwd,
 		PasswordSalt:      salt,
 		InvitationCode:    in.UserModel.InvitationCode,
