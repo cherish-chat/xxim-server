@@ -29,5 +29,15 @@ func RegisterIm(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/im/getConvSetting", route)
 		}
+		// KeepAliveReq KeepAliveResp
+		{
+			route := conngateway.Route[*pb.KeepAliveReq, *pb.KeepAliveResp]{
+				NewRequest: func() *pb.KeepAliveReq {
+					return &pb.KeepAliveReq{}
+				},
+				Do: svcCtx.ImService().KeepAlive,
+			}
+			conngateway.AddRoute("/v1/im/white/keepAlive", route)
+		}
 	}
 }
