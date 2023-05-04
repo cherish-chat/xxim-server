@@ -39,5 +39,15 @@ func RegisterIm(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/im/white/keepAlive", route)
 		}
+		// TranslateTextReq TranslateTextResp
+		{
+			route := conngateway.Route[*pb.TranslateTextReq, *pb.TranslateTextResp]{
+				NewRequest: func() *pb.TranslateTextReq {
+					return &pb.TranslateTextReq{}
+				},
+				Do: svcCtx.ImService().TranslateText,
+			}
+			conngateway.AddRoute("/v1/im/translateText", route)
+		}
 	}
 }

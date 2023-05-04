@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"time"
+	"unicode"
 )
 
 func RetryProxy(ctx context.Context, maxTimes int, interval time.Duration, f func() error) {
@@ -43,4 +44,26 @@ func TimeFormat(i int64) string {
 		return ""
 	}
 	return time.UnixMilli(i).Format("2006-01-02 15:04:05")
+}
+
+func IsChinese(str string) bool {
+	var count int
+	for _, v := range str {
+		if unicode.Is(unicode.Han, v) {
+			count++
+			break
+		}
+	}
+	return count > 0
+}
+
+func IsEnglish(str string) bool {
+	var count int
+	for _, v := range str {
+		if unicode.Is(unicode.Latin, v) {
+			count++
+			break
+		}
+	}
+	return count > 0
 }

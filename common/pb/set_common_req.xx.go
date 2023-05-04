@@ -12,6 +12,10 @@ func (x *GetCaptchaCodeReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *TranslateTextReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *GetAllAppMgmtLinkReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

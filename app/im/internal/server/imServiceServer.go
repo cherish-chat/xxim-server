@@ -86,3 +86,8 @@ func (s *ImServiceServer) GetConvSetting(ctx context.Context, in *pb.GetConvSett
 	l := logic.NewGetConvSettingLogic(ctx, s.svcCtx)
 	return l.GetConvSetting(in)
 }
+
+func (s *ImServiceServer) TranslateText(ctx context.Context, in *pb.TranslateTextReq) (*pb.TranslateTextResp, error) {
+	l := logic.NewTranslateTextLogic(ctx, s.svcCtx)
+	return l.TranslateText(in)
+}

@@ -264,6 +264,30 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("message.shield_word.replace", boolean("文本消息", "message.shield_word.replace", true, "是否替换敏感词"))
 	// message.shield_word.replace_word 替换敏感词
 	m.insertIfNotFound("message.shield_word.replace_word", str("文本消息", "message.shield_word.replace_word", "*", "替换敏感词"))
+	// message.translate.options 翻译选项
+	translateOption := utils.AnyToString([]map[string]interface{}{
+		{
+			"label": "禁用",
+			"value": "0",
+		},
+		{
+			"label": "万维易源",
+			"value": "1",
+		},
+		{
+			"label": "Amazon",
+			"value": "2",
+		},
+	})
+	m.upsert("message.translate.options", &appmgmtmodel.Config{
+		Group:          "文本消息",
+		K:              "message.translate.options",
+		V:              "0",
+		Type:           "option",
+		Name:           "翻译选项",
+		ScopePlatforms: "",
+		Options:        translateOption,
+	})
 
 	// 群聊页面
 	// group.search.allow 是否允许搜索群聊
@@ -302,6 +326,50 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("upload_file_token_secret", str("文件上传", "upload_file_token_secret", ``, "上传文件token密钥"))
 	// upload_file_server_endpoints 上传文件服务器地址
 	m.insertIfNotFound("upload_file_server_endpoints", str("文件上传", "upload_file_server_endpoints", `["http://xxx.xxx.xx:80"]`, "上传文件服务器地址"))
+
+	// 万维易源翻译API
+	// translate.showapi_appid 万维易源翻译API appid
+	m.insertIfNotFound("translate.showapi_appid", str("万维易源翻译API", "translate.showapi_appid", ``, "万维易源翻译API appid"))
+	// translate.showapi_sign 万维易源翻译API sign
+	m.insertIfNotFound("translate.showapi_sign", str("万维易源翻译API", "translate.showapi_sign", ``, "万维易源翻译API sign"))
+
+	// AmazonTranslate
+	// translate.amazon_access_key_id AmazonTranslate access_key_id
+	m.insertIfNotFound("translate.amazon_access_key_id", str("AmazonTranslate", "translate.amazon_access_key_id", ``, "AmazonTranslate access_key_id"))
+	// translate.amazon_secret_access_key AmazonTranslate secret_access_key
+	m.insertIfNotFound("translate.amazon_secret_access_key", str("AmazonTranslate", "translate.amazon_secret_access_key", ``, "AmazonTranslate secret_access_key"))
+	// translate.amazon_region
+	m.insertIfNotFound("translate.amazon_region", str("AmazonTranslate", "translate.amazon_region", `ap-east-1`, "AmazonTranslate region"))
+}
+
+// TranslateOption message.translate.options 翻译选项
+func (m *ConfigMgr) TranslateOption(ctx context.Context) string {
+	return m.GetCtx(ctx, "message.translate.options", "")
+}
+
+// TranslateShowApiAppId translate.showapi_appid 万维易源翻译API appid
+func (m *ConfigMgr) TranslateShowApiAppId(ctx context.Context) string {
+	return m.GetCtx(ctx, "translate.showapi_appid", "")
+}
+
+// TranslateShowApiSign translate.showapi_sign 万维易源翻译API sign
+func (m *ConfigMgr) TranslateShowApiSign(ctx context.Context) string {
+	return m.GetCtx(ctx, "translate.showapi_sign", "")
+}
+
+// TranslateAmazonAccessKeyId translate.amazon_access_key_id AmazonTranslate access_key_id
+func (m *ConfigMgr) TranslateAmazonAccessKeyId(ctx context.Context) string {
+	return m.GetCtx(ctx, "translate.amazon_access_key_id", "")
+}
+
+// TranslateAmazonSecretAccessKey translate.amazon_secret_access_key AmazonTranslate secret_access_key
+func (m *ConfigMgr) TranslateAmazonSecretAccessKey(ctx context.Context) string {
+	return m.GetCtx(ctx, "translate.amazon_secret_access_key", "")
+}
+
+// TranslateAmazonRegion translate.amazon_region AmazonTranslate region
+func (m *ConfigMgr) TranslateAmazonRegion(ctx context.Context) string {
+	return m.GetCtx(ctx, "translate.amazon_region", "")
 }
 
 func (m *ConfigMgr) DefaultGroupDescription(ctx context.Context, userId string) string {

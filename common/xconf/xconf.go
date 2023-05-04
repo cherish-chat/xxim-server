@@ -240,6 +240,25 @@ func (m *ConfigMgr) insertIfNotFound(k string, config *appmgmtmodel.Config) {
 	}
 }
 
+func (m *ConfigMgr) upsert(k string, config *appmgmtmodel.Config) {
+	// 查询是否存在
+	var c appmgmtmodel.Config
+	err := m.mysql.Where("k = ?", k).First(&c).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			m.mysql.Create(config)
+		}
+	} else {
+		m.mysql.Model(&c).Where("k = ? AND userId = ''", k).Updates(map[string]any{
+			"group":          config.Group,
+			"scopePlatforms": config.ScopePlatforms,
+			"type":           config.Type,
+			"name":           config.Name,
+			"options":        config.Options,
+		})
+	}
+}
+
 func (m *ConfigMgr) delete(id string) {
 	m.mysql.Where("id = ?", id).Delete(&appmgmtmodel.Config{})
 }

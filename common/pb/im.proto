@@ -126,6 +126,20 @@ message GetConvSettingResp {
   repeated ConvSetting convSettings = 2;
 }
 
+// TranslateTextReq 翻译文本
+message TranslateTextReq {
+  CommonReq commonReq = 1;
+  string q = 2; // 不能为空
+  string from = 3; // 默认是auto
+  string to = 4; // 默认是auto
+}
+
+// TranslateTextResp 翻译文本
+message TranslateTextResp {
+  CommonResp commonResp = 1;
+  string result = 2;
+}
+
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -140,4 +154,5 @@ service imService {
   rpc GetAllConvIdOfUser(GetAllConvIdOfUserReq) returns (GetAllConvIdOfUserResp);
   rpc UpdateConvSetting(UpdateConvSettingReq) returns (UpdateConvSettingResp);
   rpc GetConvSetting(GetConvSettingReq) returns (GetConvSettingResp);
+  rpc TranslateText(TranslateTextReq) returns (TranslateTextResp);
 }

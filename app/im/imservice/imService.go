@@ -28,6 +28,8 @@ type (
 	GetUserLatestConnResp      = pb.GetUserLatestConnResp
 	ImMQBody                   = pb.ImMQBody
 	MsgNotifyOpt               = pb.MsgNotifyOpt
+	TranslateTextReq           = pb.TranslateTextReq
+	TranslateTextResp          = pb.TranslateTextResp
 	UpdateConvSettingReq       = pb.UpdateConvSettingReq
 	UpdateConvSettingResp      = pb.UpdateConvSettingResp
 
@@ -45,6 +47,7 @@ type (
 		GetAllConvIdOfUser(ctx context.Context, in *GetAllConvIdOfUserReq, opts ...grpc.CallOption) (*GetAllConvIdOfUserResp, error)
 		UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
 		GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
+		TranslateText(ctx context.Context, in *TranslateTextReq, opts ...grpc.CallOption) (*TranslateTextResp, error)
 	}
 
 	defaultImService struct {
@@ -121,4 +124,9 @@ func (m *defaultImService) UpdateConvSetting(ctx context.Context, in *UpdateConv
 func (m *defaultImService) GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.GetConvSetting(ctx, in, opts...)
+}
+
+func (m *defaultImService) TranslateText(ctx context.Context, in *TranslateTextReq, opts ...grpc.CallOption) (*TranslateTextResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.TranslateText(ctx, in, opts...)
 }
