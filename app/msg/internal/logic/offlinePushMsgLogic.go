@@ -47,6 +47,7 @@ func (l *OfflinePushMsgLogic) OfflinePushMsg(in *pb.OfflinePushMsgReq) (*pb.Offl
 				deviceIds = append(deviceIds, device.DeviceIds...)
 			}
 			if len(deviceIds) == 0 {
+				l.Debugf("BatchGetUserAllDevices deviceIds is empty")
 				return &pb.OfflinePushMsgResp{}, nil
 			}
 			resp, err := l.svcCtx.MobPush.Push(l.ctx, utils.Set(deviceIds), in.Title, in.Content)

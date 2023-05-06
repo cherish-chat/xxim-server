@@ -94,6 +94,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("enable_msg_cleaner", boolean("消息", "enable_msg_cleaner", false, "是否开启消息清理器"))
 	// msg_keep_hour 消息保留时间
 	m.insertIfNotFound("msg_keep_hour", num("消息", "msg_keep_hour", 24*30, "消息保留时间"))
+	// offline.push.allow_disturb 离线推送是否允许打扰
+	m.insertIfNotFound("offline.push.allow_disturb", boolean("消息", "offline.push.allow_disturb", false, "离线推送是否允许打扰"))
 
 	// 好友
 	// friend_max_count 好友最大数量
@@ -402,6 +404,11 @@ func (m *ConfigMgr) OfflinePushTitle(ctx context.Context, userId string) string 
 
 func (m *ConfigMgr) OfflinePushContent(ctx context.Context, userId string) string {
 	return m.GetCtx(ctx, "offline_push_content", userId)
+}
+
+// OfflinePushAllowDisturb offline.push.allow_disturb 离线推送是否允许免打扰
+func (m *ConfigMgr) OfflinePushAllowDisturb(ctx context.Context, userId string) bool {
+	return m.GetCtx(ctx, "offline.push.allow_disturb", userId) == "1"
 }
 
 func (m *ConfigMgr) FriendMaxCount(ctx context.Context, userId string) int64 {

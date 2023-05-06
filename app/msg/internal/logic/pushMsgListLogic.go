@@ -43,16 +43,17 @@ func (l *PushMsgListLogic) PushMsgList(in *pb.PushMsgListReq) (*pb.CommonResp, e
 		}
 	}
 	if len(convIdMsgListMap) > 0 {
-		// 查询会话的订阅者并推送
+		// 批量查询会话的订阅者并推送 如果是单聊没推送成功 会直接走第三方离线推送逻辑
 		l.batchFindAndPushMsgList(convIdMsgListMap)
-		// 查询会话所有接受离线消息的成员 过滤在线用户 并推送
+		// 查询群所有接受离线消息的成员 过滤在线用户 并推送
 		go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "findAndPushOfflineMsgList", func(ctx context.Context) {
-			l.batchFindAndPushOfflineMsgList(ctx, convIdMsgListMap)
+			l.batchFindGroupMemberAndPushOfflineMsgList(ctx, convIdMsgListMap)
 		}, propagation.MapCarrier{})
 	}
 	return &pb.CommonResp{}, nil
 }
 
+// batchFindAndPushMsgList 批量查询会话的订阅者并推送 如果是单聊没推送成功 会直接走第三方离线推送逻辑
 func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDataList) {
 	convIds := make([]string, 0)
 	senders := make([]string, 0)
@@ -66,20 +67,28 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 	convUserIds := make(map[string][]string)
 	xtrace.StartFuncSpan(l.ctx, "BatchGetConvSubscribers", func(ctx context.Context) {
 		for _, convId := range convIds {
-			subscribers, err := NewGetConvSubscribersLogic(ctx, l.svcCtx).GetConvSubscribers(&pb.GetConvSubscribersReq{
-				ConvId:         convId,
-				LastActiveTime: utils.AnyPtr(time.Now().Add(-time.Minute * 15).UnixMilli()),
-			})
-			if err != nil {
-				l.Logger.Errorf("BatchGetConvSubscribers err: %v", err)
-				continue
-			}
-			if len(subscribers.UserIdList) > 0 {
-				convSubscribers[convId] = subscribers
-				convUserIds[convId] = subscribers.UserIdList
+			if pb.IsSingleConv(convId) {
+				userIds := pb.ParseSingleConv(convId)
+				convSubscribers[convId] = &pb.GetConvSubscribersResp{
+					UserIdList: userIds,
+				}
+				convUserIds[convId] = userIds
 			} else {
-				convSubscribers[convId] = &pb.GetConvSubscribersResp{}
-				convUserIds[convId] = []string{}
+				subscribers, err := NewGetConvSubscribersLogic(ctx, l.svcCtx).GetConvSubscribers(&pb.GetConvSubscribersReq{
+					ConvId:         convId,
+					LastActiveTime: utils.AnyPtr(time.Now().Add(-time.Minute * 15).UnixMilli()),
+				})
+				if err != nil {
+					l.Logger.Errorf("BatchGetConvSubscribers err: %v", err)
+					continue
+				}
+				if len(subscribers.UserIdList) > 0 {
+					convSubscribers[convId] = subscribers
+					convUserIds[convId] = subscribers.UserIdList
+				} else {
+					convSubscribers[convId] = &pb.GetConvSubscribersResp{}
+					convUserIds[convId] = []string{}
+				}
 			}
 		}
 		for convId, subscribers := range convSubscribers {
@@ -107,31 +116,24 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 			})
 			if err != nil {
 				l.Logger.Errorf("SendMsg err: %v", err)
-				l.offlinePushMsgList(msgDataList, userIds)
+				l.offlinePushMsgListSingle(msgDataList, []string{})
 				continue
 			}
 			successUserIdMap := make(map[string]bool)
-			failedUserIds := make([]string, 0)
 			for _, param := range resp.SuccessConnParams {
 				successUserIdMap[param.UserId] = true
 			}
-			for _, param := range resp.FailedConnParams {
-				if _, ok := successUserIdMap[param.UserId]; !ok {
-					failedUserIds = append(failedUserIds, param.UserId)
-				}
+			successUserIds := make([]string, 0)
+			for uid := range successUserIdMap {
+				successUserIds = append(successUserIds, uid)
 			}
-			failedUserIds = utils.Set(failedUserIds)
-			if len(failedUserIds) > 0 {
-				l.offlinePushMsgList(msgDataList, failedUserIds)
-			}
+			l.Debugf("SendMsg successUserIds: %v", successUserIds)
+			l.offlinePushMsgListSingle(msgDataList, successUserIds)
 		}
 	}
 }
 
-func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []string) {
-	if len(userIds) == 0 {
-		return
-	}
+func (l *PushMsgListLogic) offlinePushMsgListSingle(list *pb.MsgDataList, excludeUserIds []string) {
 	go xtrace.RunWithTrace(xtrace.TraceIdFromContext(l.ctx), "OfflinePushMsgList", func(ctx context.Context) {
 		for _, data := range list.MsgDataList {
 			// 判断是否需要离线推送
@@ -141,39 +143,68 @@ func (l *PushMsgListLogic) offlinePushMsgList(list *pb.MsgDataList, userIds []st
 			convId := data.ConvId
 			// 查询用户在此会话的离线推送设置
 			if data.IsSingleConv() {
-				l.offlinePushUser(ctx, data, convId, data.ReceiverUid())
+				receiverUid := data.ReceiverUid()
+				// 如果 receiverUid 在 excludeUserIds 中 则不推送
+				if !utils.InSlice(excludeUserIds, receiverUid) {
+					l.offlinePushUser(ctx, data, convId, receiverUid)
+				}
 			}
 		}
 	}, propagation.MapCarrier{})
 }
 
-func (l *PushMsgListLogic) batchFindAndPushOfflineMsgList(ctx context.Context, listMap map[string]*pb.MsgDataList) {
+func (l *PushMsgListLogic) batchFindGroupMemberAndPushOfflineMsgList(ctx context.Context, listMap map[string]*pb.MsgDataList) {
 	for convId, msgDataList := range listMap {
 		for _, data := range msgDataList.MsgDataList {
 			if !data.GetOptions().GetOfflinePush() {
 				continue
 			}
 			if data.IsSingleConv() {
-				// 单聊
-				receiver := data.ReceiverUid()
-				// 用户是否在线
-				resp, err := l.svcCtx.ImService().GetUserConn(ctx, &pb.GetUserConnReq{
-					UserIds: []string{receiver},
-				})
-				if err != nil {
-					l.Errorf("GetUserConn err: %v", err)
-					continue
-				}
-				if len(resp.ConnParams) > 0 {
-					// 在线
-					continue
-				}
-				l.offlinePushUser(ctx, data, convId, receiver)
-			} else if data.IsGroupConv() {
+				continue
+			}
+			if data.IsGroupConv() {
 				// 查询群成员
-				memberList, err := immodel.SearchGroupMemberList(l.svcCtx.Mysql(), data.ConvId, 1000, map[string]interface{}{
-					"isDisturb": false,
-				})
+				var memberList []*immodel.ConvSetting
+				var err error
+				if l.svcCtx.ConfigMgr.OfflinePushAllowDisturb(ctx, "") {
+					memberList, err = immodel.SearchGroupMemberList(l.svcCtx.Mysql(), data.ConvId, 1000, map[string]interface{}{
+						"isDisturb": false,
+					})
+				} else {
+					groupMemberList, err := l.svcCtx.GroupService().GetGroupMemberList(ctx, &pb.GetGroupMemberListReq{
+						CommonReq: &pb.CommonReq{},
+						GroupId:   pb.ParseGroupConv(data.ConvId),
+						Page:      &pb.Page{Size: 1000, Page: 1},
+						Filter: &pb.GetGroupMemberListReq_GetGroupMemberListFilter{
+							NoDisturb:  nil,
+							OnlyOwner:  nil,
+							OnlyAdmin:  nil,
+							OnlyMember: nil,
+						},
+						Opt: &pb.GetGroupMemberListReq_GetGroupMemberListOpt{OnlyId: utils.AnyPtr(true)},
+					})
+					if err != nil {
+						l.Errorf("GetGroupMemberList err: %v", err)
+						continue
+					}
+					if len(groupMemberList.GroupMemberList) == 0 {
+						continue
+					}
+					for _, info := range groupMemberList.GroupMemberList {
+						memberList = append(memberList, &immodel.ConvSetting{
+							ConvId:            data.ConvId,
+							UserId:            info.MemberId,
+							IsTop:             false,
+							IsDisturb:         false,
+							NotifyPreview:     true,
+							NotifySound:       true,
+							NotifyCustomSound: "",
+							NotifyVibrate:     true,
+							IsShield:          false,
+							ChatBg:            "",
+						})
+					}
+				}
 				if err != nil {
 					l.Errorf("GetGroupMemberList err: %v", err)
 					continue
@@ -198,10 +229,22 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 		return
 	}
 	if len(convSettings.ConvSettings) == 0 {
-		return
+		convSettings.ConvSettings = append(convSettings.ConvSettings, &pb.ConvSetting{
+			UserId:            userId,
+			ConvId:            convId,
+			IsTop:             nil,
+			IsDisturb:         nil,
+			NotifyPreview:     utils.AnyPtr(true),
+			NotifySound:       utils.AnyPtr(true),
+			NotifyCustomSound: nil,
+			NotifyVibrate:     utils.AnyPtr(true),
+			IsShield:          nil,
+			ChatBg:            nil,
+		})
 	}
 	convSetting := convSettings.ConvSettings[0]
-	if convSetting.GetIsDisturb() {
+	l.Debugf("offlinePushUser convSetting: %v", utils.AnyToString(convSetting))
+	if l.svcCtx.ConfigMgr.OfflinePushAllowDisturb(l.ctx, data.SenderId) && convSetting.GetIsDisturb() {
 		// 免打扰
 		return
 	}
@@ -211,6 +254,7 @@ func (l *PushMsgListLogic) offlinePushUser(ctx context.Context, data *pb.MsgData
 	}
 	// 推送
 	xtrace.StartFuncSpan(ctx, "PushOfflineMsg", func(ctx context.Context) {
+		l.Debugf("PushOfflineMsg userId: %s, alert: %s, content: %s", userId, alert, content)
 		_, err := NewOfflinePushMsgLogic(ctx, l.svcCtx).OfflinePushMsg(&pb.OfflinePushMsgReq{
 			UserIds:  []string{userId},
 			Title:    alert,
