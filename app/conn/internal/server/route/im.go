@@ -49,5 +49,15 @@ func RegisterIm(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/im/translateText", route)
 		}
+		// BatchTranslateTextReq BatchTranslateTextResp
+		{
+			route := conngateway.Route[*pb.BatchTranslateTextReq, *pb.BatchTranslateTextResp]{
+				NewRequest: func() *pb.BatchTranslateTextReq {
+					return &pb.BatchTranslateTextReq{}
+				},
+				Do: svcCtx.ImService().BatchTranslateText,
+			}
+			conngateway.AddRoute("/v1/im/batchTranslateText", route)
+		}
 	}
 }

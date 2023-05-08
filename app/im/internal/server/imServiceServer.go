@@ -91,3 +91,8 @@ func (s *ImServiceServer) TranslateText(ctx context.Context, in *pb.TranslateTex
 	l := logic.NewTranslateTextLogic(ctx, s.svcCtx)
 	return l.TranslateText(in)
 }
+
+func (s *ImServiceServer) BatchTranslateText(ctx context.Context, in *pb.BatchTranslateTextReq) (*pb.BatchTranslateTextResp, error) {
+	l := logic.NewBatchTranslateTextLogic(ctx, s.svcCtx)
+	return l.BatchTranslateText(in)
+}

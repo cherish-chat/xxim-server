@@ -15,6 +15,8 @@ import (
 type (
 	BatchGetUserLatestConnReq  = pb.BatchGetUserLatestConnReq
 	BatchGetUserLatestConnResp = pb.BatchGetUserLatestConnResp
+	BatchTranslateTextReq      = pb.BatchTranslateTextReq
+	BatchTranslateTextResp     = pb.BatchTranslateTextResp
 	BeforeConnectReq           = pb.BeforeConnectReq
 	BeforeConnectResp          = pb.BeforeConnectResp
 	BeforeRequestReq           = pb.BeforeRequestReq
@@ -48,6 +50,7 @@ type (
 		UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
 		GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
 		TranslateText(ctx context.Context, in *TranslateTextReq, opts ...grpc.CallOption) (*TranslateTextResp, error)
+		BatchTranslateText(ctx context.Context, in *BatchTranslateTextReq, opts ...grpc.CallOption) (*BatchTranslateTextResp, error)
 	}
 
 	defaultImService struct {
@@ -129,4 +132,9 @@ func (m *defaultImService) GetConvSetting(ctx context.Context, in *GetConvSettin
 func (m *defaultImService) TranslateText(ctx context.Context, in *TranslateTextReq, opts ...grpc.CallOption) (*TranslateTextResp, error) {
 	client := pb.NewImServiceClient(m.cli.Conn())
 	return client.TranslateText(ctx, in, opts...)
+}
+
+func (m *defaultImService) BatchTranslateText(ctx context.Context, in *BatchTranslateTextReq, opts ...grpc.CallOption) (*BatchTranslateTextResp, error) {
+	client := pb.NewImServiceClient(m.cli.Conn())
+	return client.BatchTranslateText(ctx, in, opts...)
 }

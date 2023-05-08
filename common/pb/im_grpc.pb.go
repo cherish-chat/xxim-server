@@ -33,6 +33,7 @@ const (
 	ImService_UpdateConvSetting_FullMethodName      = "/pb.imService/UpdateConvSetting"
 	ImService_GetConvSetting_FullMethodName         = "/pb.imService/GetConvSetting"
 	ImService_TranslateText_FullMethodName          = "/pb.imService/TranslateText"
+	ImService_BatchTranslateText_FullMethodName     = "/pb.imService/BatchTranslateText"
 )
 
 // ImServiceClient is the client API for ImService service.
@@ -53,6 +54,7 @@ type ImServiceClient interface {
 	UpdateConvSetting(ctx context.Context, in *UpdateConvSettingReq, opts ...grpc.CallOption) (*UpdateConvSettingResp, error)
 	GetConvSetting(ctx context.Context, in *GetConvSettingReq, opts ...grpc.CallOption) (*GetConvSettingResp, error)
 	TranslateText(ctx context.Context, in *TranslateTextReq, opts ...grpc.CallOption) (*TranslateTextResp, error)
+	BatchTranslateText(ctx context.Context, in *BatchTranslateTextReq, opts ...grpc.CallOption) (*BatchTranslateTextResp, error)
 }
 
 type imServiceClient struct {
@@ -189,6 +191,15 @@ func (c *imServiceClient) TranslateText(ctx context.Context, in *TranslateTextRe
 	return out, nil
 }
 
+func (c *imServiceClient) BatchTranslateText(ctx context.Context, in *BatchTranslateTextReq, opts ...grpc.CallOption) (*BatchTranslateTextResp, error) {
+	out := new(BatchTranslateTextResp)
+	err := c.cc.Invoke(ctx, ImService_BatchTranslateText_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImServiceServer is the server API for ImService service.
 // All implementations must embed UnimplementedImServiceServer
 // for forward compatibility
@@ -207,6 +218,7 @@ type ImServiceServer interface {
 	UpdateConvSetting(context.Context, *UpdateConvSettingReq) (*UpdateConvSettingResp, error)
 	GetConvSetting(context.Context, *GetConvSettingReq) (*GetConvSettingResp, error)
 	TranslateText(context.Context, *TranslateTextReq) (*TranslateTextResp, error)
+	BatchTranslateText(context.Context, *BatchTranslateTextReq) (*BatchTranslateTextResp, error)
 	mustEmbedUnimplementedImServiceServer()
 }
 
@@ -255,6 +267,9 @@ func (UnimplementedImServiceServer) GetConvSetting(context.Context, *GetConvSett
 }
 func (UnimplementedImServiceServer) TranslateText(context.Context, *TranslateTextReq) (*TranslateTextResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TranslateText not implemented")
+}
+func (UnimplementedImServiceServer) BatchTranslateText(context.Context, *BatchTranslateTextReq) (*BatchTranslateTextResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchTranslateText not implemented")
 }
 func (UnimplementedImServiceServer) mustEmbedUnimplementedImServiceServer() {}
 
@@ -521,6 +536,24 @@ func _ImService_TranslateText_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ImService_BatchTranslateText_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchTranslateTextReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImServiceServer).BatchTranslateText(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ImService_BatchTranslateText_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImServiceServer).BatchTranslateText(ctx, req.(*BatchTranslateTextReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ImService_ServiceDesc is the grpc.ServiceDesc for ImService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -583,6 +616,10 @@ var ImService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TranslateText",
 			Handler:    _ImService_TranslateText_Handler,
+		},
+		{
+			MethodName: "BatchTranslateText",
+			Handler:    _ImService_BatchTranslateText_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

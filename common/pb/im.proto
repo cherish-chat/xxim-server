@@ -140,6 +140,20 @@ message TranslateTextResp {
   string result = 2;
 }
 
+// BatchTranslateTextReq 翻译文本
+message BatchTranslateTextReq {
+  CommonReq commonReq = 1;
+  string q = 2; // 不能为空
+  string from = 3; // 不能为空
+  repeated string toList = 4; // 不能为空
+}
+
+// BatchTranslateTextResp 翻译文本
+message BatchTranslateTextResp {
+  CommonResp commonResp = 1;
+  map<string, string> results = 2;
+}
+
 service imService {
   rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp);
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
@@ -155,4 +169,5 @@ service imService {
   rpc UpdateConvSetting(UpdateConvSettingReq) returns (UpdateConvSettingResp);
   rpc GetConvSetting(GetConvSettingReq) returns (GetConvSettingResp);
   rpc TranslateText(TranslateTextReq) returns (TranslateTextResp);
+  rpc BatchTranslateText(BatchTranslateTextReq) returns (BatchTranslateTextResp);
 }
