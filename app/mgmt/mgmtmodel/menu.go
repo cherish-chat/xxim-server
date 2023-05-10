@@ -31,14 +31,14 @@ func (m *Menu) TableName() string {
 	return MGMT_TABLE_PREFIX + "menu"
 }
 
-func (m *Menu) ToPb() *pb.MSMenu {
+func (m *Menu) ToPb(t func(key string) string) *pb.MSMenu {
 	return &pb.MSMenu{
 		Id:               m.Id,
 		CreatedAt:        m.CreateTime,
 		CreatedAtStr:     utils.TimeFormat(m.CreateTime),
 		Pid:              m.Pid,
 		MenuType:         m.MenuType,
-		MenuName:         m.MenuName,
+		MenuName:         t(m.MenuName),
 		MenuIcon:         m.MenuIcon,
 		MenuIconElement2: m.MenuIconElement2,
 		MenuSort:         m.MenuSort,

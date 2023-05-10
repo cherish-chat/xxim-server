@@ -36,7 +36,7 @@ func (l *VerifySmsLogic) VerifySms(in *pb.VerifySmsReq) (*pb.VerifySmsResp, erro
 	// 验证码错误次数
 	smsCodeErrorCount, _ := l.svcCtx.Redis().GetCtx(l.ctx, smsCodeErrorKey)
 	if utils.AnyToInt64(smsCodeErrorCount) >= l.svcCtx.ConfigMgr.SmsErrorMaxCount(l.ctx) {
-		return &pb.VerifySmsResp{CommonResp: pb.NewToastErrorResp("验证码错误次数过多，请稍后再试")}, nil
+		return &pb.VerifySmsResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "验证码错误次数过多，请稍后再试"))}, nil
 	}
 	// 从redis中获取验证码
 	key := rediskey.SmsCodeKey(in.Scene, mobile)
@@ -58,7 +58,7 @@ func (l *VerifySmsLogic) VerifySms(in *pb.VerifySmsReq) (*pb.VerifySmsResp, erro
 		_, _ = l.svcCtx.Redis().IncrCtx(l.ctx, smsCodeErrorKey)
 		// 设置过期时间
 		_ = l.svcCtx.Redis().ExpireCtx(l.ctx, smsCodeErrorKey, int(l.svcCtx.ConfigMgr.SmsErrorPeriod(l.ctx)))
-		return &pb.VerifySmsResp{CommonResp: pb.NewToastErrorResp("验证码错误")}, nil
+		return &pb.VerifySmsResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "验证码错误"))}, nil
 	}
 	return &pb.VerifySmsResp{}, nil
 }

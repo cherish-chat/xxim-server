@@ -47,7 +47,7 @@ func (l *LoginMSLogic) LoginMS(in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	}
 	if verifyCaptchaResp.GetCommonResp().GetCode() != pb.CommonResp_Success {
 		l.Errorf("check captcha code err: %v", verifyCaptchaResp.GetCommonResp().GetMsg())
-		return &pb.LoginMSResp{CommonResp: pb.NewToastErrorResp("图形验证码错误")}, nil
+		return &pb.LoginMSResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "图形验证码错误"))}, nil
 	}
 	// 查询原模型
 	user := &mgmtmodel.User{}
@@ -58,7 +58,7 @@ func (l *LoginMSLogic) LoginMS(in *pb.LoginMSReq) (*pb.LoginMSResp, error) {
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
-		return &pb.LoginMSResp{CommonResp: pb.NewAlertErrorResp("登录失败", "密码错误")}, nil
+		return &pb.LoginMSResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "密码错误"))}, nil
 	}
 	tokenObj := xjwt.GenerateToken(user.Id, "",
 		xjwt.WithPlatform(in.CommonReq.Platform),

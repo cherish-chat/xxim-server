@@ -182,7 +182,7 @@ func (l *InviteFriendToGroupLogic) inviteFriendToGroup(in *pb.InviteFriendToGrou
 				UserId: id,
 			},
 			GroupId: in.GroupId,
-			Reason:  fmt.Sprintf("[%s]%s邀请我加入群聊", myBaseInfo.UserBaseInfos[0].Id, myBaseInfo.UserBaseInfos[0].Nickname),
+			Reason:  fmt.Sprintf("[%s]%s", myBaseInfo.UserBaseInfos[0].Id, myBaseInfo.UserBaseInfos[0].Nickname) + l.svcCtx.T(in.CommonReq.Language, "邀请我加入群聊"),
 		})
 		if err != nil {
 			l.Errorf("InviteFriendToGroup ApplyToBeGroupMember error: %v", err)

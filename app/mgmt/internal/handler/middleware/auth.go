@@ -45,6 +45,7 @@ func Auth(rc *redis.Redis) gin.HandlerFunc {
 		} else {
 			userAgent := c.GetHeader("user-agent")
 			ip := handler.GetClientIP(c)
+			lang := c.GetHeader("lang")
 			commonReq := &pb.CommonReq{
 				UserId:      userId,
 				Token:       token,
@@ -53,7 +54,7 @@ func Auth(rc *redis.Redis) gin.HandlerFunc {
 				OsVersion:   "web",
 				Platform:    "web",
 				AppVersion:  "latest",
-				Language:    "zh",
+				Language:    lang,
 				Ip:          ip,
 				UserAgent:   userAgent,
 			}

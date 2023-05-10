@@ -152,7 +152,7 @@ func (l *TranslateTextLogic) TranslateText(in *pb.TranslateTextReq) (*pb.Transla
 		} else if utils.IsEnglish(in.From) {
 			in.From = "en"
 		} else {
-			return &pb.TranslateTextResp{CommonResp: pb.NewToastErrorResp("不支持的语言")}, nil
+			return &pb.TranslateTextResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "不支持的语言"))}, nil
 		}
 	}
 	if in.To == "" {

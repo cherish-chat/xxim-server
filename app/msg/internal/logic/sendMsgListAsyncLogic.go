@@ -33,7 +33,7 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 		// 检查消息类型
 		switch pb.ContentType(msgData.ContentType) {
 		case pb.ContentType_TEXT:
-			resp, err := l.checkText(msgData)
+			resp, err := l.checkText(in, msgData)
 			if err != nil {
 				return resp, err
 			} else if resp.GetCommonResp().GetCode() != pb.CommonResp_Success {
@@ -54,10 +54,16 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
 			if len(areFriendsResp.GetFriendList()) == 0 {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "对方不是你的好友")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "对方不是你的好友"),
+				)}, nil
 			}
 			if is, ok := areFriendsResp.GetFriendList()[otherId]; !ok || !is {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "对方不是你的好友")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "对方不是你的好友"),
+				)}, nil
 			}
 		} else if pb.IsGroupConv(msgData.ConvId) {
 			groupId := pb.ParseGroupConv(msgData.ConvId)
@@ -72,10 +78,16 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
 			if memberInfo.GroupMemberInfo == nil {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "你不是群成员")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "你不是群成员"),
+				)}, nil
 			}
 			if memberInfo.GroupMemberInfo.UnbanTime > time.Now().UnixMilli() {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "你已被禁言")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "你已被禁言"),
+				)}, nil
 			}
 			mapGroupByIdsResp, err := l.svcCtx.GroupService().MapGroupByIds(l.ctx, &pb.MapGroupByIdsReq{
 				CommonReq: in.CommonReq,
@@ -86,23 +98,38 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 				return &pb.SendMsgListResp{CommonResp: pb.NewRetryErrorResp()}, err
 			}
 			if len(mapGroupByIdsResp.GetGroupMap()) == 0 {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "群聊已解散"),
+				)}, nil
 			}
 			if group, ok := mapGroupByIdsResp.GetGroupMap()[groupId]; !ok || group == nil {
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "群聊已解散"),
+				)}, nil
 			} else {
 				groupModel := groupmodel.GroupFromBytes(group)
 				if groupModel.DismissTime > 0 {
-					return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已解散")}, nil
+					return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+						l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+						l.svcCtx.T(in.CommonReq.Language, "群聊已解散"),
+					)}, nil
 				}
 				if groupModel.AllMute {
 					switch groupModel.AllMuterType {
 					case pb.AllMuterType_ALL:
-						return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已全员禁言")}, nil
+						return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+							l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+							l.svcCtx.T(in.CommonReq.Language, "群聊已全员禁言"),
+						)}, nil
 					case pb.AllMuterType_NORMAL:
 						// 判断我的身份
 						if memberInfo.GroupMemberInfo.Role == pb.GroupRole_MEMBER {
-							return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "群聊已全员禁言")}, nil
+							return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+								l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+								l.svcCtx.T(in.CommonReq.Language, "群聊已全员禁言"),
+							)}, nil
 						}
 					}
 				}
@@ -112,7 +139,7 @@ func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListRes
 	return &pb.SendMsgListResp{}, nil
 }
 
-func (l *SendMsgListAsyncLogic) checkText(data *pb.MsgData) (*pb.SendMsgListResp, error) {
+func (l *SendMsgListAsyncLogic) checkText(in *pb.SendMsgListReq, data *pb.MsgData) (*pb.SendMsgListResp, error) {
 	// 是否开启了敏感词过滤
 	if l.svcCtx.ConfigMgr.MessageShieldWordCheck(l.ctx, data.SenderId) {
 		text := string(data.Content)
@@ -121,7 +148,10 @@ func (l *SendMsgListAsyncLogic) checkText(data *pb.MsgData) (*pb.SendMsgListResp
 			// 是否不允许发
 			if !l.svcCtx.ConfigMgr.MessageShieldWordAllow(l.ctx, data.SenderId) {
 				// 直接报错返回
-				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp("发送失败", "内容包含违规词")}, nil
+				return &pb.SendMsgListResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "发送失败"),
+					l.svcCtx.T(in.CommonReq.Language, "内容包含违规词"),
+				)}, nil
 			}
 			// 是否需要替换
 			if l.svcCtx.ConfigMgr.MessageShieldWordAllowReplace(l.ctx, data.SenderId) {

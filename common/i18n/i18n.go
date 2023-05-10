@@ -1,6 +1,8 @@
 package i18n
 
 import (
+	_ "embed"
+	"encoding/json"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
 )
@@ -29,21 +31,17 @@ func (m *Language) TableName() string {
 	return "language"
 }
 
+//go:embed i18n.json
+var i18nJson []byte
+
 func (l *I18N) init() {
-	l.mysql.AutoMigrate(&Language{})
-	var languageList []Language
-	// 查询所有
-	err := l.mysql.Find(&languageList).Error
+	languageMap := make(map[string]map[string]string)
+	err := json.Unmarshal(i18nJson, &languageMap)
 	if err != nil {
 		logx.Errorf("init language error: %v", err)
 		panic(err)
 	}
-	for _, language := range languageList {
-		if _, ok := l.LanguageMap[language.Language]; !ok {
-			l.LanguageMap[language.Language] = map[string]string{}
-		}
-		l.LanguageMap[language.Language][language.Key] = language.Value
-	}
+	l.LanguageMap = languageMap
 }
 
 func (l *I18N) T(lang string, key string) (value string) {

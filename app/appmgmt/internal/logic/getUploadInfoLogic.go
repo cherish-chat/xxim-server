@@ -48,7 +48,7 @@ func (l *GetUploadInfoLogic) GetUploadInfo(in *pb.GetUploadInfoReq) (*pb.GetUplo
 	// 生成上传地址
 	uploadServerEndpoints := l.svcCtx.ConfigMgr.UploadFileServerEndpoints(l.ctx)
 	if len(uploadServerEndpoints) == 0 {
-		return &pb.GetUploadInfoResp{CommonResp: pb.NewToastErrorResp("文件服务器未配置，请联系管理员")}, nil
+		return &pb.GetUploadInfoResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "文件服务器未配置，请联系管理员"))}, nil
 	}
 	// 随机选择一个文件服务器
 	rand.Seed(time.Now().UnixNano())

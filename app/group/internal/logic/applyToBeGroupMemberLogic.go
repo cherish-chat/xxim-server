@@ -53,7 +53,7 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 	}
 	// 判断群人数是否达到上限
 	if int32(group.MemberCount) >= group.MaxMember {
-		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp("操作失败", "群人数已达上限")}, nil
+		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "操作失败"), l.svcCtx.T(in.CommonReq.Language, "群人数已达上限"))}, nil
 	}
 	// 查询自己加了多少群
 	var groupCount int64
@@ -75,7 +75,7 @@ func (l *ApplyToBeGroupMemberLogic) ApplyToBeGroupMember(in *pb.ApplyToBeGroupMe
 		}
 	}
 	if int64(l.svcCtx.Config.GroupConfig.MaxGroupCount) <= groupCount {
-		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp("操作失败", "您已加入了太多的群聊")}, nil
+		return &pb.ApplyToBeGroupMemberResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "操作失败"), l.svcCtx.T(in.CommonReq.Language, "您已加入了太多的群聊"))}, nil
 	}
 	apply := &groupmodel.GroupApply{
 		Id:         utils.GenId(),

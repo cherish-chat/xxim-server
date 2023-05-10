@@ -79,8 +79,8 @@ func (l *KickGroupMemberLogic) KickGroupMember(in *pb.KickGroupMemberReq) (*pb.K
 				// 普通用户是否允许退群
 				if !l.svcCtx.ConfigMgr.GroupAllowUserQuit(l.ctx, in.MemberId) {
 					return &pb.KickGroupMemberResp{CommonResp: pb.NewAlertErrorResp(
-						"操作失败",
-						"普通用户不允许退群",
+						l.svcCtx.T(in.CommonReq.Language, "操作失败"),
+						l.svcCtx.T(in.CommonReq.Language, "普通用户不允许退群"),
 					)}, err
 				}
 			}
@@ -329,7 +329,7 @@ func (l *KickGroupMemberLogic) DismissRecoverGroup(in *pb.KickGroupMemberReq) (*
 			ContentType: pb.NoticeContentType_GroupMemberLeave,
 			Content: utils.AnyToBytes(pb.NoticeContent_GroupMemberLeave{
 				GroupId:  in.GroupId,
-				Tip:      "您解散了群组",
+				Tip:      l.svcCtx.T(in.CommonReq.Language, "您解散了群组"),
 				MemberId: in.MemberId,
 			}),
 			Title: "",

@@ -33,7 +33,7 @@ func (l *VerifyLoginMSCaptchaCodeLogic) VerifyLoginMSCaptchaCode(in *pb.VerifyLo
 	}
 	if code == "" {
 		l.Errorf("VerifyCaptchaCode failed: %v", err)
-		return &pb.VerifyLoginMSCaptchaCodeResp{CommonResp: pb.NewInternalErrorResp("图形验证码已失效")}, err
+		return &pb.VerifyLoginMSCaptchaCodeResp{CommonResp: pb.NewInternalErrorResp(l.svcCtx.T(in.CommonReq.Language, "图形验证码已失效"))}, err
 	}
 	// 是否立刻删除
 	if in.Delete {
@@ -45,7 +45,7 @@ func (l *VerifyLoginMSCaptchaCodeLogic) VerifyLoginMSCaptchaCode(in *pb.VerifyLo
 	}
 	if code != in.Code {
 		l.Infof("code verify failed: %s != %s", code, in.Code)
-		return &pb.VerifyLoginMSCaptchaCodeResp{CommonResp: pb.NewToastErrorResp("图形验证码错误")}, nil
+		return &pb.VerifyLoginMSCaptchaCodeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "图形验证码错误"))}, nil
 	}
 	return &pb.VerifyLoginMSCaptchaCodeResp{CommonResp: pb.NewSuccessResp()}, nil
 }

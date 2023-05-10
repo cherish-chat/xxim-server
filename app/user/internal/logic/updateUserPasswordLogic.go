@@ -41,7 +41,10 @@ func (l *UpdateUserPasswordLogic) UpdateUserPassword(in *pb.UpdateUserPasswordRe
 	}
 	// 对比旧密码
 	if !xpwd.VerifyPwd(in.OldPassword, user.Password, user.PasswordSalt) {
-		return &pb.UpdateUserPasswordResp{CommonResp: pb.NewAlertErrorResp("操作失败", "密码错误")}, nil
+		return &pb.UpdateUserPasswordResp{CommonResp: pb.NewAlertErrorResp(
+			l.svcCtx.T(in.CommonReq.Language, "操作失败"),
+			l.svcCtx.T(in.CommonReq.Language, "密码错误"),
+		)}, nil
 	}
 	// 更新用户信息
 	updateMap := map[string]interface{}{}

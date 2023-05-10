@@ -42,7 +42,7 @@ func (l *BatchTranslateTextLogic) BatchTranslateText(in *pb.BatchTranslateTextRe
 		} else if utils.IsEnglish(in.From) {
 			in.From = "en"
 		} else {
-			return &pb.BatchTranslateTextResp{CommonResp: pb.NewToastErrorResp("不支持的语言")}, nil
+			return &pb.BatchTranslateTextResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "不支持的语言"))}, nil
 		}
 	}
 	if len(in.ToList) == 0 {

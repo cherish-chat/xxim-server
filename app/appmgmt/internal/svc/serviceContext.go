@@ -10,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
+	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
@@ -31,6 +32,7 @@ type ServiceContext struct {
 	groupService    groupservice.GroupService
 	ConfigMgr       *xconf.ConfigMgr
 	MsgPodsMgr      *msgservice.MsgPodsMgr
+	*i18n.I18N
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -38,6 +40,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
 	}
+	s.I18N = i18n.NewI18N(s.Mysql())
 	s.MsgPodsMgr = msgservice.NewMsgPodsMgr(c.MsgRpcPod)
 	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	return s

@@ -38,13 +38,13 @@ func (l *SendSmsLogic) SendSms(in *pb.SendSmsReq) (*pb.SendSmsResp, error) {
 	}
 	// 手机号限流是否触发
 	if exist, _ := l.svcCtx.Redis().Exists(rediskey.SmsSendLimitKey(in.Scene, mobile)); exist {
-		return &pb.SendSmsResp{CommonResp: pb.NewToastErrorResp("发送频率过快")}, nil
+		return &pb.SendSmsResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "发送频率过快"))}, nil
 	}
 	// 每天上限
 	if val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.SmsSendLimitEverydayKey(in.Scene, mobile)); val != "" {
 		count := utils.AnyToInt64(val)
 		if count >= l.svcCtx.ConfigMgr.SmsSendLimitEveryday(l.ctx) {
-			return &pb.SendSmsResp{CommonResp: pb.NewToastErrorResp("发送次数超过上限")}, nil
+			return &pb.SendSmsResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "发送次数超过上限"))}, nil
 		}
 	}
 	// 随机生成6位验证码

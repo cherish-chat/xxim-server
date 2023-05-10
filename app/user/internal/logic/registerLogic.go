@@ -42,10 +42,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		reg := `^[a-zA-Z0-9]+$`
 		mustCompile := regexp.MustCompile(reg)
 		if !mustCompile.MatchString(in.Id) {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号只能包含字母和数字")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "账号只能包含字母和数字"),
+			)}, nil
 		}
 		if len(in.Id) > 24 {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "账号不能超过24位"),
+			)}, nil
 		}
 	}
 	// 字母全部转小写
@@ -73,7 +79,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		// 判断是否超过限制
 		if val > int64(quota) {
 			l.Errorf("register ip limit key over quota: %v", val)
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册频率过高，请稍后再试")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "注册频率过高，请稍后再试"),
+			)}, nil
 		}
 	}
 	// 是否开启ip白名单限制
@@ -89,12 +98,18 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		}
 		if count == 0 {
 			l.Errorf("ip not in whitelist: %v", in.CommonReq.Ip)
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，ip不在白名单中")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "ip不在白名单中"),
+			)}, nil
 		}
 	}
 	// 注册开关
 	if !l.svcCtx.ConfigMgr.EnablePlatformRegister(l.ctx, in.CommonReq.Platform) {
-		return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "不允许在"+in.CommonReq.Platform+"上注册")}, nil
+		return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+			l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+			l.svcCtx.T(in.CommonReq.Language, "不允许在"+in.CommonReq.Platform+"上注册"),
+		)}, nil
 	}
 	var inviCode = ""
 	var invitationCode *usermodel.InvitationCode
@@ -102,10 +117,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustInviteCode(l.ctx) {
 		// 请求中必须带邀请码
 		if in.InvitationCode == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，必须要邀请码")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "必须要邀请码"),
+			)}, nil
 		}
 		if *in.InvitationCode == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，邀请码不能为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "邀请码不能为空"),
+			)}, nil
 		}
 	}
 	if in.InvitationCode != nil && *in.InvitationCode != "" {
@@ -115,13 +136,18 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		err := l.svcCtx.Mysql().Model(&usermodel.InvitationCode{}).Where("code = ?", inviCode).First(ic).Error
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
-				return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，邀请码不存在")}, nil
+				return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+					l.svcCtx.T(in.CommonReq.Language, "邀请码不存在"),
+				)}, nil
 			}
 			l.Errorf("check invitation code err: %v", err)
 			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		if !ic.IsEnable {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，邀请码已失效")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				"注册失败，邀请码已失效")}, nil
 		}
 		invitationCode = ic
 	}
@@ -131,10 +157,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustMobile(l.ctx) {
 		// 请求中必须带手机号
 		if in.Mobile == nil || in.MobileCountryCode == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "手机号为空"),
+			)}, nil
 		}
 		if *in.Mobile == "" || *in.MobileCountryCode == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "手机号为空"),
+			)}, nil
 		}
 		mobile = *in.Mobile
 		mobileCountryCode = *in.MobileCountryCode
@@ -156,7 +188,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		if exists {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "手机号已存在"),
+			)}, nil
 		}
 		// 先给手机号上锁
 		err = l.svcCtx.Redis().SetexCtx(l.ctx, lockKey, "1", 10)
@@ -172,7 +207,10 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			return &pb.RegisterResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
 		if count > 0 {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，手机号已存在")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "手机号已存在"),
+			)}, nil
 		}
 		defer func() {
 			// 删除锁
@@ -186,10 +224,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustSmsCode(l.ctx) {
 		// 请求中必须带smsCode
 		if in.SmsCode == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，短信验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "短信验证码为空"),
+			)}, nil
 		}
 		if *in.SmsCode == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，短信验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "短信验证码为空"),
+			)}, nil
 		}
 		var verifySmsResp *pb.VerifySmsResp
 		var err error
@@ -214,16 +258,28 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustCaptchaCode(l.ctx) {
 		// 请求中必须带图形验证码
 		if in.CaptchaCode == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"),
+			)}, nil
 		}
 		if *in.CaptchaCode == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"),
+			)}, nil
 		}
 		if in.CaptchaId == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"),
+			)}, nil
 		}
 		if *in.CaptchaId == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，图形验证码为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"),
+			)}, nil
 		}
 		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
 		var err error
@@ -251,10 +307,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustAvatar(l.ctx) {
 		// 请求中必须带头像
 		if in.Avatar == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，头像为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "头像为空"),
+			)}, nil
 		}
 		if *in.Avatar == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，头像为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "头像为空"),
+			)}, nil
 		}
 		avatar = *in.Avatar
 	}
@@ -266,10 +328,16 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 	if l.svcCtx.ConfigMgr.RegisterMustNickname(l.ctx) {
 		// 请求中必须带昵称
 		if in.Nickname == nil {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，昵称为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "昵称为空"),
+			)}, nil
 		}
 		if *in.Nickname == "" {
-			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp("注册失败", "注册失败，昵称为空")}, nil
+			return &pb.RegisterResp{CommonResp: pb.NewAlertErrorResp(
+				l.svcCtx.T(in.CommonReq.Language, "注册失败"),
+				l.svcCtx.T(in.CommonReq.Language, "昵称为空"),
+			)}, nil
 		}
 		nickname = *in.Nickname
 	}

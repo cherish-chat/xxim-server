@@ -43,7 +43,7 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 	bytes, ok := groupByIds.GroupMap[in.GroupId]
 	if !ok {
 		l.Errorf("group not found: %s", in.GroupId)
-		return &pb.GetGroupHomeResp{CommonResp: pb.NewToastErrorResp("群聊不存在")}, nil
+		return &pb.GetGroupHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "群聊不存在"))}, nil
 	}
 	group := groupmodel.GroupFromBytes(bytes)
 	return &pb.GetGroupHomeResp{

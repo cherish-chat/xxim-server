@@ -9,6 +9,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
+	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/utils/ip2region"
 	"github.com/cherish-chat/xxim-server/common/xconf"
@@ -29,6 +30,7 @@ type ServiceContext struct {
 	userService     userservice.UserService
 	noticeService   noticeservice.NoticeService
 	ConfigMgr       *xconf.ConfigMgr
+	*i18n.I18N
 }
 
 func (s *ServiceContext) Redis() *redis.Redis {
@@ -91,6 +93,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config: c,
 	}
 	ip2region.Init(c.Ip2RegionUrl)
+	s.I18N = i18n.NewI18N(s.Mysql())
 	s.ConfigMgr = xconf.NewConfigMgr(s.Mysql(), s.Redis(), "system")
 	s.ConnPodsMgr = connservice.NewConnPodsMgr(c.ConnRpc)
 	s.Mysql().AutoMigrate(&immodel.UserConnectRecord{})

@@ -42,10 +42,10 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		reg := `^[a-zA-Z0-9]+$`
 		mustCompile := regexp.MustCompile(reg)
 		if !mustCompile.MatchString(in.Id) {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号只能包含字母和数字")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "账号只能包含字母和数字"))}, nil
 		}
 		if len(in.Id) > 24 {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("注册失败", "账号不能超过24位")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "注册失败"), l.svcCtx.T(in.CommonReq.Language, "账号不能超过24位"))}, nil
 		}
 	}
 	// 字母全小写
@@ -66,7 +66,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	// 获取用户密码输入错误次数
 	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
 	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx, in.CommonReq.UserId) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "用户名未注册或密码错误")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户名未注册或密码错误"))}, nil
 	}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
@@ -78,16 +78,16 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	if l.svcCtx.ConfigMgr.LoginMustCaptchaCode(l.ctx) {
 		// 请求中必须带图形验证码
 		if in.CaptchaCode == nil {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"))}, nil
 		}
 		if *in.CaptchaCode == "" {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"))}, nil
 		}
 		if in.CaptchaId == nil {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"))}, nil
 		}
 		if *in.CaptchaId == "" {
-			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，图形验证码为空")}, nil
+			return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "图形验证码为空"))}, nil
 		}
 		var verifyCaptchaResp *pb.VerifyCaptchaCodeResp
 		var err error
@@ -112,7 +112,10 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 		if user.Role == usermodel.RoleUser {
 			// 用户能否在该平台功能
 			if !l.svcCtx.ConfigMgr.LoginUserOnPlatform(l.ctx, in.CommonReq.Platform) {
-				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户不能在"+in.CommonReq.Platform+"登录"))}, nil
+				return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(
+					l.svcCtx.T(in.CommonReq.Language, "登录失败"),
+					l.svcCtx.T(in.CommonReq.Language, "用户不能在")+in.CommonReq.Platform+l.svcCtx.T(in.CommonReq.Language, "登录"),
+				)}, nil
 			}
 			// 用户登录时是否需要ip在白名单
 			if l.svcCtx.ConfigMgr.LoginUserNeedIpWhiteList(l.ctx, user.Id) {
@@ -271,7 +274,7 @@ func (l *LoginLogic) checkIpWhiteList(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	if count == 0 {
 		l.Errorf("ip not in whitelist: %v", in.CommonReq.Ip)
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp("登录失败", "登录失败，ip不在白名单中")}, nil
+		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "ip不在白名单中"))}, nil
 	}
 	return nil, nil
 }

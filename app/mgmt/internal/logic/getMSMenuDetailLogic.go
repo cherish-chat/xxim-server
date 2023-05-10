@@ -33,5 +33,7 @@ func (l *GetMSMenuDetailLogic) GetMSMenuDetail(in *pb.GetMSMenuDetailReq) (*pb.G
 		l.Errorf("查询菜单失败: %v", err)
 		return &pb.GetMSMenuDetailResp{CommonResp: pb.NewRetryErrorResp()}, err
 	}
-	return &pb.GetMSMenuDetailResp{Menu: model.ToPb()}, nil
+	return &pb.GetMSMenuDetailResp{Menu: model.ToPb(func(key string) string {
+		return l.svcCtx.T(in.CommonReq.Language, key)
+	})}, nil
 }

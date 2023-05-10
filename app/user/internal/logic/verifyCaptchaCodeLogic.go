@@ -33,7 +33,7 @@ func (l *VerifyCaptchaCodeLogic) VerifyCaptchaCode(in *pb.VerifyCaptchaCodeReq) 
 	}
 	if code == "" {
 		l.Errorf("VerifyCaptchaCode failed: %v", err)
-		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp("图形验证码已失效")}, err
+		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "图形验证码已失效"))}, err
 	}
 	// 是否立刻删除
 	if in.Delete {
@@ -44,7 +44,7 @@ func (l *VerifyCaptchaCodeLogic) VerifyCaptchaCode(in *pb.VerifyCaptchaCodeReq) 
 		}
 	}
 	if code != in.Code {
-		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp("图形验证码错误")}, nil
+		return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "图形验证码错误"))}, nil
 	}
 	return &pb.VerifyCaptchaCodeResp{CommonResp: pb.NewSuccessResp()}, nil
 }

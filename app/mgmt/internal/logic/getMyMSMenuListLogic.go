@@ -27,6 +27,9 @@ func NewGetMyMSMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetMyMSMenuListLogic) GetMyMSMenuList(in *pb.GetMyMSMenuListReq) (*pb.GetMyMSMenuListResp, error) {
+	t := func(key string) string {
+		return l.svcCtx.T(in.CommonReq.Language, key)
+	}
 	self := mgmtmodel.User{}
 	l.svcCtx.Mysql().Model(self).Where("id = ?", in.CommonReq.UserId).First(&self)
 	if self.Id == "" {
@@ -50,7 +53,7 @@ func (l *GetMyMSMenuListLogic) GetMyMSMenuList(in *pb.GetMyMSMenuListReq) (*pb.G
 	var menuList []*pb.MSMenu
 	for _, menu := range menus {
 		if menu.Pid == "0" || menu.Pid == "" {
-			menuList = append(menuList, menu.ToPb())
+			menuList = append(menuList, menu.ToPb(t))
 		}
 	}
 	for _, menu := range menus {
@@ -58,7 +61,7 @@ func (l *GetMyMSMenuListLogic) GetMyMSMenuList(in *pb.GetMyMSMenuListReq) (*pb.G
 			found := false
 			for _, m := range menuList {
 				if m.Id == menu.Pid {
-					m.Children = append(m.Children, menu.ToPb())
+					m.Children = append(m.Children, menu.ToPb(t))
 					found = true
 					break
 				}
@@ -67,7 +70,7 @@ func (l *GetMyMSMenuListLogic) GetMyMSMenuList(in *pb.GetMyMSMenuListReq) (*pb.G
 				for _, m := range menuList {
 					for _, c := range m.Children {
 						if c.Id == menu.Pid {
-							c.Children = append(c.Children, menu.ToPb())
+							c.Children = append(c.Children, menu.ToPb(t))
 							found = true
 							break
 						}
