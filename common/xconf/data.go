@@ -290,6 +290,9 @@ func (m *ConfigMgr) initData() {
 		ScopePlatforms: "",
 		Options:        translateOption,
 	})
+	m.insertIfNotFound("message.translate.languages",
+		str("文本消息", "message.translate.languages", "en,hi,id,ja,ko,pt,ru,th,vi,ur,zh,zh-TW", "翻译语言(逗号隔开)"),
+	)
 
 	// 群聊页面
 	// group.search.allow 是否允许搜索群聊
