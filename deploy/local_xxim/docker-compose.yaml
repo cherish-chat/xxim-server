@@ -1,0 +1,49 @@
+version: "3"
+
+networks:
+  imcloudx:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.88.10.0/24
+          gateway: 172.88.10.1
+
+services:
+  ########### dependencies ###########
+  etcd: # 配置中心 注册中心
+    image: bitnami/etcd:3.5.8
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    privileged: true
+    volumes:
+      - "./data/etcd:/bitnami/etcd/data"
+    environment:
+      - "ETCD_ADVERTISE_CLIENT_URLS=http://172.88.10.11:2379"
+      - "ETCD_LISTEN_CLIENT_URLS=http://172.88.10.11:2379"
+      - "ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380"
+      - "ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380"
+      #参数指不用密码可以连接
+      - "ALLOW_NONE_AUTHENTICATION=yes"
+      - "ETCD_INITIAL_CLUSTER=node1=http://0.0.0.0:2380"
+      - "ETCD_NAME=node1"
+    container_name: etcd
+    restart: always
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.11 # 172.88.10.11:2379
+
+  etcd-keeper:
+    image: lykart/etcdkeeper:v1.1
+    container_name: etcd-keeper
+    environment:
+      - ETCD_BASE=172.88.10.11:2379
+      - USERNAME=admin
+      - PASSWORD=admin
+    depends_on:
+      - etcd
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.12 # http://172.88.10.12:8080

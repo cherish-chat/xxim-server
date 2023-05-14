@@ -26,7 +26,4 @@
 *.log
 *.log.*
 
-*local/
-*local_*/
-
 *.xdb
