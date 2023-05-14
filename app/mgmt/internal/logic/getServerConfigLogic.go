@@ -104,35 +104,35 @@ func GetConfig(serverConfig *mgmtmodel.ServerConfig, name string) map[string]any
 	}
 	if serverConfig.ConnRpc.DiscovType == "endpoints" {
 		c["ImRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.ImRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("im-rpc:%d", serverConfig.ImRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["MsgRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.MsgRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("msg-rpc:%d", serverConfig.MsgRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["UserRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.UserRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("user-rpc:%d", serverConfig.UserRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["RelationRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.RelationRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("relation-rpc:%d", serverConfig.RelationRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["GroupRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.GroupRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("group-rpc:%d", serverConfig.GroupRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["NoticeRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.NoticeRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("notice-rpc:%d", serverConfig.NoticeRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["AppMgmtRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.AppMgmtRpc.Port)},
+			"Endpoints": []string{fmt.Sprintf("appmgmt-rpc:%d", serverConfig.AppMgmtRpc.Port)},
 			"NonBlock":  true,
 		}
 		c["MgmtRpc"] = map[string]any{
-			"Endpoints": []string{fmt.Sprintf("127.0.0.1:%d", serverConfig.Mgmt.RpcPort)},
+			"Endpoints": []string{fmt.Sprintf("mgmt:%d", serverConfig.Mgmt.RpcPort)},
 			"NonBlock":  true,
 		}
 	} else if serverConfig.ConnRpc.DiscovType == "k8s" {
