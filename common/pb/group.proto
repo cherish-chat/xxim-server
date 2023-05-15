@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message GroupCreateReq {
+  CommonReq commonReq = 1;
+}
+
+message GroupCreateResp {
+  CommonResp commonResp = 1;
+}
+
+service groupService {
+  //GroupCreate 创建群组
+  rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
+}

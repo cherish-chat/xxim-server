@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message DispatchOnlineCallbackReq {
+  CommonReq commonReq = 1;
+}
+
+message DispatchOnlineCallbackResp {
+  CommonResp commonResp = 1;
+}
+
+service dispatchService {
+  //DispatchOnlineCallback 上线回调
+  rpc DispatchOnlineCallback(DispatchOnlineCallbackReq) returns (DispatchOnlineCallbackResp) {}
+}

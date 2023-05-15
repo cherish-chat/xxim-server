@@ -1,0 +1,55 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+
+message CommonReq {
+  bytes data = 1; // 数据
+  string appId = 2; // 应用id
+  string userId = 3; // 用户id
+  string clientIp = 4; // 客户端ip
+}
+
+enum RespCode {
+  SUCCESS = 0; // 成功
+  INVALID_DATA = 1; // 无效的数据
+  UNAUTHORIZED = 2; // 未授权
+  FORBIDDEN = 3; // 禁止访问
+  INVALID_METHOD = 4; // 无效的方法
+  TIMEOUT = 5; // 超时
+  SERVER_ERROR = 6; // 服务器错误
+}
+
+enum RespActionType {
+  NONE_ACTION = 0; // 无动作
+  TOAST_ACTION = 1; // toast提示
+  ALERT_ACTION = 2; // alert提示
+}
+
+message ToastActionData {
+  enum Level {
+    INFO = 0; // 信息
+    WARN = 1; // 警告
+    ERROR = 2; // 错误
+  }
+  Level level = 1; // 级别
+  string message = 2; // 消息
+}
+
+message AlertActionData {
+  enum ButtonType {
+    NO_BUTTON = 0; // 无按钮
+    JUMP_URL = 1; // 跳转url
+  }
+  string title = 1; // 标题
+  string message = 2; // 消息
+  ButtonType buttonType = 3; // 按钮类型
+  string buttonLabel = 4; // 按钮标签
+  string buttonData = 5; // 按钮数据
+}
+
+message CommonResp {
+  bytes data = 1; // 数据
+  RespCode code = 2; // 错误码
+  RespActionType actionType = 3; // 动作类型
+  bytes actionData = 4; // 动作数据
+}

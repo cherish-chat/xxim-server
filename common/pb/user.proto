@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message UserRegisterReq {
+  CommonReq commonReq = 1;
+}
+
+message UserRegisterResp {
+  CommonResp commonResp = 1;
+}
+
+service userService {
+  //UserRegister 用户注册
+  rpc UserRegister(UserRegisterReq) returns (UserRegisterResp);
+}

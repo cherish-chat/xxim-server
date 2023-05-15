@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message NoticeInsertReq {
+  CommonReq commonReq = 1;
+}
+
+message NoticeInsertResp {
+  CommonResp commonResp = 1;
+}
+
+service noticeService {
+  //NoticeInsert 插入公告
+  rpc NoticeInsert(NoticeInsertReq) returns (NoticeInsertResp);
+}

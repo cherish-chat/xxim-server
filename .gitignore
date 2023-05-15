@@ -27,3 +27,5 @@
 *.log.*
 
 *.xdb
+other
+*etc

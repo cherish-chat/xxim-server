@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message RelationApplyFriendReq {
+  CommonReq commonReq = 1;
+}
+
+message RelationApplyFriendResp {
+  CommonResp commonResp = 1;
+}
+
+service relationService {
+  //RelationApplyFriend 申请好友
+  rpc RelationApplyFriend(RelationApplyFriendReq) returns (RelationApplyFriendResp);
+}

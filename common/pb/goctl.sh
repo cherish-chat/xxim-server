@@ -12,6 +12,7 @@ function rpc() {
   # shellcheck disable=SC2164
   cd pb
   ln -s "../../../common/pb/$filename" "$filename" || true
+  ln -s "../../../common/pb/common.proto" "common.proto" || true
   goctl rpc protoc -I="." "$filename" -v --go_out=../../../common --go-grpc_out=../../../common --zrpc_out=.. --style=goZero
   # shellcheck disable=SC2164
   cd "${common_pb_path}"
@@ -29,4 +30,11 @@ function rpc() {
   done
 }
 
+rpc "dispatch"
 rpc "gateway"
+rpc "group"
+rpc "msg"
+rpc "notice"
+rpc "relation"
+rpc "third"
+rpc "user"

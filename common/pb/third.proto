@@ -1,0 +1,26 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+enum ThirdSendSmsType {
+  REGISTER = 0; // 注册
+  LOGIN = 1; // 登录
+  RESET_PASSWORD = 2; // 重置密码
+  REBIND_PHONE = 3; // 绑定手机号
+}
+message ThirdSendSmsReq {
+  CommonReq commonReq = 1;
+  repeated string args = 2;
+  repeated string mobiles = 3;
+  ThirdSendSmsType type = 4;
+}
+
+message ThirdSendSmsResp {
+  CommonResp commonResp = 1;
+}
+
+service thirdService {
+  //SendSms 发送短信
+  rpc SendSms(ThirdSendSmsReq) returns (ThirdSendSmsResp);
+}
