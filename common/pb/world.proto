@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message WorldPostSubmitReq {
+  CommonReq commonReq = 1;
+}
+
+message WorldPostSubmitResp {
+  CommonResp commonResp = 1;
+}
+
+service worldService {
+  //WorldPostSubmit 世界圈帖子发布
+  rpc WorldPostSubmit(WorldPostSubmitReq) returns (WorldPostSubmitResp);
+}
