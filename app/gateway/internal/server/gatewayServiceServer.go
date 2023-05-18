@@ -22,7 +22,7 @@ func NewGatewayServiceServer(svcCtx *svc.ServiceContext) *GatewayServiceServer {
 	}
 }
 
-func (s *GatewayServiceServer) Post(ctx context.Context, in *pb.GatewayPostReq) (*pb.GatewayPostResp, error) {
-	l := logic.NewPostLogic(ctx, s.svcCtx)
-	return l.Post(in)
+func (s *GatewayServiceServer) GatewayGetUserConnection(ctx context.Context, in *pb.GatewayGetUserConnectionReq) (*pb.GatewayGetUserConnectionResp, error) {
+	l := logic.NewGatewayGetUserConnectionLogic(ctx, s.svcCtx)
+	return l.GatewayGetUserConnection(in)
 }

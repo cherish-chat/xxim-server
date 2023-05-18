@@ -2,14 +2,126 @@ syntax = "proto3";
 package pb;
 option go_package = "./pb";
 
-message CommonReq {
-  bytes data = 1; // 数据
-  string appId = 2; // 应用id
-  string userId = 3; // 用户id
-  string clientIp = 4; // 客户端ip
+//Platform 平台枚举
+enum Platform {
+  IOS = 0; // ios
+  ANDROID = 1; // android
+  WEB = 2; // web
+  WINDOWS = 3; // windows
+  MAC = 4; // mac
+  LINUX = 5; // linux
+  Ipad = 6; // ipad
+  AndroidPad = 7; // android pad
 }
 
-enum RespCode {
+//I18nLanguage 语言枚举
+enum I18nLanguage {
+  UNSET_LANGUAGE = 0; // 未设置
+  Afrikaans = 1; // 南非荷兰语	af
+  Albanian = 2; // 阿尔巴尼亚语	sq
+  Amharic = 3; // 阿姆哈拉语	am
+  Arabic = 4; // 阿拉伯语	ar
+  Armenian = 5; // 亚美尼亚语	hy
+  Azerbaijani = 6; // 阿塞拜疆语	az
+  Bengali = 7; // 孟加拉语	bn
+  Bosnian = 8; // 波斯尼亚语	bs
+  Bulgarian = 9; // 保加利亚语	bg
+  Catalan = 10; // 加泰罗尼亚语	ca
+  Chinese_Simplified = 11; // 简体中文 	zh
+  Chinese_Traditional = 12; // 繁体中文 	zh-TW
+  Croatian = 13; // 克罗地亚语	hr
+  Czech = 14; // 捷克语	cs
+  Danish = 15; // 丹麦语	da
+  Dari = 16; // 波斯语	fa-AF
+  Dutch = 17; // 荷兰语	nl
+  English = 18; // 英语	en
+  Estonian = 19; // 爱沙尼亚语	et
+  Farsi_Persian = 20; // 波斯语 	fa
+  Filipino_Tagalog = 21; // 菲律宾语	tl
+  Finnish = 22; // 芬兰语	fi
+  French = 23; // 法语	fr
+  French_Canada = 24; // 法语（加拿大）	fr-CA
+  Georgian = 25; // 格鲁吉亚语	ka
+  German = 26; // 德语	de
+  Greek = 27; // 希腊语	el
+  Gujarati = 28; // 古吉拉特语	gu
+  Haitian_Creole = 29; // 海地克里奥尔语 	ht
+  Hausa = 30; // 豪萨语	ha
+  Hebrew = 31; // 希伯来语	he
+  Hindi = 32; // 印地语	hi
+  Hungarian = 33; // 匈牙利语	hu
+  Icelandic = 34; // 冰岛语	is
+  Indonesian = 35; // 印度尼西亚语	id
+  Irish = 36; // 爱尔兰语	ga
+  Italian = 37; // 意大利语	it
+  Japanese = 38; // 日语	ja
+  Kannada = 39; // 卡纳达语	kn
+  Kazakh = 40; // 哈萨克语	kk
+  Korean = 41; // 韩语	ko
+  Latvian = 42; // 拉脱维亚语	lv
+  Lithuanian = 43; // 立陶宛语	lt
+  Macedonian = 44; // 马其顿语	mk
+  Malay = 45; // 马来语	ms
+  Malayalam = 46; // 马拉雅拉姆语	ml
+  Maltese = 47; // 马耳他语	mt
+  Marathi = 48; // 马拉地语	mr
+  Mongolian = 49; // 蒙古语	mn
+  Norwegian_Bokmal = 50; // 挪威语 	no
+  Pashto = 51; // 普什图语	ps
+  Polish = 52; // 波兰语	pl
+  Portuguese_Brazil = 53; // 葡萄牙语（巴西）	pt
+  Portuguese_Portugal = 54; // 葡萄牙语（葡萄牙）	pt-PT
+  Punjabi = 55; // 旁遮普语	pa
+  Romanian = 56; // 罗马尼亚语	ro
+  Russian = 57; // 俄语	ru
+  Serbian = 58; // 塞尔维亚语	sr
+  Sinhala = 59; // 僧伽罗语	si
+  Slovak = 60; // 斯洛伐克语	sk
+  Slovenian = 61; // 斯洛文尼亚语	sl
+  Somali = 62; // 索马里语	so
+  Spanish = 63; // 西班牙语	es
+  Spanish_Mexico = 64; // 西班牙语（墨西哥）	es-MX
+  Swahili = 65; // 斯瓦希里语	sw
+  Swedish = 66; // 瑞典语	sv
+  Tamil = 67; // 泰米尔语	ta
+  Telugu = 68; // 泰卢固语	te
+  Thai = 69; // 泰语	th
+  Turkish = 70; // 土耳其语	tr
+  Ukrainian = 71; // 乌克兰语	uk
+  Urdu = 72; // 乌尔都语	ur
+  Uzbek = 73; // 乌兹别克语	uz
+  Vietnamese = 74; // 越南语	vi
+  Welsh = 75; // 威尔士语	cy
+}
+
+//EncodingProto 编码协议枚举
+enum EncodingProto {
+  PROTOBUF = 0; // protobuf
+  JSON = 1; // json
+}
+
+//RequestHeader 请求头
+message RequestHeader {
+  string requestId = 1; // 请求id
+  string appId = 2; // 应用id
+  string userId = 3; // 用户id
+  string userToken = 4; // token
+  string clientIp = 5; // 客户端ip
+  string installId = 6; // 安装后向服务器注册的UUID
+  Platform platform = 7; // 平台
+  string gatewayPodIp = 8; // 网关pod的ip
+  string deviceModel = 9; // 设备型号
+  string osVersion = 10; // 操作系统版本
+  string appVersion = 11; // app版本
+  I18nLanguage language = 12; // 语言
+  int64 connectTime = 13; // 连接时间 13位时间戳
+  string aesKey = 21; // 32位 aes加密的key
+  string aesIv = 22; // 16位 aes加密的iv
+  EncodingProto encoding = 23; // 编码
+}
+
+//ResponseCode
+enum ResponseCode {
   SUCCESS = 0; // 成功
   INVALID_DATA = 1; // 无效的数据
   UNAUTHORIZED = 2; // 未授权
@@ -19,12 +131,15 @@ enum RespCode {
   SERVER_ERROR = 6; // 服务器错误
 }
 
-enum RespActionType {
+//ResponseActionType 客户端收到响应后做的动作类型
+enum ResponseActionType {
   NONE_ACTION = 0; // 无动作
   TOAST_ACTION = 1; // toast提示
   ALERT_ACTION = 2; // alert提示
+  SECOND_AUTH_ACTION = 3; // 二次认证 一段时间内没有进行二次验证 而且此次是高危操作 此时客户端应该弹出二次验证界面 验证短信验证码
 }
 
+//ToastActionData toast提示 客户端根据level显示不同的颜色 可能持续不同的时间
 message ToastActionData {
   enum Level {
     INFO = 0; // 信息
@@ -35,6 +150,7 @@ message ToastActionData {
   string message = 2; // 消息
 }
 
+//AlertActionData alert提示 永远有一个关闭按钮 以下描述的是另一个操作按钮
 message AlertActionData {
   enum ButtonType {
     NO_BUTTON = 0; // 无按钮
@@ -47,9 +163,9 @@ message AlertActionData {
   string buttonData = 5; // 按钮数据
 }
 
-message CommonResp {
-  bytes data = 1; // 数据
-  RespCode code = 2; // 错误码
-  RespActionType actionType = 3; // 动作类型
-  bytes actionData = 4; // 动作数据
+//ResponseHeader 响应头
+message ResponseHeader {
+  ResponseCode code = 1; // 错误码
+  ResponseActionType actionType = 2; // 动作类型
+  string actionData = 3; // 动作数据 json字符串
 }

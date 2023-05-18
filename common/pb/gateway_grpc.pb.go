@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayServiceClient interface {
-	Post(ctx context.Context, in *GatewayPostReq, opts ...grpc.CallOption) (*GatewayPostResp, error)
+	GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
 }
 
 type gatewayServiceClient struct {
@@ -33,9 +33,9 @@ func NewGatewayServiceClient(cc grpc.ClientConnInterface) GatewayServiceClient {
 	return &gatewayServiceClient{cc}
 }
 
-func (c *gatewayServiceClient) Post(ctx context.Context, in *GatewayPostReq, opts ...grpc.CallOption) (*GatewayPostResp, error) {
-	out := new(GatewayPostResp)
-	err := c.cc.Invoke(ctx, "/pb.gatewayService/Post", in, out, opts...)
+func (c *gatewayServiceClient) GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error) {
+	out := new(GatewayGetUserConnectionResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/GatewayGetUserConnection", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *gatewayServiceClient) Post(ctx context.Context, in *GatewayPostReq, opt
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility
 type GatewayServiceServer interface {
-	Post(context.Context, *GatewayPostReq) (*GatewayPostResp, error)
+	GatewayGetUserConnection(context.Context, *GatewayGetUserConnectionReq) (*GatewayGetUserConnectionResp, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }
 
@@ -54,8 +54,8 @@ type GatewayServiceServer interface {
 type UnimplementedGatewayServiceServer struct {
 }
 
-func (UnimplementedGatewayServiceServer) Post(context.Context, *GatewayPostReq) (*GatewayPostResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Post not implemented")
+func (UnimplementedGatewayServiceServer) GatewayGetUserConnection(context.Context, *GatewayGetUserConnectionReq) (*GatewayGetUserConnectionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GatewayGetUserConnection not implemented")
 }
 func (UnimplementedGatewayServiceServer) mustEmbedUnimplementedGatewayServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterGatewayServiceServer(s grpc.ServiceRegistrar, srv GatewayServiceSer
 	s.RegisterService(&GatewayService_ServiceDesc, srv)
 }
 
-func _GatewayService_Post_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GatewayPostReq)
+func _GatewayService_GatewayGetUserConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayGetUserConnectionReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GatewayServiceServer).Post(ctx, in)
+		return srv.(GatewayServiceServer).GatewayGetUserConnection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.gatewayService/Post",
+		FullMethod: "/pb.gatewayService/GatewayGetUserConnection",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GatewayServiceServer).Post(ctx, req.(*GatewayPostReq))
+		return srv.(GatewayServiceServer).GatewayGetUserConnection(ctx, req.(*GatewayGetUserConnectionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GatewayServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Post",
-			Handler:    _GatewayService_Post_Handler,
+			MethodName: "GatewayGetUserConnection",
+			Handler:    _GatewayService_GatewayGetUserConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

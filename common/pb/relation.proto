@@ -4,11 +4,11 @@ option go_package = "./pb";
 import "common.proto";
 
 message RelationApplyFriendReq {
-  CommonReq commonReq = 1;
+  RequestHeader header = 1;
 }
 
 message RelationApplyFriendResp {
-  CommonResp commonResp = 1;
+  ResponseHeader header = 1;
 }
 
 service relationService {

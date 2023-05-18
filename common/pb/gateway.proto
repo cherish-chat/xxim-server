@@ -1,31 +1,20 @@
 syntax = "proto3";
 package pb;
 option go_package = "./pb";
+import "common.proto";
 
-message GatewayPostReqOption {
-  int32 timeout = 1; // 超时时间 单位毫秒
+//GatewayGetUserConnectionReq 获取用户的连接 可以用userId、platforms、installIds过滤
+message GatewayGetUserConnectionReq {
+  RequestHeader header = 1;
+  repeated string userIds = 2;
+  repeated string platforms = 3;
+  repeated string installIds = 4;
 }
 
-message GatewayPostReq {
-  string method = 1; // 请求方法
-  bytes data = 2; // 请求数据
-  GatewayPostReqOption option = 3; // 请求选项
-}
-
-enum GatewayPostRespCode {
-  SUCCESS = 0; // 成功
-  INVALID_DATA = 1; // 无效的数据
-  UNAUTHORIZED = 2; // 未授权
-  FORBIDDEN = 3; // 禁止访问
-  INVALID_METHOD = 4; // 无效的方法
-  TIMEOUT = 5; // 超时
-  SERVER_ERROR = 6; // 服务器错误
-}
-message GatewayPostResp {
-  GatewayPostRespCode code = 1; // 响应码
-  bytes data = 2; // 响应数据
+message GatewayGetUserConnectionResp {
+  ResponseHeader commonResp = 1;
 }
 
 service gatewayService {
-  rpc Post(GatewayPostReq) returns (GatewayPostResp);
+  rpc GatewayGetUserConnection(GatewayGetUserConnectionReq) returns (GatewayGetUserConnectionResp);
 }

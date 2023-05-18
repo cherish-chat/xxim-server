@@ -13,12 +13,11 @@ import (
 )
 
 type (
-	GatewayPostReq       = pb.GatewayPostReq
-	GatewayPostReqOption = pb.GatewayPostReqOption
-	GatewayPostResp      = pb.GatewayPostResp
+	GatewayGetUserConnectionReq  = pb.GatewayGetUserConnectionReq
+	GatewayGetUserConnectionResp = pb.GatewayGetUserConnectionResp
 
 	GatewayService interface {
-		Post(ctx context.Context, in *GatewayPostReq, opts ...grpc.CallOption) (*GatewayPostResp, error)
+		GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
 	}
 
 	defaultGatewayService struct {
@@ -32,7 +31,7 @@ func NewGatewayService(cli zrpc.Client) GatewayService {
 	}
 }
 
-func (m *defaultGatewayService) Post(ctx context.Context, in *GatewayPostReq, opts ...grpc.CallOption) (*GatewayPostResp, error) {
+func (m *defaultGatewayService) GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
-	return client.Post(ctx, in, opts...)
+	return client.GatewayGetUserConnection(ctx, in, opts...)
 }

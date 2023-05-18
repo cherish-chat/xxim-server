@@ -10,14 +10,14 @@ enum ThirdSendSmsType {
   REBIND_PHONE = 3; // 绑定手机号
 }
 message ThirdSendSmsReq {
-  CommonReq commonReq = 1;
+  RequestHeader header = 1;
   repeated string args = 2;
   repeated string mobiles = 3;
   ThirdSendSmsType type = 4;
 }
 
 message ThirdSendSmsResp {
-  CommonResp commonResp = 1;
+  ResponseHeader header = 1;
 }
 
 service thirdService {

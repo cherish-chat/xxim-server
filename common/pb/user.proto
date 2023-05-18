@@ -4,11 +4,11 @@ option go_package = "./pb";
 import "common.proto";
 
 message UserRegisterReq {
-  CommonReq commonReq = 1;
+  RequestHeader header = 1;
 }
 
 message UserRegisterResp {
-  CommonResp commonResp = 1;
+  ResponseHeader header = 1;
 }
 
 service userService {
