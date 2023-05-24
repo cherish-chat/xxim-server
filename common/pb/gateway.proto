@@ -3,6 +3,12 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
+//GatewayApiResponse http/私有协议 响应
+message GatewayApiResponse {
+  ResponseHeader header = 1;
+  bytes body = 2;
+}
+
 //GatewayGetUserConnectionReq 获取用户的连接 可以用userId、platforms、installIds过滤
 message GatewayGetUserConnectionReq {
   RequestHeader header = 1;
@@ -12,7 +18,7 @@ message GatewayGetUserConnectionReq {
 }
 
 message GatewayGetUserConnectionResp {
-  ResponseHeader commonResp = 1;
+  ResponseHeader header = 1;
 }
 
 service gatewayService {

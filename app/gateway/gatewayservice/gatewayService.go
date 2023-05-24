@@ -13,6 +13,7 @@ import (
 )
 
 type (
+	GatewayApiResponse           = pb.GatewayApiResponse
 	GatewayGetUserConnectionReq  = pb.GatewayGetUserConnectionReq
 	GatewayGetUserConnectionResp = pb.GatewayGetUserConnectionResp
 

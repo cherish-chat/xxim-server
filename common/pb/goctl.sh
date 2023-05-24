@@ -30,6 +30,10 @@ function rpc() {
   done
 }
 
+# common.proto
+# shellcheck disable=SC2046
+protoc --proto_path=. common.proto --go_out=..
+
 rpc "dispatch"
 rpc "gateway"
 rpc "group"
