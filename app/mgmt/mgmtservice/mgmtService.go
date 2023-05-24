@@ -33,6 +33,8 @@ type (
 	AppLineConfig_Storage_Kodo               = pb.AppLineConfig_Storage_Kodo
 	AppLineConfig_Storage_Minio              = pb.AppLineConfig_Storage_Minio
 	AppLineConfig_Storage_Oss                = pb.AppLineConfig_Storage_Oss
+	ClearAllUserReq                          = pb.ClearAllUserReq
+	ClearAllUserResp                         = pb.ClearAllUserResp
 	ConfigMSResp                             = pb.ConfigMSResp
 	DeleteMSAlbumCateReq                     = pb.DeleteMSAlbumCateReq
 	DeleteMSAlbumCateResp                    = pb.DeleteMSAlbumCateResp
@@ -222,6 +224,8 @@ type (
 		DeleteMSAlbum(ctx context.Context, in *DeleteMSAlbumReq, opts ...grpc.CallOption) (*DeleteMSAlbumResp, error)
 		UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbumReq, opts ...grpc.CallOption) (*UpdateMSAlbumResp, error)
 		StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error)
+		// 清空所有用户
+		ClearAllUser(ctx context.Context, in *ClearAllUserReq, opts ...grpc.CallOption) (*ClearAllUserResp, error)
 	}
 
 	defaultMgmtService struct {
@@ -525,4 +529,10 @@ func (m *defaultMgmtService) UpdateMSAlbum(ctx context.Context, in *UpdateMSAlbu
 func (m *defaultMgmtService) StatsMS(ctx context.Context, in *StatsMSReq, opts ...grpc.CallOption) (*StatsMSResp, error) {
 	client := pb.NewMgmtServiceClient(m.cli.Conn())
 	return client.StatsMS(ctx, in, opts...)
+}
+
+// 清空所有用户
+func (m *defaultMgmtService) ClearAllUser(ctx context.Context, in *ClearAllUserReq, opts ...grpc.CallOption) (*ClearAllUserResp, error) {
+	client := pb.NewMgmtServiceClient(m.cli.Conn())
+	return client.ClearAllUser(ctx, in, opts...)
 }

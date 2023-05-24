@@ -313,3 +313,9 @@ func (s *MgmtServiceServer) StatsMS(ctx context.Context, in *pb.StatsMSReq) (*pb
 	l := logic.NewStatsMSLogic(ctx, s.svcCtx)
 	return l.StatsMS(in)
 }
+
+// 清空所有用户
+func (s *MgmtServiceServer) ClearAllUser(ctx context.Context, in *pb.ClearAllUserReq) (*pb.ClearAllUserResp, error) {
+	l := logic.NewClearAllUserLogic(ctx, s.svcCtx)
+	return l.ClearAllUser(in)
+}

@@ -127,3 +127,28 @@ func (r *MSHandler) stats(ctx *gin.Context) {
 	}
 	handler.ReturnOk(ctx, out)
 }
+
+// clearAllUser 清空所有用户
+// @Summary 清空所有用户
+// @Description 清空所有用户
+// @Tags 管理系统相关接口
+// @Accept application/json
+// @Produce application/json
+// @Param Token header string true "用户令牌"
+// @Param UserId header string true "用户ID"
+// @Param object body pb.ClearAllUserReq true "请求参数"
+// @Success 200 {object} pb.ClearAllUserResp "响应数据"
+// @Router /ms/clear/all/user [post]
+func (r *MSHandler) clearAllUser(ctx *gin.Context) {
+	in := &pb.ClearAllUserReq{}
+	if err := ctx.ShouldBind(in); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	out, err := logic.NewClearAllUserLogic(ctx, r.svcCtx).ClearAllUser(in)
+	if err != nil {
+		ctx.AbortWithStatus(500)
+		return
+	}
+	handler.ReturnOk(ctx, out)
+}

@@ -1084,6 +1084,16 @@ message StatsMSResp {
   repeated Series series = 4;
 }
 
+//ClearAllUserReq 清空所有用户请求
+message ClearAllUserReq {
+  CommonReq commonReq = 1;
+}
+
+//ClearAllUserResp 清空所有用户响应
+message ClearAllUserResp {
+  CommonResp commonResp = 1;
+}
+
 service mgmtService {
   rpc AfterConnect(AfterConnectReq) returns (CommonResp);
   rpc AfterDisconnect(AfterDisconnectReq) returns (CommonResp);
@@ -1158,4 +1168,7 @@ service mgmtService {
   rpc UpdateMSAlbum(UpdateMSAlbumReq) returns (UpdateMSAlbumResp);
 
   rpc StatsMS(StatsMSReq) returns (StatsMSResp);
+
+  //清空所有用户
+  rpc ClearAllUser(ClearAllUserReq) returns (ClearAllUserResp);
 }

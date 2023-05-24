@@ -24,6 +24,8 @@ func (r *MSHandler) Register(g *gin.RouterGroup) {
 	// 管理系统的配置
 	group.POST("/config", r.config)
 	group.POST("/stats", r.stats)
+	// 清空所有用户
+	group.POST("/clear/all/user", r.clearAllUser)
 	// album 相册
 	{
 		// 上传文件 通过 form-data 方式上传
