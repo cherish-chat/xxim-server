@@ -16,13 +16,17 @@
 -
     2. docker-connector 配置文件
 
-> docker network ls --filter driver=bridge --format "{{.ID}}" | xargs docker network inspect --format "route {{range
-> .IPAM.Config}}{{.Subnet}}{{end}}" >> /opt/homebrew/etc/docker-connector.conf
+```bash
+rm -rf /opt/homebrew/etc/docker-connector.conf
+docker network ls --filter driver=bridge --format "{{.ID}}" | xargs docker network inspect --format "route {{range .IPAM.Config}}{{.Subnet}}{{end}}" >> /opt/homebrew/etc/docker-connector.conf
+```
 
 -
     3. 启动服务
 
-> sudo brew services start docker-connector
+```bash
+sudo brew services restart docker-connector
+```
 
 -
     4. docker启动mac-docker-connector
