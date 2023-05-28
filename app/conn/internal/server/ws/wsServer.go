@@ -60,14 +60,15 @@ func NewServer(
 		beforeConnect:    func(ctx context.Context, param types.ConnParam) (int, error) { return 0, nil },
 	}
 	s.engine = gin.New()
-	if svcCtx.Config.Log.Level == "debug" || svcCtx.Config.Log.Level == "info" {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
-	}
 	s.engine.Use(gin.Recovery())
 	s.engine.Use(xhttp.Cors())
-	s.engine.Use(gin.Logger())
+	if svcCtx.Config.Log.Level == "debug" || svcCtx.Config.Log.Level == "info" {
+		s.engine.Use(gin.Logger())
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		// 禁用访问日志
+		gin.DefaultWriter = io.Discard
+	}
 	s.engine.GET("/", gin.WrapH(http.HandlerFunc(s.subscribeHandler)))
 	s.engine.GET("/ws", gin.WrapH(http.HandlerFunc(s.subscribeHandler)))
 	conngateway.HttpGateway(s.engine)
