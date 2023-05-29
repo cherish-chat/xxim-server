@@ -35,6 +35,7 @@ func Init(downloadUrl string) {
 		logx.Errorf("new ip2region searcher failed: %s", err.Error())
 		panic(err)
 	}
+	Ip2Region("114.114.114.114")
 }
 
 type Obj struct {
