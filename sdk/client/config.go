@@ -1,6 +1,13 @@
 package client
 
-import "errors"
+import (
+	"errors"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/sdk/store"
+	"github.com/cherish-chat/xxim-server/sdk/types"
+	"runtime"
+	"strconv"
+)
 
 type Config struct {
 	// Endpoints are the endpoints of the servers.
@@ -13,6 +20,38 @@ type Config struct {
 	AesIv string
 	// ContentType is the content type of the request. Please select one of the following: protobuf, json; default is protobuf.
 	ContentType string
+	// AppId is the id of the application. if you don't have one, please ignore it. See https://console.imcloudx.com/#/app for details.
+	AppId string
+	// InstallId is the id of the installation. If not filled in, it will be written locally.
+	InstallId string
+	// Platform is the platform of the installation. optional: 0(ios), 1(android), 2(web), 3(windows), 4(mac), 5(linux), 6(ipad), 7(androidPad). If not filled in, the native platform value will be used.
+	Platform *types.Platform
+	// DeviceModel is the model of the device. If not filled in, the native device model value will be used.
+	DeviceModel string
+	// OsVersion is the version of the operating system. If not filled in, the native operating system version value will be used.
+	OsVersion string
+	// Language is the language of the device. Default is zh-CN.
+	Language *types.I18NLanguage
+	// Account is the account of the user. Required.
+	Account AccountConfig
+}
+type AuthType int
+
+const (
+	AuthType_Password AuthType = 1
+)
+
+type AccountConfigPassword struct {
+	// Username is the username of the user.
+	Username string
+	// Password is the password of the user.
+	Password string
+}
+
+type AccountConfig struct {
+	// 认证方式
+	AuthType AuthType
+	Password *AccountConfigPassword
 }
 
 var (
@@ -25,6 +64,63 @@ func (c *Config) Validate() error {
 	}
 	if c.ContentType != "json" {
 		c.ContentType = "protobuf"
+	}
+	if c.InstallId == "" {
+		//读取本地配置
+		installId := store.Database.Config.FindByK("install_id")
+		if installId == "" {
+			installId = utils.Snowflake.String()
+			store.Database.Config.Save("install_id", installId)
+		}
+		c.InstallId = installId
+	}
+	if c.Platform == nil {
+		//获取本机系统
+		goos := runtime.GOOS
+		switch goos {
+		case "darwin":
+			platform := types.Platform(4)
+			c.Platform = &platform
+		case "linux":
+			platform := types.Platform(5)
+			c.Platform = &platform
+		case "windows":
+			platform := types.Platform(3)
+			c.Platform = &platform
+		default:
+			platform := types.Platform(2)
+			c.Platform = &platform
+		}
+	}
+	if c.DeviceModel == "" {
+		// 读取本机设备信息
+		goos := runtime.GOOS
+		goarch := runtime.GOARCH
+		numCpu := runtime.NumCPU()
+		c.DeviceModel = goos + "-" + goarch + "-" + strconv.Itoa(numCpu)
+	}
+	if c.OsVersion == "" {
+		// 读取本机系统版本
+		c.OsVersion = runtime.Version()
+	}
+	if c.Language == nil {
+		// 读取本机语言
+		language := types.I18NLanguage_Chinese_Simplified
+		c.Language = &language
+	}
+	switch c.Account.AuthType {
+	case AuthType_Password:
+		if c.Account.Password == nil {
+			return errors.New("password is required")
+		}
+		if c.Account.Password.Username == "" {
+			return errors.New("username is required")
+		}
+		if c.Account.Password.Password == "" {
+			return errors.New("password is required")
+		}
+	default:
+		return errors.New("unsupported auth type")
 	}
 	return nil
 }

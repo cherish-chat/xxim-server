@@ -14,6 +14,19 @@ func TestHttpClient_GatewayGetUserConnection(t *testing.T) {
 		AesIv:           "xx",
 		//ContentType:     "protobuf",
 		ContentType: "json",
+		AppId:       "",
+		InstallId:   "",
+		Platform:    nil,
+		DeviceModel: "",
+		OsVersion:   "",
+		Language:    nil,
+		Account: AccountConfig{
+			AuthType: AuthType_Password,
+			Password: &AccountConfigPassword{
+				Username: "xx",
+				Password: "xx",
+			},
+		},
 	})
 	if err != nil {
 		t.Fatalf(err.Error())

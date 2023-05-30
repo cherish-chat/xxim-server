@@ -3,6 +3,12 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
+//GatewayApiRequest http/私有协议 请求
+message GatewayApiRequest {
+  RequestHeader header = 1;
+  bytes body = 2;
+}
+
 //GatewayApiResponse http/私有协议 响应
 message GatewayApiResponse {
   ResponseHeader header = 1;

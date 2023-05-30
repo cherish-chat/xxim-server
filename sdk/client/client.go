@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/cherish-chat/xxim-server/common"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/sdk/types"
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"net/http"
+	"os"
 )
 
 type HttpClient struct {
@@ -54,11 +57,53 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 			if err != nil {
 				return fmt.Errorf("req marshal error: %v", err)
 			}
+			data, _ = proto.Marshal(&types.GatewayApiRequest{
+				Header: &types.RequestHeader{
+					RequestId:    utils.Snowflake.String(),
+					AppId:        c.Config.AppId,
+					UserId:       c.getUserId(),
+					UserToken:    c.getUserToken(),
+					ClientIp:     "", //客户端不需要设置 由服务端设置
+					InstallId:    c.Config.InstallId,
+					Platform:     *c.Config.Platform,
+					GatewayPodIp: "",
+					DeviceModel:  c.Config.DeviceModel,
+					OsVersion:    c.Config.OsVersion,
+					AppVersion:   common.Version,
+					Language:     *c.Config.Language,
+					ConnectTime:  0,
+					AesKey:       c.Config.AesKey,
+					AesIv:        c.Config.AesIv,
+					Encoding:     types.EncodingProto_PROTOBUF,
+				},
+				Body: data,
+			})
 		} else {
 			data, err = json.Marshal(req)
 			if err != nil {
 				return fmt.Errorf("req marshal error: %v", err)
 			}
+			data, _ = json.Marshal(&types.GatewayApiRequest{
+				Header: &types.RequestHeader{
+					RequestId:    utils.Snowflake.String(),
+					AppId:        c.Config.AppId,
+					UserId:       c.getUserId(),
+					UserToken:    c.getUserToken(),
+					ClientIp:     "", //客户端不需要设置 由服务端设置
+					InstallId:    c.Config.InstallId,
+					Platform:     *c.Config.Platform,
+					GatewayPodIp: "",
+					DeviceModel:  c.Config.DeviceModel,
+					OsVersion:    c.Config.OsVersion,
+					AppVersion:   common.Version,
+					Language:     *c.Config.Language,
+					ConnectTime:  0,
+					AesKey:       c.Config.AesKey,
+					AesIv:        c.Config.AesIv,
+					Encoding:     types.EncodingProto_JSON,
+				},
+				Body: data,
+			})
 		}
 		// 是否开启了加密
 		if c.Config.EnableEncrypted {
@@ -116,4 +161,28 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 		}
 	}
 	return nil
+}
+
+func (c *HttpClient) getUserId() string {
+	switch c.Config.Account.AuthType {
+	case AuthType_Password:
+		// TODO: 使用 username 和 password 登录, 获取 userId 和 userToken, 存储到本地
+		return ""
+	default:
+		logx.Errorf("invalid auth type: %v", c.Config.Account.AuthType)
+		os.Exit(1)
+		return ""
+	}
+}
+
+func (c *HttpClient) getUserToken() string {
+	switch c.Config.Account.AuthType {
+	case AuthType_Password:
+		// TODO: 使用 username 和 password 登录, 获取 userId 和 userToken, 存储到本地
+		return ""
+	default:
+		logx.Errorf("invalid auth type: %v", c.Config.Account.AuthType)
+		os.Exit(1)
+		return ""
+	}
 }

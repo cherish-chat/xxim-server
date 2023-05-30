@@ -21,25 +21,43 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	encoding := pb.EncodingProto_PROTOBUF
 	// 判断是json还是protobuf
 	if strings.Contains(contentType, "application/json") {
+		apiRequest := &pb.GatewayApiRequest{}
 		// json
-		err := ctx.ShouldBindJSON(request)
+		err := ctx.ShouldBindJSON(apiRequest)
 		if err != nil {
 			return &pb.GatewayApiResponse{
 				Header: i18n.NewInvalidDataError(err.Error()),
 				Body:   nil,
 			}, err
 		}
+		err = utils.Json.Unmarshal(apiRequest.Body, request)
+		if err != nil {
+			return &pb.GatewayApiResponse{
+				Header: i18n.NewInvalidDataError(err.Error()),
+				Body:   nil,
+			}, err
+		}
+		request.SetHeader(apiRequest.Header)
 		encoding = pb.EncodingProto_JSON
 	} else if strings.Contains(contentType, "application/x-protobuf") {
 		// protobuf
 		body, _ := ctx.GetRawData()
-		err := proto.Unmarshal(body, request)
+		apiRequest := &pb.GatewayApiRequest{}
+		err := proto.Unmarshal(body, apiRequest)
 		if err != nil {
 			return &pb.GatewayApiResponse{
 				Header: i18n.NewInvalidDataError(err.Error()),
 				Body:   nil,
 			}, err
 		}
+		err = proto.Unmarshal(apiRequest.Body, request)
+		if err != nil {
+			return &pb.GatewayApiResponse{
+				Header: i18n.NewInvalidDataError(err.Error()),
+				Body:   nil,
+			}, err
+		}
+		request.SetHeader(apiRequest.Header)
 	} else {
 		return &pb.GatewayApiResponse{
 			Header: i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf"),
