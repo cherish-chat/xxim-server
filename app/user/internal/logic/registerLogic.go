@@ -266,6 +266,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 				Scene:       "register",
 				Code:        *in.SmsCode,
 				Delete:      true,
+				CommonReq:   in.CommonReq,
 			})
 		})
 		if err != nil {
