@@ -289,6 +289,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 				Code:      *in.CaptchaCode,
 				Scene:     "register",
 				Delete:    true,
+				CommonReq: in.CommonReq,
 			})
 		})
 		if err != nil {
