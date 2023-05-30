@@ -97,6 +97,7 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 				Code:      *in.CaptchaCode,
 				Scene:     "login",
 				Delete:    true,
+				CommonReq: in.CommonReq,
 			})
 		})
 		if err != nil {
