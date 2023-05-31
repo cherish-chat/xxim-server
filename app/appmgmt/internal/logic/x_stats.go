@@ -69,7 +69,7 @@ func (l *StatsLogic) existStats(t time.Time, typ string) bool {
 	// 获取那天的数据是否存在 如果存在就不统计了
 	data := &appmgmtmodel.Stats{}
 	err := l.svcCtx.Mysql().Model(data).
-		Where("data = ? AND type = ?", t.Format("2006-01-02"), typ).
+		Where("date = ? AND type = ?", t.Format("2006-01-02"), typ).
 		First(data).Error
 	if err == nil {
 		return true
