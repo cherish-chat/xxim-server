@@ -35,7 +35,11 @@ func NewAddUserModelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddU
 
 func (l *AddUserModelLogic) AddUserModel(in *pb.AddUserModelReq) (*pb.AddUserModelResp, error) {
 	salt := utils.GenId()
+	// 判断in.Password是不是md5的
 	pwd := xpwd.GeneratePwd(in.Password, salt)
+	if len(in.Password) != 32 {
+		pwd = xpwd.GeneratePwd(utils.Md5(in.Password), salt)
+	}
 	now := time.Now()
 	ip := in.CommonReq.Ip
 	region := ip2region.Ip2Region(ip)
