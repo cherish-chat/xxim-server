@@ -81,6 +81,19 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		// 删除app内飘屏通知
 		group.POST("/delete/notice", r.deleteNotice)
 	}
+	// app内富文章
+	{
+		// 获取全部app内富文章列表
+		group.POST("/get/richArticle/list/all", r.getAllRichArticleList)
+		// 获取app内富文章详情
+		group.POST("/get/richArticle/detail", r.getRichArticleDetail)
+		// 增加app内富文章
+		group.POST("/add/richArticle", r.addRichArticle)
+		// 更新app内富文章
+		group.POST("/update/richArticle", r.updateRichArticle)
+		// 删除app内富文章
+		group.POST("/delete/richArticle", r.deleteRichArticle)
+	}
 	// app内表情组管理
 	{
 		// 获取全部app内表情组列表

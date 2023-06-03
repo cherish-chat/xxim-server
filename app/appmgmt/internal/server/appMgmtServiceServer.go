@@ -221,3 +221,33 @@ func (s *AppMgmtServiceServer) GetUploadInfo(ctx context.Context, in *pb.GetUplo
 	l := logic.NewGetUploadInfoLogic(ctx, s.svcCtx)
 	return l.GetUploadInfo(in)
 }
+
+func (s *AppMgmtServiceServer) GetAllAppMgmtRichArticle(ctx context.Context, in *pb.GetAllAppMgmtRichArticleReq) (*pb.GetAllAppMgmtRichArticleResp, error) {
+	l := logic.NewGetAllAppMgmtRichArticleLogic(ctx, s.svcCtx)
+	return l.GetAllAppMgmtRichArticle(in)
+}
+
+func (s *AppMgmtServiceServer) GetAppMgmtRichArticleDetail(ctx context.Context, in *pb.GetAppMgmtRichArticleDetailReq) (*pb.GetAppMgmtRichArticleDetailResp, error) {
+	l := logic.NewGetAppMgmtRichArticleDetailLogic(ctx, s.svcCtx)
+	return l.GetAppMgmtRichArticleDetail(in)
+}
+
+func (s *AppMgmtServiceServer) AddAppMgmtRichArticle(ctx context.Context, in *pb.AddAppMgmtRichArticleReq) (*pb.AddAppMgmtRichArticleResp, error) {
+	l := logic.NewAddAppMgmtRichArticleLogic(ctx, s.svcCtx)
+	return l.AddAppMgmtRichArticle(in)
+}
+
+func (s *AppMgmtServiceServer) UpdateAppMgmtRichArticle(ctx context.Context, in *pb.UpdateAppMgmtRichArticleReq) (*pb.UpdateAppMgmtRichArticleResp, error) {
+	l := logic.NewUpdateAppMgmtRichArticleLogic(ctx, s.svcCtx)
+	return l.UpdateAppMgmtRichArticle(in)
+}
+
+func (s *AppMgmtServiceServer) DeleteAppMgmtRichArticle(ctx context.Context, in *pb.DeleteAppMgmtRichArticleReq) (*pb.DeleteAppMgmtRichArticleResp, error) {
+	l := logic.NewDeleteAppMgmtRichArticleLogic(ctx, s.svcCtx)
+	return l.DeleteAppMgmtRichArticle(in)
+}
+
+func (s *AppMgmtServiceServer) AppGetRichArticleList(ctx context.Context, in *pb.AppGetRichArticleListReq) (*pb.AppGetRichArticleListResp, error) {
+	l := logic.NewAppGetRichArticleListLogic(ctx, s.svcCtx)
+	return l.AppGetRichArticleList(in)
+}

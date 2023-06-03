@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	minio "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"io"
@@ -55,7 +56,9 @@ func NewMinioStorage(config *pb.AppLineConfig_Storage_Minio) (*MinioStorage, err
 func (s *MinioStorage) PutObject(ctx context.Context, objectName string, data []byte) (url string, err error) {
 	ioReader := bytes.NewReader(data)
 	objectSize := int64(len(data))
-	_, err = s.Client.PutObject(ctx, s.Config.BucketName, objectName, ioReader, objectSize, minio.PutObjectOptions{})
+	_, err = s.Client.PutObject(ctx, s.Config.BucketName, objectName, ioReader, objectSize, minio.PutObjectOptions{
+		ContentType: utils.File.GetContentTypeByFilename(objectName),
+	})
 	if err != nil {
 		return "", err
 	}
