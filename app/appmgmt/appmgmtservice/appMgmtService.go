@@ -13,94 +13,107 @@ import (
 )
 
 type (
-	AddAppMgmtEmojiGroupReq        = pb.AddAppMgmtEmojiGroupReq
-	AddAppMgmtEmojiGroupResp       = pb.AddAppMgmtEmojiGroupResp
-	AddAppMgmtEmojiReq             = pb.AddAppMgmtEmojiReq
-	AddAppMgmtEmojiResp            = pb.AddAppMgmtEmojiResp
-	AddAppMgmtLinkReq              = pb.AddAppMgmtLinkReq
-	AddAppMgmtLinkResp             = pb.AddAppMgmtLinkResp
-	AddAppMgmtNoticeReq            = pb.AddAppMgmtNoticeReq
-	AddAppMgmtNoticeResp           = pb.AddAppMgmtNoticeResp
-	AddAppMgmtShieldWordReq        = pb.AddAppMgmtShieldWordReq
-	AddAppMgmtShieldWordResp       = pb.AddAppMgmtShieldWordResp
-	AddAppMgmtVersionReq           = pb.AddAppMgmtVersionReq
-	AddAppMgmtVersionResp          = pb.AddAppMgmtVersionResp
-	AddAppMgmtVpnReq               = pb.AddAppMgmtVpnReq
-	AddAppMgmtVpnResp              = pb.AddAppMgmtVpnResp
-	AppGetAllConfigReq             = pb.AppGetAllConfigReq
-	AppGetAllConfigResp            = pb.AppGetAllConfigResp
-	AppMgmtConfig                  = pb.AppMgmtConfig
-	AppMgmtEmoji                   = pb.AppMgmtEmoji
-	AppMgmtEmojiGroup              = pb.AppMgmtEmojiGroup
-	AppMgmtLink                    = pb.AppMgmtLink
-	AppMgmtNotice                  = pb.AppMgmtNotice
-	AppMgmtShieldWord              = pb.AppMgmtShieldWord
-	AppMgmtVersion                 = pb.AppMgmtVersion
-	AppMgmtVpn                     = pb.AppMgmtVpn
-	DeleteAppMgmtEmojiGroupReq     = pb.DeleteAppMgmtEmojiGroupReq
-	DeleteAppMgmtEmojiGroupResp    = pb.DeleteAppMgmtEmojiGroupResp
-	DeleteAppMgmtEmojiReq          = pb.DeleteAppMgmtEmojiReq
-	DeleteAppMgmtEmojiResp         = pb.DeleteAppMgmtEmojiResp
-	DeleteAppMgmtLinkReq           = pb.DeleteAppMgmtLinkReq
-	DeleteAppMgmtLinkResp          = pb.DeleteAppMgmtLinkResp
-	DeleteAppMgmtNoticeReq         = pb.DeleteAppMgmtNoticeReq
-	DeleteAppMgmtNoticeResp        = pb.DeleteAppMgmtNoticeResp
-	DeleteAppMgmtShieldWordReq     = pb.DeleteAppMgmtShieldWordReq
-	DeleteAppMgmtShieldWordResp    = pb.DeleteAppMgmtShieldWordResp
-	DeleteAppMgmtVersionReq        = pb.DeleteAppMgmtVersionReq
-	DeleteAppMgmtVersionResp       = pb.DeleteAppMgmtVersionResp
-	DeleteAppMgmtVpnReq            = pb.DeleteAppMgmtVpnReq
-	DeleteAppMgmtVpnResp           = pb.DeleteAppMgmtVpnResp
-	GetAllAppMgmtConfigReq         = pb.GetAllAppMgmtConfigReq
-	GetAllAppMgmtConfigResp        = pb.GetAllAppMgmtConfigResp
-	GetAllAppMgmtEmojiGroupReq     = pb.GetAllAppMgmtEmojiGroupReq
-	GetAllAppMgmtEmojiGroupResp    = pb.GetAllAppMgmtEmojiGroupResp
-	GetAllAppMgmtEmojiReq          = pb.GetAllAppMgmtEmojiReq
-	GetAllAppMgmtEmojiResp         = pb.GetAllAppMgmtEmojiResp
-	GetAllAppMgmtLinkReq           = pb.GetAllAppMgmtLinkReq
-	GetAllAppMgmtLinkResp          = pb.GetAllAppMgmtLinkResp
-	GetAllAppMgmtNoticeReq         = pb.GetAllAppMgmtNoticeReq
-	GetAllAppMgmtNoticeResp        = pb.GetAllAppMgmtNoticeResp
-	GetAllAppMgmtShieldWordReq     = pb.GetAllAppMgmtShieldWordReq
-	GetAllAppMgmtShieldWordResp    = pb.GetAllAppMgmtShieldWordResp
-	GetAllAppMgmtVersionReq        = pb.GetAllAppMgmtVersionReq
-	GetAllAppMgmtVersionResp       = pb.GetAllAppMgmtVersionResp
-	GetAllAppMgmtVpnReq            = pb.GetAllAppMgmtVpnReq
-	GetAllAppMgmtVpnResp           = pb.GetAllAppMgmtVpnResp
-	GetAppMgmtEmojiDetailReq       = pb.GetAppMgmtEmojiDetailReq
-	GetAppMgmtEmojiDetailResp      = pb.GetAppMgmtEmojiDetailResp
-	GetAppMgmtEmojiGroupDetailReq  = pb.GetAppMgmtEmojiGroupDetailReq
-	GetAppMgmtEmojiGroupDetailResp = pb.GetAppMgmtEmojiGroupDetailResp
-	GetAppMgmtLinkDetailReq        = pb.GetAppMgmtLinkDetailReq
-	GetAppMgmtLinkDetailResp       = pb.GetAppMgmtLinkDetailResp
-	GetAppMgmtNoticeDetailReq      = pb.GetAppMgmtNoticeDetailReq
-	GetAppMgmtNoticeDetailResp     = pb.GetAppMgmtNoticeDetailResp
-	GetAppMgmtShieldWordDetailReq  = pb.GetAppMgmtShieldWordDetailReq
-	GetAppMgmtShieldWordDetailResp = pb.GetAppMgmtShieldWordDetailResp
-	GetAppMgmtVersionDetailReq     = pb.GetAppMgmtVersionDetailReq
-	GetAppMgmtVersionDetailResp    = pb.GetAppMgmtVersionDetailResp
-	GetAppMgmtVpnDetailReq         = pb.GetAppMgmtVpnDetailReq
-	GetAppMgmtVpnDetailResp        = pb.GetAppMgmtVpnDetailResp
-	GetLatestVersionReq            = pb.GetLatestVersionReq
-	GetLatestVersionResp           = pb.GetLatestVersionResp
-	GetUploadInfoReq               = pb.GetUploadInfoReq
-	GetUploadInfoResp              = pb.GetUploadInfoResp
-	UpdateAppMgmtConfigReq         = pb.UpdateAppMgmtConfigReq
-	UpdateAppMgmtConfigResp        = pb.UpdateAppMgmtConfigResp
-	UpdateAppMgmtEmojiGroupReq     = pb.UpdateAppMgmtEmojiGroupReq
-	UpdateAppMgmtEmojiGroupResp    = pb.UpdateAppMgmtEmojiGroupResp
-	UpdateAppMgmtEmojiReq          = pb.UpdateAppMgmtEmojiReq
-	UpdateAppMgmtEmojiResp         = pb.UpdateAppMgmtEmojiResp
-	UpdateAppMgmtLinkReq           = pb.UpdateAppMgmtLinkReq
-	UpdateAppMgmtLinkResp          = pb.UpdateAppMgmtLinkResp
-	UpdateAppMgmtNoticeReq         = pb.UpdateAppMgmtNoticeReq
-	UpdateAppMgmtNoticeResp        = pb.UpdateAppMgmtNoticeResp
-	UpdateAppMgmtShieldWordReq     = pb.UpdateAppMgmtShieldWordReq
-	UpdateAppMgmtShieldWordResp    = pb.UpdateAppMgmtShieldWordResp
-	UpdateAppMgmtVersionReq        = pb.UpdateAppMgmtVersionReq
-	UpdateAppMgmtVersionResp       = pb.UpdateAppMgmtVersionResp
-	UpdateAppMgmtVpnReq            = pb.UpdateAppMgmtVpnReq
-	UpdateAppMgmtVpnResp           = pb.UpdateAppMgmtVpnResp
+	AddAppMgmtEmojiGroupReq         = pb.AddAppMgmtEmojiGroupReq
+	AddAppMgmtEmojiGroupResp        = pb.AddAppMgmtEmojiGroupResp
+	AddAppMgmtEmojiReq              = pb.AddAppMgmtEmojiReq
+	AddAppMgmtEmojiResp             = pb.AddAppMgmtEmojiResp
+	AddAppMgmtLinkReq               = pb.AddAppMgmtLinkReq
+	AddAppMgmtLinkResp              = pb.AddAppMgmtLinkResp
+	AddAppMgmtNoticeReq             = pb.AddAppMgmtNoticeReq
+	AddAppMgmtNoticeResp            = pb.AddAppMgmtNoticeResp
+	AddAppMgmtRichArticleReq        = pb.AddAppMgmtRichArticleReq
+	AddAppMgmtRichArticleResp       = pb.AddAppMgmtRichArticleResp
+	AddAppMgmtShieldWordReq         = pb.AddAppMgmtShieldWordReq
+	AddAppMgmtShieldWordResp        = pb.AddAppMgmtShieldWordResp
+	AddAppMgmtVersionReq            = pb.AddAppMgmtVersionReq
+	AddAppMgmtVersionResp           = pb.AddAppMgmtVersionResp
+	AddAppMgmtVpnReq                = pb.AddAppMgmtVpnReq
+	AddAppMgmtVpnResp               = pb.AddAppMgmtVpnResp
+	AppGetAllConfigReq              = pb.AppGetAllConfigReq
+	AppGetAllConfigResp             = pb.AppGetAllConfigResp
+	AppGetRichArticleListReq        = pb.AppGetRichArticleListReq
+	AppGetRichArticleListResp       = pb.AppGetRichArticleListResp
+	AppMgmtConfig                   = pb.AppMgmtConfig
+	AppMgmtEmoji                    = pb.AppMgmtEmoji
+	AppMgmtEmojiGroup               = pb.AppMgmtEmojiGroup
+	AppMgmtLink                     = pb.AppMgmtLink
+	AppMgmtNotice                   = pb.AppMgmtNotice
+	AppMgmtRichArticle              = pb.AppMgmtRichArticle
+	AppMgmtShieldWord               = pb.AppMgmtShieldWord
+	AppMgmtVersion                  = pb.AppMgmtVersion
+	AppMgmtVpn                      = pb.AppMgmtVpn
+	DeleteAppMgmtEmojiGroupReq      = pb.DeleteAppMgmtEmojiGroupReq
+	DeleteAppMgmtEmojiGroupResp     = pb.DeleteAppMgmtEmojiGroupResp
+	DeleteAppMgmtEmojiReq           = pb.DeleteAppMgmtEmojiReq
+	DeleteAppMgmtEmojiResp          = pb.DeleteAppMgmtEmojiResp
+	DeleteAppMgmtLinkReq            = pb.DeleteAppMgmtLinkReq
+	DeleteAppMgmtLinkResp           = pb.DeleteAppMgmtLinkResp
+	DeleteAppMgmtNoticeReq          = pb.DeleteAppMgmtNoticeReq
+	DeleteAppMgmtNoticeResp         = pb.DeleteAppMgmtNoticeResp
+	DeleteAppMgmtRichArticleReq     = pb.DeleteAppMgmtRichArticleReq
+	DeleteAppMgmtRichArticleResp    = pb.DeleteAppMgmtRichArticleResp
+	DeleteAppMgmtShieldWordReq      = pb.DeleteAppMgmtShieldWordReq
+	DeleteAppMgmtShieldWordResp     = pb.DeleteAppMgmtShieldWordResp
+	DeleteAppMgmtVersionReq         = pb.DeleteAppMgmtVersionReq
+	DeleteAppMgmtVersionResp        = pb.DeleteAppMgmtVersionResp
+	DeleteAppMgmtVpnReq             = pb.DeleteAppMgmtVpnReq
+	DeleteAppMgmtVpnResp            = pb.DeleteAppMgmtVpnResp
+	GetAllAppMgmtConfigReq          = pb.GetAllAppMgmtConfigReq
+	GetAllAppMgmtConfigResp         = pb.GetAllAppMgmtConfigResp
+	GetAllAppMgmtEmojiGroupReq      = pb.GetAllAppMgmtEmojiGroupReq
+	GetAllAppMgmtEmojiGroupResp     = pb.GetAllAppMgmtEmojiGroupResp
+	GetAllAppMgmtEmojiReq           = pb.GetAllAppMgmtEmojiReq
+	GetAllAppMgmtEmojiResp          = pb.GetAllAppMgmtEmojiResp
+	GetAllAppMgmtLinkReq            = pb.GetAllAppMgmtLinkReq
+	GetAllAppMgmtLinkResp           = pb.GetAllAppMgmtLinkResp
+	GetAllAppMgmtNoticeReq          = pb.GetAllAppMgmtNoticeReq
+	GetAllAppMgmtNoticeResp         = pb.GetAllAppMgmtNoticeResp
+	GetAllAppMgmtRichArticleReq     = pb.GetAllAppMgmtRichArticleReq
+	GetAllAppMgmtRichArticleResp    = pb.GetAllAppMgmtRichArticleResp
+	GetAllAppMgmtShieldWordReq      = pb.GetAllAppMgmtShieldWordReq
+	GetAllAppMgmtShieldWordResp     = pb.GetAllAppMgmtShieldWordResp
+	GetAllAppMgmtVersionReq         = pb.GetAllAppMgmtVersionReq
+	GetAllAppMgmtVersionResp        = pb.GetAllAppMgmtVersionResp
+	GetAllAppMgmtVpnReq             = pb.GetAllAppMgmtVpnReq
+	GetAllAppMgmtVpnResp            = pb.GetAllAppMgmtVpnResp
+	GetAppMgmtEmojiDetailReq        = pb.GetAppMgmtEmojiDetailReq
+	GetAppMgmtEmojiDetailResp       = pb.GetAppMgmtEmojiDetailResp
+	GetAppMgmtEmojiGroupDetailReq   = pb.GetAppMgmtEmojiGroupDetailReq
+	GetAppMgmtEmojiGroupDetailResp  = pb.GetAppMgmtEmojiGroupDetailResp
+	GetAppMgmtLinkDetailReq         = pb.GetAppMgmtLinkDetailReq
+	GetAppMgmtLinkDetailResp        = pb.GetAppMgmtLinkDetailResp
+	GetAppMgmtNoticeDetailReq       = pb.GetAppMgmtNoticeDetailReq
+	GetAppMgmtNoticeDetailResp      = pb.GetAppMgmtNoticeDetailResp
+	GetAppMgmtRichArticleDetailReq  = pb.GetAppMgmtRichArticleDetailReq
+	GetAppMgmtRichArticleDetailResp = pb.GetAppMgmtRichArticleDetailResp
+	GetAppMgmtShieldWordDetailReq   = pb.GetAppMgmtShieldWordDetailReq
+	GetAppMgmtShieldWordDetailResp  = pb.GetAppMgmtShieldWordDetailResp
+	GetAppMgmtVersionDetailReq      = pb.GetAppMgmtVersionDetailReq
+	GetAppMgmtVersionDetailResp     = pb.GetAppMgmtVersionDetailResp
+	GetAppMgmtVpnDetailReq          = pb.GetAppMgmtVpnDetailReq
+	GetAppMgmtVpnDetailResp         = pb.GetAppMgmtVpnDetailResp
+	GetLatestVersionReq             = pb.GetLatestVersionReq
+	GetLatestVersionResp            = pb.GetLatestVersionResp
+	GetUploadInfoReq                = pb.GetUploadInfoReq
+	GetUploadInfoResp               = pb.GetUploadInfoResp
+	UpdateAppMgmtConfigReq          = pb.UpdateAppMgmtConfigReq
+	UpdateAppMgmtConfigResp         = pb.UpdateAppMgmtConfigResp
+	UpdateAppMgmtEmojiGroupReq      = pb.UpdateAppMgmtEmojiGroupReq
+	UpdateAppMgmtEmojiGroupResp     = pb.UpdateAppMgmtEmojiGroupResp
+	UpdateAppMgmtEmojiReq           = pb.UpdateAppMgmtEmojiReq
+	UpdateAppMgmtEmojiResp          = pb.UpdateAppMgmtEmojiResp
+	UpdateAppMgmtLinkReq            = pb.UpdateAppMgmtLinkReq
+	UpdateAppMgmtLinkResp           = pb.UpdateAppMgmtLinkResp
+	UpdateAppMgmtNoticeReq          = pb.UpdateAppMgmtNoticeReq
+	UpdateAppMgmtNoticeResp         = pb.UpdateAppMgmtNoticeResp
+	UpdateAppMgmtRichArticleReq     = pb.UpdateAppMgmtRichArticleReq
+	UpdateAppMgmtRichArticleResp    = pb.UpdateAppMgmtRichArticleResp
+	UpdateAppMgmtShieldWordReq      = pb.UpdateAppMgmtShieldWordReq
+	UpdateAppMgmtShieldWordResp     = pb.UpdateAppMgmtShieldWordResp
+	UpdateAppMgmtVersionReq         = pb.UpdateAppMgmtVersionReq
+	UpdateAppMgmtVersionResp        = pb.UpdateAppMgmtVersionResp
+	UpdateAppMgmtVpnReq             = pb.UpdateAppMgmtVpnReq
+	UpdateAppMgmtVpnResp            = pb.UpdateAppMgmtVpnResp
 
 	AppMgmtService interface {
 		GetAllAppMgmtConfig(ctx context.Context, in *GetAllAppMgmtConfigReq, opts ...grpc.CallOption) (*GetAllAppMgmtConfigResp, error)
@@ -143,6 +156,12 @@ type (
 		DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
 		AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
 		GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error)
+		GetAllAppMgmtRichArticle(ctx context.Context, in *GetAllAppMgmtRichArticleReq, opts ...grpc.CallOption) (*GetAllAppMgmtRichArticleResp, error)
+		GetAppMgmtRichArticleDetail(ctx context.Context, in *GetAppMgmtRichArticleDetailReq, opts ...grpc.CallOption) (*GetAppMgmtRichArticleDetailResp, error)
+		AddAppMgmtRichArticle(ctx context.Context, in *AddAppMgmtRichArticleReq, opts ...grpc.CallOption) (*AddAppMgmtRichArticleResp, error)
+		UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error)
+		DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error)
+		AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -354,4 +373,34 @@ func (m *defaultAppMgmtService) AppGetAllConfig(ctx context.Context, in *AppGetA
 func (m *defaultAppMgmtService) GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.GetUploadInfo(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAllAppMgmtRichArticle(ctx context.Context, in *GetAllAppMgmtRichArticleReq, opts ...grpc.CallOption) (*GetAllAppMgmtRichArticleResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAllAppMgmtRichArticle(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppMgmtRichArticleDetail(ctx context.Context, in *GetAppMgmtRichArticleDetailReq, opts ...grpc.CallOption) (*GetAppMgmtRichArticleDetailResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppMgmtRichArticleDetail(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AddAppMgmtRichArticle(ctx context.Context, in *AddAppMgmtRichArticleReq, opts ...grpc.CallOption) (*AddAppMgmtRichArticleResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AddAppMgmtRichArticle(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppMgmtRichArticle(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.DeleteAppMgmtRichArticle(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.AppGetRichArticleList(ctx, in, opts...)
 }

@@ -334,6 +334,14 @@ func initMenu(tx *gorm.DB) {
 				genMenu3("383", "380", "外链编辑", "app:link:edit"),
 				genMenu3("384", "380", "外链删除", "app:link:del"),
 			),
+			// richarticle 富文章
+			genMenu2("390", "300", "富文章管理", "el-icon-CreditCard", 0,
+				"app:richarticle:list", "app/richarticle", "app/richarticle/index",
+				genMenu3("391", "390", "富文章详情", "app:richarticle:detail"),
+				genMenu3("392", "390", "富文章新增", "app:richarticle:add"),
+				genMenu3("393", "390", "富文章编辑", "app:richarticle:edit"),
+				genMenu3("394", "390", "富文章删除", "app:richarticle:del"),
+			),
 		),
 		genMenu1("400", "用户管理", "el-icon-UserFilled", 48, "user",
 			// defaultconv 默认会话

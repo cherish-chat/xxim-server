@@ -62,6 +62,12 @@ type AppMgmtServiceClient interface {
 	DeleteAppMgmtLink(ctx context.Context, in *DeleteAppMgmtLinkReq, opts ...grpc.CallOption) (*DeleteAppMgmtLinkResp, error)
 	AppGetAllConfig(ctx context.Context, in *AppGetAllConfigReq, opts ...grpc.CallOption) (*AppGetAllConfigResp, error)
 	GetUploadInfo(ctx context.Context, in *GetUploadInfoReq, opts ...grpc.CallOption) (*GetUploadInfoResp, error)
+	GetAllAppMgmtRichArticle(ctx context.Context, in *GetAllAppMgmtRichArticleReq, opts ...grpc.CallOption) (*GetAllAppMgmtRichArticleResp, error)
+	GetAppMgmtRichArticleDetail(ctx context.Context, in *GetAppMgmtRichArticleDetailReq, opts ...grpc.CallOption) (*GetAppMgmtRichArticleDetailResp, error)
+	AddAppMgmtRichArticle(ctx context.Context, in *AddAppMgmtRichArticleReq, opts ...grpc.CallOption) (*AddAppMgmtRichArticleResp, error)
+	UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error)
+	DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error)
+	AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error)
 }
 
 type appMgmtServiceClient struct {
@@ -432,6 +438,60 @@ func (c *appMgmtServiceClient) GetUploadInfo(ctx context.Context, in *GetUploadI
 	return out, nil
 }
 
+func (c *appMgmtServiceClient) GetAllAppMgmtRichArticle(ctx context.Context, in *GetAllAppMgmtRichArticleReq, opts ...grpc.CallOption) (*GetAllAppMgmtRichArticleResp, error) {
+	out := new(GetAllAppMgmtRichArticleResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAllAppMgmtRichArticle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) GetAppMgmtRichArticleDetail(ctx context.Context, in *GetAppMgmtRichArticleDetailReq, opts ...grpc.CallOption) (*GetAppMgmtRichArticleDetailResp, error) {
+	out := new(GetAppMgmtRichArticleDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAppMgmtRichArticleDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) AddAppMgmtRichArticle(ctx context.Context, in *AddAppMgmtRichArticleReq, opts ...grpc.CallOption) (*AddAppMgmtRichArticleResp, error) {
+	out := new(AddAppMgmtRichArticleResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/AddAppMgmtRichArticle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error) {
+	out := new(UpdateAppMgmtRichArticleResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/UpdateAppMgmtRichArticle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error) {
+	out := new(DeleteAppMgmtRichArticleResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/DeleteAppMgmtRichArticle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error) {
+	out := new(AppGetRichArticleListResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/AppGetRichArticleList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppMgmtServiceServer is the server API for AppMgmtService service.
 // All implementations must embed UnimplementedAppMgmtServiceServer
 // for forward compatibility
@@ -476,6 +536,12 @@ type AppMgmtServiceServer interface {
 	DeleteAppMgmtLink(context.Context, *DeleteAppMgmtLinkReq) (*DeleteAppMgmtLinkResp, error)
 	AppGetAllConfig(context.Context, *AppGetAllConfigReq) (*AppGetAllConfigResp, error)
 	GetUploadInfo(context.Context, *GetUploadInfoReq) (*GetUploadInfoResp, error)
+	GetAllAppMgmtRichArticle(context.Context, *GetAllAppMgmtRichArticleReq) (*GetAllAppMgmtRichArticleResp, error)
+	GetAppMgmtRichArticleDetail(context.Context, *GetAppMgmtRichArticleDetailReq) (*GetAppMgmtRichArticleDetailResp, error)
+	AddAppMgmtRichArticle(context.Context, *AddAppMgmtRichArticleReq) (*AddAppMgmtRichArticleResp, error)
+	UpdateAppMgmtRichArticle(context.Context, *UpdateAppMgmtRichArticleReq) (*UpdateAppMgmtRichArticleResp, error)
+	DeleteAppMgmtRichArticle(context.Context, *DeleteAppMgmtRichArticleReq) (*DeleteAppMgmtRichArticleResp, error)
+	AppGetRichArticleList(context.Context, *AppGetRichArticleListReq) (*AppGetRichArticleListResp, error)
 	mustEmbedUnimplementedAppMgmtServiceServer()
 }
 
@@ -602,6 +668,24 @@ func (UnimplementedAppMgmtServiceServer) AppGetAllConfig(context.Context, *AppGe
 }
 func (UnimplementedAppMgmtServiceServer) GetUploadInfo(context.Context, *GetUploadInfoReq) (*GetUploadInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUploadInfo not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetAllAppMgmtRichArticle(context.Context, *GetAllAppMgmtRichArticleReq) (*GetAllAppMgmtRichArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllAppMgmtRichArticle not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetAppMgmtRichArticleDetail(context.Context, *GetAppMgmtRichArticleDetailReq) (*GetAppMgmtRichArticleDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppMgmtRichArticleDetail not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) AddAppMgmtRichArticle(context.Context, *AddAppMgmtRichArticleReq) (*AddAppMgmtRichArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAppMgmtRichArticle not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) UpdateAppMgmtRichArticle(context.Context, *UpdateAppMgmtRichArticleReq) (*UpdateAppMgmtRichArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAppMgmtRichArticle not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) DeleteAppMgmtRichArticle(context.Context, *DeleteAppMgmtRichArticleReq) (*DeleteAppMgmtRichArticleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppMgmtRichArticle not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) AppGetRichArticleList(context.Context, *AppGetRichArticleListReq) (*AppGetRichArticleListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AppGetRichArticleList not implemented")
 }
 func (UnimplementedAppMgmtServiceServer) mustEmbedUnimplementedAppMgmtServiceServer() {}
 
@@ -1336,6 +1420,114 @@ func _AppMgmtService_GetUploadInfo_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppMgmtService_GetAllAppMgmtRichArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllAppMgmtRichArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetAllAppMgmtRichArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetAllAppMgmtRichArticle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetAllAppMgmtRichArticle(ctx, req.(*GetAllAppMgmtRichArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_GetAppMgmtRichArticleDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppMgmtRichArticleDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetAppMgmtRichArticleDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetAppMgmtRichArticleDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetAppMgmtRichArticleDetail(ctx, req.(*GetAppMgmtRichArticleDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_AddAppMgmtRichArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAppMgmtRichArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).AddAppMgmtRichArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/AddAppMgmtRichArticle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).AddAppMgmtRichArticle(ctx, req.(*AddAppMgmtRichArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_UpdateAppMgmtRichArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAppMgmtRichArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).UpdateAppMgmtRichArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/UpdateAppMgmtRichArticle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).UpdateAppMgmtRichArticle(ctx, req.(*UpdateAppMgmtRichArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_DeleteAppMgmtRichArticle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAppMgmtRichArticleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).DeleteAppMgmtRichArticle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/DeleteAppMgmtRichArticle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).DeleteAppMgmtRichArticle(ctx, req.(*DeleteAppMgmtRichArticleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_AppGetRichArticleList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppGetRichArticleListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).AppGetRichArticleList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/AppGetRichArticleList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).AppGetRichArticleList(ctx, req.(*AppGetRichArticleListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AppMgmtService_ServiceDesc is the grpc.ServiceDesc for AppMgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1502,6 +1694,30 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUploadInfo",
 			Handler:    _AppMgmtService_GetUploadInfo_Handler,
+		},
+		{
+			MethodName: "GetAllAppMgmtRichArticle",
+			Handler:    _AppMgmtService_GetAllAppMgmtRichArticle_Handler,
+		},
+		{
+			MethodName: "GetAppMgmtRichArticleDetail",
+			Handler:    _AppMgmtService_GetAppMgmtRichArticleDetail_Handler,
+		},
+		{
+			MethodName: "AddAppMgmtRichArticle",
+			Handler:    _AppMgmtService_AddAppMgmtRichArticle_Handler,
+		},
+		{
+			MethodName: "UpdateAppMgmtRichArticle",
+			Handler:    _AppMgmtService_UpdateAppMgmtRichArticle_Handler,
+		},
+		{
+			MethodName: "DeleteAppMgmtRichArticle",
+			Handler:    _AppMgmtService_DeleteAppMgmtRichArticle_Handler,
+		},
+		{
+			MethodName: "AppGetRichArticleList",
+			Handler:    _AppMgmtService_AppGetRichArticleList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

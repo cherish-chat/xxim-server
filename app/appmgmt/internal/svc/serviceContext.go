@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/group/groupservice"
 	"github.com/cherish-chat/xxim-server/app/im/imservice"
 	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtmodel"
+	"github.com/cherish-chat/xxim-server/app/mgmt/mgmtservice"
 	msgservice "github.com/cherish-chat/xxim-server/app/msg/msgService"
 	"github.com/cherish-chat/xxim-server/app/notice/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/relation/relationservice"
@@ -32,13 +33,15 @@ type ServiceContext struct {
 	groupService    groupservice.GroupService
 	ConfigMgr       *xconf.ConfigMgr
 	MsgPodsMgr      *msgservice.MsgPodsMgr
+	MgmtService     mgmtservice.MgmtService
 	*i18n.I18N
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c config.Config, mgmtService mgmtservice.MgmtService) *ServiceContext {
 	ip2region.Init(c.Ip2RegionUrl)
 	s := &ServiceContext{
-		Config: c,
+		Config:      c,
+		MgmtService: mgmtService,
 	}
 	s.I18N = i18n.NewI18N(s.Mysql())
 	s.MsgPodsMgr = msgservice.NewMsgPodsMgr(c.MsgRpcPod)
@@ -59,6 +62,7 @@ func (s *ServiceContext) Mysql() *gorm.DB {
 		s.mysql.AutoMigrate(&appmgmtmodel.Vpn{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Link{})
 		s.mysql.AutoMigrate(&appmgmtmodel.Stats{})
+		s.mysql.AutoMigrate(&appmgmtmodel.RichArticle{})
 		mgmtmodel.InitData(s.mysql)
 	}
 	return s.mysql

@@ -1,5 +1,9 @@
 package pb
 
+func (x *AppGetRichArticleListReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *SendMsgListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

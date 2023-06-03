@@ -22,8 +22,8 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	mgmtservice.MustLoadConfig(*mgmtRpcAddress, "appmgmt", &c)
-	ctx := svc.NewServiceContext(c)
+	mgmtService := mgmtservice.MustLoadConfig(*mgmtRpcAddress, "appmgmt", &c)
+	ctx := svc.NewServiceContext(c, mgmtService)
 	svr := server.NewAppMgmtServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

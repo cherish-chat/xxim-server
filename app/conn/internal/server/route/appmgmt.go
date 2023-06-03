@@ -47,4 +47,14 @@ func RegisterAppMgmt(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/appmgmt/getAllAppMgmtLink", route)
 	}
+	// AppGetRichArticleListReq AppGetRichArticleListResp
+	{
+		route := conngateway.Route[*pb.AppGetRichArticleListReq, *pb.AppGetRichArticleListResp]{
+			NewRequest: func() *pb.AppGetRichArticleListReq {
+				return &pb.AppGetRichArticleListReq{}
+			},
+			Do: svcCtx.AppMgmtService().AppGetRichArticleList,
+		}
+		conngateway.AddRoute("/v1/appmgmt/white/appGetRichArticleList", route)
+	}
 }
