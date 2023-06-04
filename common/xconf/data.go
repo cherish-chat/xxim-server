@@ -323,6 +323,8 @@ func (m *ConfigMgr) initData() {
 	m.insertIfNotFound("group.show_group_info.user.discover_name", str("发现", "group.show_group_info.user.discover_name", "发现", "发现底部导航按钮名称"))
 	// 是否显示发现按钮
 	m.insertIfNotFound("group.show_group_info.user.discover_show", boolean("发现", "group.show_group_info.user.discover_show", true, "是否显示发现按钮"))
+	// 是否允许显示information
+	m.insertIfNotFound("information.show.allow", boolean("发现", "information.show.allow", true, "是否允许显示新闻资讯"))
 
 	// 文件上传
 	// upload_file_header 上传文件自定义header
