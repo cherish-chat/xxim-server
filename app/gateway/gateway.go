@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/cherish-chat/xxim-server/common/xconf"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
@@ -9,7 +10,6 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
-	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	xconf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
 	svr := server.NewGatewayServiceServer(ctx)
 

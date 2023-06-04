@@ -1,9 +1,17 @@
 package client
 
-import "github.com/cherish-chat/xxim-server/sdk/types"
+import (
+	"github.com/cherish-chat/xxim-server/common/pb"
+)
 
-func (c *HttpClient) GatewayGetUserConnection(req *types.GatewayGetUserConnectionReq) (resp *types.GatewayGetUserConnectionResp, err error) {
-	resp = &types.GatewayGetUserConnectionResp{}
-	err = c.Request("/api/v1/gateway/getUserConnection", req, resp)
+func (c *HttpClient) GatewayGetUserConnection(req *pb.GatewayGetUserConnectionReq) (resp *pb.GatewayGetUserConnectionResp, err error) {
+	resp = &pb.GatewayGetUserConnectionResp{}
+	err = c.Request("/v1/gateway/getUserConnection", req, resp)
+	return
+}
+
+func (c *WsClient) GatewayGetUserConnection(req *pb.GatewayGetUserConnectionReq) (resp *pb.GatewayGetUserConnectionResp, err error) {
+	resp = &pb.GatewayGetUserConnectionResp{}
+	err = c.Request("/v1/gateway/getUserConnection", req, resp)
 	return
 }

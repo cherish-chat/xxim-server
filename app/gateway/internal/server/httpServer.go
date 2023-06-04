@@ -3,10 +3,12 @@ package server
 import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/middleware"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/logx"
+	"io"
 	"os"
 )
 
@@ -18,14 +20,16 @@ func NewHttpServer(svcCtx *svc.ServiceContext) *HttpServer {
 		middleware.Logger(svcCtx),  // 访问日志
 		gin.Recovery(),             // panic 恢复
 		middleware.Cors(svcCtx),    // 跨域
-		middleware.Aes(svcCtx),     // aes 加解密
 		middleware.ApiLog(svcCtx),  // api 日志
 	)
 	handler.SetupRoutes(s.svcCtx, s.ginEngine)
+	logic.InitWsManager(s.svcCtx)
 	if s.svcCtx.Config.Mode != "pro" {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
+		// 禁用日志
+		gin.DefaultWriter = io.Discard
 	}
 	return s
 }

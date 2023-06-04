@@ -2,18 +2,28 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/common"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/sdk/types"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"net/http"
+	"nhooyr.io/websocket"
 	"os"
+	"sync"
+	"time"
 )
+
+type IClient interface {
+	Request(path string, req any, resp any) error
+	GatewayGetUserConnection(req *pb.GatewayGetUserConnectionReq) (resp *pb.GatewayGetUserConnectionResp, err error)
+}
 
 type HttpClient struct {
 	httpClient          *http.Client
@@ -32,13 +42,87 @@ func NewHttpClient(config *Config) (*HttpClient, error) {
 	}, nil
 }
 
+type WsClient struct {
+	wsClient    *websocket.Conn
+	httpClient  *HttpClient
+	Config      *Config
+	responseMap sync.Map // key: requestId, value: chan *types.GatewayApiResponse
+}
+
+func NewWsClient(config *Config) (*WsClient, error) {
+	httpClient, err := NewHttpClient(config)
+	if err != nil {
+		return nil, err
+	}
+	endpoint := config.Endpoints[0]
+	url := fmt.Sprintf("%s%s", endpoint, "/ws?")
+	params := map[string]string{
+		"appId":       config.AppId,
+		"userId":      httpClient.getUserId(),
+		"userToken":   httpClient.getUserToken(),
+		"installId":   config.InstallId,
+		"platform":    config.Platform.ToString(),
+		"deviceModel": config.DeviceModel,
+		"osVersion":   config.OsVersion,
+		"appVersion":  common.Version,
+		"language":    config.Language.ToString(),
+		"encoding":    config.Encoding.ToString(),
+	}
+	for k, v := range params {
+		url += fmt.Sprintf("%s=%s&", k, v)
+	}
+	url = url[:len(url)-1]
+	wsClient, _, err := websocket.Dial(context.Background(), url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("websocket dial error: %v", err)
+	}
+	w := &WsClient{
+		Config:     config,
+		wsClient:   wsClient,
+		httpClient: httpClient,
+	}
+	go w.loopRead()
+	return w, nil
+}
+
+func (c *WsClient) loopRead() {
+	for {
+		_, message, err := c.wsClient.Read(context.Background())
+		if err != nil {
+			logx.Errorf("read message error: %v", err)
+			continue
+		}
+		var resp pb.GatewayApiResponse
+		if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
+			err = proto.Unmarshal(message, &resp)
+		} else {
+			err = json.Unmarshal(message, &resp)
+		}
+		if err != nil {
+			logx.Errorf("unmarshal message error: %v", err)
+			continue
+		}
+		ch, ok := c.responseMap.Load(resp.RequestId)
+		if !ok {
+			logx.Errorf("response not found, request id: %s", resp.RequestId)
+			continue
+		}
+		ch.(chan *pb.GatewayApiResponse) <- &resp
+	}
+}
+
 var (
 	ErrInvalidRequestType = errors.New("invalid request type, req must implement types.ReqInterface")
+	ErrRequestTimeout     = errors.New("request timeout")
 )
 
-func (c *HttpClient) getUrl(path string) string {
+func (c *HttpClient) GetUrl(path string) string {
 	endpoint := c.Config.Endpoints[c.latestEndpointIndex]
-	return fmt.Sprintf("%s%s", endpoint, path)
+	return fmt.Sprintf("%s/api%s", endpoint, path)
+}
+
+func (c *WsClient) GetUrl(path string) string {
+	return path
 }
 
 func (c *HttpClient) Request(path string, req any, resp any) error {
@@ -46,7 +130,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 	if req != nil {
 		var data []byte
 		var err error
-		if c.Config.ContentType == "protobuf" {
+		if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
 			var ok bool
 			var message types.ReqInterface
 			message, ok = req.(types.ReqInterface)
@@ -57,9 +141,8 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 			if err != nil {
 				return fmt.Errorf("req marshal error: %v", err)
 			}
-			data, _ = proto.Marshal(&types.GatewayApiRequest{
-				Header: &types.RequestHeader{
-					RequestId:    utils.Snowflake.String(),
+			data, _ = proto.Marshal(&pb.GatewayApiRequest{
+				Header: &pb.RequestHeader{
 					AppId:        c.Config.AppId,
 					UserId:       c.getUserId(),
 					UserToken:    c.getUserToken(),
@@ -72,9 +155,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					AppVersion:   common.Version,
 					Language:     *c.Config.Language,
 					ConnectTime:  0,
-					AesKey:       c.Config.AesKey,
-					AesIv:        c.Config.AesIv,
-					Encoding:     types.EncodingProto_PROTOBUF,
+					Encoding:     pb.EncodingProto_PROTOBUF,
 				},
 				Body: data,
 			})
@@ -83,9 +164,8 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 			if err != nil {
 				return fmt.Errorf("req marshal error: %v", err)
 			}
-			data, _ = json.Marshal(&types.GatewayApiRequest{
-				Header: &types.RequestHeader{
-					RequestId:    utils.Snowflake.String(),
+			data, _ = json.Marshal(&pb.GatewayApiRequest{
+				Header: &pb.RequestHeader{
 					AppId:        c.Config.AppId,
 					UserId:       c.getUserId(),
 					UserToken:    c.getUserToken(),
@@ -98,25 +178,19 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					AppVersion:   common.Version,
 					Language:     *c.Config.Language,
 					ConnectTime:  0,
-					AesKey:       c.Config.AesKey,
-					AesIv:        c.Config.AesIv,
-					Encoding:     types.EncodingProto_JSON,
+					Encoding:     pb.EncodingProto_JSON,
 				},
 				Body: data,
 			})
 		}
-		// 是否开启了加密
-		if c.Config.EnableEncrypted {
-			data = utils.Aes.Encrypt(c.Config.AesKey, c.Config.AesIv, data)
-		}
 		body = bytes.NewReader(data)
 	}
-	request, err := http.NewRequest("POST", c.getUrl(path), body)
+	request, err := http.NewRequest("POST", c.GetUrl(path), body)
 	if err != nil {
 		return fmt.Errorf("new request error: %v", err)
 	}
 	// set content type
-	if c.Config.ContentType == "protobuf" {
+	if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
 		request.Header.Set("Content-Type", "application/x-protobuf")
 	} else {
 		request.Header.Set("Content-Type", "application/json")
@@ -135,16 +209,9 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 	if err != nil {
 		return fmt.Errorf("read response body error: %v", err)
 	}
-	// 是否开启了加密
-	if c.Config.EnableEncrypted {
-		data, err = utils.Aes.Decrypt(c.Config.AesKey, c.Config.AesIv, data)
-		if err != nil {
-			return fmt.Errorf("decrypt response body error: %v", err)
-		}
-	}
 	// unmarshal response body
 	if resp != nil {
-		if c.Config.ContentType == "protobuf" {
+		if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
 			message, ok := resp.(proto.Message)
 			if !ok {
 				return fmt.Errorf("invalid response type, resp must implement proto.Message")
@@ -161,6 +228,89 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 		}
 	}
 	return nil
+}
+
+func (c *WsClient) Request(path string, req any, resp any) error {
+	requestId := utils.Snowflake.String()
+	var body []byte
+	if req != nil {
+		if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
+			pb, ok := req.(proto.Message)
+			if !ok {
+				return ErrInvalidRequestType
+			}
+			data, err := proto.Marshal(pb)
+			if err != nil {
+				return fmt.Errorf("req marshal error: %v", err)
+			}
+			body = data
+		} else {
+			data, err := json.Marshal(req)
+			if err != nil {
+				return fmt.Errorf("req marshal error: %v", err)
+			}
+			body = data
+		}
+	}
+	apiRequest := &pb.GatewayApiRequest{
+		RequestId: requestId,
+		Path:      path,
+		Body:      body,
+	}
+	var data []byte
+	var err error
+	if *c.Config.Encoding == pb.EncodingProto_JSON {
+		data, err = json.Marshal(apiRequest)
+		if err != nil {
+			return fmt.Errorf("apiRequest marshal error: %v", err)
+		}
+	} else {
+		data, err = proto.Marshal(apiRequest)
+		if err != nil {
+			return fmt.Errorf("apiRequest marshal error: %v", err)
+		}
+	}
+	ch := c.waitResponse(requestId)
+	err = c.wsClient.Write(context.Background(), websocket.MessageBinary, data)
+	if err != nil {
+		return fmt.Errorf("write error: %v", err)
+	}
+	select {
+	case <-time.After(c.Config.RequestTimeout):
+		return ErrRequestTimeout
+	case response := <-ch:
+		if response.GetHeader().GetCode() != pb.ResponseCode_SUCCESS {
+			return fmt.Errorf("response error: %v", response.GetHeader().GetCode())
+		}
+		if resp != nil {
+			getBody := response.GetBody()
+			if len(getBody) == 0 {
+				return nil
+			}
+			if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
+				message, ok := resp.(proto.Message)
+				if !ok {
+					return fmt.Errorf("invalid response type, resp must implement proto.Message")
+				}
+				err = proto.Unmarshal(getBody, message)
+				if err != nil {
+					return fmt.Errorf("resp unmarshal error: %v", err)
+				}
+			} else {
+				err = json.Unmarshal(getBody, resp)
+				if err != nil {
+					return fmt.Errorf("resp unmarshal error: %v", err)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func (c *WsClient) waitResponse(requestId string) chan *pb.GatewayApiResponse {
+	ch := make(chan *pb.GatewayApiResponse)
+	c.responseMap.Store(requestId, ch)
+	return ch
 }
 
 func (c *HttpClient) getUserId() string {

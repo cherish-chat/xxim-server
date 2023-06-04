@@ -1,15 +1,13 @@
 package config
 
-import "github.com/zeromicro/go-zero/zrpc"
+import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/zrpc"
+)
 
 type Config struct {
 	zrpc.RpcServerConf
 	Http struct {
-		Encrypt struct {
-			Enable bool   `json:",optional"`
-			AesKey string `json:",optional"`
-			AesIv  string `json:",optional"`
-		} `json:",optional"`
 		Cors struct {
 			Enable           bool     `json:",optional"`
 			AllowOrigins     []string `json:",optional"`
@@ -24,4 +22,8 @@ type Config struct {
 		Host string `json:",default=0.0.0.0"`
 		Port int    `json:",default=34500"`
 	}
+	RpcClientConf struct {
+		Dispatch zrpc.RpcClientConf
+	}
+	RedisConf redis.RedisConf
 }

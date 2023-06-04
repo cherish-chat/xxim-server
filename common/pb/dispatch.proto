@@ -11,7 +11,24 @@ message DispatchOnlineCallbackResp {
   ResponseHeader header = 1;
 }
 
+//BeforeConnect 服务端连接前的回调
+message BeforeConnectReq {
+  RequestHeader header = 1;
+}
+
+message BeforeConnectResp {
+  ResponseHeader header = 1;
+  // 是否允许建立连接
+  bool success = 2;
+  // 如果不允许建立连接，返回的错误码
+  WebsocketCustomCloseCode closeCode = 3;
+  // 如果不允许建立连接，返回的错误信息
+  string closeReason = 4;
+}
+
 service dispatchService {
   //DispatchOnlineCallback 上线回调
   rpc DispatchOnlineCallback(DispatchOnlineCallbackReq) returns (DispatchOnlineCallbackResp) {}
+  //BeforeConnect 服务端连接前的回调
+  rpc BeforeConnect(BeforeConnectReq) returns (BeforeConnectResp) {}
 }

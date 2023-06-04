@@ -1,5 +1,6 @@
 package middleware
 
+/*
 import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -58,3 +59,4 @@ func (w *responseWriter) Write(b []byte) (int, error) {
 	encrypt := utils.Aes.Encrypt(w.aesKey, w.aesIv, b)
 	return w.ResponseWriter.Write(encrypt)
 }
+*/

@@ -6,13 +6,17 @@ import "common.proto";
 //GatewayApiRequest http/私有协议 请求
 message GatewayApiRequest {
   RequestHeader header = 1;
-  bytes body = 2;
+  string requestId = 2;
+  string path = 3;
+  bytes body = 4;
 }
 
 //GatewayApiResponse http/私有协议 响应
 message GatewayApiResponse {
   ResponseHeader header = 1;
-  bytes body = 2;
+  string requestId = 2;
+  string path = 3;
+  bytes body = 4;
 }
 
 //GatewayGetUserConnectionReq 获取用户的连接 可以用userId、platforms、installIds过滤

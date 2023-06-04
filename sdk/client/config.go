@@ -2,36 +2,33 @@ package client
 
 import (
 	"errors"
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/sdk/store"
-	"github.com/cherish-chat/xxim-server/sdk/types"
 	"runtime"
 	"strconv"
+	"time"
 )
 
 type Config struct {
 	// Endpoints are the endpoints of the servers.
 	Endpoints []string
-	// EnableEncrypted indicates whether to enable encrypted communication.
-	EnableEncrypted bool
-	// AesKey is the key for AES encryption. Only valid when EnableEncrypted is true.
-	AesKey string
-	// AesIv is the iv for AES encryption. Only valid when EnableEncrypted is true.
-	AesIv string
-	// ContentType is the content type of the request. Please select one of the following: protobuf, json; default is protobuf.
-	ContentType string
+	// Encoding is the content type of the request. Please select one of the following: protobuf, json; default is protobuf.
+	Encoding *pb.EncodingProto
 	// AppId is the id of the application. if you don't have one, please ignore it. See https://console.imcloudx.com/#/app for details.
 	AppId string
 	// InstallId is the id of the installation. If not filled in, it will be written locally.
 	InstallId string
 	// Platform is the platform of the installation. optional: 0(ios), 1(android), 2(web), 3(windows), 4(mac), 5(linux), 6(ipad), 7(androidPad). If not filled in, the native platform value will be used.
-	Platform *types.Platform
+	Platform *pb.Platform
 	// DeviceModel is the model of the device. If not filled in, the native device model value will be used.
 	DeviceModel string
 	// OsVersion is the version of the operating system. If not filled in, the native operating system version value will be used.
 	OsVersion string
 	// Language is the language of the device. Default is zh-CN.
-	Language *types.I18NLanguage
+	Language *pb.I18NLanguage
+	// RequestTimeout is the timeout of the request. Default is 10s.
+	RequestTimeout time.Duration
 	// Account is the account of the user. Required.
 	Account AccountConfig
 }
@@ -62,8 +59,9 @@ func (c *Config) Validate() error {
 	if len(c.Endpoints) == 0 {
 		return ErrNoEndpoint
 	}
-	if c.ContentType != "json" {
-		c.ContentType = "protobuf"
+	if c.Encoding == nil {
+		encoding := pb.EncodingProto(1)
+		c.Encoding = &encoding
 	}
 	if c.InstallId == "" {
 		//读取本地配置
@@ -79,16 +77,16 @@ func (c *Config) Validate() error {
 		goos := runtime.GOOS
 		switch goos {
 		case "darwin":
-			platform := types.Platform(4)
+			platform := pb.Platform(4)
 			c.Platform = &platform
 		case "linux":
-			platform := types.Platform(5)
+			platform := pb.Platform(5)
 			c.Platform = &platform
 		case "windows":
-			platform := types.Platform(3)
+			platform := pb.Platform(3)
 			c.Platform = &platform
 		default:
-			platform := types.Platform(2)
+			platform := pb.Platform(2)
 			c.Platform = &platform
 		}
 	}
@@ -105,7 +103,7 @@ func (c *Config) Validate() error {
 	}
 	if c.Language == nil {
 		// 读取本机语言
-		language := types.I18NLanguage_Chinese_Simplified
+		language := pb.I18NLanguage_Chinese_Simplified
 		c.Language = &language
 	}
 	switch c.Account.AuthType {
@@ -121,6 +119,9 @@ func (c *Config) Validate() error {
 		}
 	default:
 		return errors.New("unsupported auth type")
+	}
+	if c.RequestTimeout == 0 {
+		c.RequestTimeout = 10 * time.Second
 	}
 	return nil
 }

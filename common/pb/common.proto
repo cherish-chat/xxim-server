@@ -102,22 +102,19 @@ enum EncodingProto {
 
 //RequestHeader 请求头
 message RequestHeader {
-  string requestId = 1; // 请求id
-  string appId = 2; // 应用id
-  string userId = 3; // 用户id
-  string userToken = 4; // token
-  string clientIp = 5; // 客户端ip
-  string installId = 6; // 安装后向服务器注册的UUID
-  Platform platform = 7; // 平台
-  string gatewayPodIp = 8; // 网关pod的ip
-  string deviceModel = 9; // 设备型号
-  string osVersion = 10; // 操作系统版本
-  string appVersion = 11; // app版本
-  I18nLanguage language = 12; // 语言
-  int64 connectTime = 13; // 连接时间 13位时间戳
-  string aesKey = 21; // 32位 aes加密的key
-  string aesIv = 22; // 16位 aes加密的iv
-  EncodingProto encoding = 23; // 编码
+  string appId = 1; // 应用id
+  string userId = 2; // 用户id
+  string userToken = 3; // token
+  string clientIp = 4; // 客户端ip
+  string installId = 5; // 安装后向服务器注册的UUID
+  Platform platform = 6; // 平台
+  string gatewayPodIp = 7; // 网关pod的ip
+  string deviceModel = 8; // 设备型号
+  string osVersion = 9; // 操作系统版本
+  string appVersion = 10; // app版本
+  I18nLanguage language = 11; // 语言
+  int64 connectTime = 12; // 连接时间 13位时间戳
+  EncodingProto encoding = 13; // 编码
 }
 
 //ResponseCode
@@ -168,4 +165,15 @@ message ResponseHeader {
   ResponseCode code = 1; // 错误码
   ResponseActionType actionType = 2; // 动作类型
   string actionData = 3; // 动作数据 json字符串
+}
+
+//WebsocketCustomCloseCode websocket关闭码
+//You can define custom codes in the 3000-4999 range.
+//The 3000-3999 range is reserved for use by libraries, frameworks and applications.
+//The 4000-4999 range is reserved for private use.
+enum WebsocketCustomCloseCode {
+  CloseCodeZero = 0; // pb必须有一个默认值
+  CloseCodeAuthenticationFailed = 4001; // 认证失败
+  CloseCodeDuplicateConnection = 4002; // 重复连接
+  CloseCodeServerInternalError = 4003; // 服务器内部错误
 }

@@ -27,3 +27,9 @@ func (s *DispatchServiceServer) DispatchOnlineCallback(ctx context.Context, in *
 	l := logic.NewDispatchOnlineCallbackLogic(ctx, s.svcCtx)
 	return l.DispatchOnlineCallback(in)
 }
+
+// BeforeConnect 服务端连接前的回调
+func (s *DispatchServiceServer) BeforeConnect(ctx context.Context, in *pb.BeforeConnectReq) (*pb.BeforeConnectResp, error) {
+	l := logic.NewBeforeConnectLogic(ctx, s.svcCtx)
+	return l.BeforeConnect(in)
+}

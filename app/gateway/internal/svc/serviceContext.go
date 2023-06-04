@@ -1,20 +1,32 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/dispatch/dispatchservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
+	"github.com/cherish-chat/xxim-server/common/xcache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"strings"
+	"time"
 )
 
 type ServiceContext struct {
-	Config         config.Config
-	gatewayService gatewayservice.GatewayService
+	Config          config.Config
+	gatewayService  gatewayservice.GatewayService
+	DispatchService dispatchservice.DispatchService
+	Redis           *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
+		DispatchService: dispatchservice.NewDispatchService(zrpc.MustNewClient(
+			c.RpcClientConf.Dispatch,
+			zrpc.WithNonBlock(),
+			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+		)),
+		Redis: xcache.MustNewRedis(c.RedisConf),
 	}
 	return s
 }

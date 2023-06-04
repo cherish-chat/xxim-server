@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"io"
 	"net/http"
 	"strings"
 )
@@ -22,4 +23,10 @@ func (x *xHttp) GetClientIP(r *http.Request) string {
 		}
 	}
 	return strings.Split(ip, ",")[0]
+}
+
+func (x *xHttp) GetResponseBody(response *http.Response) []byte {
+	defer response.Body.Close()
+	body, _ := io.ReadAll(response.Body)
+	return body
 }

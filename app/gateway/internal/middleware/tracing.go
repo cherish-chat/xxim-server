@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
+	"github.com/cherish-chat/xxim-server/common"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagation"
@@ -52,10 +53,9 @@ func TraceHandler(serviceName, path string) func(http.Handler) http.Handler {
 */
 
 const serviceName = "gateway"
-const TraceName = "xxim"
 
 func Tracing(svcCtx *svc.ServiceContext) gin.HandlerFunc {
-	tracer := otel.Tracer(TraceName)
+	tracer := otel.Tracer(common.TraceName)
 	propagator := otel.GetTextMapPropagator()
 	return func(c *gin.Context) {
 		spanName := c.Request.URL.Path
