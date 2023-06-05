@@ -19,18 +19,35 @@ message GatewayApiResponse {
   bytes body = 4;
 }
 
-//GatewayGetUserConnectionReq 获取用户的连接 可以用userId、platforms、installIds过滤
+//WsConnection ws连接
+message WsConnection {
+  int64 id = 1;
+  RequestHeader header = 2;
+}
+
+//GatewayGetUserConnectionReq 获取用户的连接
 message GatewayGetUserConnectionReq {
   RequestHeader header = 1;
-  repeated string userIds = 2;
-  repeated string platforms = 3;
-  repeated string installIds = 4;
+  string userId = 2;
 }
 
 message GatewayGetUserConnectionResp {
   ResponseHeader header = 1;
+  repeated WsConnection connections = 2;
+}
+
+//GatewayBatchGetUserConnectionReq 批量获取用户的连接
+message GatewayBatchGetUserConnectionReq {
+  RequestHeader header = 1;
+  repeated string userIds = 2;
+}
+
+message GatewayBatchGetUserConnectionResp {
+  ResponseHeader header = 1;
+  repeated WsConnection connections = 2;
 }
 
 service gatewayService {
   rpc GatewayGetUserConnection(GatewayGetUserConnectionReq) returns (GatewayGetUserConnectionResp);
+  rpc GatewayBatchGetUserConnection(GatewayBatchGetUserConnectionReq) returns (GatewayBatchGetUserConnectionResp);
 }

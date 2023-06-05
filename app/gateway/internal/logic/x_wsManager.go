@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	clientv3 "go.etcd.io/etcd/client/v3"
 	"nhooyr.io/websocket"
 	"sync"
 )
@@ -25,7 +24,13 @@ type WsConnection struct {
 	Connection *websocket.Conn
 	Header     *pb.RequestHeader
 	Ctx        context.Context
-	leaseId    clientv3.LeaseID
+}
+
+func (c *WsConnection) ToPb() *pb.WsConnection {
+	return &pb.WsConnection{
+		Id:     c.Id,
+		Header: c.Header,
+	}
 }
 
 type WsConnectionRWMutexMap struct {
@@ -47,6 +52,19 @@ func (w *WsConnectionRWMutexMap) GetByUserId(userId string) ([]*WsConnection, bo
 	defer w.userIdsMapLock.RUnlock()
 	v, ok := w.userIdsMap[userId]
 	return v, ok
+}
+
+func (w *WsConnectionRWMutexMap) GetByUserIds(userIds []string) []*WsConnection {
+	w.userIdsMapLock.RLock()
+	defer w.userIdsMapLock.RUnlock()
+	var connections []*WsConnection
+	for _, userId := range userIds {
+		v, ok := w.userIdsMap[userId]
+		if ok {
+			connections = append(connections, v...)
+		}
+	}
+	return connections
 }
 
 func (w *WsConnectionRWMutexMap) Set(connectionId int64, value *WsConnection) {

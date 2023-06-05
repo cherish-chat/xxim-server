@@ -47,13 +47,11 @@ func getWsClient(t *testing.T, config *Config) IClient {
 }
 
 func TestHttpClient_GatewayGetUserConnection(t *testing.T) {
-	client := getHttpClient(t, nil)
-	//client := getWsClient(t, nil)
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
 	gatewayGetUserConnectionResp, err := client.GatewayGetUserConnection(&pb.GatewayGetUserConnectionReq{
-		Header:     &pb.RequestHeader{},
-		UserIds:    nil,
-		Platforms:  nil,
-		InstallIds: nil,
+		Header: &pb.RequestHeader{},
+		UserId: "",
 	})
 	if err != nil {
 		t.Fatalf(err.Error())

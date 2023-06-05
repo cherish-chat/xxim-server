@@ -26,3 +26,8 @@ func (s *GatewayServiceServer) GatewayGetUserConnection(ctx context.Context, in 
 	l := logic.NewGatewayGetUserConnectionLogic(ctx, s.svcCtx)
 	return l.GatewayGetUserConnection(in)
 }
+
+func (s *GatewayServiceServer) GatewayBatchGetUserConnection(ctx context.Context, in *pb.GatewayBatchGetUserConnectionReq) (*pb.GatewayBatchGetUserConnectionResp, error) {
+	l := logic.NewGatewayBatchGetUserConnectionLogic(ctx, s.svcCtx)
+	return l.GatewayBatchGetUserConnection(in)
+}

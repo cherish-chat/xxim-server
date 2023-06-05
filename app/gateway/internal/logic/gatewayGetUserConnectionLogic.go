@@ -24,7 +24,13 @@ func NewGatewayGetUserConnectionLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *GatewayGetUserConnectionLogic) GatewayGetUserConnection(in *pb.GatewayGetUserConnectionReq) (*pb.GatewayGetUserConnectionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GatewayGetUserConnectionResp{}, nil
+	wsConnections, ok := WsManager.wsConnectionMap.GetByUserId(in.UserId)
+	if !ok {
+		return &pb.GatewayGetUserConnectionResp{}, nil
+	}
+	var resp = &pb.GatewayGetUserConnectionResp{}
+	for _, wsConnection := range wsConnections {
+		resp.Connections = append(resp.Connections, wsConnection.ToPb())
+	}
+	return resp, nil
 }
