@@ -50,6 +50,7 @@ func (l *UpdateAppMgmtRichArticleLogic) UpdateAppMgmtRichArticle(in *pb.UpdateAp
 	updateMap := map[string]interface{}{}
 	{
 		updateMap["title"] = in.AppMgmtRichArticle.Title
+		updateMap["coverUrl"] = in.AppMgmtRichArticle.CoverUrl
 		updateMap["content"] = in.AppMgmtRichArticle.Content
 		updateMap["contentType"] = in.AppMgmtRichArticle.ContentType
 		updateMap["sort"] = in.AppMgmtRichArticle.Sort
