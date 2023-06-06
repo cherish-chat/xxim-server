@@ -42,6 +42,7 @@ func (l *AddAppMgmtRichArticleLogic) AddAppMgmtRichArticle(in *pb.AddAppMgmtRich
 	}
 	model := &appmgmtmodel.RichArticle{
 		Id:          appmgmtmodel.GetId(l.svcCtx.Mysql(), &appmgmtmodel.RichArticle{}, 10000),
+		CoverUrl:    in.AppMgmtRichArticle.CoverUrl,
 		Title:       in.AppMgmtRichArticle.Title,
 		Content:     in.AppMgmtRichArticle.Content,
 		ContentType: in.AppMgmtRichArticle.ContentType,

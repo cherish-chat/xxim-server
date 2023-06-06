@@ -38,6 +38,8 @@ type RichArticle struct {
 	Id string `gorm:"column:id;type:char(32);primary_key;not null" json:"id"`
 	// 文章标题
 	Title string `gorm:"column:title;type:varchar(255);not null;index;" json:"title"`
+	// 封面图url
+	CoverUrl string `gorm:"column:coverUrl;type:varchar(255);not null;" json:"coverUrl"`
 	// 富文本内容
 	Content string `gorm:"column:content;type:longtext;not null;" json:"content"`
 	// 内容类型
@@ -67,6 +69,7 @@ func (a *RichArticle) ToPB() *pb.AppMgmtRichArticle {
 	return &pb.AppMgmtRichArticle{
 		Id:           a.Id,
 		Title:        a.Title,
+		CoverUrl:     a.CoverUrl,
 		Content:      a.Content,
 		ContentType:  a.ContentType,
 		Url:          a.Url,

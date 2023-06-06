@@ -659,6 +659,8 @@ message AppMgmtRichArticle {
   string updatedAtStr = 10;
   // 排序
   int32 sort = 11;
+  // 封面图url
+  string coverUrl = 12;
 }
 
 //GetAllAppMgmtRichArticleReq 获取所有富文本文章
