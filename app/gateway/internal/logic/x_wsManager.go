@@ -119,3 +119,15 @@ func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64) error {
 	w.wsConnectionMap.Delete(header.UserId, id)
 	return nil
 }
+
+func (w *wsManager) WriteData(id int64, data []byte) bool {
+	wsConnection, ok := w.wsConnectionMap.GetByConnectionId(id)
+	if !ok {
+		return false
+	}
+	err := wsConnection.Connection.Write(wsConnection.Ctx, websocket.MessageText, data)
+	if err != nil {
+		return false
+	}
+	return true
+}

@@ -106,11 +106,33 @@ func AddWsRoute(path string, handlerFunc func(ctx context.Context, connection *l
 func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	// gateway api
 	{
+		// GatewayGetUserConnectionReq GatewayGetUserConnectionResp
 		AddUnifiedRoute("/v1/gateway/getUserConnection", Route[*pb.GatewayGetUserConnectionReq, *pb.GatewayGetUserConnectionResp]{
 			NewRequest: func() *pb.GatewayGetUserConnectionReq {
 				return &pb.GatewayGetUserConnectionReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayGetUserConnection,
+		})
+		// GatewayBatchGetUserConnectionReq GatewayBatchGetUserConnectionResp
+		AddUnifiedRoute("/v1/gateway/batchGetUserConnection", Route[*pb.GatewayBatchGetUserConnectionReq, *pb.GatewayBatchGetUserConnectionResp]{
+			NewRequest: func() *pb.GatewayBatchGetUserConnectionReq {
+				return &pb.GatewayBatchGetUserConnectionReq{}
+			},
+			Do: svcCtx.GatewayService().GatewayBatchGetUserConnection,
+		})
+		// GatewayGetConnectionByFilterReq GatewayGetConnectionByFilterResp
+		AddUnifiedRoute("/v1/gateway/getConnectionByFilter", Route[*pb.GatewayGetConnectionByFilterReq, *pb.GatewayGetConnectionByFilterResp]{
+			NewRequest: func() *pb.GatewayGetConnectionByFilterReq {
+				return &pb.GatewayGetConnectionByFilterReq{}
+			},
+			Do: svcCtx.GatewayService().GatewayGetConnectionByFilter,
+		})
+		// GatewayWriteDataToWsReq GatewayWriteDataToWsResp
+		AddUnifiedRoute("/v1/gateway/writeDataToWs", Route[*pb.GatewayWriteDataToWsReq, *pb.GatewayWriteDataToWsResp]{
+			NewRequest: func() *pb.GatewayWriteDataToWsReq {
+				return &pb.GatewayWriteDataToWsReq{}
+			},
+			Do: svcCtx.GatewayService().GatewayWriteDataToWs,
 		})
 	}
 	// http

@@ -23,6 +23,9 @@ import (
 type IClient interface {
 	Request(path string, req any, resp any) error
 	GatewayGetUserConnection(req *pb.GatewayGetUserConnectionReq) (resp *pb.GatewayGetUserConnectionResp, err error)
+	GatewayBatchGetUserConnection(req *pb.GatewayBatchGetUserConnectionReq) (resp *pb.GatewayBatchGetUserConnectionResp, err error)
+	GatewayGetConnectionByFilter(req *pb.GatewayGetConnectionByFilterReq) (resp *pb.GatewayGetConnectionByFilterResp, err error)
+	GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *pb.GatewayWriteDataToWsResp, err error)
 }
 
 type HttpClient struct {
@@ -104,7 +107,7 @@ func (c *WsClient) loopRead() {
 		}
 		ch, ok := c.responseMap.Load(resp.RequestId)
 		if !ok {
-			logx.Errorf("response not found, request id: %s", resp.RequestId)
+			logx.Infof("response not found, data: %s", string(message))
 			continue
 		}
 		ch.(chan *pb.GatewayApiResponse) <- &resp
@@ -156,6 +159,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					Language:     *c.Config.Language,
 					ConnectTime:  0,
 					Encoding:     pb.EncodingProto_PROTOBUF,
+					Extra:        c.Config.CustomHeader,
 				},
 				Body: data,
 			})
@@ -179,6 +183,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					Language:     *c.Config.Language,
 					ConnectTime:  0,
 					Encoding:     pb.EncodingProto_JSON,
+					Extra:        c.Config.CustomHeader,
 				},
 				Body: data,
 			})

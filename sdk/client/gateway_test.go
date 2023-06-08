@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"testing"
+	"time"
 )
 
 var defaultConfig = &Config{
@@ -46,9 +47,11 @@ func getWsClient(t *testing.T, config *Config) IClient {
 	return client
 }
 
+// GatewayGetUserConnection 获取用户连接
 func TestHttpClient_GatewayGetUserConnection(t *testing.T) {
 	//client := getHttpClient(t, nil)
 	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
 	gatewayGetUserConnectionResp, err := client.GatewayGetUserConnection(&pb.GatewayGetUserConnectionReq{
 		Header: &pb.RequestHeader{},
 		UserId: "",
@@ -57,4 +60,71 @@ func TestHttpClient_GatewayGetUserConnection(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(gatewayGetUserConnectionResp))
+}
+
+// GatewayBatchGetUserConnection 批量获取用户连接
+func TestHttpClient_GatewayBatchGetUserConnection(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	gatewayBatchGetUserConnectionResp, err := client.GatewayBatchGetUserConnection(&pb.GatewayBatchGetUserConnectionReq{
+		Header: &pb.RequestHeader{},
+		UserIds: []string{
+			"",
+		},
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(gatewayBatchGetUserConnectionResp))
+}
+
+// GatewayGetConnectionByFilter 根据条件获取用户连接
+func TestHttpClient_GatewayGetConnectionByFilter(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	gatewayGetConnectionByFilterResp, err := client.GatewayGetConnectionByFilter(&pb.GatewayGetConnectionByFilterReq{
+		Header: &pb.RequestHeader{},
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: []string{
+				"",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(gatewayGetConnectionByFilterResp))
+}
+
+// GatewayWriteDataToWs 向用户连接写入数据
+func TestHttpClient_GatewayWriteDataToWs(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	gatewayWriteDataToWsResp, err := client.GatewayWriteDataToWs(&pb.GatewayWriteDataToWsReq{
+		Header: &pb.RequestHeader{},
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: []string{
+				"",
+			},
+		},
+		Data: utils.Json.MarshalToBytes(&pb.GatewayApiResponse{
+			Header: &pb.ResponseHeader{
+				Code:       pb.ResponseCode_SUCCESS,
+				ActionType: 0,
+				ActionData: "",
+				Extra:      "sdfghjklkjhgfds",
+			},
+			RequestId: "1234567890987654321",
+			Path:      "aaa/aaaa/aaaaa",
+			Body:      []byte("1234567890"),
+		}),
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(gatewayWriteDataToWsResp))
+	time.Sleep(1 * time.Second)
 }

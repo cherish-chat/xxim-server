@@ -115,6 +115,7 @@ message RequestHeader {
   I18nLanguage language = 11; // 语言
   int64 connectTime = 12; // 连接时间 13位时间戳
   EncodingProto encoding = 13; // 编码
+  string extra = 14; // 额外信息
 }
 
 //ResponseCode
@@ -165,6 +166,7 @@ message ResponseHeader {
   ResponseCode code = 1; // 错误码
   ResponseActionType actionType = 2; // 动作类型
   string actionData = 3; // 动作数据 json字符串
+  string extra = 4; // 额外信息
 }
 
 //WebsocketCustomCloseCode websocket关闭码

@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type GatewayServiceClient interface {
 	GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
 	GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error)
+	GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
+	GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
 }
 
 type gatewayServiceClient struct {
@@ -52,12 +54,32 @@ func (c *gatewayServiceClient) GatewayBatchGetUserConnection(ctx context.Context
 	return out, nil
 }
 
+func (c *gatewayServiceClient) GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error) {
+	out := new(GatewayGetConnectionByFilterResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/GatewayGetConnectionByFilter", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayServiceClient) GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
+	out := new(GatewayWriteDataToWsResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/GatewayWriteDataToWs", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GatewayServiceServer is the server API for GatewayService service.
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility
 type GatewayServiceServer interface {
 	GatewayGetUserConnection(context.Context, *GatewayGetUserConnectionReq) (*GatewayGetUserConnectionResp, error)
 	GatewayBatchGetUserConnection(context.Context, *GatewayBatchGetUserConnectionReq) (*GatewayBatchGetUserConnectionResp, error)
+	GatewayGetConnectionByFilter(context.Context, *GatewayGetConnectionByFilterReq) (*GatewayGetConnectionByFilterResp, error)
+	GatewayWriteDataToWs(context.Context, *GatewayWriteDataToWsReq) (*GatewayWriteDataToWsResp, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }
 
@@ -70,6 +92,12 @@ func (UnimplementedGatewayServiceServer) GatewayGetUserConnection(context.Contex
 }
 func (UnimplementedGatewayServiceServer) GatewayBatchGetUserConnection(context.Context, *GatewayBatchGetUserConnectionReq) (*GatewayBatchGetUserConnectionResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GatewayBatchGetUserConnection not implemented")
+}
+func (UnimplementedGatewayServiceServer) GatewayGetConnectionByFilter(context.Context, *GatewayGetConnectionByFilterReq) (*GatewayGetConnectionByFilterResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GatewayGetConnectionByFilter not implemented")
+}
+func (UnimplementedGatewayServiceServer) GatewayWriteDataToWs(context.Context, *GatewayWriteDataToWsReq) (*GatewayWriteDataToWsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GatewayWriteDataToWs not implemented")
 }
 func (UnimplementedGatewayServiceServer) mustEmbedUnimplementedGatewayServiceServer() {}
 
@@ -120,6 +148,42 @@ func _GatewayService_GatewayBatchGetUserConnection_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GatewayService_GatewayGetConnectionByFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayGetConnectionByFilterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).GatewayGetConnectionByFilter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.gatewayService/GatewayGetConnectionByFilter",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).GatewayGetConnectionByFilter(ctx, req.(*GatewayGetConnectionByFilterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GatewayService_GatewayWriteDataToWs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayWriteDataToWsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).GatewayWriteDataToWs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.gatewayService/GatewayWriteDataToWs",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).GatewayWriteDataToWs(ctx, req.(*GatewayWriteDataToWsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GatewayService_ServiceDesc is the grpc.ServiceDesc for GatewayService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GatewayBatchGetUserConnection",
 			Handler:    _GatewayService_GatewayBatchGetUserConnection_Handler,
+		},
+		{
+			MethodName: "GatewayGetConnectionByFilter",
+			Handler:    _GatewayService_GatewayGetConnectionByFilter_Handler,
+		},
+		{
+			MethodName: "GatewayWriteDataToWs",
+			Handler:    _GatewayService_GatewayWriteDataToWs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

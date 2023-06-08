@@ -31,6 +31,8 @@ type Config struct {
 	RequestTimeout time.Duration
 	// Account is the account of the user. Required.
 	Account AccountConfig
+	// CustomHeader is the custom header of the request.
+	CustomHeader string
 }
 type AuthType int
 

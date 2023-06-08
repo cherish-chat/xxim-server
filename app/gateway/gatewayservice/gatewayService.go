@@ -17,13 +17,20 @@ type (
 	GatewayApiResponse                = pb.GatewayApiResponse
 	GatewayBatchGetUserConnectionReq  = pb.GatewayBatchGetUserConnectionReq
 	GatewayBatchGetUserConnectionResp = pb.GatewayBatchGetUserConnectionResp
+	GatewayGetConnectionByFilterReq   = pb.GatewayGetConnectionByFilterReq
+	GatewayGetConnectionByFilterResp  = pb.GatewayGetConnectionByFilterResp
+	GatewayGetConnectionFilter        = pb.GatewayGetConnectionFilter
 	GatewayGetUserConnectionReq       = pb.GatewayGetUserConnectionReq
 	GatewayGetUserConnectionResp      = pb.GatewayGetUserConnectionResp
+	GatewayWriteDataToWsReq           = pb.GatewayWriteDataToWsReq
+	GatewayWriteDataToWsResp          = pb.GatewayWriteDataToWsResp
 	WsConnection                      = pb.WsConnection
 
 	GatewayService interface {
 		GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
 		GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error)
+		GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
+		GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
 	}
 
 	defaultGatewayService struct {
@@ -45,4 +52,14 @@ func (m *defaultGatewayService) GatewayGetUserConnection(ctx context.Context, in
 func (m *defaultGatewayService) GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayBatchGetUserConnection(ctx, in, opts...)
+}
+
+func (m *defaultGatewayService) GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.GatewayGetConnectionByFilter(ctx, in, opts...)
+}
+
+func (m *defaultGatewayService) GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.GatewayWriteDataToWs(ctx, in, opts...)
 }

@@ -59,6 +59,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 		Language:     pb.LanguageFromString(r.URL.Query().Get("language")),
 		ConnectTime:  utils.Time.Now13(),
 		Encoding:     pb.EncodingFromString(r.URL.Query().Get("encoding")),
+		Extra:        r.URL.Query().Get("extra"),
 	}
 	compressionMode := websocket.CompressionNoContextTakeover
 	// https://github.com/nhooyr/websocket/issues/218
@@ -155,6 +156,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 					"language":     header.Language.String(),
 					"connectTime":  utils.Time.Int64ToString(header.ConnectTime),
 					"encoding":     header.Encoding.ContentType(),
+					"extra":        header.Extra,
 				})
 				spanCtx, span := tracer.Start(
 					ctx,

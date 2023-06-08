@@ -31,3 +31,13 @@ func (s *GatewayServiceServer) GatewayBatchGetUserConnection(ctx context.Context
 	l := logic.NewGatewayBatchGetUserConnectionLogic(ctx, s.svcCtx)
 	return l.GatewayBatchGetUserConnection(in)
 }
+
+func (s *GatewayServiceServer) GatewayGetConnectionByFilter(ctx context.Context, in *pb.GatewayGetConnectionByFilterReq) (*pb.GatewayGetConnectionByFilterResp, error) {
+	l := logic.NewGatewayGetConnectionByFilterLogic(ctx, s.svcCtx)
+	return l.GatewayGetConnectionByFilter(in)
+}
+
+func (s *GatewayServiceServer) GatewayWriteDataToWs(ctx context.Context, in *pb.GatewayWriteDataToWsReq) (*pb.GatewayWriteDataToWsResp, error) {
+	l := logic.NewGatewayWriteDataToWsLogic(ctx, s.svcCtx)
+	return l.GatewayWriteDataToWs(in)
+}
