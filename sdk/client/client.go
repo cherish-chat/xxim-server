@@ -93,8 +93,7 @@ func (c *WsClient) loopRead() {
 	for {
 		_, message, err := c.wsClient.Read(context.Background())
 		if err != nil {
-			err = errors.Unwrap(err)
-			err = errors.Unwrap(err)
+			err = utils.Error.DeepUnwrap(err)
 			closeError, ok := err.(websocket.CloseError)
 			if ok {
 				logx.Errorf("read message error: %v, code: %d, reason: %s", err, closeError.Code, closeError.Reason)
