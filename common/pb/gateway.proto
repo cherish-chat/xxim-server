@@ -74,9 +74,23 @@ message GatewayWriteDataToWsResp {
   repeated WsConnection successConnections = 2;
 }
 
+//GatewayKickWsReq 踢出ws连接
+message GatewayKickWsReq {
+  RequestHeader header = 1;
+  GatewayGetConnectionFilter filter = 2;
+  WebsocketCustomCloseCode closeCode = 3;
+  string closeReason = 4;
+}
+
+message GatewayKickWsResp {
+  ResponseHeader header = 1;
+  repeated WsConnection successConnections = 2;
+}
+
 service gatewayService {
   rpc GatewayGetUserConnection(GatewayGetUserConnectionReq) returns (GatewayGetUserConnectionResp);
   rpc GatewayBatchGetUserConnection(GatewayBatchGetUserConnectionReq) returns (GatewayBatchGetUserConnectionResp);
   rpc GatewayGetConnectionByFilter(GatewayGetConnectionByFilterReq) returns (GatewayGetConnectionByFilterResp);
   rpc GatewayWriteDataToWs(GatewayWriteDataToWsReq) returns (GatewayWriteDataToWsResp);
+  rpc GatewayKickWs(GatewayKickWsReq) returns (GatewayKickWsResp);
 }

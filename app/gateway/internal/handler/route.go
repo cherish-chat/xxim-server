@@ -134,6 +134,13 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			},
 			Do: svcCtx.GatewayService().GatewayWriteDataToWs,
 		})
+		// GatewayKickWsReq GatewayKickWsResp
+		AddUnifiedRoute("/v1/gateway/kickWs", Route[*pb.GatewayKickWsReq, *pb.GatewayKickWsResp]{
+			NewRequest: func() *pb.GatewayKickWsReq {
+				return &pb.GatewayKickWsReq{}
+			},
+			Do: svcCtx.GatewayService().GatewayKickWs,
+		})
 	}
 	// http
 	{

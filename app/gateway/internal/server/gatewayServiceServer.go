@@ -41,3 +41,8 @@ func (s *GatewayServiceServer) GatewayWriteDataToWs(ctx context.Context, in *pb.
 	l := logic.NewGatewayWriteDataToWsLogic(ctx, s.svcCtx)
 	return l.GatewayWriteDataToWs(in)
 }
+
+func (s *GatewayServiceServer) GatewayKickWs(ctx context.Context, in *pb.GatewayKickWsReq) (*pb.GatewayKickWsResp, error) {
+	l := logic.NewGatewayKickWsLogic(ctx, s.svcCtx)
+	return l.GatewayKickWs(in)
+}

@@ -31,6 +31,13 @@ func (l *GatewayGetConnectionByFilterLogic) GatewayGetConnectionByFilter(in *pb.
 			resp.Connections = append(resp.Connections, wsConnection.ToPb())
 		}
 		return resp, nil
+	} else {
+		// get all
+		wsConnections := WsManager.wsConnectionMap.GetAll()
+		var resp = &pb.GatewayGetConnectionByFilterResp{}
+		for _, wsConnection := range wsConnections {
+			resp.Connections = append(resp.Connections, wsConnection.ToPb())
+		}
+		return resp, nil
 	}
-	return &pb.GatewayGetConnectionByFilterResp{}, nil
 }

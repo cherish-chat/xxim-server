@@ -15,3 +15,7 @@ func (x *GatewayGetConnectionByFilterReq) SetHeader(header *RequestHeader) {
 func (x *GatewayWriteDataToWsReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *GatewayKickWsReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

@@ -128,3 +128,22 @@ func TestHttpClient_GatewayWriteDataToWs(t *testing.T) {
 	t.Logf("%s", utils.Json.MarshalToString(gatewayWriteDataToWsResp))
 	time.Sleep(1 * time.Second)
 }
+
+// GatewayKickWs 踢出用户连接
+func TestHttpClient_GatewayKickWs(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	gatewayKickWsResp, err := client.GatewayKickWs(&pb.GatewayKickWsReq{
+		Header: &pb.RequestHeader{},
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: []string{
+				"",
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(gatewayKickWsResp))
+}

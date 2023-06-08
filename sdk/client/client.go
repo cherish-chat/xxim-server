@@ -26,6 +26,7 @@ type IClient interface {
 	GatewayBatchGetUserConnection(req *pb.GatewayBatchGetUserConnectionReq) (resp *pb.GatewayBatchGetUserConnectionResp, err error)
 	GatewayGetConnectionByFilter(req *pb.GatewayGetConnectionByFilterReq) (resp *pb.GatewayGetConnectionByFilterResp, err error)
 	GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *pb.GatewayWriteDataToWsResp, err error)
+	GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error)
 }
 
 type HttpClient struct {
@@ -92,6 +93,15 @@ func (c *WsClient) loopRead() {
 	for {
 		_, message, err := c.wsClient.Read(context.Background())
 		if err != nil {
+			err = errors.Unwrap(err)
+			err = errors.Unwrap(err)
+			closeError, ok := err.(websocket.CloseError)
+			if ok {
+				logx.Errorf("read message error: %v, code: %d, reason: %s", err, closeError.Code, closeError.Reason)
+				time.Sleep(time.Second * 1)
+				os.Exit(1)
+				return
+			}
 			logx.Errorf("read message error: %v", err)
 			continue
 		}

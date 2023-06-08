@@ -67,6 +67,16 @@ func (w *WsConnectionRWMutexMap) GetByUserIds(userIds []string) []*WsConnection 
 	return connections
 }
 
+func (w *WsConnectionRWMutexMap) GetAll() []*WsConnection {
+	w.idConnectionMapLock.RLock()
+	defer w.idConnectionMapLock.RUnlock()
+	var connections []*WsConnection
+	for _, connection := range w.idConnectionMap {
+		connections = append(connections, connection)
+	}
+	return connections
+}
+
 func (w *WsConnectionRWMutexMap) Set(connectionId int64, value *WsConnection) {
 	w.idConnectionMapLock.Lock()
 	w.idConnectionMap[connectionId] = value
@@ -130,4 +140,12 @@ func (w *wsManager) WriteData(id int64, data []byte) bool {
 		return false
 	}
 	return true
+}
+
+func (w *wsManager) CloseConnection(id int64, code websocket.StatusCode, reason string) {
+	wsConnection, ok := w.wsConnectionMap.GetByConnectionId(id)
+	if !ok {
+		return
+	}
+	_ = wsConnection.Connection.Close(code, reason)
 }

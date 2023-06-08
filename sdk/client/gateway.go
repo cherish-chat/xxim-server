@@ -59,3 +59,17 @@ func (c *WsClient) GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *
 	err = c.Request("/v1/gateway/writeDataToWs", req, resp)
 	return
 }
+
+// GatewayKickWs 踢出ws
+func (c *HttpClient) GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error) {
+	resp = &pb.GatewayKickWsResp{}
+	err = c.Request("/v1/gateway/kickWs", req, resp)
+	return
+}
+
+// GatewayKickWs 踢出ws
+func (c *WsClient) GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error) {
+	resp = &pb.GatewayKickWsResp{}
+	err = c.Request("/v1/gateway/kickWs", req, resp)
+	return
+}
