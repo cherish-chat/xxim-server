@@ -142,9 +142,7 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			Do: svcCtx.GatewayService().GatewayKickWs,
 		})
 		// GatewayKeepAliveReq GatewayKeepAliveResp
-		AddWsRoute("/v1/gateway/keepAlive", func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
-			return logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive(connection)
-		})
+		AddWsRoute("/v1/gateway/keepAlive", KeepAliveHandler(svcCtx))
 	}
 	// http
 	{

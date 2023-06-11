@@ -86,6 +86,7 @@ func NewWsClient(config *Config) (*WsClient, error) {
 		httpClient: httpClient,
 	}
 	go w.loopRead()
+	go w.heartbeat()
 	return w, nil
 }
 
@@ -120,6 +121,22 @@ func (c *WsClient) loopRead() {
 			continue
 		}
 		ch.(chan *pb.GatewayApiResponse) <- &resp
+	}
+}
+
+func (c *WsClient) heartbeat() {
+	ticker := time.NewTicker(c.Config.KeepAliveSecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			go func() {
+				e := c.Request("/v1/gateway/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
+				if e != nil {
+					logx.Errorf("heartbeat error: %v", e)
+				}
+			}()
+		}
 	}
 }
 

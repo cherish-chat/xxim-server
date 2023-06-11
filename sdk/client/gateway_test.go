@@ -23,6 +23,7 @@ var defaultConfig = &Config{
 			Password: "xx",
 		},
 	},
+	KeepAliveSecond: 4,
 }
 
 func getHttpClient(t *testing.T, config *Config) IClient {
@@ -146,4 +147,12 @@ func TestHttpClient_GatewayKickWs(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(gatewayKickWsResp))
+}
+
+// GatewayKeepAlive 保持用户连接
+func TestHttpClient_GatewayKeepAlive(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(50 * time.Second)
+	_ = client
 }

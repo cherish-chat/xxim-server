@@ -73,3 +73,41 @@ services:
       - "yes"
       - "--requirepass"
       - "123456"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.enabled=false"
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.31 # 172.88.10.31:9200
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.2
+    container_name: kibana
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+      - "LANG=zh_CN.UTF-8"
+      - "TZ=Asia/Shanghai"
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.32 # http://172.88.10.32:5601
+
+  jaeger-allinone:
+    image: jaegertracing/all-in-one
+    container_name: jaeger-allinone
+    environment:
+      - "SPAN_STORAGE_TYPE=elasticsearch"
+      - "ES_SERVER_URLS=http://elasticsearch:9200"
+      - "COLLECTOR_ZIPKIN_HOST_PORT=:9411"
+      - "ES_TAGS_AS_FIELDS_ALL=true"
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.33 # http://172.88.10.33:16686 / http://172.88.10.33:14268
+    depends_on:
+      - elasticsearch

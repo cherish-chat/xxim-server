@@ -16,7 +16,6 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
-	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	oteltrace "go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/proto"
 	"io"
@@ -138,46 +137,8 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 				}
 				return
 			}
-			logger.Debugf("read message.length: %d", len(msg))
 			go func() {
-				tracer := otel.Tracer(common.TraceName)
-				propagator := otel.GetTextMapPropagator()
-				spanName := "/ws/read/data/from/connecting"
-				spanCtx := propagator.Extract(ctx, propagation.MapCarrier{
-					"appId":        header.AppId,
-					"userId":       header.UserId,
-					"clientIp":     header.ClientIp,
-					"installId":    header.InstallId,
-					"platform":     header.Platform.String(),
-					"gatewayPodIp": header.GatewayPodIp,
-					"deviceModel":  header.DeviceModel,
-					"osVersion":    header.OsVersion,
-					"appVersion":   header.AppVersion,
-					"language":     header.Language.String(),
-					"connectTime":  utils.Time.Int64ToString(header.ConnectTime),
-					"encoding":     header.Encoding.ContentType(),
-					"extra":        header.Extra,
-				})
-				spanCtx, span := tracer.Start(
-					ctx,
-					spanName,
-					oteltrace.WithSpanKind(oteltrace.SpanKindServer),
-					oteltrace.WithAttributes(semconv.HTTPServerAttributesFromHTTPRequest(
-						"gateway", spanName, r)...),
-				)
-				defer span.End()
-				propagator.Inject(spanCtx, propagation.HeaderCarrier(w.Header()))
-				var code pb.ResponseCode
-				code, err = h.onReceive(spanCtx, connection, typ, msg)
-				if err != nil {
-					span.SetStatus(codes.Error, err.Error())
-				} else if code != pb.ResponseCode_SUCCESS {
-					span.SetAttributes(attribute.String("code", code.String()))
-					span.SetStatus(codes.Error, code.String())
-				} else {
-					span.SetAttributes(attribute.String("code", code.String()))
-					span.SetStatus(codes.Ok, "")
-				}
+				_, _ = h.onReceive(ctx, connection, typ, msg)
 			}()
 		}
 	}()
@@ -206,19 +167,43 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *logic.WsConnectio
 	}
 	apiRequest.Header = connection.Header
 	route, ok := wsRouteMap[apiRequest.Path]
-	if !ok {
-		// 404
-		logx.Errorf("path 404 not found: %s", apiRequest.Path)
-		return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", "path 404 not found")
+	tracer := otel.Tracer(common.TraceName)
+	propagator := otel.GetTextMapPropagator()
+	spanName := apiRequest.Path
+	carrier := propagation.MapCarrier{
+		"appId":        apiRequest.Header.AppId,
+		"userId":       apiRequest.Header.UserId,
+		"clientIp":     apiRequest.Header.ClientIp,
+		"installId":    apiRequest.Header.InstallId,
+		"platform":     apiRequest.Header.Platform.String(),
+		"gatewayPodIp": apiRequest.Header.GatewayPodIp,
+		"deviceModel":  apiRequest.Header.DeviceModel,
+		"osVersion":    apiRequest.Header.OsVersion,
+		"appVersion":   apiRequest.Header.AppVersion,
+		"language":     apiRequest.Header.Language.String(),
+		"connectTime":  utils.Number.Int64ToString(apiRequest.Header.ConnectTime),
+		"encoding":     apiRequest.Header.Encoding.ContentType(),
+		"extra":        apiRequest.Header.Extra,
 	}
-	tracer := otel.GetTracerProvider().Tracer(common.TraceName)
-	spanCtx, span := tracer.Start(ctx, apiRequest.Path,
+	spanCtx := propagator.Extract(ctx, carrier)
+	kvs := []attribute.KeyValue{attribute.Int64("connection.Id", connection.Id)}
+	for k, v := range carrier {
+		kvs = append(kvs, attribute.String(k, v))
+	}
+	spanCtx, span := tracer.Start(spanCtx, spanName,
 		oteltrace.WithSpanKind(oteltrace.SpanKindServer),
 		oteltrace.WithAttributes(
-			attribute.Int64("connection.Id", connection.Id),
+			kvs...,
 		),
 	)
 	defer span.End()
+	propagator.Inject(spanCtx, carrier)
+	if !ok {
+		// 404
+		logx.Errorf("path 404 not found: %s", apiRequest.Path)
+		span.SetStatus(codes.Error, "path"+apiRequest.Path+"404 not found")
+		return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", "path 404 not found")
+	}
 	code, responseBody, err := route(spanCtx, connection, apiRequest)
 	if len(responseBody) > 0 {
 		// 发送消息
@@ -226,6 +211,12 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *logic.WsConnectio
 		if err != nil {
 			logx.Infof("failed to write message: %v", err)
 		}
+	}
+	span.SetAttributes(attribute.Int("responseBody.length", len(responseBody)))
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
 	}
 	return code, err
 }

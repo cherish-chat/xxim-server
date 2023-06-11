@@ -33,6 +33,8 @@ type Config struct {
 	Account AccountConfig
 	// CustomHeader is the custom header of the request.
 	CustomHeader string
+	// KeepAliveSecond is the keep alive second of the websocket. Default is 30s.
+	KeepAliveSecond time.Duration
 }
 type AuthType int
 
@@ -124,6 +126,9 @@ func (c *Config) Validate() error {
 	}
 	if c.RequestTimeout == 0 {
 		c.RequestTimeout = 10 * time.Second
+	}
+	if c.KeepAliveSecond == 0 {
+		c.KeepAliveSecond = 30 * time.Second
 	}
 	return nil
 }

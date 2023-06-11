@@ -58,7 +58,7 @@ func ApiLog(svcCtx *svc.ServiceContext) gin.HandlerFunc {
 					go func() {
 						respBody := blw.body.Bytes()
 						resp := string(respBody)
-						logx.Infof("clientIp: %s, method: %s, path: %s, requestTime: %s, responseTime: %s, request: %s, response: %s",
+						logx.Debugf("clientIp: %s, method: %s, path: %s, requestTime: %s, responseTime: %s, request: %s, response: %s",
 							clientIp, c.Request.Method, c.Request.URL.Path, reqTime.Format("2006-01-02 15:04:05.000"), respTime.Format("2006-01-02 15:04:05.000"), string(bodyBuf), resp,
 						)
 						// TODO: 推送到消息队列?

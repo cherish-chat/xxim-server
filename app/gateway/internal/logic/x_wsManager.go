@@ -12,12 +12,16 @@ import (
 func InitWsManager(svcCtx *svc.ServiceContext) {
 	WsManager = &wsManager{
 		svcCtx: svcCtx,
-		wsConnectionMap: &WsConnectionRWMutexMap{
-			idConnectionMap:     make(map[int64]*WsConnection),
+		wsConnectionMap: &WsConnectionMap{
 			userIdsMap:          make(map[string][]*WsConnection),
+			userIdsMapLock:      sync.RWMutex{},
+			idConnectionMap:     make(map[int64]*WsConnection),
 			idConnectionMapLock: sync.RWMutex{},
+			idAliveTimeMap:      make(map[int64]time.Time),
+			idAliveTimeMapLock:  sync.RWMutex{},
 		},
 	}
+	go WsManager.loopCheck()
 }
 
 type WsConnection struct {
@@ -34,29 +38,31 @@ func (c *WsConnection) ToPb() *pb.WsConnection {
 	}
 }
 
-type WsConnectionRWMutexMap struct {
+type WsConnectionMap struct {
 	idConnectionMap     map[int64]*WsConnection
 	idConnectionMapLock sync.RWMutex
 	userIdsMap          map[string][]*WsConnection
 	userIdsMapLock      sync.RWMutex
-	idAliveMap          sync.Map
+	idAliveTimeMap      map[int64]time.Time
+	idAliveTimeMapLock  sync.RWMutex
 }
 
-func (w *WsConnectionRWMutexMap) GetByConnectionId(connectionId int64) (*WsConnection, bool) {
+func (w *WsConnectionMap) GetByConnectionId(connectionId int64) (*WsConnection, bool) {
+	// RLock() 读锁
 	w.idConnectionMapLock.RLock()
 	defer w.idConnectionMapLock.RUnlock()
 	v, ok := w.idConnectionMap[connectionId]
 	return v, ok
 }
 
-func (w *WsConnectionRWMutexMap) GetByUserId(userId string) ([]*WsConnection, bool) {
+func (w *WsConnectionMap) GetByUserId(userId string) ([]*WsConnection, bool) {
 	w.userIdsMapLock.RLock()
 	defer w.userIdsMapLock.RUnlock()
 	v, ok := w.userIdsMap[userId]
 	return v, ok
 }
 
-func (w *WsConnectionRWMutexMap) GetByUserIds(userIds []string) []*WsConnection {
+func (w *WsConnectionMap) GetByUserIds(userIds []string) []*WsConnection {
 	w.userIdsMapLock.RLock()
 	defer w.userIdsMapLock.RUnlock()
 	var connections []*WsConnection
@@ -69,42 +75,42 @@ func (w *WsConnectionRWMutexMap) GetByUserIds(userIds []string) []*WsConnection 
 	return connections
 }
 
-func (w *WsConnectionRWMutexMap) GetAll() []*WsConnection {
+func (w *WsConnectionMap) GetAll() []*WsConnection {
+	var connections []*WsConnection
 	w.idConnectionMapLock.RLock()
 	defer w.idConnectionMapLock.RUnlock()
-	var connections []*WsConnection
-	for _, connection := range w.idConnectionMap {
-		connections = append(connections, connection)
+	for _, v := range w.idConnectionMap {
+		connections = append(connections, v)
 	}
 	return connections
 }
 
-func (w *WsConnectionRWMutexMap) GetAliveTime(connectionId int64) (time.Time, bool) {
-	v, ok := w.idAliveMap.Load(connectionId)
-	if !ok {
-		return time.Time{}, false
-	}
-	return v.(time.Time), true
+func (w *WsConnectionMap) GetAliveTime(connectionId int64) (time.Time, bool) {
+	// RLock() 读锁
+	w.idAliveTimeMapLock.RLock()
+	defer w.idAliveTimeMapLock.RUnlock()
+	v, ok := w.idAliveTimeMap[connectionId]
+	return v, ok
 }
 
-func (w *WsConnectionRWMutexMap) DeleteAliveTime(connectionId int64) {
-	w.idAliveMap.Delete(connectionId)
+func (w *WsConnectionMap) SetAliveTime(ctx context.Context, connectionId int64, aliveTime time.Time) {
+	w.idAliveTimeMapLock.Lock()
+	w.idAliveTimeMap[connectionId] = aliveTime
+	w.idAliveTimeMapLock.Unlock()
 }
 
-func (w *WsConnectionRWMutexMap) SetAliveTime(connectionId int64, aliveTime time.Time) {
-	w.idAliveMap.Store(connectionId, aliveTime)
-}
-
-func (w *WsConnectionRWMutexMap) Set(connectionId int64, value *WsConnection) {
+func (w *WsConnectionMap) Set(connectionId int64, value *WsConnection) {
 	w.idConnectionMapLock.Lock()
-	w.idConnectionMap[connectionId] = value
 	w.idConnectionMapLock.Unlock()
 	w.userIdsMapLock.Lock()
 	w.userIdsMap[value.Header.UserId] = append(w.userIdsMap[value.Header.UserId], value)
 	w.userIdsMapLock.Unlock()
+	w.idAliveTimeMapLock.Lock()
+	w.idAliveTimeMap[connectionId] = time.Now()
+	w.idAliveTimeMapLock.Unlock()
 }
 
-func (w *WsConnectionRWMutexMap) Delete(userId string, connectionId int64) {
+func (w *WsConnectionMap) Delete(userId string, connectionId int64) {
 	w.idConnectionMapLock.Lock()
 	delete(w.idConnectionMap, connectionId)
 	w.idConnectionMapLock.Unlock()
@@ -123,12 +129,14 @@ func (w *WsConnectionRWMutexMap) Delete(userId string, connectionId int64) {
 		}
 	}
 	w.userIdsMap[userId] = newConnections
-	w.DeleteAliveTime(connectionId)
+	w.idAliveTimeMapLock.Lock()
+	delete(w.idAliveTimeMap, connectionId)
+	w.idAliveTimeMapLock.Unlock()
 }
 
 type wsManager struct {
 	svcCtx          *svc.ServiceContext
-	wsConnectionMap *WsConnectionRWMutexMap
+	wsConnectionMap *WsConnectionMap
 }
 
 var WsManager *wsManager
@@ -142,7 +150,6 @@ func (w *wsManager) AddSubscriber(ctx context.Context, header *pb.RequestHeader,
 	}
 	//启动定时器 定时删掉连接
 	go w.clearConnectionTimer(wsConnection)
-	w.KeepAlive(wsConnection)
 	w.wsConnectionMap.Set(id, wsConnection)
 	return wsConnection, nil
 }
@@ -156,7 +163,8 @@ func (w *wsManager) clearConnectionTimer(connection *WsConnection) {
 		case <-ticker.C:
 			//使用 id 查询连接最后活跃时间
 			aliveTime, ok := w.wsConnectionMap.GetAliveTime(connection.Id)
-			if !ok || time.Now().Sub(aliveTime) > time.Second*time.Duration(w.svcCtx.Config.Websocket.KeepAliveSecond) {
+			sub := time.Now().Sub(aliveTime)
+			if !ok || sub > time.Second*time.Duration(w.svcCtx.Config.Websocket.KeepAliveSecond) {
 				// 删除连接
 				w.RemoveSubscriber(connection.Header, connection.Id, websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout), "heartbeat timeout")
 				return
@@ -165,8 +173,8 @@ func (w *wsManager) clearConnectionTimer(connection *WsConnection) {
 	}
 }
 
-func (w *wsManager) KeepAlive(connection *WsConnection) {
-	w.wsConnectionMap.SetAliveTime(connection.Id, time.Now())
+func (w *wsManager) KeepAlive(ctx context.Context, connection *WsConnection) {
+	w.wsConnectionMap.SetAliveTime(ctx, connection.Id, time.Now())
 }
 
 func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCode websocket.StatusCode, closeReason string) error {
@@ -196,4 +204,24 @@ func (w *wsManager) CloseConnection(id int64, code websocket.StatusCode, reason 
 		return
 	}
 	_ = wsConnection.Connection.Close(code, reason)
+}
+
+func (w *wsManager) loopCheck() {
+	go func() {
+		ticker := time.NewTicker(time.Second * time.Duration(w.svcCtx.Config.Websocket.KeepAliveTickerSecond))
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				connections := w.wsConnectionMap.GetAll()
+				for _, connection := range connections {
+					_, ok := w.wsConnectionMap.GetAliveTime(connection.Id)
+					if !ok {
+						// 删除连接
+						w.RemoveSubscriber(connection.Header, connection.Id, websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout), "heartbeat timeout")
+					}
+				}
+			}
+		}
+	}()
 }
