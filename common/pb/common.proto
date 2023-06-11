@@ -178,4 +178,5 @@ enum WebsocketCustomCloseCode {
   CloseCodeAuthenticationFailed = 4001; // 认证失败
   CloseCodeDuplicateConnection = 4002; // 重复连接
   CloseCodeServerInternalError = 4003; // 服务器内部错误
+  CloseCodeHeartbeatTimeout = 4004; // 心跳超时
 }

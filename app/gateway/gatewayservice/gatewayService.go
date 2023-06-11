@@ -22,6 +22,8 @@ type (
 	GatewayGetConnectionFilter        = pb.GatewayGetConnectionFilter
 	GatewayGetUserConnectionReq       = pb.GatewayGetUserConnectionReq
 	GatewayGetUserConnectionResp      = pb.GatewayGetUserConnectionResp
+	GatewayKeepAliveReq               = pb.GatewayKeepAliveReq
+	GatewayKeepAliveResp              = pb.GatewayKeepAliveResp
 	GatewayKickWsReq                  = pb.GatewayKickWsReq
 	GatewayKickWsResp                 = pb.GatewayKickWsResp
 	GatewayWriteDataToWsReq           = pb.GatewayWriteDataToWsReq
@@ -34,6 +36,7 @@ type (
 		GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
 		GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
 		GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error)
+		GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error)
 	}
 
 	defaultGatewayService struct {
@@ -70,4 +73,9 @@ func (m *defaultGatewayService) GatewayWriteDataToWs(ctx context.Context, in *Ga
 func (m *defaultGatewayService) GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayKickWs(ctx, in, opts...)
+}
+
+func (m *defaultGatewayService) GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.GatewayKeepAlive(ctx, in, opts...)
 }

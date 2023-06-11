@@ -23,6 +23,8 @@ func NewGatewayGetConnectionByFilterLogic(ctx context.Context, svcCtx *svc.Servi
 	}
 }
 
+// GatewayGetConnectionByFilter 通过条件获取用户的连接
+// 二次开发人员可以增加过滤条件
 func (l *GatewayGetConnectionByFilterLogic) GatewayGetConnectionByFilter(in *pb.GatewayGetConnectionByFilterReq) (*pb.GatewayGetConnectionByFilterResp, error) {
 	if len(in.GetFilter().GetUserIds()) > 0 {
 		wsConnections := WsManager.wsConnectionMap.GetByUserIds(in.GetFilter().GetUserIds())

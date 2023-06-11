@@ -87,10 +87,34 @@ message GatewayKickWsResp {
   repeated WsConnection successConnections = 2;
 }
 
+//GatewayKeepAliveReq 保持连接
+message GatewayKeepAliveReq {
+  RequestHeader header = 1;
+}
+
+message GatewayKeepAliveResp {
+  ResponseHeader header = 1;
+}
+
 service gatewayService {
+  // GatewayGetUserConnection 获取用户的连接
+  // 二次开发人员不建议修改此处逻辑
   rpc GatewayGetUserConnection(GatewayGetUserConnectionReq) returns (GatewayGetUserConnectionResp);
+  // GatewayBatchGetUserConnection 批量获取用户的连接
+  // 二次开发人员建议不修改此处逻辑
   rpc GatewayBatchGetUserConnection(GatewayBatchGetUserConnectionReq) returns (GatewayBatchGetUserConnectionResp);
+  // GatewayGetConnectionByFilter 通过条件获取用户的连接
+  // 二次开发人员可以增加过滤条件
   rpc GatewayGetConnectionByFilter(GatewayGetConnectionByFilterReq) returns (GatewayGetConnectionByFilterResp);
+  // GatewayWriteDataToWs 向用户的连接写入数据
+  // 二次开发人员不建议修改此处逻辑
   rpc GatewayWriteDataToWs(GatewayWriteDataToWsReq) returns (GatewayWriteDataToWsResp);
+  // GatewayKickWs 踢出用户的连接
+  // 二次开发人员可以在此处修改踢出用户连接的逻辑
+  // 比如踢出连接之前，先给用户发送一条消息
   rpc GatewayKickWs(GatewayKickWsReq) returns (GatewayKickWsResp);
+  // KeepAlive 保持连接
+  // 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
+  // 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
+  rpc GatewayKeepAlive(GatewayKeepAliveReq) returns (GatewayKeepAliveResp);
 }

@@ -46,3 +46,8 @@ func (s *GatewayServiceServer) GatewayKickWs(ctx context.Context, in *pb.Gateway
 	l := logic.NewGatewayKickWsLogic(ctx, s.svcCtx)
 	return l.GatewayKickWs(in)
 }
+
+func (s *GatewayServiceServer) GatewayKeepAlive(ctx context.Context, in *pb.GatewayKeepAliveReq) (*pb.GatewayKeepAliveResp, error) {
+	l := logic.NewGatewayKeepAliveLogic(ctx, s.svcCtx)
+	return l.GatewayKeepAlive(in)
+}

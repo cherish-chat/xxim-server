@@ -22,6 +22,10 @@ type Config struct {
 		Host string `json:",default=0.0.0.0"`
 		Port int    `json:",default=34500"`
 	}
+	Websocket struct {
+		KeepAliveTickerSecond int `json:",default=30"` // 定时器，每隔n秒检测连接是否存活
+		KeepAliveSecond       int `json:",default=60"` // 检测是否存活时，如果超过n秒没有收到客户端的消息，则关闭连接
+	}
 	RpcClientConf struct {
 		Dispatch zrpc.RpcClientConf
 	}

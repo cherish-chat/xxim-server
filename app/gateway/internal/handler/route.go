@@ -36,7 +36,7 @@ var wsRouteMap = map[string]func(ctx context.Context, connection *logic.WsConnec
 func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](path string, route Route[REQ, RESP]) {
 	request := route.NewRequest()
 	// http
-	httpRouteMap[path] = func(ctx *gin.Context) {
+	AddHttpRoute(path, func(ctx *gin.Context) {
 		var response *pb.GatewayApiResponse
 		var err error
 		response, err = UnifiedHandleHttp(ctx, request, route.Do)
@@ -65,9 +65,9 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](path string, route Ro
 		buf := MarshalResponse(requestHeader, response)
 		ctx.Data(200, requestHeader.Encoding.ContentType(), buf)
 		return
-	}
+	})
 	// ws
-	wsRouteMap[path] = func(ctx context.Context, connection *logic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	AddWsRoute(path, func(ctx context.Context, connection *logic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
 		requestHeader := connection.Header
@@ -92,7 +92,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](path string, route Ro
 			response.Header = i18n.NewOkHeader()
 		}
 		return response.Header.Code, MarshalResponse(requestHeader, response), nil
-	}
+	})
 }
 
 func AddHttpRoute(path string, handlerFunc gin.HandlerFunc) {
@@ -140,6 +140,10 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 				return &pb.GatewayKickWsReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayKickWs,
+		})
+		// GatewayKeepAliveReq GatewayKeepAliveResp
+		AddWsRoute("/v1/gateway/keepAlive", func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+			return logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive(connection)
 		})
 	}
 	// http

@@ -23,6 +23,8 @@ func NewGatewayWriteDataToWsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
+// GatewayWriteDataToWs 向用户的连接写入数据
+// 二次开发人员不建议修改此处逻辑
 func (l *GatewayWriteDataToWsLogic) GatewayWriteDataToWs(in *pb.GatewayWriteDataToWsReq) (*pb.GatewayWriteDataToWsResp, error) {
 	gatewayGetConnectionByFilterResp, err := NewGatewayGetConnectionByFilterLogic(l.ctx, l.svcCtx).GatewayGetConnectionByFilter(&pb.GatewayGetConnectionByFilterReq{
 		Header: in.Header,

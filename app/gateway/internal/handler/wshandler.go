@@ -99,7 +99,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	connectionId := utils.Snowflake.Int64()
 	defer func() {
 		logger.Debugf("removing subscriber: %s", connectionId)
-		err := logic.WsManager.RemoveSubscriber(header, connectionId)
+		err := logic.WsManager.RemoveSubscriber(header, connectionId, websocket.StatusNormalClosure, "finished")
 		if err != nil {
 			logger.Errorf("failed to remove subscriber: %v", err)
 			return
