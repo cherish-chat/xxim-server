@@ -2,7 +2,7 @@
 
 #services=(appmgmt conn group im mgmt msg notice relation user xos)
 #配置要编译的服务
-services=(xos)
+services=(conn appmgmt mgmt)
 
 # shellcheck disable=SC2034
 SCRIPT_DIR=$(pwd)

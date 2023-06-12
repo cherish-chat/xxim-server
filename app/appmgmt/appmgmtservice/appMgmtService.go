@@ -76,6 +76,8 @@ type (
 	GetAllAppMgmtVersionResp        = pb.GetAllAppMgmtVersionResp
 	GetAllAppMgmtVpnReq             = pb.GetAllAppMgmtVpnReq
 	GetAllAppMgmtVpnResp            = pb.GetAllAppMgmtVpnResp
+	GetAppAddressBookReq            = pb.GetAppAddressBookReq
+	GetAppAddressBookResp           = pb.GetAppAddressBookResp
 	GetAppMgmtEmojiDetailReq        = pb.GetAppMgmtEmojiDetailReq
 	GetAppMgmtEmojiDetailResp       = pb.GetAppMgmtEmojiDetailResp
 	GetAppMgmtEmojiGroupDetailReq   = pb.GetAppMgmtEmojiGroupDetailReq
@@ -96,6 +98,8 @@ type (
 	GetLatestVersionResp            = pb.GetLatestVersionResp
 	GetUploadInfoReq                = pb.GetUploadInfoReq
 	GetUploadInfoResp               = pb.GetUploadInfoResp
+	UpdateAppAddressBookReq         = pb.UpdateAppAddressBookReq
+	UpdateAppAddressBookResp        = pb.UpdateAppAddressBookResp
 	UpdateAppMgmtConfigReq          = pb.UpdateAppMgmtConfigReq
 	UpdateAppMgmtConfigResp         = pb.UpdateAppMgmtConfigResp
 	UpdateAppMgmtEmojiGroupReq      = pb.UpdateAppMgmtEmojiGroupReq
@@ -162,6 +166,8 @@ type (
 		UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error)
 		DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error)
 		AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error)
+		UpdateAppAddressBook(ctx context.Context, in *UpdateAppAddressBookReq, opts ...grpc.CallOption) (*UpdateAppAddressBookResp, error)
+		GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -403,4 +409,14 @@ func (m *defaultAppMgmtService) DeleteAppMgmtRichArticle(ctx context.Context, in
 func (m *defaultAppMgmtService) AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.AppGetRichArticleList(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) UpdateAppAddressBook(ctx context.Context, in *UpdateAppAddressBookReq, opts ...grpc.CallOption) (*UpdateAppAddressBookResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.UpdateAppAddressBook(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppAddressBook(ctx, in, opts...)
 }

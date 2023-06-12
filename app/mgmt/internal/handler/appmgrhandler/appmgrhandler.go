@@ -131,4 +131,11 @@ func (r *AppMgrHandler) Register(g *gin.RouterGroup) {
 		// 删除VPN
 		group.POST("/delete/link", r.deleteLink)
 	}
+	// app通讯录
+	{
+		// 获取app通讯录
+		group.POST("/get/addressbook", r.getAddressBook)
+		// 更新app通讯录
+		group.POST("/update/addressbook", r.updateAddressBook)
+	}
 }
