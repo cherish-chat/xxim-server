@@ -22,11 +22,25 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayServiceClient interface {
+	// GatewayGetUserConnection 获取用户的连接
+	// 二次开发人员不建议修改此处逻辑
 	GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
+	// GatewayBatchGetUserConnection 批量获取用户的连接
+	// 二次开发人员建议不修改此处逻辑
 	GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error)
+	// GatewayGetConnectionByFilter 通过条件获取用户的连接
+	// 二次开发人员可以增加过滤条件
 	GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
+	// GatewayWriteDataToWs 向用户的连接写入数据
+	// 二次开发人员不建议修改此处逻辑
 	GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
+	// GatewayKickWs 踢出用户的连接
+	// 二次开发人员可以在此处修改踢出用户连接的逻辑
+	// 比如踢出连接之前，先给用户发送一条消息
 	GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error)
+	// KeepAlive 保持连接
+	// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
+	// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
 	GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error)
 }
 
@@ -96,11 +110,25 @@ func (c *gatewayServiceClient) GatewayKeepAlive(ctx context.Context, in *Gateway
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility
 type GatewayServiceServer interface {
+	// GatewayGetUserConnection 获取用户的连接
+	// 二次开发人员不建议修改此处逻辑
 	GatewayGetUserConnection(context.Context, *GatewayGetUserConnectionReq) (*GatewayGetUserConnectionResp, error)
+	// GatewayBatchGetUserConnection 批量获取用户的连接
+	// 二次开发人员建议不修改此处逻辑
 	GatewayBatchGetUserConnection(context.Context, *GatewayBatchGetUserConnectionReq) (*GatewayBatchGetUserConnectionResp, error)
+	// GatewayGetConnectionByFilter 通过条件获取用户的连接
+	// 二次开发人员可以增加过滤条件
 	GatewayGetConnectionByFilter(context.Context, *GatewayGetConnectionByFilterReq) (*GatewayGetConnectionByFilterResp, error)
+	// GatewayWriteDataToWs 向用户的连接写入数据
+	// 二次开发人员不建议修改此处逻辑
 	GatewayWriteDataToWs(context.Context, *GatewayWriteDataToWsReq) (*GatewayWriteDataToWsResp, error)
+	// GatewayKickWs 踢出用户的连接
+	// 二次开发人员可以在此处修改踢出用户连接的逻辑
+	// 比如踢出连接之前，先给用户发送一条消息
 	GatewayKickWs(context.Context, *GatewayKickWsReq) (*GatewayKickWsResp, error)
+	// KeepAlive 保持连接
+	// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
+	// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
 	GatewayKeepAlive(context.Context, *GatewayKeepAliveReq) (*GatewayKeepAliveResp, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }

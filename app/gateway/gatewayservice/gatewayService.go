@@ -31,11 +31,17 @@ type (
 	WsConnection                      = pb.WsConnection
 
 	GatewayService interface {
+		//  GatewayGetUserConnection 获取用户的连接
 		GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error)
+		//  GatewayBatchGetUserConnection 批量获取用户的连接
 		GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error)
+		//  GatewayGetConnectionByFilter 通过条件获取用户的连接
 		GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
+		//  GatewayWriteDataToWs 向用户的连接写入数据
 		GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
+		//  GatewayKickWs 踢出用户的连接
 		GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error)
+		//  KeepAlive 保持连接
 		GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error)
 	}
 
@@ -50,31 +56,37 @@ func NewGatewayService(cli zrpc.Client) GatewayService {
 	}
 }
 
+//  GatewayGetUserConnection 获取用户的连接
 func (m *defaultGatewayService) GatewayGetUserConnection(ctx context.Context, in *GatewayGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayGetUserConnectionResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayGetUserConnection(ctx, in, opts...)
 }
 
+//  GatewayBatchGetUserConnection 批量获取用户的连接
 func (m *defaultGatewayService) GatewayBatchGetUserConnection(ctx context.Context, in *GatewayBatchGetUserConnectionReq, opts ...grpc.CallOption) (*GatewayBatchGetUserConnectionResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayBatchGetUserConnection(ctx, in, opts...)
 }
 
+//  GatewayGetConnectionByFilter 通过条件获取用户的连接
 func (m *defaultGatewayService) GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayGetConnectionByFilter(ctx, in, opts...)
 }
 
+//  GatewayWriteDataToWs 向用户的连接写入数据
 func (m *defaultGatewayService) GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayWriteDataToWs(ctx, in, opts...)
 }
 
+//  GatewayKickWs 踢出用户的连接
 func (m *defaultGatewayService) GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayKickWs(ctx, in, opts...)
 }
 
+//  KeepAlive 保持连接
 func (m *defaultGatewayService) GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayKeepAlive(ctx, in, opts...)

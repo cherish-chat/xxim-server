@@ -28,6 +28,12 @@ func (s *DispatchServiceServer) DispatchOnlineCallback(ctx context.Context, in *
 	return l.DispatchOnlineCallback(in)
 }
 
+// DispatchOfflineCallback 下线回调
+func (s *DispatchServiceServer) DispatchOfflineCallback(ctx context.Context, in *pb.DispatchOfflineCallbackReq) (*pb.DispatchOfflineCallbackResp, error) {
+	l := logic.NewDispatchOfflineCallbackLogic(ctx, s.svcCtx)
+	return l.DispatchOfflineCallback(in)
+}
+
 // BeforeConnect 服务端连接前的回调
 func (s *DispatchServiceServer) BeforeConnect(ctx context.Context, in *pb.BeforeConnectReq) (*pb.BeforeConnectResp, error) {
 	l := logic.NewBeforeConnectLogic(ctx, s.svcCtx)

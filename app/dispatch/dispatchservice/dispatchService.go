@@ -13,14 +13,18 @@ import (
 )
 
 type (
-	BeforeConnectReq           = pb.BeforeConnectReq
-	BeforeConnectResp          = pb.BeforeConnectResp
-	DispatchOnlineCallbackReq  = pb.DispatchOnlineCallbackReq
-	DispatchOnlineCallbackResp = pb.DispatchOnlineCallbackResp
+	BeforeConnectReq            = pb.BeforeConnectReq
+	BeforeConnectResp           = pb.BeforeConnectResp
+	DispatchOfflineCallbackReq  = pb.DispatchOfflineCallbackReq
+	DispatchOfflineCallbackResp = pb.DispatchOfflineCallbackResp
+	DispatchOnlineCallbackReq   = pb.DispatchOnlineCallbackReq
+	DispatchOnlineCallbackResp  = pb.DispatchOnlineCallbackResp
 
 	DispatchService interface {
 		// DispatchOnlineCallback 上线回调
 		DispatchOnlineCallback(ctx context.Context, in *DispatchOnlineCallbackReq, opts ...grpc.CallOption) (*DispatchOnlineCallbackResp, error)
+		// DispatchOfflineCallback 下线回调
+		DispatchOfflineCallback(ctx context.Context, in *DispatchOfflineCallbackReq, opts ...grpc.CallOption) (*DispatchOfflineCallbackResp, error)
 		// BeforeConnect 服务端连接前的回调
 		BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
 	}
@@ -40,6 +44,12 @@ func NewDispatchService(cli zrpc.Client) DispatchService {
 func (m *defaultDispatchService) DispatchOnlineCallback(ctx context.Context, in *DispatchOnlineCallbackReq, opts ...grpc.CallOption) (*DispatchOnlineCallbackResp, error) {
 	client := pb.NewDispatchServiceClient(m.cli.Conn())
 	return client.DispatchOnlineCallback(ctx, in, opts...)
+}
+
+// DispatchOfflineCallback 下线回调
+func (m *defaultDispatchService) DispatchOfflineCallback(ctx context.Context, in *DispatchOfflineCallbackReq, opts ...grpc.CallOption) (*DispatchOfflineCallbackResp, error) {
+	client := pb.NewDispatchServiceClient(m.cli.Conn())
+	return client.DispatchOfflineCallback(ctx, in, opts...)
 }
 
 // BeforeConnect 服务端连接前的回调

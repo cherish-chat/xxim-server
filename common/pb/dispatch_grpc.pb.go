@@ -23,8 +23,13 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DispatchServiceClient interface {
 	//DispatchOnlineCallback 上线回调
+	//二次开发人员可以在此接口中实现上线回调逻辑
 	DispatchOnlineCallback(ctx context.Context, in *DispatchOnlineCallbackReq, opts ...grpc.CallOption) (*DispatchOnlineCallbackResp, error)
+	//DispatchOfflineCallback 下线回调
+	//二次开发人员可以在此接口中实现下线回调逻辑
+	DispatchOfflineCallback(ctx context.Context, in *DispatchOfflineCallbackReq, opts ...grpc.CallOption) (*DispatchOfflineCallbackResp, error)
 	//BeforeConnect 服务端连接前的回调
+	//二次开发人员可以在此接口中实现服务端连接前的逻辑，比如校验token
 	BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error)
 }
 
@@ -45,6 +50,15 @@ func (c *dispatchServiceClient) DispatchOnlineCallback(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *dispatchServiceClient) DispatchOfflineCallback(ctx context.Context, in *DispatchOfflineCallbackReq, opts ...grpc.CallOption) (*DispatchOfflineCallbackResp, error) {
+	out := new(DispatchOfflineCallbackResp)
+	err := c.cc.Invoke(ctx, "/pb.dispatchService/DispatchOfflineCallback", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *dispatchServiceClient) BeforeConnect(ctx context.Context, in *BeforeConnectReq, opts ...grpc.CallOption) (*BeforeConnectResp, error) {
 	out := new(BeforeConnectResp)
 	err := c.cc.Invoke(ctx, "/pb.dispatchService/BeforeConnect", in, out, opts...)
@@ -59,8 +73,13 @@ func (c *dispatchServiceClient) BeforeConnect(ctx context.Context, in *BeforeCon
 // for forward compatibility
 type DispatchServiceServer interface {
 	//DispatchOnlineCallback 上线回调
+	//二次开发人员可以在此接口中实现上线回调逻辑
 	DispatchOnlineCallback(context.Context, *DispatchOnlineCallbackReq) (*DispatchOnlineCallbackResp, error)
+	//DispatchOfflineCallback 下线回调
+	//二次开发人员可以在此接口中实现下线回调逻辑
+	DispatchOfflineCallback(context.Context, *DispatchOfflineCallbackReq) (*DispatchOfflineCallbackResp, error)
 	//BeforeConnect 服务端连接前的回调
+	//二次开发人员可以在此接口中实现服务端连接前的逻辑，比如校验token
 	BeforeConnect(context.Context, *BeforeConnectReq) (*BeforeConnectResp, error)
 	mustEmbedUnimplementedDispatchServiceServer()
 }
@@ -71,6 +90,9 @@ type UnimplementedDispatchServiceServer struct {
 
 func (UnimplementedDispatchServiceServer) DispatchOnlineCallback(context.Context, *DispatchOnlineCallbackReq) (*DispatchOnlineCallbackResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DispatchOnlineCallback not implemented")
+}
+func (UnimplementedDispatchServiceServer) DispatchOfflineCallback(context.Context, *DispatchOfflineCallbackReq) (*DispatchOfflineCallbackResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DispatchOfflineCallback not implemented")
 }
 func (UnimplementedDispatchServiceServer) BeforeConnect(context.Context, *BeforeConnectReq) (*BeforeConnectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BeforeConnect not implemented")
@@ -106,6 +128,24 @@ func _DispatchService_DispatchOnlineCallback_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DispatchService_DispatchOfflineCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DispatchOfflineCallbackReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DispatchServiceServer).DispatchOfflineCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.dispatchService/DispatchOfflineCallback",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DispatchServiceServer).DispatchOfflineCallback(ctx, req.(*DispatchOfflineCallbackReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DispatchService_BeforeConnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BeforeConnectReq)
 	if err := dec(in); err != nil {
@@ -134,6 +174,10 @@ var DispatchService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DispatchOnlineCallback",
 			Handler:    _DispatchService_DispatchOnlineCallback_Handler,
+		},
+		{
+			MethodName: "DispatchOfflineCallback",
+			Handler:    _DispatchService_DispatchOfflineCallback_Handler,
 		},
 		{
 			MethodName: "BeforeConnect",

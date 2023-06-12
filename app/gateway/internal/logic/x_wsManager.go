@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/zeromicro/go-zero/core/logx"
 	"nhooyr.io/websocket"
 	"sync"
 	"time"
@@ -151,7 +152,28 @@ func (w *wsManager) AddSubscriber(ctx context.Context, header *pb.RequestHeader,
 	//启动定时器 定时删掉连接
 	go w.clearConnectionTimer(wsConnection)
 	w.wsConnectionMap.Set(id, wsConnection)
+	go func() {
+		_, e := w.svcCtx.DispatchService.DispatchOnlineCallback(ctx, &pb.DispatchOnlineCallbackReq{Header: header})
+		if e != nil {
+			logx.Errorf("DispatchOnlineCallback error: %s", e.Error())
+		}
+	}()
 	return wsConnection, nil
+}
+
+func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCode websocket.StatusCode, closeReason string) error {
+	connection, ok := w.wsConnectionMap.GetByConnectionId(id)
+	if ok {
+		_ = connection.Connection.Close(closeCode, closeReason)
+	}
+	w.wsConnectionMap.Delete(header.UserId, id)
+	go func() {
+		_, e := w.svcCtx.DispatchService.DispatchOfflineCallback(connection.Ctx, &pb.DispatchOfflineCallbackReq{Header: header})
+		if e != nil {
+			logx.Errorf("DispatchOfflineCallback error: %s", e.Error())
+		}
+	}()
+	return nil
 }
 
 // clearConnectionTimer 定时器清除连接
@@ -175,15 +197,6 @@ func (w *wsManager) clearConnectionTimer(connection *WsConnection) {
 
 func (w *wsManager) KeepAlive(ctx context.Context, connection *WsConnection) {
 	w.wsConnectionMap.SetAliveTime(ctx, connection.Id, time.Now())
-}
-
-func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCode websocket.StatusCode, closeReason string) error {
-	connection, ok := w.wsConnectionMap.GetByConnectionId(id)
-	if ok {
-		_ = connection.Connection.Close(closeCode, closeReason)
-	}
-	w.wsConnectionMap.Delete(header.UserId, id)
-	return nil
 }
 
 func (w *wsManager) WriteData(id int64, data []byte) bool {
