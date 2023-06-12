@@ -251,3 +251,13 @@ func (s *AppMgmtServiceServer) AppGetRichArticleList(ctx context.Context, in *pb
 	l := logic.NewAppGetRichArticleListLogic(ctx, s.svcCtx)
 	return l.AppGetRichArticleList(in)
 }
+
+func (s *AppMgmtServiceServer) UpdateAppAddressBook(ctx context.Context, in *pb.UpdateAppAddressBookReq) (*pb.UpdateAppAddressBookResp, error) {
+	l := logic.NewUpdateAppAddressBookLogic(ctx, s.svcCtx)
+	return l.UpdateAppAddressBook(in)
+}
+
+func (s *AppMgmtServiceServer) GetAppAddressBook(ctx context.Context, in *pb.GetAppAddressBookReq) (*pb.GetAppAddressBookResp, error) {
+	l := logic.NewGetAppAddressBookLogic(ctx, s.svcCtx)
+	return l.GetAppAddressBook(in)
+}

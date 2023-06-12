@@ -342,6 +342,11 @@ func initMenu(tx *gorm.DB) {
 				genMenu3("393", "390", "富文章编辑", "app:richarticle:edit"),
 				genMenu3("394", "390", "富文章删除", "app:richarticle:del"),
 			),
+			// addressbook 通讯录
+			genMenu2("1310", "300", "通讯录管理", "local-icon-gukefapiao", 0,
+				"app:addressbook:list", "app/addressbook", "app/addressbook/index",
+				genMenu3("1311", "1310", "通讯录编辑", "app:addressbook:edit"),
+			),
 		),
 		genMenu1("400", "用户管理", "el-icon-UserFilled", 48, "user",
 			// defaultconv 默认会话

@@ -735,6 +735,28 @@ message AppGetRichArticleListResp {
   int64 total = 3;
 }
 
+//UpdateAppAddressBookReq 更新app通讯录
+message UpdateAppAddressBookReq {
+  CommonReq commonReq = 1;
+  string addressBook = 2;
+}
+
+//UpdateAppAddressBookResp 更新app通讯录
+message UpdateAppAddressBookResp {
+  CommonResp commonResp = 1;
+}
+
+//GetAppAddressBookReq 获取app通讯录
+message GetAppAddressBookReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppAddressBookResp 获取app通讯录
+message GetAppAddressBookResp {
+  CommonResp commonResp = 1;
+  string addressBook = 2;
+}
+
 service appMgmtService {
   rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
   rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
@@ -791,4 +813,7 @@ service appMgmtService {
   rpc UpdateAppMgmtRichArticle(UpdateAppMgmtRichArticleReq) returns (UpdateAppMgmtRichArticleResp);
   rpc DeleteAppMgmtRichArticle(DeleteAppMgmtRichArticleReq) returns (DeleteAppMgmtRichArticleResp);
   rpc AppGetRichArticleList(AppGetRichArticleListReq) returns (AppGetRichArticleListResp);
+
+  rpc UpdateAppAddressBook(UpdateAppAddressBookReq) returns (UpdateAppAddressBookResp);
+  rpc GetAppAddressBook(GetAppAddressBookReq) returns (GetAppAddressBookResp);
 }

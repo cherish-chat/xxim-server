@@ -68,6 +68,8 @@ type AppMgmtServiceClient interface {
 	UpdateAppMgmtRichArticle(ctx context.Context, in *UpdateAppMgmtRichArticleReq, opts ...grpc.CallOption) (*UpdateAppMgmtRichArticleResp, error)
 	DeleteAppMgmtRichArticle(ctx context.Context, in *DeleteAppMgmtRichArticleReq, opts ...grpc.CallOption) (*DeleteAppMgmtRichArticleResp, error)
 	AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error)
+	UpdateAppAddressBook(ctx context.Context, in *UpdateAppAddressBookReq, opts ...grpc.CallOption) (*UpdateAppAddressBookResp, error)
+	GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error)
 }
 
 type appMgmtServiceClient struct {
@@ -492,6 +494,24 @@ func (c *appMgmtServiceClient) AppGetRichArticleList(ctx context.Context, in *Ap
 	return out, nil
 }
 
+func (c *appMgmtServiceClient) UpdateAppAddressBook(ctx context.Context, in *UpdateAppAddressBookReq, opts ...grpc.CallOption) (*UpdateAppAddressBookResp, error) {
+	out := new(UpdateAppAddressBookResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/UpdateAppAddressBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appMgmtServiceClient) GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error) {
+	out := new(GetAppAddressBookResp)
+	err := c.cc.Invoke(ctx, "/pb.appMgmtService/GetAppAddressBook", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppMgmtServiceServer is the server API for AppMgmtService service.
 // All implementations must embed UnimplementedAppMgmtServiceServer
 // for forward compatibility
@@ -542,6 +562,8 @@ type AppMgmtServiceServer interface {
 	UpdateAppMgmtRichArticle(context.Context, *UpdateAppMgmtRichArticleReq) (*UpdateAppMgmtRichArticleResp, error)
 	DeleteAppMgmtRichArticle(context.Context, *DeleteAppMgmtRichArticleReq) (*DeleteAppMgmtRichArticleResp, error)
 	AppGetRichArticleList(context.Context, *AppGetRichArticleListReq) (*AppGetRichArticleListResp, error)
+	UpdateAppAddressBook(context.Context, *UpdateAppAddressBookReq) (*UpdateAppAddressBookResp, error)
+	GetAppAddressBook(context.Context, *GetAppAddressBookReq) (*GetAppAddressBookResp, error)
 	mustEmbedUnimplementedAppMgmtServiceServer()
 }
 
@@ -686,6 +708,12 @@ func (UnimplementedAppMgmtServiceServer) DeleteAppMgmtRichArticle(context.Contex
 }
 func (UnimplementedAppMgmtServiceServer) AppGetRichArticleList(context.Context, *AppGetRichArticleListReq) (*AppGetRichArticleListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AppGetRichArticleList not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) UpdateAppAddressBook(context.Context, *UpdateAppAddressBookReq) (*UpdateAppAddressBookResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAppAddressBook not implemented")
+}
+func (UnimplementedAppMgmtServiceServer) GetAppAddressBook(context.Context, *GetAppAddressBookReq) (*GetAppAddressBookResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppAddressBook not implemented")
 }
 func (UnimplementedAppMgmtServiceServer) mustEmbedUnimplementedAppMgmtServiceServer() {}
 
@@ -1528,6 +1556,42 @@ func _AppMgmtService_AppGetRichArticleList_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppMgmtService_UpdateAppAddressBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAppAddressBookReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).UpdateAppAddressBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/UpdateAppAddressBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).UpdateAppAddressBook(ctx, req.(*UpdateAppAddressBookReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppMgmtService_GetAppAddressBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppAddressBookReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgmtServiceServer).GetAppAddressBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.appMgmtService/GetAppAddressBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgmtServiceServer).GetAppAddressBook(ctx, req.(*GetAppAddressBookReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AppMgmtService_ServiceDesc is the grpc.ServiceDesc for AppMgmtService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1718,6 +1782,14 @@ var AppMgmtService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppGetRichArticleList",
 			Handler:    _AppMgmtService_AppGetRichArticleList_Handler,
+		},
+		{
+			MethodName: "UpdateAppAddressBook",
+			Handler:    _AppMgmtService_UpdateAppAddressBook_Handler,
+		},
+		{
+			MethodName: "GetAppAddressBook",
+			Handler:    _AppMgmtService_GetAppAddressBook_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
