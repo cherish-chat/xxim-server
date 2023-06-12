@@ -261,3 +261,8 @@ func (s *AppMgmtServiceServer) GetAppAddressBook(ctx context.Context, in *pb.Get
 	l := logic.NewGetAppAddressBookLogic(ctx, s.svcCtx)
 	return l.GetAppAddressBook(in)
 }
+
+func (s *AppMgmtServiceServer) GetAppAddressBookUrl(ctx context.Context, in *pb.GetAppAddressBookUrlReq) (*pb.GetAppAddressBookUrlResp, error) {
+	l := logic.NewGetAppAddressBookUrlLogic(ctx, s.svcCtx)
+	return l.GetAppAddressBookUrl(in)
+}

@@ -78,6 +78,8 @@ type (
 	GetAllAppMgmtVpnResp            = pb.GetAllAppMgmtVpnResp
 	GetAppAddressBookReq            = pb.GetAppAddressBookReq
 	GetAppAddressBookResp           = pb.GetAppAddressBookResp
+	GetAppAddressBookUrlReq         = pb.GetAppAddressBookUrlReq
+	GetAppAddressBookUrlResp        = pb.GetAppAddressBookUrlResp
 	GetAppMgmtEmojiDetailReq        = pb.GetAppMgmtEmojiDetailReq
 	GetAppMgmtEmojiDetailResp       = pb.GetAppMgmtEmojiDetailResp
 	GetAppMgmtEmojiGroupDetailReq   = pb.GetAppMgmtEmojiGroupDetailReq
@@ -168,6 +170,7 @@ type (
 		AppGetRichArticleList(ctx context.Context, in *AppGetRichArticleListReq, opts ...grpc.CallOption) (*AppGetRichArticleListResp, error)
 		UpdateAppAddressBook(ctx context.Context, in *UpdateAppAddressBookReq, opts ...grpc.CallOption) (*UpdateAppAddressBookResp, error)
 		GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error)
+		GetAppAddressBookUrl(ctx context.Context, in *GetAppAddressBookUrlReq, opts ...grpc.CallOption) (*GetAppAddressBookUrlResp, error)
 	}
 
 	defaultAppMgmtService struct {
@@ -419,4 +422,9 @@ func (m *defaultAppMgmtService) UpdateAppAddressBook(ctx context.Context, in *Up
 func (m *defaultAppMgmtService) GetAppAddressBook(ctx context.Context, in *GetAppAddressBookReq, opts ...grpc.CallOption) (*GetAppAddressBookResp, error) {
 	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
 	return client.GetAppAddressBook(ctx, in, opts...)
+}
+
+func (m *defaultAppMgmtService) GetAppAddressBookUrl(ctx context.Context, in *GetAppAddressBookUrlReq, opts ...grpc.CallOption) (*GetAppAddressBookUrlResp, error) {
+	client := pb.NewAppMgmtServiceClient(m.cli.Conn())
+	return client.GetAppAddressBookUrl(ctx, in, opts...)
 }
