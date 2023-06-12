@@ -11,7 +11,28 @@ import (
 
 // Group 群组 数据库模型
 type Group struct {
+	//GroupId 群id 主键
 	GroupId int `json:"groupId" gorm:"column:groupId;type:char(32);primary_key;not null"`
+	//GroupName 群名称
+	GroupName string `json:"groupName" gorm:"column:groupName;type:varchar(32);not null"`
+	//GroupAvatar 群头像
+	GroupAvatar string `json:"groupAvatar" gorm:"column:groupAvatar;type:varchar(255);not null"`
+	//OwnerUserId 群主id
+	OwnerUserId string `json:"ownerUserId" gorm:"column:ownerUserId;type:char(32);not null"`
+	//ManagerUserIds 管理员id列表 逗号分隔
+	//如果没有查询需要，不要SELECT这个字段，因为这个字段可能会很大，群管理员上限是1900人，因为65535/33=1985.90
+	ManagerUserIds string `json:"managerUserIds" gorm:"column:managerUserIds;type:text;not null"`
+	//CreatedAt 创建时间 13位时间戳
+	CreateTime int64 `json:"createTime" gorm:"column:createTime;type:bigint;not null"`
+	//UpdatedAt 更新时间 13位时间戳
+	UpdateTime int64 `json:"updateTime" gorm:"column:updateTime;type:bigint;not null"`
+	//DismissTime 解散时间 13位时间戳
+	DismissTime int64 `json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null"`
+	//MemberCount 成员数量
+	MemberCount int `json:"memberCount" gorm:"column:memberCount;type:int;not null"`
+
+	//RemarkForAdmin 管理员设置的备注
+	RemarkForAdmin string `json:"remarkForAdmin" gorm:"column:remarkForAdmin;type:varchar(32);not null"`
 }
 
 // TableName 表名
