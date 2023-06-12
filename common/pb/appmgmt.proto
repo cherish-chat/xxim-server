@@ -757,6 +757,17 @@ message GetAppAddressBookResp {
   string addressBook = 2;
 }
 
+//GetAppAddressBookUrlReq 获取app通讯录 url
+message GetAppAddressBookUrlReq {
+  CommonReq commonReq = 1;
+}
+
+//GetAppAddressBookUrlResp 获取app通讯录 url
+message GetAppAddressBookUrlResp {
+  CommonResp commonResp = 1;
+  string url = 2;
+}
+
 service appMgmtService {
   rpc GetAllAppMgmtConfig(GetAllAppMgmtConfigReq) returns (GetAllAppMgmtConfigResp);
   rpc UpdateAppMgmtConfig(UpdateAppMgmtConfigReq) returns (UpdateAppMgmtConfigResp);
@@ -816,4 +827,5 @@ service appMgmtService {
 
   rpc UpdateAppAddressBook(UpdateAppAddressBookReq) returns (UpdateAppAddressBookResp);
   rpc GetAppAddressBook(GetAppAddressBookReq) returns (GetAppAddressBookResp);
+  rpc GetAppAddressBookUrl(GetAppAddressBookUrlReq) returns (GetAppAddressBookUrlResp);
 }

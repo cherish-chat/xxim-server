@@ -4,6 +4,10 @@ func (x *AppGetRichArticleListReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
 
+func (x *GetAppAddressBookUrlReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
 func (x *GetAppAddressBookReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }

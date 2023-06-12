@@ -7,3 +7,7 @@ func AllAppMgmtConfig() string {
 func AppAddressBook() string {
 	return "h:appmgmt:address_book"
 }
+
+func AppAddressBookUrl() string {
+	return "s:appmgmt:address_book_url"
+}

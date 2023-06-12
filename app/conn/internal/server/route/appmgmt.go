@@ -67,4 +67,14 @@ func RegisterAppMgmt(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/appmgmt/getAppAddressBook", route)
 	}
+	// GetAppAddressBookUrlReq GetAppAddressBookUrlResp
+	{
+		route := conngateway.Route[*pb.GetAppAddressBookUrlReq, *pb.GetAppAddressBookUrlResp]{
+			NewRequest: func() *pb.GetAppAddressBookUrlReq {
+				return &pb.GetAppAddressBookUrlReq{}
+			},
+			Do: svcCtx.AppMgmtService().GetAppAddressBookUrl,
+		}
+		conngateway.AddRoute("/v1/appmgmt/getAppAddressBookUrl", route)
+	}
 }
