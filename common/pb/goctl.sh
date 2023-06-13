@@ -34,12 +34,11 @@ function rpc() {
 # shellcheck disable=SC2046
 protoc --proto_path=. common.proto --go_out=..
 
+rpc "conversation"
 rpc "dispatch"
 rpc "gateway"
-rpc "group"
-rpc "msg"
+rpc "message"
 rpc "notice"
-rpc "relation"
 rpc "third"
 rpc "user"
 rpc "world"

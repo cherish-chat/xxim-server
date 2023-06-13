@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/dispatch/internal/config"
 	"github.com/cherish-chat/xxim-server/app/dispatch/internal/server"
@@ -35,6 +35,6 @@ func main() {
 	})
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

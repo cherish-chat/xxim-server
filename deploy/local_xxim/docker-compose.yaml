@@ -111,3 +111,74 @@ services:
         ipv4_address: 172.88.10.33 # http://172.88.10.33:16686 / http://172.88.10.33:14268
     depends_on:
       - elasticsearch
+
+  ########### mongors0 ###########
+  mongors0-1:
+    image: mongo
+    container_name: mongors0-1
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "MONGO_INITDB_ROOT_USERNAME=root"
+      - "MONGO_INITDB_ROOT_PASSWORD=123456"
+    entrypoint:
+      - "/usr/bin/mongod"
+      - "--bind_ip_all"
+      - "--replSet"
+      - "rs0"
+    volumes:
+      - ./data/mongors0/1:/data/db
+      - ./data/mongors0/1-config:/data/configdb
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.41 # 172.88.10.41:27017
+
+  mongors0-2:
+    image: mongo
+    container_name: mongors0-2
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "MONGO_INITDB_ROOT_USERNAME=root"
+      - "MONGO_INITDB_ROOT_PASSWORD=123456"
+    entrypoint:
+      - "/usr/bin/mongod"
+      - "--bind_ip_all"
+      - "--replSet"
+      - "rs0"
+    volumes:
+      - ./data/mongors0/2:/data/db
+      - ./data/mongors0/2-config:/data/configdb
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.42 # 172.88.10.42:27017
+    depends_on:
+      - mongors0-1
+
+  mongors0-3:
+    image: mongo
+    container_name: mongors0-3
+    environment:
+      - "TZ=Asia/Shanghai"
+      - "MONGO_INITDB_ROOT_USERNAME=root"
+      - "MONGO_INITDB_ROOT_PASSWORD=123456"
+    entrypoint:
+      - "/usr/bin/mongod"
+      - "--bind_ip_all"
+      - "--replSet"
+      - "rs0"
+    volumes:
+      - ./data/mongors0/3:/data/db
+      - ./data/mongors0/3-config:/data/configdb
+    networks:
+      imcloudx:
+        ipv4_address: 172.88.10.43 # 172.88.10.43:27017
+    depends_on:
+      - mongors0-1
+      - mongors0-2
+  #  docker exec -it mongors0-1 /bin/bash
+  #  ```bash
+  #  mongo
+  #
+  #  mongo> rs.initiate({_id:"rs0",members:[{_id:0,host:"172.88.10.41:27017", "priority": 2},{_id:1,host:"172.88.10.42:27017"},{_id:2,host:"172.88.10.43:27017"}]})
+  #
+  #  ```
+  ########### mongors0 ###########

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message MessageInsertReq {
+  RequestHeader header = 1;
+}
+
+message MessageInsertResp {
+  ResponseHeader header = 1;
+}
+
+service messageService {
+  //MessageInsert 插入消息
+  //二次开发时，需要实现该接口
+  rpc MessageInsert(MessageInsertReq) returns (MessageInsertResp);
+}

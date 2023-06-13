@@ -8,12 +8,20 @@ import (
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/gin-gonic/gin"
 	"github.com/zeromicro/go-zero/core/logx"
-	"io"
 	"os"
 )
 
+type logxWriter struct {
+}
+
+func (l *logxWriter) Write(p []byte) (n int, err error) {
+	logx.Infof("%s", p)
+	return len(p), nil
+}
+
 func NewHttpServer(svcCtx *svc.ServiceContext) *HttpServer {
 	s := &HttpServer{svcCtx: svcCtx}
+	gin.DefaultWriter = new(logxWriter)
 	s.ginEngine = gin.New()
 	s.ginEngine.Use(
 		middleware.Tracing(svcCtx), // 链路追踪
@@ -28,8 +36,6 @@ func NewHttpServer(svcCtx *svc.ServiceContext) *HttpServer {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
-		// 禁用日志
-		gin.DefaultWriter = io.Discard
 	}
 	return s
 }

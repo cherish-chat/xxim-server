@@ -24,8 +24,8 @@ func NewDispatchOfflineCallbackLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 // DispatchOfflineCallback 下线回调
-func (l *DispatchOfflineCallbackLogic) DispatchOfflineCallback(in *pb.DispatchOnlineCallbackReq) (*pb.DispatchOnlineCallbackResp, error) {
+func (l *DispatchOfflineCallbackLogic) DispatchOfflineCallback(in *pb.DispatchOfflineCallbackReq) (*pb.DispatchOfflineCallbackResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.DispatchOnlineCallbackResp{}, nil
+	return &pb.DispatchOfflineCallbackResp{}, nil
 }

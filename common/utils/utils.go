@@ -12,8 +12,12 @@ const (
 )
 
 func Md5(s string) string {
+	return Md5Bytes([]byte(s))
+}
+
+func Md5Bytes(b []byte) string {
 	h := md5.New()
-	h.Write([]byte(s))
+	h.Write(b)
 	cipher := h.Sum(nil)
 	return hex.EncodeToString(cipher)
 }
