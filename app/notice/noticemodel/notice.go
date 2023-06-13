@@ -73,7 +73,7 @@ func GenerateNoticeId(conversationId string, conversationType ConversationType, 
 	return utils.Md5(s)
 }
 
-func (m *Notice) Indexes() []opts.IndexModel {
+func (m *Notice) GetIndexes() []opts.IndexModel {
 	return []opts.IndexModel{{
 		Key:          []string{"-updateTime"},
 		IndexOptions: options.Index().SetName("updateTime"),

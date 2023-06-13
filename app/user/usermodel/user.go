@@ -35,7 +35,7 @@ type User struct {
 	Avatar string `bson:"avatar" json:"avatar"`
 }
 
-func (m *User) Indexes() []opts.IndexModel {
+func (m *User) GetIndexes() []opts.IndexModel {
 	return []opts.IndexModel{{
 		Key:          []string{"-registerTime"},
 		IndexOptions: options.Index().SetName("registerTime"),

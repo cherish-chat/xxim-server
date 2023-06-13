@@ -72,7 +72,7 @@ type Message struct {
 	Extra bson.M `bson:"extra" json:"extra"`
 }
 
-func (m *Message) Indexes() []opts.IndexModel {
+func (m *Message) GetIndexes() []opts.IndexModel {
 	return []opts.IndexModel{{
 		Key:          []string{"clientMessageId"},
 		IndexOptions: options.Index().SetName("clientMessageId"),
