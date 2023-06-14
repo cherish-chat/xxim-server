@@ -45,3 +45,16 @@ func NewOkHeader() *pb.ResponseHeader {
 		ActionData: "",
 	}
 }
+
+func NewToastHeader(level pb.ToastActionData_Level, message string) *pb.ResponseHeader {
+	data := &pb.ToastActionData{
+		Level:   level,
+		Message: message,
+	}
+	return &pb.ResponseHeader{
+		Code:       pb.ResponseCode_SUCCESS,
+		ActionType: pb.ResponseActionType_TOAST_ACTION,
+		ActionData: utils.Json.MarshalToString(data),
+		Extra:      "",
+	}
+}

@@ -3,15 +3,211 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
+//UserRegister 用户注册 二次开发人员可以传递自定义参数
+
+//UserRegisterReq 用户注册请求
 message UserRegisterReq {
+  RequestHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  optional int64 registerTime = 3; // 注册时间 13位时间戳 如果不传 默认为当前时间
+  optional string nickname = 4; // 昵称
+  optional string avatar = 5; // 头像url
+
+  map<string, string> accountMap = 6; // 账号信息 你可以存放password、email、phone等等
+  map<string, string> profileMap = 7; // 个人信息 你可以存放性别、年龄、生日等等
+  map<string, string> extraMap = 8; // 扩展信息 你可以存放等级、积分、金币等等
+
+  map<string, string> verifyMap = 9; // 验证信息 你可以存放smsCode、emailCode等等
+}
+
+//UserRegisterResp 用户注册响应
+message UserRegisterResp {
+  ResponseHeader header = 1;
+}
+
+//UserDestroy 用户注销
+
+//UserDestroyReq 用户注销请求
+message UserDestroyReq {
+  RequestHeader header = 1;
+  string userId = 2; // // 用户id 唯一
+}
+
+//UserDestroyResp 用户注销响应
+message UserDestroyResp {
+  ResponseHeader header = 1;
+}
+
+//UserAccessToken 用户通过accountMap获取token
+
+//UserAccessTokenReq 用户登录请求
+message UserAccessTokenReq {
+  RequestHeader header = 1;
+  map<string, string> accountMap = 2; // 账号信息 你可以存放password、email、phone等等
+  optional int64 expireTime = 3; // 过期时间 13位时间戳
+}
+
+//UserAccessTokenResp 用户登录响应
+message UserAccessTokenResp {
+  ResponseHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  string accessToken = 3; // 用户token
+  string refreshToken = 4; // 刷新token
+}
+
+//FlushUserAccessToken 刷新用户token
+
+//FlushUserAccessTokenReq 刷新用户token请求
+message FlushUserAccessTokenReq {
+  RequestHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  string refreshToken = 3; // 刷新token
+}
+
+//FlushUserAccessTokenResp 刷新用户token响应
+message FlushUserAccessTokenResp {
+  ResponseHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  string accessToken = 3; // 用户token
+}
+
+//RevokeUserAccessToken 注销用户token
+
+//RevokeUserAccessTokenReq 注销用户token
+message RevokeUserAccessTokenReq {
   RequestHeader header = 1;
 }
 
-message UserRegisterResp {
+//RevokeUserAccessTokenResp 注销用户token
+message RevokeUserAccessTokenResp {
+  ResponseHeader header = 1;
+}
+
+//UpdateUserAccountMap 更新用户账号信息
+
+//UpdateUserAccountMapReq 更新用户账号信息请求
+message UpdateUserAccountMapReq {
+  RequestHeader header = 1;
+  map<string, string> accountMap = 2; // 账号信息 你可以存放password、email、phone等等
+  map<string, string> verifyMap = 3; // 验证信息 你可以存放oldPassword、smsCode、emailCode等等
+}
+
+//UpdateUserAccountMapResp 更新用户账号信息响应
+message UpdateUserAccountMapResp {
+  ResponseHeader header = 1;
+}
+
+//UpdateUserProfileMap 更新用户个人信息
+
+//UpdateUserProfileMapReq 更新用户个人信息请求
+message UpdateUserProfileMapReq {
+  RequestHeader header = 1;
+  map<string, string> profileMap = 2; // 个人信息 你可以存放性别、年龄、生日等等
+}
+
+//UpdateUserProfileMapResp 更新用户个人信息响应
+message UpdateUserProfileMapResp {
+  ResponseHeader header = 1;
+}
+
+//UpdateUserExtraMap 更新用户扩展信息
+
+//UpdateUserExtraMapReq 更新用户扩展信息请求
+message UpdateUserExtraMapReq {
+  RequestHeader header = 1;
+  map<string, string> extraMap = 2; // 扩展信息 你可以存放等级、积分、金币等等
+}
+
+//UpdateUserExtraMapResp 更新用户扩展信息响应
+message UpdateUserExtraMapResp {
+  ResponseHeader header = 1;
+}
+
+//GetSelfUserInfo 获取自己的用户信息
+
+//GetSelfUserInfoReq 获取自己的用户信息请求
+message GetSelfUserInfoReq {
+  RequestHeader header = 1;
+}
+
+//GetSelfUserInfoResp 获取自己的用户信息响应
+message GetSelfUserInfoResp {
+  ResponseHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  optional int64 registerTime = 3; // 注册时间 13位时间戳 如果不传 默认为当前时间
+  optional string nickname = 4; // 昵称
+  optional string avatar = 5; // 头像url
+
+  map<string, string> accountMap = 6; // 账号信息 你可以存放password、email、phone等等
+  map<string, string> profileMap = 7; // 个人信息 你可以存放性别、年龄、生日等等
+  map<string, string> extraMap = 8; // 扩展信息 你可以存放等级、积分、金币等等
+}
+
+//GetUserInfo 获取用户信息
+
+//GetUserInfoReq 获取用户信息请求
+message GetUserInfoReq {
+  RequestHeader header = 1;
+  string userId = 2; // 用户id 唯一
+}
+
+//GetUserInfoResp 获取用户信息响应
+message GetUserInfoResp {
+  ResponseHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  optional int64 registerTime = 3; // 注册时间 13位时间戳 如果不传 默认为当前时间
+  optional string nickname = 4; // 昵称
+  optional string avatar = 5; // 头像url
+
+  map<string, string> profileMap = 6; // 个人信息 你可以存放性别、年龄、生日等等
+}
+
+//ResetUserAccountMap 重置用户账号信息
+
+//ResetUserAccountMapReq 重置用户账号信息请求
+message ResetUserAccountMapReq {
+  RequestHeader header = 1;
+  map<string, string> accountMap = 2; // 账号信息 你可以存放password、email、phone等等
+  map<string, string> verifyMap = 3; // 验证信息 你可以存放smsCode、emailCode等等
+}
+
+//ResetUserAccountMapResp 重置用户账号信息响应
+message ResetUserAccountMapResp {
   ResponseHeader header = 1;
 }
 
 service userService {
   //UserRegister 用户注册
+  //二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
   rpc UserRegister(UserRegisterReq) returns (UserRegisterResp);
+  //UserDestroy 用户注销
+  //注销逻辑可以从这里修改
+  rpc UserDestroy(UserDestroyReq) returns (UserDestroyResp);
+  //UserAccessToken 用户登录
+  //登录逻辑可以从这里修改 默认是密码/手机号登录
+  rpc UserAccessToken(UserAccessTokenReq) returns (UserAccessTokenResp);
+  //FlushUserAccessToken 刷新用户token
+  //刷新逻辑可以从这里修改
+  rpc FlushUserAccessToken(FlushUserAccessTokenReq) returns (FlushUserAccessTokenResp);
+  //RevokeUserAccessToken 注销用户token
+  //注销逻辑可以从这里修改
+  rpc RevokeUserAccessToken(RevokeUserAccessTokenReq) returns (RevokeUserAccessTokenResp);
+  //UpdateUserAccountMap 更新用户账号信息
+  //更新账号信息逻辑可以从这里修改 默认：如果是修改密码，需要旧密码或手机验证码。如果修改绑定手机号，需要验证新手机号的验证码
+  rpc UpdateUserAccountMap(UpdateUserAccountMapReq) returns (UpdateUserAccountMapResp);
+  //UpdateUserProfileMap 更新用户个人信息
+  //更新个人信息逻辑可以从这里修改
+  rpc UpdateUserProfileMap(UpdateUserProfileMapReq) returns (UpdateUserProfileMapResp);
+  //UpdateUserExtraMap 更新用户扩展信息
+  //更新扩展信息逻辑可以从这里修改
+  rpc UpdateUserExtraMap(UpdateUserExtraMapReq) returns (UpdateUserExtraMapResp);
+  //GetSelfUserInfo 获取自己的用户信息
+  //获取自己的用户信息逻辑可以从这里修改
+  rpc GetSelfUserInfo(GetSelfUserInfoReq) returns (GetSelfUserInfoResp);
+  //GetUserInfo 获取用户信息
+  //获取用户信息逻辑可以从这里修改
+  rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
+  //ResetUserAccountMap 重置用户账号信息
+  //重置账号信息逻辑可以从这里修改
+  rpc ResetUserAccountMap(ResetUserAccountMapReq) returns (ResetUserAccountMapResp);
 }

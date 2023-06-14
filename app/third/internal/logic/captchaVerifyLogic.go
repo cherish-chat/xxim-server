@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SendSmsLogic struct {
+type CaptchaVerifyLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewSendSmsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendSmsLogic {
-	return &SendSmsLogic{
+func NewCaptchaVerifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CaptchaVerifyLogic {
+	return &CaptchaVerifyLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// SendSms 发送短信
-func (l *SendSmsLogic) SendSms(in *pb.ThirdSendSmsReq) (*pb.ThirdSendSmsResp, error) {
+// CaptchaVerify 验证图形验证码
+func (l *CaptchaVerifyLogic) CaptchaVerify(in *pb.CaptchaVerifyReq) (*pb.CaptchaVerifyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.ThirdSendSmsResp{}, nil
+	return &pb.CaptchaVerifyResp{}, nil
 }

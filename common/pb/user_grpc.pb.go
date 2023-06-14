@@ -23,7 +23,38 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	//UserRegister 用户注册
+	//二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
 	UserRegister(ctx context.Context, in *UserRegisterReq, opts ...grpc.CallOption) (*UserRegisterResp, error)
+	//UserDestroy 用户注销
+	//注销逻辑可以从这里修改
+	UserDestroy(ctx context.Context, in *UserDestroyReq, opts ...grpc.CallOption) (*UserDestroyResp, error)
+	//UserAccessToken 用户登录
+	//登录逻辑可以从这里修改 默认是密码/手机号登录
+	UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error)
+	//FlushUserAccessToken 刷新用户token
+	//刷新逻辑可以从这里修改
+	FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error)
+	//RevokeUserAccessToken 注销用户token
+	//注销逻辑可以从这里修改
+	RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error)
+	//UpdateUserAccountMap 更新用户账号信息
+	//更新账号信息逻辑可以从这里修改 默认：如果是修改密码，需要旧密码或手机验证码。如果修改绑定手机号，需要验证新手机号的验证码
+	UpdateUserAccountMap(ctx context.Context, in *UpdateUserAccountMapReq, opts ...grpc.CallOption) (*UpdateUserAccountMapResp, error)
+	//UpdateUserProfileMap 更新用户个人信息
+	//更新个人信息逻辑可以从这里修改
+	UpdateUserProfileMap(ctx context.Context, in *UpdateUserProfileMapReq, opts ...grpc.CallOption) (*UpdateUserProfileMapResp, error)
+	//UpdateUserExtraMap 更新用户扩展信息
+	//更新扩展信息逻辑可以从这里修改
+	UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error)
+	//GetSelfUserInfo 获取自己的用户信息
+	//获取自己的用户信息逻辑可以从这里修改
+	GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error)
+	//GetUserInfo 获取用户信息
+	//获取用户信息逻辑可以从这里修改
+	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+	//ResetUserAccountMap 重置用户账号信息
+	//重置账号信息逻辑可以从这里修改
+	ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
 }
 
 type userServiceClient struct {
@@ -43,12 +74,133 @@ func (c *userServiceClient) UserRegister(ctx context.Context, in *UserRegisterRe
 	return out, nil
 }
 
+func (c *userServiceClient) UserDestroy(ctx context.Context, in *UserDestroyReq, opts ...grpc.CallOption) (*UserDestroyResp, error) {
+	out := new(UserDestroyResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserDestroy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error) {
+	out := new(UserAccessTokenResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserAccessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error) {
+	out := new(FlushUserAccessTokenResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/FlushUserAccessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error) {
+	out := new(RevokeUserAccessTokenResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/RevokeUserAccessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserAccountMap(ctx context.Context, in *UpdateUserAccountMapReq, opts ...grpc.CallOption) (*UpdateUserAccountMapResp, error) {
+	out := new(UpdateUserAccountMapResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserAccountMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserProfileMap(ctx context.Context, in *UpdateUserProfileMapReq, opts ...grpc.CallOption) (*UpdateUserProfileMapResp, error) {
+	out := new(UpdateUserProfileMapResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserProfileMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error) {
+	out := new(UpdateUserExtraMapResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UpdateUserExtraMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error) {
+	out := new(GetSelfUserInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetSelfUserInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
+	out := new(GetUserInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error) {
+	out := new(ResetUserAccountMapResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/ResetUserAccountMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	//UserRegister 用户注册
+	//二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
 	UserRegister(context.Context, *UserRegisterReq) (*UserRegisterResp, error)
+	//UserDestroy 用户注销
+	//注销逻辑可以从这里修改
+	UserDestroy(context.Context, *UserDestroyReq) (*UserDestroyResp, error)
+	//UserAccessToken 用户登录
+	//登录逻辑可以从这里修改 默认是密码/手机号登录
+	UserAccessToken(context.Context, *UserAccessTokenReq) (*UserAccessTokenResp, error)
+	//FlushUserAccessToken 刷新用户token
+	//刷新逻辑可以从这里修改
+	FlushUserAccessToken(context.Context, *FlushUserAccessTokenReq) (*FlushUserAccessTokenResp, error)
+	//RevokeUserAccessToken 注销用户token
+	//注销逻辑可以从这里修改
+	RevokeUserAccessToken(context.Context, *RevokeUserAccessTokenReq) (*RevokeUserAccessTokenResp, error)
+	//UpdateUserAccountMap 更新用户账号信息
+	//更新账号信息逻辑可以从这里修改 默认：如果是修改密码，需要旧密码或手机验证码。如果修改绑定手机号，需要验证新手机号的验证码
+	UpdateUserAccountMap(context.Context, *UpdateUserAccountMapReq) (*UpdateUserAccountMapResp, error)
+	//UpdateUserProfileMap 更新用户个人信息
+	//更新个人信息逻辑可以从这里修改
+	UpdateUserProfileMap(context.Context, *UpdateUserProfileMapReq) (*UpdateUserProfileMapResp, error)
+	//UpdateUserExtraMap 更新用户扩展信息
+	//更新扩展信息逻辑可以从这里修改
+	UpdateUserExtraMap(context.Context, *UpdateUserExtraMapReq) (*UpdateUserExtraMapResp, error)
+	//GetSelfUserInfo 获取自己的用户信息
+	//获取自己的用户信息逻辑可以从这里修改
+	GetSelfUserInfo(context.Context, *GetSelfUserInfoReq) (*GetSelfUserInfoResp, error)
+	//GetUserInfo 获取用户信息
+	//获取用户信息逻辑可以从这里修改
+	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
+	//ResetUserAccountMap 重置用户账号信息
+	//重置账号信息逻辑可以从这里修改
+	ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -58,6 +210,36 @@ type UnimplementedUserServiceServer struct {
 
 func (UnimplementedUserServiceServer) UserRegister(context.Context, *UserRegisterReq) (*UserRegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserRegister not implemented")
+}
+func (UnimplementedUserServiceServer) UserDestroy(context.Context, *UserDestroyReq) (*UserDestroyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDestroy not implemented")
+}
+func (UnimplementedUserServiceServer) UserAccessToken(context.Context, *UserAccessTokenReq) (*UserAccessTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserAccessToken not implemented")
+}
+func (UnimplementedUserServiceServer) FlushUserAccessToken(context.Context, *FlushUserAccessTokenReq) (*FlushUserAccessTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FlushUserAccessToken not implemented")
+}
+func (UnimplementedUserServiceServer) RevokeUserAccessToken(context.Context, *RevokeUserAccessTokenReq) (*RevokeUserAccessTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserAccessToken not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserAccountMap(context.Context, *UpdateUserAccountMapReq) (*UpdateUserAccountMapResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserAccountMap not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserProfileMap(context.Context, *UpdateUserProfileMapReq) (*UpdateUserProfileMapResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserProfileMap not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateUserExtraMap(context.Context, *UpdateUserExtraMapReq) (*UpdateUserExtraMapResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserExtraMap not implemented")
+}
+func (UnimplementedUserServiceServer) GetSelfUserInfo(context.Context, *GetSelfUserInfoReq) (*GetSelfUserInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSelfUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetUserAccountMap not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -90,6 +272,186 @@ func _UserService_UserRegister_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UserDestroy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserDestroyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserDestroy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserDestroy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserDestroy(ctx, req.(*UserDestroyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UserAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAccessTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserAccessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserAccessToken(ctx, req.(*UserAccessTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_FlushUserAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FlushUserAccessTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).FlushUserAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/FlushUserAccessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).FlushUserAccessToken(ctx, req.(*FlushUserAccessTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_RevokeUserAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeUserAccessTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).RevokeUserAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/RevokeUserAccessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).RevokeUserAccessToken(ctx, req.(*RevokeUserAccessTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserAccountMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserAccountMapReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserAccountMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserAccountMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserAccountMap(ctx, req.(*UpdateUserAccountMapReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserProfileMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserProfileMapReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserProfileMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserProfileMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserProfileMap(ctx, req.(*UpdateUserProfileMapReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateUserExtraMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserExtraMapReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateUserExtraMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UpdateUserExtraMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateUserExtraMap(ctx, req.(*UpdateUserExtraMapReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetSelfUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSelfUserInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetSelfUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetSelfUserInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetSelfUserInfo(ctx, req.(*GetSelfUserInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserInfo(ctx, req.(*GetUserInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ResetUserAccountMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetUserAccountMapReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ResetUserAccountMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/ResetUserAccountMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ResetUserAccountMap(ctx, req.(*ResetUserAccountMapReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +462,46 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserRegister",
 			Handler:    _UserService_UserRegister_Handler,
+		},
+		{
+			MethodName: "UserDestroy",
+			Handler:    _UserService_UserDestroy_Handler,
+		},
+		{
+			MethodName: "UserAccessToken",
+			Handler:    _UserService_UserAccessToken_Handler,
+		},
+		{
+			MethodName: "FlushUserAccessToken",
+			Handler:    _UserService_FlushUserAccessToken_Handler,
+		},
+		{
+			MethodName: "RevokeUserAccessToken",
+			Handler:    _UserService_RevokeUserAccessToken_Handler,
+		},
+		{
+			MethodName: "UpdateUserAccountMap",
+			Handler:    _UserService_UpdateUserAccountMap_Handler,
+		},
+		{
+			MethodName: "UpdateUserProfileMap",
+			Handler:    _UserService_UpdateUserProfileMap_Handler,
+		},
+		{
+			MethodName: "UpdateUserExtraMap",
+			Handler:    _UserService_UpdateUserExtraMap_Handler,
+		},
+		{
+			MethodName: "GetSelfUserInfo",
+			Handler:    _UserService_GetSelfUserInfo_Handler,
+		},
+		{
+			MethodName: "GetUserInfo",
+			Handler:    _UserService_GetUserInfo_Handler,
+		},
+		{
+			MethodName: "ResetUserAccountMap",
+			Handler:    _UserService_ResetUserAccountMap_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

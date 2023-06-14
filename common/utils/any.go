@@ -4,6 +4,19 @@ func AnyPtr[T any](v T) *T {
 	return &v
 }
 
+type EnumInSliceType interface {
+	String() string
+}
+
+func EnumInSlice[T EnumInSliceType](v T, slice []T) bool {
+	for _, item := range slice {
+		if item.String() == v.String() {
+			return true
+		}
+	}
+	return false
+}
+
 func AnyString(o any) string {
 	switch v := o.(type) {
 	case string:

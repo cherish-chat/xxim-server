@@ -3,24 +3,152 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
-enum ThirdSendSmsType {
-  REGISTER = 0; // 注册
-  LOGIN = 1; // 登录
-  RESET_PASSWORD = 2; // 重置密码
-  REBIND_PHONE = 3; // 绑定手机号
-}
-message ThirdSendSmsReq {
+//SmsCodeSend 发送短信
+
+//SmsCodeSendReq 发送短信请求
+message SmsCodeSendReq {
   RequestHeader header = 1;
-  repeated string args = 2;
-  repeated string mobiles = 3;
-  ThirdSendSmsType type = 4;
+  //手机号
+  string phone = 2;
+  //手机国家区号
+  string phoneCode = 3;
+  //短信场景
+  string scene = 4;
+  //过期时间
+  optional int64 expireTime = 5;
 }
 
-message ThirdSendSmsResp {
+//SmsCodeSendResp 发送短信响应
+message SmsCodeSendResp {
   ResponseHeader header = 1;
 }
 
+//SmsCodeVerify 验证短信
+
+//SmsCodeVerifyReq 验证短信请求
+message SmsCodeVerifyReq {
+  RequestHeader header = 1;
+  //手机号
+  string phone = 2;
+  //手机国家区号
+  string phoneCode = 3;
+  //短信场景
+  string scene = 4;
+  //验证码
+  string smsCode = 5;
+  //是否立刻删除 删除后再次验证会失败
+  bool delete = 6;
+}
+
+//SmsCodeVerifyResp 验证短信响应
+message SmsCodeVerifyResp {
+  ResponseHeader header = 1;
+  bool success = 2;
+}
+
+//EmailCodeSend 发送邮件
+
+//EmailCodeSendReq 发送邮件请求
+message EmailCodeSendReq {
+  RequestHeader header = 1;
+  //邮件地址
+  string email = 2;
+  //场景
+  string scene = 3;
+  //过期时间
+  optional int64 expireTime = 4;
+}
+
+//EmailCodeSendResp 发送邮件响应
+message EmailCodeSendResp {
+  ResponseHeader header = 1;
+}
+
+//EmailCodeVerify 验证邮件
+
+//EmailCodeVerifyReq 验证邮件请求
+message EmailCodeVerifyReq {
+  RequestHeader header = 1;
+  //邮件地址
+  string email = 2;
+  //场景
+  string scene = 3;
+  //验证码
+  string emailCode = 4;
+  //是否立刻删除 删除后再次验证会失败
+  bool delete = 5;
+}
+
+//EmailCodeVerifyResp 验证邮件响应
+message EmailCodeVerifyResp {
+  ResponseHeader header = 1;
+  bool success = 2;
+}
+
+//GetCaptcha 获取图形验证码
+
+//GetCaptchaReq 获取图形验证码请求
+message GetCaptchaReq {
+  RequestHeader header = 1;
+  //过期时间
+  optional int64 expireTime = 2;
+  //字符是否包含英文
+  bool includeEnglish = 3;
+  //字符是否包含数字
+  bool includeNumber = 4;
+  //宽度
+  int32 width = 5;
+  //高度
+  int32 height = 6;
+  //字符数量
+  int32 charCount = 7;
+}
+
+//GetCaptchaResp 获取图形验证码响应
+message GetCaptchaResp {
+  ResponseHeader header = 1;
+  //验证码id
+  string captchaId = 2;
+  //图形验证码
+  string captchaCode = 3;
+}
+
+//CaptchaVerify 验证图形验证码
+
+//CaptchaVerifyReq 验证图形验证码请求
+message CaptchaVerifyReq {
+  RequestHeader header = 1;
+  //验证码id
+  string captchaId = 2;
+  //验证码
+  string captchaCode = 3;
+  //是否立刻删除 删除后再次验证会失败
+  bool delete = 4;
+}
+
+//CaptchaVerifyResp 验证图形验证码响应
+message CaptchaVerifyResp {
+  ResponseHeader header = 1;
+  bool success = 2;
+}
+
 service thirdService {
-  //SendSms 发送短信
-  rpc SendSms(ThirdSendSmsReq) returns (ThirdSendSmsResp);
+  //SmsCodeSend 发送短信
+  //二次开发人员可以自行实现
+  rpc SmsCodeSend(SmsCodeSendReq) returns (SmsCodeSendResp) {}
+  //SmsCodeVerify 验证短信
+  //二次开发人员可以自行实现
+  rpc SmsCodeVerify(SmsCodeVerifyReq) returns (SmsCodeVerifyResp) {}
+  //EmailCodeSend 发送邮件
+  //二次开发人员可以自行实现
+  rpc EmailCodeSend(EmailCodeSendReq) returns (EmailCodeSendResp) {}
+  //EmailCodeVerify 验证邮件
+  //二次开发人员可以自行实现
+  rpc EmailCodeVerify(EmailCodeVerifyReq) returns (EmailCodeVerifyResp) {}
+  //GetCaptcha 获取图形验证码
+  //二次开发人员可以自行实现
+  rpc GetCaptcha(GetCaptchaReq) returns (GetCaptchaResp) {}
+  //CaptchaVerify 验证图形验证码
+  //二次开发人员可以自行实现
+  rpc CaptchaVerify(CaptchaVerifyReq) returns (CaptchaVerifyResp) {}
 }

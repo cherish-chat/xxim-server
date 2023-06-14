@@ -27,3 +27,63 @@ func (s *UserServiceServer) UserRegister(ctx context.Context, in *pb.UserRegiste
 	l := logic.NewUserRegisterLogic(ctx, s.svcCtx)
 	return l.UserRegister(in)
 }
+
+// UserDestroy 用户注销
+func (s *UserServiceServer) UserDestroy(ctx context.Context, in *pb.UserDestroyReq) (*pb.UserDestroyResp, error) {
+	l := logic.NewUserDestroyLogic(ctx, s.svcCtx)
+	return l.UserDestroy(in)
+}
+
+// UserAccessToken 用户登录
+func (s *UserServiceServer) UserAccessToken(ctx context.Context, in *pb.UserAccessTokenReq) (*pb.UserAccessTokenResp, error) {
+	l := logic.NewUserAccessTokenLogic(ctx, s.svcCtx)
+	return l.UserAccessToken(in)
+}
+
+// FlushUserAccessToken 刷新用户token
+func (s *UserServiceServer) FlushUserAccessToken(ctx context.Context, in *pb.FlushUserAccessTokenReq) (*pb.FlushUserAccessTokenResp, error) {
+	l := logic.NewFlushUserAccessTokenLogic(ctx, s.svcCtx)
+	return l.FlushUserAccessToken(in)
+}
+
+// RevokeUserAccessToken 注销用户token
+func (s *UserServiceServer) RevokeUserAccessToken(ctx context.Context, in *pb.RevokeUserAccessTokenReq) (*pb.RevokeUserAccessTokenResp, error) {
+	l := logic.NewRevokeUserAccessTokenLogic(ctx, s.svcCtx)
+	return l.RevokeUserAccessToken(in)
+}
+
+// UpdateUserAccountMap 更新用户账号信息
+func (s *UserServiceServer) UpdateUserAccountMap(ctx context.Context, in *pb.UpdateUserAccountMapReq) (*pb.UpdateUserAccountMapResp, error) {
+	l := logic.NewUpdateUserAccountMapLogic(ctx, s.svcCtx)
+	return l.UpdateUserAccountMap(in)
+}
+
+// UpdateUserProfileMap 更新用户个人信息
+func (s *UserServiceServer) UpdateUserProfileMap(ctx context.Context, in *pb.UpdateUserProfileMapReq) (*pb.UpdateUserProfileMapResp, error) {
+	l := logic.NewUpdateUserProfileMapLogic(ctx, s.svcCtx)
+	return l.UpdateUserProfileMap(in)
+}
+
+// UpdateUserExtraMap 更新用户扩展信息
+func (s *UserServiceServer) UpdateUserExtraMap(ctx context.Context, in *pb.UpdateUserExtraMapReq) (*pb.UpdateUserExtraMapResp, error) {
+	l := logic.NewUpdateUserExtraMapLogic(ctx, s.svcCtx)
+	return l.UpdateUserExtraMap(in)
+}
+
+// GetSelfUserInfo 获取自己的用户信息
+func (s *UserServiceServer) GetSelfUserInfo(ctx context.Context, in *pb.GetSelfUserInfoReq) (*pb.GetSelfUserInfoResp, error) {
+	l := logic.NewGetSelfUserInfoLogic(ctx, s.svcCtx)
+	return l.GetSelfUserInfo(in)
+}
+
+// GetUserInfo 获取用户信息
+func (s *UserServiceServer) GetUserInfo(ctx context.Context, in *pb.GetUserInfoReq) (*pb.GetUserInfoResp, error) {
+	l := logic.NewGetUserInfoLogic(ctx, s.svcCtx)
+	return l.GetUserInfo(in)
+}
+
+// ResetUserAccountMap 重置用户账号信息
+func (s *UserServiceServer) ResetUserAccountMap(ctx context.Context, in *pb.ResetUserAccountMapReq) (*pb.ResetUserAccountMapResp, error) {
+	l := logic.NewResetUserAccountMapLogic(ctx, s.svcCtx)
+	return l.ResetUserAccountMap(in)
+}

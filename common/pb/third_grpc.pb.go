@@ -22,8 +22,24 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ThirdServiceClient interface {
-	//SendSms 发送短信
-	SendSms(ctx context.Context, in *ThirdSendSmsReq, opts ...grpc.CallOption) (*ThirdSendSmsResp, error)
+	//SmsCodeSend 发送短信
+	//二次开发人员可以自行实现
+	SmsCodeSend(ctx context.Context, in *SmsCodeSendReq, opts ...grpc.CallOption) (*SmsCodeSendResp, error)
+	//SmsCodeVerify 验证短信
+	//二次开发人员可以自行实现
+	SmsCodeVerify(ctx context.Context, in *SmsCodeVerifyReq, opts ...grpc.CallOption) (*SmsCodeVerifyResp, error)
+	//EmailCodeSend 发送邮件
+	//二次开发人员可以自行实现
+	EmailCodeSend(ctx context.Context, in *EmailCodeSendReq, opts ...grpc.CallOption) (*EmailCodeSendResp, error)
+	//EmailCodeVerify 验证邮件
+	//二次开发人员可以自行实现
+	EmailCodeVerify(ctx context.Context, in *EmailCodeVerifyReq, opts ...grpc.CallOption) (*EmailCodeVerifyResp, error)
+	//GetCaptcha 获取图形验证码
+	//二次开发人员可以自行实现
+	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaResp, error)
+	//CaptchaVerify 验证图形验证码
+	//二次开发人员可以自行实现
+	CaptchaVerify(ctx context.Context, in *CaptchaVerifyReq, opts ...grpc.CallOption) (*CaptchaVerifyResp, error)
 }
 
 type thirdServiceClient struct {
@@ -34,9 +50,54 @@ func NewThirdServiceClient(cc grpc.ClientConnInterface) ThirdServiceClient {
 	return &thirdServiceClient{cc}
 }
 
-func (c *thirdServiceClient) SendSms(ctx context.Context, in *ThirdSendSmsReq, opts ...grpc.CallOption) (*ThirdSendSmsResp, error) {
-	out := new(ThirdSendSmsResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/SendSms", in, out, opts...)
+func (c *thirdServiceClient) SmsCodeSend(ctx context.Context, in *SmsCodeSendReq, opts ...grpc.CallOption) (*SmsCodeSendResp, error) {
+	out := new(SmsCodeSendResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/SmsCodeSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *thirdServiceClient) SmsCodeVerify(ctx context.Context, in *SmsCodeVerifyReq, opts ...grpc.CallOption) (*SmsCodeVerifyResp, error) {
+	out := new(SmsCodeVerifyResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/SmsCodeVerify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *thirdServiceClient) EmailCodeSend(ctx context.Context, in *EmailCodeSendReq, opts ...grpc.CallOption) (*EmailCodeSendResp, error) {
+	out := new(EmailCodeSendResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/EmailCodeSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *thirdServiceClient) EmailCodeVerify(ctx context.Context, in *EmailCodeVerifyReq, opts ...grpc.CallOption) (*EmailCodeVerifyResp, error) {
+	out := new(EmailCodeVerifyResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/EmailCodeVerify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *thirdServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaResp, error) {
+	out := new(GetCaptchaResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/GetCaptcha", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *thirdServiceClient) CaptchaVerify(ctx context.Context, in *CaptchaVerifyReq, opts ...grpc.CallOption) (*CaptchaVerifyResp, error) {
+	out := new(CaptchaVerifyResp)
+	err := c.cc.Invoke(ctx, "/pb.thirdService/CaptchaVerify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +108,24 @@ func (c *thirdServiceClient) SendSms(ctx context.Context, in *ThirdSendSmsReq, o
 // All implementations must embed UnimplementedThirdServiceServer
 // for forward compatibility
 type ThirdServiceServer interface {
-	//SendSms 发送短信
-	SendSms(context.Context, *ThirdSendSmsReq) (*ThirdSendSmsResp, error)
+	//SmsCodeSend 发送短信
+	//二次开发人员可以自行实现
+	SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error)
+	//SmsCodeVerify 验证短信
+	//二次开发人员可以自行实现
+	SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error)
+	//EmailCodeSend 发送邮件
+	//二次开发人员可以自行实现
+	EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error)
+	//EmailCodeVerify 验证邮件
+	//二次开发人员可以自行实现
+	EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error)
+	//GetCaptcha 获取图形验证码
+	//二次开发人员可以自行实现
+	GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaResp, error)
+	//CaptchaVerify 验证图形验证码
+	//二次开发人员可以自行实现
+	CaptchaVerify(context.Context, *CaptchaVerifyReq) (*CaptchaVerifyResp, error)
 	mustEmbedUnimplementedThirdServiceServer()
 }
 
@@ -56,8 +133,23 @@ type ThirdServiceServer interface {
 type UnimplementedThirdServiceServer struct {
 }
 
-func (UnimplementedThirdServiceServer) SendSms(context.Context, *ThirdSendSmsReq) (*ThirdSendSmsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendSms not implemented")
+func (UnimplementedThirdServiceServer) SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeSend not implemented")
+}
+func (UnimplementedThirdServiceServer) SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeVerify not implemented")
+}
+func (UnimplementedThirdServiceServer) EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeSend not implemented")
+}
+func (UnimplementedThirdServiceServer) EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeVerify not implemented")
+}
+func (UnimplementedThirdServiceServer) GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCaptcha not implemented")
+}
+func (UnimplementedThirdServiceServer) CaptchaVerify(context.Context, *CaptchaVerifyReq) (*CaptchaVerifyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CaptchaVerify not implemented")
 }
 func (UnimplementedThirdServiceServer) mustEmbedUnimplementedThirdServiceServer() {}
 
@@ -72,20 +164,110 @@ func RegisterThirdServiceServer(s grpc.ServiceRegistrar, srv ThirdServiceServer)
 	s.RegisterService(&ThirdService_ServiceDesc, srv)
 }
 
-func _ThirdService_SendSms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ThirdSendSmsReq)
+func _ThirdService_SmsCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmsCodeSendReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ThirdServiceServer).SendSms(ctx, in)
+		return srv.(ThirdServiceServer).SmsCodeSend(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.thirdService/SendSms",
+		FullMethod: "/pb.thirdService/SmsCodeSend",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).SendSms(ctx, req.(*ThirdSendSmsReq))
+		return srv.(ThirdServiceServer).SmsCodeSend(ctx, req.(*SmsCodeSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ThirdService_SmsCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmsCodeVerifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThirdServiceServer).SmsCodeVerify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.thirdService/SmsCodeVerify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThirdServiceServer).SmsCodeVerify(ctx, req.(*SmsCodeVerifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ThirdService_EmailCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailCodeSendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThirdServiceServer).EmailCodeSend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.thirdService/EmailCodeSend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThirdServiceServer).EmailCodeSend(ctx, req.(*EmailCodeSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ThirdService_EmailCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailCodeVerifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThirdServiceServer).EmailCodeVerify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.thirdService/EmailCodeVerify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThirdServiceServer).EmailCodeVerify(ctx, req.(*EmailCodeVerifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ThirdService_GetCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCaptchaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThirdServiceServer).GetCaptcha(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.thirdService/GetCaptcha",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThirdServiceServer).GetCaptcha(ctx, req.(*GetCaptchaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ThirdService_CaptchaVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CaptchaVerifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ThirdServiceServer).CaptchaVerify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.thirdService/CaptchaVerify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ThirdServiceServer).CaptchaVerify(ctx, req.(*CaptchaVerifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,8 +280,28 @@ var ThirdService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ThirdServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SendSms",
-			Handler:    _ThirdService_SendSms_Handler,
+			MethodName: "SmsCodeSend",
+			Handler:    _ThirdService_SmsCodeSend_Handler,
+		},
+		{
+			MethodName: "SmsCodeVerify",
+			Handler:    _ThirdService_SmsCodeVerify_Handler,
+		},
+		{
+			MethodName: "EmailCodeSend",
+			Handler:    _ThirdService_EmailCodeSend_Handler,
+		},
+		{
+			MethodName: "EmailCodeVerify",
+			Handler:    _ThirdService_EmailCodeVerify_Handler,
+		},
+		{
+			MethodName: "GetCaptcha",
+			Handler:    _ThirdService_GetCaptcha_Handler,
+		},
+		{
+			MethodName: "CaptchaVerify",
+			Handler:    _ThirdService_CaptchaVerify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

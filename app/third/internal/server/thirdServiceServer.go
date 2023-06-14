@@ -22,8 +22,38 @@ func NewThirdServiceServer(svcCtx *svc.ServiceContext) *ThirdServiceServer {
 	}
 }
 
-// SendSms 发送短信
-func (s *ThirdServiceServer) SendSms(ctx context.Context, in *pb.ThirdSendSmsReq) (*pb.ThirdSendSmsResp, error) {
-	l := logic.NewSendSmsLogic(ctx, s.svcCtx)
-	return l.SendSms(in)
+// SmsCodeSend 发送短信
+func (s *ThirdServiceServer) SmsCodeSend(ctx context.Context, in *pb.SmsCodeSendReq) (*pb.SmsCodeSendResp, error) {
+	l := logic.NewSmsCodeSendLogic(ctx, s.svcCtx)
+	return l.SmsCodeSend(in)
+}
+
+// SmsCodeVerify 验证短信
+func (s *ThirdServiceServer) SmsCodeVerify(ctx context.Context, in *pb.SmsCodeVerifyReq) (*pb.SmsCodeVerifyResp, error) {
+	l := logic.NewSmsCodeVerifyLogic(ctx, s.svcCtx)
+	return l.SmsCodeVerify(in)
+}
+
+// EmailCodeSend 发送邮件
+func (s *ThirdServiceServer) EmailCodeSend(ctx context.Context, in *pb.EmailCodeSendReq) (*pb.EmailCodeSendResp, error) {
+	l := logic.NewEmailCodeSendLogic(ctx, s.svcCtx)
+	return l.EmailCodeSend(in)
+}
+
+// EmailCodeVerify 验证邮件
+func (s *ThirdServiceServer) EmailCodeVerify(ctx context.Context, in *pb.EmailCodeVerifyReq) (*pb.EmailCodeVerifyResp, error) {
+	l := logic.NewEmailCodeVerifyLogic(ctx, s.svcCtx)
+	return l.EmailCodeVerify(in)
+}
+
+// GetCaptcha 获取图形验证码
+func (s *ThirdServiceServer) GetCaptcha(ctx context.Context, in *pb.GetCaptchaReq) (*pb.GetCaptchaResp, error) {
+	l := logic.NewGetCaptchaLogic(ctx, s.svcCtx)
+	return l.GetCaptcha(in)
+}
+
+// CaptchaVerify 验证图形验证码
+func (s *ThirdServiceServer) CaptchaVerify(ctx context.Context, in *pb.CaptchaVerifyReq) (*pb.CaptchaVerifyResp, error) {
+	l := logic.NewCaptchaVerifyLogic(ctx, s.svcCtx)
+	return l.CaptchaVerify(in)
 }

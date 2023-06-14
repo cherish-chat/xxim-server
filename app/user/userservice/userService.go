@@ -13,12 +13,52 @@ import (
 )
 
 type (
-	UserRegisterReq  = pb.UserRegisterReq
-	UserRegisterResp = pb.UserRegisterResp
+	FlushUserAccessTokenReq   = pb.FlushUserAccessTokenReq
+	FlushUserAccessTokenResp  = pb.FlushUserAccessTokenResp
+	GetSelfUserInfoReq        = pb.GetSelfUserInfoReq
+	GetSelfUserInfoResp       = pb.GetSelfUserInfoResp
+	GetUserInfoReq            = pb.GetUserInfoReq
+	GetUserInfoResp           = pb.GetUserInfoResp
+	ResetUserAccountMapReq    = pb.ResetUserAccountMapReq
+	ResetUserAccountMapResp   = pb.ResetUserAccountMapResp
+	RevokeUserAccessTokenReq  = pb.RevokeUserAccessTokenReq
+	RevokeUserAccessTokenResp = pb.RevokeUserAccessTokenResp
+	UpdateUserAccountMapReq   = pb.UpdateUserAccountMapReq
+	UpdateUserAccountMapResp  = pb.UpdateUserAccountMapResp
+	UpdateUserExtraMapReq     = pb.UpdateUserExtraMapReq
+	UpdateUserExtraMapResp    = pb.UpdateUserExtraMapResp
+	UpdateUserProfileMapReq   = pb.UpdateUserProfileMapReq
+	UpdateUserProfileMapResp  = pb.UpdateUserProfileMapResp
+	UserAccessTokenReq        = pb.UserAccessTokenReq
+	UserAccessTokenResp       = pb.UserAccessTokenResp
+	UserDestroyReq            = pb.UserDestroyReq
+	UserDestroyResp           = pb.UserDestroyResp
+	UserRegisterReq           = pb.UserRegisterReq
+	UserRegisterResp          = pb.UserRegisterResp
 
 	UserService interface {
 		// UserRegister 用户注册
 		UserRegister(ctx context.Context, in *UserRegisterReq, opts ...grpc.CallOption) (*UserRegisterResp, error)
+		// UserDestroy 用户注销
+		UserDestroy(ctx context.Context, in *UserDestroyReq, opts ...grpc.CallOption) (*UserDestroyResp, error)
+		// UserAccessToken 用户登录
+		UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error)
+		// FlushUserAccessToken 刷新用户token
+		FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error)
+		// RevokeUserAccessToken 注销用户token
+		RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error)
+		// UpdateUserAccountMap 更新用户账号信息
+		UpdateUserAccountMap(ctx context.Context, in *UpdateUserAccountMapReq, opts ...grpc.CallOption) (*UpdateUserAccountMapResp, error)
+		// UpdateUserProfileMap 更新用户个人信息
+		UpdateUserProfileMap(ctx context.Context, in *UpdateUserProfileMapReq, opts ...grpc.CallOption) (*UpdateUserProfileMapResp, error)
+		// UpdateUserExtraMap 更新用户扩展信息
+		UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error)
+		// GetSelfUserInfo 获取自己的用户信息
+		GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error)
+		// GetUserInfo 获取用户信息
+		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+		// ResetUserAccountMap 重置用户账号信息
+		ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
 	}
 
 	defaultUserService struct {
@@ -36,4 +76,64 @@ func NewUserService(cli zrpc.Client) UserService {
 func (m *defaultUserService) UserRegister(ctx context.Context, in *UserRegisterReq, opts ...grpc.CallOption) (*UserRegisterResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UserRegister(ctx, in, opts...)
+}
+
+// UserDestroy 用户注销
+func (m *defaultUserService) UserDestroy(ctx context.Context, in *UserDestroyReq, opts ...grpc.CallOption) (*UserDestroyResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserDestroy(ctx, in, opts...)
+}
+
+// UserAccessToken 用户登录
+func (m *defaultUserService) UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserAccessToken(ctx, in, opts...)
+}
+
+// FlushUserAccessToken 刷新用户token
+func (m *defaultUserService) FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.FlushUserAccessToken(ctx, in, opts...)
+}
+
+// RevokeUserAccessToken 注销用户token
+func (m *defaultUserService) RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.RevokeUserAccessToken(ctx, in, opts...)
+}
+
+// UpdateUserAccountMap 更新用户账号信息
+func (m *defaultUserService) UpdateUserAccountMap(ctx context.Context, in *UpdateUserAccountMapReq, opts ...grpc.CallOption) (*UpdateUserAccountMapResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserAccountMap(ctx, in, opts...)
+}
+
+// UpdateUserProfileMap 更新用户个人信息
+func (m *defaultUserService) UpdateUserProfileMap(ctx context.Context, in *UpdateUserProfileMapReq, opts ...grpc.CallOption) (*UpdateUserProfileMapResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserProfileMap(ctx, in, opts...)
+}
+
+// UpdateUserExtraMap 更新用户扩展信息
+func (m *defaultUserService) UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UpdateUserExtraMap(ctx, in, opts...)
+}
+
+// GetSelfUserInfo 获取自己的用户信息
+func (m *defaultUserService) GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetSelfUserInfo(ctx, in, opts...)
+}
+
+// GetUserInfo 获取用户信息
+func (m *defaultUserService) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserInfo(ctx, in, opts...)
+}
+
+// ResetUserAccountMap 重置用户账号信息
+func (m *defaultUserService) ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.ResetUserAccountMap(ctx, in, opts...)
 }
