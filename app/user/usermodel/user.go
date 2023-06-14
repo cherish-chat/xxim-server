@@ -1,6 +1,7 @@
 package usermodel
 
 import (
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/qiniu/qmgo"
 	opts "github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -11,7 +12,7 @@ import (
 
 // User 用户 数据库模型
 type User struct {
-	Id primitive.ObjectID `bson:"_id" json:"-"`
+	Id primitive.ObjectID `bson:"_id,omitempty" json:"-"`
 
 	// 账户信息
 	// Username 用户名 唯一
@@ -49,10 +50,13 @@ func (m *User) GetIndexes() []opts.IndexModel {
 		Key:          []string{"-destroyTime"},
 		IndexOptions: options.Index().SetName("destroyTime"),
 	}, {
-		Key:          []string{"accountMap.username"},
+		Key:          []string{"accountMap." + pb.AccountTypeUsername},
 		IndexOptions: options.Index().SetName("username"),
 	}, {
-		Key:          []string{"accountMap.phone", "accountMap.phoneCountryCode"},
+		Key:          []string{"accountMap." + pb.AccountTypeEmail},
+		IndexOptions: options.Index().SetName("email"),
+	}, {
+		Key:          []string{"accountMap." + pb.AccountTypePhone, "accountMap." + pb.AccountTypePhoneCode},
 		IndexOptions: options.Index().SetName("phone"),
 	}}
 }

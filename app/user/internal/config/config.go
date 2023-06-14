@@ -14,7 +14,21 @@ type Config struct {
 		MongoCollection xmgo.MongoCollectionConf
 	}
 	Account struct {
-		Register struct {
+		//UsernameUnique 用户名是否唯一
+		UsernameUnique bool `json:",optional"`
+		//UserRegex 用户名正则
+		UserRegex string `json:",optional"`
+		//手机号是否唯一
+		PhoneUnique bool `json:",optional"`
+		//PhoneRegex 手机号正则
+		PhoneRegex string `json:",optional"`
+		//PhoneCode 国家区号
+		PhoneCode []string `json:",optional"`
+		//邮箱是否唯一
+		EmailUnique bool `json:",optional"`
+		//EmailRegex 邮箱正则
+		EmailRegex string `json:",optional"`
+		Register   struct {
 			//AllowPlatform 可以接受的platform
 			//const (
 			//	Platform_IOS        Platform = 0 // ios

@@ -28,6 +28,7 @@ type Config struct {
 	}
 	RpcClientConf struct {
 		Dispatch zrpc.RpcClientConf
+		User     zrpc.RpcClientConf
 		Third    zrpc.RpcClientConf
 	}
 	RedisConf redis.RedisConf

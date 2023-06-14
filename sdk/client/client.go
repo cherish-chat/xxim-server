@@ -27,6 +27,7 @@ type IClient interface {
 	GatewayGetConnectionByFilter(req *pb.GatewayGetConnectionByFilterReq) (resp *pb.GatewayGetConnectionByFilterResp, err error)
 	GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *pb.GatewayWriteDataToWsResp, err error)
 	GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error)
+	UserRegister(req *pb.UserRegisterReq) (resp *pb.UserRegisterResp, err error)
 }
 
 type HttpClient struct {
@@ -131,9 +132,12 @@ func (c *WsClient) heartbeat() {
 		select {
 		case <-ticker.C:
 			go func() {
+				logx.Debugf("send heartbeat")
 				e := c.Request("/v1/gateway/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
 				if e != nil {
 					logx.Errorf("heartbeat error: %v", e)
+				} else {
+					logx.Debugf("heartbeat success")
 				}
 			}()
 		}

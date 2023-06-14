@@ -144,6 +144,16 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 		// GatewayKeepAliveReq GatewayKeepAliveResp
 		AddWsRoute("/v1/gateway/keepAlive", KeepAliveHandler(svcCtx))
 	}
+	// user api
+	{
+		// UserRegisterReq UserRegisterResp
+		AddUnifiedRoute("/v1/user/userRegister", Route[*pb.UserRegisterReq, *pb.UserRegisterResp]{
+			NewRequest: func() *pb.UserRegisterReq {
+				return &pb.UserRegisterReq{}
+			},
+			Do: svcCtx.UserService.UserRegister,
+		})
+	}
 	// http
 	{
 		apiGroup := engine.Group("/api")

@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/dispatch/dispatchservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
+	"github.com/cherish-chat/xxim-server/app/user/userservice"
 	"github.com/cherish-chat/xxim-server/common/xcache"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -15,6 +16,7 @@ type ServiceContext struct {
 	Config          config.Config
 	gatewayService  gatewayservice.GatewayService
 	DispatchService dispatchservice.DispatchService
+	UserService     userservice.UserService
 	Redis           *redis.Redis
 }
 
@@ -23,6 +25,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config: c,
 		DispatchService: dispatchservice.NewDispatchService(zrpc.MustNewClient(
 			c.RpcClientConf.Dispatch,
+			zrpc.WithNonBlock(),
+			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+		)),
+		UserService: userservice.NewUserService(zrpc.MustNewClient(
+			c.RpcClientConf.User,
 			zrpc.WithNonBlock(),
 			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
 		)),

@@ -7,8 +7,10 @@ import (
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xcache"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -50,6 +52,51 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		}
 
 		//是否必填password
+		username, ok := in.AccountMap[pb.AccountTypeUsername]
+		if !ok {
+			if l.svcCtx.Config.Account.Register.RequirePassword {
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_required")),
+				}, nil
+			}
+		} else {
+			user.AccountMap[pb.AccountTypeUsername] = username
+			if l.svcCtx.Config.Account.UserRegex != "" {
+				if !utils.Regex.Match(l.svcCtx.Config.Account.UserRegex, username) {
+					return &pb.UserRegisterResp{
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_format_error")),
+					}, nil
+				}
+			}
+		}
+		if l.svcCtx.Config.Account.UsernameUnique {
+			//用户名上锁
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserUsernameLockKey(username), 5)
+			if err != nil || !ok {
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_lock_error")),
+				}, nil
+			}
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserUsernameLockKey(username))
+			//检查用户名是否已存在
+			found := &usermodel.User{}
+			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{
+				"accountMap." + pb.AccountTypeUsername: username,
+			}).One(found)
+			if err != nil {
+				if err != mongo.ErrNoDocuments {
+					l.Errorf("UserRegisterLogic.UserRegister l.svcCtx.UserCollection.Find error: %v", err)
+					return nil, err
+				} else {
+					// 没问题
+				}
+			} else {
+				// 已存在
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_already_exists")),
+				}, nil
+			}
+		}
 		passwordSalt, ok := in.AccountMap[pb.AccountTypePasswordSalt]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequirePassword {
@@ -92,6 +139,20 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		} else {
 			user.AccountMap[pb.AccountTypePhoneCode] = phoneCode
 		}
+		if phone != "" && phoneCode != "" {
+			if l.svcCtx.Config.Account.PhoneRegex != "" {
+				if !utils.Regex.Match(l.svcCtx.Config.Account.PhoneRegex, phone) {
+					return &pb.UserRegisterResp{
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_format_error")),
+					}, nil
+				}
+			}
+			if !utils.AnyInSlice[string](phoneCode, l.svcCtx.Config.Account.PhoneCode) {
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_code_error")),
+				}, nil
+			}
+		}
 		smsCode, ok := in.VerifyMap[pb.VerifyTypeSmsCode]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindPhone {
@@ -121,6 +182,35 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				}, nil
 			}
 		}
+		if l.svcCtx.Config.Account.PhoneUnique {
+			//手机号上锁
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserPhoneLockKey(phone, phoneCode), 5)
+			if err != nil || !ok {
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_lock_error")),
+				}, nil
+			}
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserPhoneLockKey(phone, phoneCode))
+			//检查用户名是否已存在
+			found := &usermodel.User{}
+			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{
+				"accountMap." + pb.AccountTypePhone:     phone,
+				"accountMap." + pb.AccountTypePhoneCode: phoneCode,
+			}).One(found)
+			if err != nil {
+				if err != mongo.ErrNoDocuments {
+					l.Errorf("UserRegisterLogic.UserRegister l.svcCtx.UserCollection.Find error: %v", err)
+					return nil, err
+				} else {
+					// 没问题
+				}
+			} else {
+				// 已存在
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_already_exists")),
+				}, nil
+			}
+		}
 
 		//是否必填邮箱
 		email, ok := in.AccountMap[pb.AccountTypeEmail]
@@ -141,6 +231,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				}, nil
 			}
 		} else {
+			if l.svcCtx.Config.Account.EmailRegex != "" {
+				if !utils.Regex.Match(l.svcCtx.Config.Account.EmailRegex, email) {
+					return &pb.UserRegisterResp{
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_format_error")),
+					}, nil
+				}
+			}
 			//验证邮箱验证码
 			emailVerifyResp, err := l.svcCtx.ThirdService.EmailCodeVerify(l.ctx, &pb.EmailCodeVerifyReq{
 				Header:    in.Header,
@@ -158,6 +255,34 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if !emailVerifyResp.Success {
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_error")),
+				}, nil
+			}
+		}
+		if l.svcCtx.Config.Account.EmailUnique {
+			//手机号上锁
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserEmailLockKey(email), 5)
+			if err != nil || !ok {
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_lock_error")),
+				}, nil
+			}
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserEmailLockKey(email))
+			//检查用户名是否已存在
+			found := &usermodel.User{}
+			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{
+				"accountMap." + pb.AccountTypeEmail: email,
+			}).One(found)
+			if err != nil {
+				if err != mongo.ErrNoDocuments {
+					l.Errorf("UserRegisterLogic.UserRegister l.svcCtx.UserCollection.Find error: %v", err)
+					return nil, err
+				} else {
+					// 没问题
+				}
+			} else {
+				// 已存在
+				return &pb.UserRegisterResp{
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_already_exists")),
 				}, nil
 			}
 		}

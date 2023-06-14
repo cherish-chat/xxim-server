@@ -1,6 +1,7 @@
 package pb
 
 const (
+	AccountTypeUsername     = "username"
 	AccountTypePassword     = "password"
 	AccountTypePasswordSalt = "passwordSalt"
 	AccountTypePhone        = "phone"

@@ -23,7 +23,7 @@ var defaultConfig = &Config{
 			Password: "xx",
 		},
 	},
-	KeepAliveSecond: 4,
+	KeepAliveSecond: time.Second * 30,
 }
 
 func getHttpClient(t *testing.T, config *Config) IClient {

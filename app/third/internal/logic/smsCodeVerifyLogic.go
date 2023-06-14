@@ -27,5 +27,5 @@ func NewSmsCodeVerifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sms
 func (l *SmsCodeVerifyLogic) SmsCodeVerify(in *pb.SmsCodeVerifyReq) (*pb.SmsCodeVerifyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.SmsCodeVerifyResp{}, nil
+	return &pb.SmsCodeVerifyResp{Success: true}, nil
 }

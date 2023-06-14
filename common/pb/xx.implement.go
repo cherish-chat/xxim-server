@@ -19,3 +19,7 @@ func (x *GatewayWriteDataToWsReq) SetHeader(header *RequestHeader) {
 func (x *GatewayKickWsReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *UserRegisterReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

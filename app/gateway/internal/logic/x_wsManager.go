@@ -168,9 +168,11 @@ func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCo
 	}
 	w.wsConnectionMap.Delete(header.UserId, id)
 	go func() {
-		_, e := w.svcCtx.DispatchService.DispatchOfflineCallback(connection.Ctx, &pb.DispatchOfflineCallbackReq{Header: header})
-		if e != nil {
-			logx.Errorf("DispatchOfflineCallback error: %s", e.Error())
+		if ok {
+			_, e := w.svcCtx.DispatchService.DispatchOfflineCallback(connection.Ctx, &pb.DispatchOfflineCallbackReq{Header: header})
+			if e != nil {
+				logx.Errorf("DispatchOfflineCallback error: %s", e.Error())
+			}
 		}
 	}()
 	return nil

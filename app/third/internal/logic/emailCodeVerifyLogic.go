@@ -27,5 +27,5 @@ func NewEmailCodeVerifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *E
 func (l *EmailCodeVerifyLogic) EmailCodeVerify(in *pb.EmailCodeVerifyReq) (*pb.EmailCodeVerifyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.EmailCodeVerifyResp{}, nil
+	return &pb.EmailCodeVerifyResp{Success: true}, nil
 }
