@@ -82,7 +82,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 		return
 	}
 	c.SetReadLimit(math.MaxInt32)
-	beforeConnectResp, err := h.svcCtx.DispatchService.BeforeConnect(r.Context(), &pb.BeforeConnectReq{Header: header})
+	beforeConnectResp, err := h.svcCtx.UserService.UserBeforeConnect(r.Context(), &pb.UserBeforeConnectReq{Header: header})
 	if err != nil {
 		logger.Errorf("beforeConnect error: %v", err)
 		c.Close(websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeServerInternalError), err.Error())

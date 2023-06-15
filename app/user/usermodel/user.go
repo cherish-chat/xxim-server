@@ -2,6 +2,7 @@ package usermodel
 
 import (
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/qiniu/qmgo"
 	opts "github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -59,6 +60,10 @@ func (m *User) GetIndexes() []opts.IndexModel {
 		Key:          []string{"accountMap." + pb.AccountTypePhone, "accountMap." + pb.AccountTypePhoneCode},
 		IndexOptions: options.Index().SetName("phone"),
 	}}
+}
+
+func (m *User) GetAccountMap() utils.SSM {
+	return utils.NewSSMFromBsonM(m.AccountMap)
 }
 
 type xUserModel struct {

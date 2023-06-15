@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -14,6 +15,8 @@ type Config struct {
 		MongoCollection xmgo.MongoCollectionConf
 	}
 	Account struct {
+		//JwtConfig jwt配置
+		JwtConfig utils.JwtConfig
 		//UsernameUnique 用户名是否唯一
 		UsernameUnique bool `json:",optional"`
 		//UserRegex 用户名正则
@@ -67,6 +70,8 @@ type Config struct {
 			//	Platform_AndroidPad Platform = 7 // android pad
 			//)
 			AllowPlatform []pb.Platform `json:",optional"`
+			// RequireCaptcha 是否验证图形验证码
+			RequireCaptcha bool `json:",optional"`
 		}
 	}
 	RpcClientConf struct {

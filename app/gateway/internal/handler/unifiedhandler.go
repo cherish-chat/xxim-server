@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -13,6 +14,7 @@ import (
 )
 
 func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
+	svcCtx *svc.ServiceContext,
 	ctx *gin.Context,
 	request REQ,
 	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
@@ -85,9 +87,36 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	requestHeader.ClientIp = utils.Http.GetClientIP(ctx.Request)
 	requestHeader.Encoding = encoding
 	requestHeader.GatewayPodIp = utils.GetPodIp()
-	response, err := do(ctx.Request.Context(), request)
+
+	// beforeRequest
+	userBeforeRequestResp, err := svcCtx.UserService.UserBeforeRequest(ctx.Request.Context(), &pb.UserBeforeRequestReq{
+		Header: requestHeader,
+		Path:   apiRequest.Path,
+	})
+	if err != nil {
+		return &pb.GatewayApiResponse{
+			Header:    i18n.NewServerError(requestHeader),
+			RequestId: apiRequest.RequestId,
+			Path:      apiRequest.Path,
+			Body:      nil,
+		}, err
+	}
 	var result *pb.GatewayApiResponse
-	body, _ := proto.Marshal(response)
+	body, _ := proto.Marshal(userBeforeRequestResp)
+	if len(body) > 0 {
+		responseHeader := userBeforeRequestResp.GetHeader()
+		if responseHeader != nil && responseHeader.Code != pb.ResponseCode_SUCCESS {
+			return &pb.GatewayApiResponse{
+				Header:    responseHeader,
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      MarshalResponse(requestHeader, userBeforeRequestResp),
+			}, nil
+		}
+	}
+
+	response, err := do(ctx.Request.Context(), request)
+	body, _ = proto.Marshal(response)
 	if len(body) > 0 {
 		responseHeader := response.GetHeader()
 		if responseHeader == nil {
@@ -111,6 +140,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 }
 
 func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
+	svcCtx *svc.ServiceContext,
 	ctx context.Context,
 	connection *logic.WsConnection,
 	apiRequest *pb.GatewayApiRequest,
@@ -155,9 +185,36 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			Path:      apiRequest.Path,
 		}, nil
 	}
-	response, err := do(ctx, request)
+
+	//beforeRequest
+	userBeforeRequestResp, err := svcCtx.UserService.UserBeforeRequest(ctx, &pb.UserBeforeRequestReq{
+		Header: header,
+		Path:   apiRequest.Path,
+	})
+	if err != nil {
+		return &pb.GatewayApiResponse{
+			Header:    i18n.NewServerError(header),
+			RequestId: apiRequest.RequestId,
+			Path:      apiRequest.Path,
+			Body:      nil,
+		}, err
+	}
 	var result *pb.GatewayApiResponse
-	body, _ := proto.Marshal(response)
+	body, _ := proto.Marshal(userBeforeRequestResp)
+	if len(body) > 0 {
+		responseHeader := userBeforeRequestResp.GetHeader()
+		if responseHeader != nil && responseHeader.Code != pb.ResponseCode_SUCCESS {
+			return &pb.GatewayApiResponse{
+				Header:    responseHeader,
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      MarshalResponse(header, userBeforeRequestResp),
+			}, nil
+		}
+	}
+
+	response, err := do(ctx, request)
+	body, _ = proto.Marshal(response)
 	if len(body) > 0 {
 		responseHeader := response.GetHeader()
 		if responseHeader == nil {

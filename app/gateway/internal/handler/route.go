@@ -33,13 +33,13 @@ type Route[REQ ReqInterface, RESP RespInterface] struct {
 var httpRouteMap = map[string]gin.HandlerFunc{}
 var wsRouteMap = map[string]func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error){}
 
-func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](path string, route Route[REQ, RESP]) {
+func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceContext, path string, route Route[REQ, RESP]) {
 	request := route.NewRequest()
 	// http
 	AddHttpRoute(path, func(ctx *gin.Context) {
 		var response *pb.GatewayApiResponse
 		var err error
-		response, err = UnifiedHandleHttp(ctx, request, route.Do)
+		response, err = UnifiedHandleHttp(svcCtx, ctx, request, route.Do)
 		requestHeader := request.GetHeader()
 		if err != nil {
 			logx.WithContext(ctx.Request.Context()).Errorf("UnifiedHandleHttp: %s, error: %v", path, err)
@@ -67,11 +67,11 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](path string, route Ro
 		return
 	})
 	// ws
-	AddWsRoute(path, func(ctx context.Context, connection *logic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	AddWsRoute(svcCtx, path, func(ctx context.Context, connection *logic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
 		requestHeader := connection.Header
-		response, err = UnifiedHandleWs(ctx, connection, apiRequest, request, route.Do)
+		response, err = UnifiedHandleWs(svcCtx, ctx, connection, apiRequest, request, route.Do)
 		if err != nil {
 			logx.WithContext(ctx).Errorf("UnifiedHandleWs: %s, error: %v", path, err)
 			if response == nil {
@@ -99,7 +99,7 @@ func AddHttpRoute(path string, handlerFunc gin.HandlerFunc) {
 	httpRouteMap[path] = handlerFunc
 }
 
-func AddWsRoute(path string, handlerFunc func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
+func AddWsRoute(svcCtx *svc.ServiceContext, path string, handlerFunc func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
 	wsRouteMap[path] = handlerFunc
 }
 
@@ -107,51 +107,58 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	// gateway api
 	{
 		// GatewayGetUserConnectionReq GatewayGetUserConnectionResp
-		AddUnifiedRoute("/v1/gateway/getUserConnection", Route[*pb.GatewayGetUserConnectionReq, *pb.GatewayGetUserConnectionResp]{
+		AddUnifiedRoute(svcCtx, "/v1/gateway/getUserConnection", Route[*pb.GatewayGetUserConnectionReq, *pb.GatewayGetUserConnectionResp]{
 			NewRequest: func() *pb.GatewayGetUserConnectionReq {
 				return &pb.GatewayGetUserConnectionReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayGetUserConnection,
 		})
 		// GatewayBatchGetUserConnectionReq GatewayBatchGetUserConnectionResp
-		AddUnifiedRoute("/v1/gateway/batchGetUserConnection", Route[*pb.GatewayBatchGetUserConnectionReq, *pb.GatewayBatchGetUserConnectionResp]{
+		AddUnifiedRoute(svcCtx, "/v1/gateway/batchGetUserConnection", Route[*pb.GatewayBatchGetUserConnectionReq, *pb.GatewayBatchGetUserConnectionResp]{
 			NewRequest: func() *pb.GatewayBatchGetUserConnectionReq {
 				return &pb.GatewayBatchGetUserConnectionReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayBatchGetUserConnection,
 		})
 		// GatewayGetConnectionByFilterReq GatewayGetConnectionByFilterResp
-		AddUnifiedRoute("/v1/gateway/getConnectionByFilter", Route[*pb.GatewayGetConnectionByFilterReq, *pb.GatewayGetConnectionByFilterResp]{
+		AddUnifiedRoute(svcCtx, "/v1/gateway/getConnectionByFilter", Route[*pb.GatewayGetConnectionByFilterReq, *pb.GatewayGetConnectionByFilterResp]{
 			NewRequest: func() *pb.GatewayGetConnectionByFilterReq {
 				return &pb.GatewayGetConnectionByFilterReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayGetConnectionByFilter,
 		})
 		// GatewayWriteDataToWsReq GatewayWriteDataToWsResp
-		AddUnifiedRoute("/v1/gateway/writeDataToWs", Route[*pb.GatewayWriteDataToWsReq, *pb.GatewayWriteDataToWsResp]{
+		AddUnifiedRoute(svcCtx, "/v1/gateway/writeDataToWs", Route[*pb.GatewayWriteDataToWsReq, *pb.GatewayWriteDataToWsResp]{
 			NewRequest: func() *pb.GatewayWriteDataToWsReq {
 				return &pb.GatewayWriteDataToWsReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayWriteDataToWs,
 		})
 		// GatewayKickWsReq GatewayKickWsResp
-		AddUnifiedRoute("/v1/gateway/kickWs", Route[*pb.GatewayKickWsReq, *pb.GatewayKickWsResp]{
+		AddUnifiedRoute(svcCtx, "/v1/gateway/kickWs", Route[*pb.GatewayKickWsReq, *pb.GatewayKickWsResp]{
 			NewRequest: func() *pb.GatewayKickWsReq {
 				return &pb.GatewayKickWsReq{}
 			},
 			Do: svcCtx.GatewayService().GatewayKickWs,
 		})
 		// GatewayKeepAliveReq GatewayKeepAliveResp
-		AddWsRoute("/v1/gateway/keepAlive", KeepAliveHandler(svcCtx))
+		AddWsRoute(svcCtx, "/v1/gateway/keepAlive", KeepAliveHandler(svcCtx))
 	}
 	// user api
 	{
 		// UserRegisterReq UserRegisterResp
-		AddUnifiedRoute("/v1/user/userRegister", Route[*pb.UserRegisterReq, *pb.UserRegisterResp]{
+		AddUnifiedRoute(svcCtx, "/v1/user/userRegister", Route[*pb.UserRegisterReq, *pb.UserRegisterResp]{
 			NewRequest: func() *pb.UserRegisterReq {
 				return &pb.UserRegisterReq{}
 			},
 			Do: svcCtx.UserService.UserRegister,
+		})
+		// UserAccessTokenReq UserAccessTokenResp
+		AddUnifiedRoute(svcCtx, "/v1/user/userAccessToken", Route[*pb.UserAccessTokenReq, *pb.UserAccessTokenResp]{
+			NewRequest: func() *pb.UserAccessTokenReq {
+				return &pb.UserAccessTokenReq{}
+			},
+			Do: svcCtx.UserService.UserAccessToken,
 		})
 	}
 	// http

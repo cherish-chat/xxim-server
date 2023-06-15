@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xcache"
+	"github.com/cherish-chat/xxim-server/common/xmq"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -352,5 +353,8 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		l.Errorf("InsertOne err: %v", err)
 		return nil, err
 	}
+
+	// afterRegister
+	go l.svcCtx.MQ.Produce(context.Background(), xmq.TopicAfterRegister, []byte(user.UserId))
 	return &pb.UserRegisterResp{}, nil
 }

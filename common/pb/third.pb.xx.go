@@ -1,9 +1,11 @@
 package pb
 
 const (
-	SmsSceneTypeRegister = "register"
+	SmsSceneTypeRegister  = "register"
+	SmsSceneTypeUserToken = "userToken"
 )
 
 const (
-	EmailSceneTypeRegister = "register"
+	EmailSceneTypeRegister  = "register"
+	EmailSceneTypeUserToken = "userToken"
 )

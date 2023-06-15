@@ -25,6 +25,9 @@ func main() {
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
 	svr := server.NewUserServiceServer(ctx)
+	consumerServer := server.NewConsumerServer(ctx)
+
+	consumerServer.Start()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterUserServiceServer(grpcServer, svr)

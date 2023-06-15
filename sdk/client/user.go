@@ -15,3 +15,17 @@ func (c *WsClient) UserRegister(req *pb.UserRegisterReq) (resp *pb.UserRegisterR
 	err = c.Request("/v1/user/userRegister", req, resp)
 	return
 }
+
+// UserAccessToken 获取用户访问令牌
+func (c *HttpClient) UserAccessToken(req *pb.UserAccessTokenReq) (resp *pb.UserAccessTokenResp, err error) {
+	resp = &pb.UserAccessTokenResp{}
+	err = c.Request("/v1/user/userAccessToken", req, resp)
+	return
+}
+
+// UserAccessToken 获取用户访问令牌
+func (c *WsClient) UserAccessToken(req *pb.UserAccessTokenReq) (resp *pb.UserAccessTokenResp, err error) {
+	resp = &pb.UserAccessTokenResp{}
+	err = c.Request("/v1/user/userAccessToken", req, resp)
+	return
+}

@@ -13,28 +13,36 @@ import (
 )
 
 type (
-	FlushUserAccessTokenReq   = pb.FlushUserAccessTokenReq
-	FlushUserAccessTokenResp  = pb.FlushUserAccessTokenResp
-	GetSelfUserInfoReq        = pb.GetSelfUserInfoReq
-	GetSelfUserInfoResp       = pb.GetSelfUserInfoResp
-	GetUserInfoReq            = pb.GetUserInfoReq
-	GetUserInfoResp           = pb.GetUserInfoResp
-	ResetUserAccountMapReq    = pb.ResetUserAccountMapReq
-	ResetUserAccountMapResp   = pb.ResetUserAccountMapResp
-	RevokeUserAccessTokenReq  = pb.RevokeUserAccessTokenReq
-	RevokeUserAccessTokenResp = pb.RevokeUserAccessTokenResp
-	UpdateUserAccountMapReq   = pb.UpdateUserAccountMapReq
-	UpdateUserAccountMapResp  = pb.UpdateUserAccountMapResp
-	UpdateUserExtraMapReq     = pb.UpdateUserExtraMapReq
-	UpdateUserExtraMapResp    = pb.UpdateUserExtraMapResp
-	UpdateUserProfileMapReq   = pb.UpdateUserProfileMapReq
-	UpdateUserProfileMapResp  = pb.UpdateUserProfileMapResp
-	UserAccessTokenReq        = pb.UserAccessTokenReq
-	UserAccessTokenResp       = pb.UserAccessTokenResp
-	UserDestroyReq            = pb.UserDestroyReq
-	UserDestroyResp           = pb.UserDestroyResp
-	UserRegisterReq           = pb.UserRegisterReq
-	UserRegisterResp          = pb.UserRegisterResp
+	GetSelfUserInfoReq         = pb.GetSelfUserInfoReq
+	GetSelfUserInfoResp        = pb.GetSelfUserInfoResp
+	GetUserInfoReq             = pb.GetUserInfoReq
+	GetUserInfoResp            = pb.GetUserInfoResp
+	RefreshUserAccessTokenReq  = pb.RefreshUserAccessTokenReq
+	RefreshUserAccessTokenResp = pb.RefreshUserAccessTokenResp
+	ResetUserAccountMapReq     = pb.ResetUserAccountMapReq
+	ResetUserAccountMapResp    = pb.ResetUserAccountMapResp
+	RevokeUserAccessTokenReq   = pb.RevokeUserAccessTokenReq
+	RevokeUserAccessTokenResp  = pb.RevokeUserAccessTokenResp
+	UpdateUserAccountMapReq    = pb.UpdateUserAccountMapReq
+	UpdateUserAccountMapResp   = pb.UpdateUserAccountMapResp
+	UpdateUserExtraMapReq      = pb.UpdateUserExtraMapReq
+	UpdateUserExtraMapResp     = pb.UpdateUserExtraMapResp
+	UpdateUserProfileMapReq    = pb.UpdateUserProfileMapReq
+	UpdateUserProfileMapResp   = pb.UpdateUserProfileMapResp
+	UserAccessTokenReq         = pb.UserAccessTokenReq
+	UserAccessTokenResp        = pb.UserAccessTokenResp
+	UserBeforeConnectReq       = pb.UserBeforeConnectReq
+	UserBeforeConnectResp      = pb.UserBeforeConnectResp
+	UserBeforeRequestReq       = pb.UserBeforeRequestReq
+	UserBeforeRequestResp      = pb.UserBeforeRequestResp
+	UserDestroyReq             = pb.UserDestroyReq
+	UserDestroyResp            = pb.UserDestroyResp
+	UserOfflineCallbackReq     = pb.UserOfflineCallbackReq
+	UserOfflineCallbackResp    = pb.UserOfflineCallbackResp
+	UserOnlineCallbackReq      = pb.UserOnlineCallbackReq
+	UserOnlineCallbackResp     = pb.UserOnlineCallbackResp
+	UserRegisterReq            = pb.UserRegisterReq
+	UserRegisterResp           = pb.UserRegisterResp
 
 	UserService interface {
 		// UserRegister 用户注册
@@ -43,8 +51,8 @@ type (
 		UserDestroy(ctx context.Context, in *UserDestroyReq, opts ...grpc.CallOption) (*UserDestroyResp, error)
 		// UserAccessToken 用户登录
 		UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error)
-		// FlushUserAccessToken 刷新用户token
-		FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error)
+		// RefreshUserAccessToken 刷新用户token
+		RefreshUserAccessToken(ctx context.Context, in *RefreshUserAccessTokenReq, opts ...grpc.CallOption) (*RefreshUserAccessTokenResp, error)
 		// RevokeUserAccessToken 注销用户token
 		RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error)
 		// UpdateUserAccountMap 更新用户账号信息
@@ -59,6 +67,14 @@ type (
 		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		// ResetUserAccountMap 重置用户账号信息
 		ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
+		// UserOnlineCallback 用户上线回调
+		UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error)
+		// UserOfflineCallback 用户下线回调
+		UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error)
+		// UserBeforeConnect 用户连接前的回调
+		UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
+		// UserBeforeRequest 用户请求前的回调
+		UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
 	}
 
 	defaultUserService struct {
@@ -90,10 +106,10 @@ func (m *defaultUserService) UserAccessToken(ctx context.Context, in *UserAccess
 	return client.UserAccessToken(ctx, in, opts...)
 }
 
-// FlushUserAccessToken 刷新用户token
-func (m *defaultUserService) FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error) {
+// RefreshUserAccessToken 刷新用户token
+func (m *defaultUserService) RefreshUserAccessToken(ctx context.Context, in *RefreshUserAccessTokenReq, opts ...grpc.CallOption) (*RefreshUserAccessTokenResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
-	return client.FlushUserAccessToken(ctx, in, opts...)
+	return client.RefreshUserAccessToken(ctx, in, opts...)
 }
 
 // RevokeUserAccessToken 注销用户token
@@ -136,4 +152,28 @@ func (m *defaultUserService) GetUserInfo(ctx context.Context, in *GetUserInfoReq
 func (m *defaultUserService) ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.ResetUserAccountMap(ctx, in, opts...)
+}
+
+// UserOnlineCallback 用户上线回调
+func (m *defaultUserService) UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserOnlineCallback(ctx, in, opts...)
+}
+
+// UserOfflineCallback 用户下线回调
+func (m *defaultUserService) UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserOfflineCallback(ctx, in, opts...)
+}
+
+// UserBeforeConnect 用户连接前的回调
+func (m *defaultUserService) UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserBeforeConnect(ctx, in, opts...)
+}
+
+// UserBeforeRequest 用户请求前的回调
+func (m *defaultUserService) UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.UserBeforeRequest(ctx, in, opts...)
 }

@@ -40,10 +40,10 @@ func (s *UserServiceServer) UserAccessToken(ctx context.Context, in *pb.UserAcce
 	return l.UserAccessToken(in)
 }
 
-// FlushUserAccessToken 刷新用户token
-func (s *UserServiceServer) FlushUserAccessToken(ctx context.Context, in *pb.FlushUserAccessTokenReq) (*pb.FlushUserAccessTokenResp, error) {
-	l := logic.NewFlushUserAccessTokenLogic(ctx, s.svcCtx)
-	return l.FlushUserAccessToken(in)
+// RefreshUserAccessToken 刷新用户token
+func (s *UserServiceServer) RefreshUserAccessToken(ctx context.Context, in *pb.RefreshUserAccessTokenReq) (*pb.RefreshUserAccessTokenResp, error) {
+	l := logic.NewRefreshUserAccessTokenLogic(ctx, s.svcCtx)
+	return l.RefreshUserAccessToken(in)
 }
 
 // RevokeUserAccessToken 注销用户token
@@ -86,4 +86,28 @@ func (s *UserServiceServer) GetUserInfo(ctx context.Context, in *pb.GetUserInfoR
 func (s *UserServiceServer) ResetUserAccountMap(ctx context.Context, in *pb.ResetUserAccountMapReq) (*pb.ResetUserAccountMapResp, error) {
 	l := logic.NewResetUserAccountMapLogic(ctx, s.svcCtx)
 	return l.ResetUserAccountMap(in)
+}
+
+// UserOnlineCallback 用户上线回调
+func (s *UserServiceServer) UserOnlineCallback(ctx context.Context, in *pb.UserOnlineCallbackReq) (*pb.UserOnlineCallbackResp, error) {
+	l := logic.NewUserOnlineCallbackLogic(ctx, s.svcCtx)
+	return l.UserOnlineCallback(in)
+}
+
+// UserOfflineCallback 用户下线回调
+func (s *UserServiceServer) UserOfflineCallback(ctx context.Context, in *pb.UserOfflineCallbackReq) (*pb.UserOfflineCallbackResp, error) {
+	l := logic.NewUserOfflineCallbackLogic(ctx, s.svcCtx)
+	return l.UserOfflineCallback(in)
+}
+
+// UserBeforeConnect 用户连接前的回调
+func (s *UserServiceServer) UserBeforeConnect(ctx context.Context, in *pb.UserBeforeConnectReq) (*pb.UserBeforeConnectResp, error) {
+	l := logic.NewUserBeforeConnectLogic(ctx, s.svcCtx)
+	return l.UserBeforeConnect(in)
+}
+
+// UserBeforeRequest 用户请求前的回调
+func (s *UserServiceServer) UserBeforeRequest(ctx context.Context, in *pb.UserBeforeRequestReq) (*pb.UserBeforeRequestResp, error) {
+	l := logic.NewUserBeforeRequestLogic(ctx, s.svcCtx)
+	return l.UserBeforeRequest(in)
 }

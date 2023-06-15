@@ -1,7 +1,6 @@
 package svc
 
 import (
-	"github.com/cherish-chat/xxim-server/app/dispatch/dispatchservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/user/userservice"
@@ -13,21 +12,15 @@ import (
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	gatewayService  gatewayservice.GatewayService
-	DispatchService dispatchservice.DispatchService
-	UserService     userservice.UserService
-	Redis           *redis.Redis
+	Config         config.Config
+	gatewayService gatewayservice.GatewayService
+	UserService    userservice.UserService
+	Redis          *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config: c,
-		DispatchService: dispatchservice.NewDispatchService(zrpc.MustNewClient(
-			c.RpcClientConf.Dispatch,
-			zrpc.WithNonBlock(),
-			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
-		)),
 		UserService: userservice.NewUserService(zrpc.MustNewClient(
 			c.RpcClientConf.User,
 			zrpc.WithNonBlock(),

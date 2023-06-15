@@ -9,8 +9,8 @@ import (
 
 // UserRegister 注册用户
 func TestHttpClient_UserRegister(t *testing.T) {
-	userId := "2"
-	phone := "13600000002"
+	userId := "3"
+	phone := "13600000003"
 	//client := getHttpClient(t, nil)
 	client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
@@ -46,4 +46,28 @@ func TestHttpClient_UserRegister(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(userRegisterResp))
+}
+
+// UserAccessToken 获取用户访问令牌
+func TestHttpClient_UserAccessToken(t *testing.T) {
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	userAccessTokenResp, err := client.UserAccessToken(&pb.UserAccessTokenReq{
+		Header: &pb.RequestHeader{
+			Platform:  1,
+			InstallId: "3",
+			UserToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1Mjk5MjQsImp0aSI6IjMifQ.z_3mr5G3U_F3-XZF45lYrkCBE_eq7Qd5kuPsVCVFU1k",
+		},
+		AccountMap: map[string]string{
+			pb.AccountTypeUsername: "user3",
+			pb.AccountTypePassword: utils.Md5("123456"),
+		},
+		VerifyMap:  nil,
+		ExpireTime: nil,
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(userAccessTokenResp))
 }

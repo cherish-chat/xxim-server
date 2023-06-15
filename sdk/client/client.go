@@ -28,6 +28,7 @@ type IClient interface {
 	GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *pb.GatewayWriteDataToWsResp, err error)
 	GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error)
 	UserRegister(req *pb.UserRegisterReq) (resp *pb.UserRegisterResp, err error)
+	UserAccessToken(req *pb.UserAccessTokenReq) (resp *pb.UserAccessTokenResp, err error)
 }
 
 type HttpClient struct {
@@ -364,7 +365,7 @@ func (c *HttpClient) getUserToken() string {
 	switch c.Config.Account.AuthType {
 	case AuthType_Password:
 		// TODO: 使用 username 和 password 登录, 获取 userId 和 userToken, 存储到本地
-		return ""
+		return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1Mjk5ODEsImp0aSI6IjMifQ.nbeMXsmCN3xXAFahLA76tdy5iKBdLIyqo3VfH9VXGSQ"
 	default:
 		logx.Errorf("invalid auth type: %v", c.Config.Account.AuthType)
 		os.Exit(1)

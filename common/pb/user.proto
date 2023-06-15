@@ -44,7 +44,8 @@ message UserDestroyResp {
 message UserAccessTokenReq {
   RequestHeader header = 1;
   map<string, string> accountMap = 2; // 账号信息 你可以存放password、email、phone等等
-  optional int64 expireTime = 3; // 过期时间 13位时间戳
+  map<string, string> verifyMap = 3; // 验证信息 你可以存放smsCode、emailCode等等
+  optional int64 expireTime = 4; // 过期时间 13位时间戳
 }
 
 //UserAccessTokenResp 用户登录响应
@@ -52,23 +53,19 @@ message UserAccessTokenResp {
   ResponseHeader header = 1;
   string userId = 2; // 用户id 唯一
   string accessToken = 3; // 用户token
-  string refreshToken = 4; // 刷新token
 }
 
-//FlushUserAccessToken 刷新用户token
+//RefreshUserAccessToken 刷新用户token
 
-//FlushUserAccessTokenReq 刷新用户token请求
-message FlushUserAccessTokenReq {
+//RefreshUserAccessTokenReq 刷新用户token请求
+message RefreshUserAccessTokenReq {
   RequestHeader header = 1;
   string userId = 2; // 用户id 唯一
-  string refreshToken = 3; // 刷新token
 }
 
-//FlushUserAccessTokenResp 刷新用户token响应
-message FlushUserAccessTokenResp {
+//RefreshUserAccessTokenResp 刷新用户token响应
+message RefreshUserAccessTokenResp {
   ResponseHeader header = 1;
-  string userId = 2; // 用户id 唯一
-  string accessToken = 3; // 用户token
 }
 
 //RevokeUserAccessToken 注销用户token
@@ -176,6 +173,61 @@ message ResetUserAccountMapResp {
   ResponseHeader header = 1;
 }
 
+// UserOnlineCallback 用户上线回调
+
+//UserOnlineCallbackReq 用户上线回调请求
+message UserOnlineCallbackReq {
+  RequestHeader header = 1;
+}
+
+//UserOnlineCallbackResp 用户上线回调响应
+message UserOnlineCallbackResp {
+  ResponseHeader header = 1;
+}
+
+//UserOfflineCallback 用户下线回调
+
+//UserOfflineCallbackReq 用户下线回调请求
+message UserOfflineCallbackReq {
+  RequestHeader header = 1;
+}
+
+//UserOfflineCallbackResp 用户下线回调响应
+message UserOfflineCallbackResp {
+  ResponseHeader header = 1;
+}
+
+//UserBeforeConnect 用户连接前的回调
+
+//UserBeforeConnectReq 服务端连接前的回调
+message UserBeforeConnectReq {
+  RequestHeader header = 1;
+}
+
+//UserBeforeConnectResp 服务端连接前的回调
+message UserBeforeConnectResp {
+  ResponseHeader header = 1;
+  // 是否允许建立连接
+  bool success = 2;
+  // 如果不允许建立连接，返回的错误码
+  WebsocketCustomCloseCode closeCode = 3;
+  // 如果不允许建立连接，返回的错误信息
+  string closeReason = 4;
+}
+
+//UserBeforeRequest 用户请求前的回调
+
+//UserBeforeRequestReq 用户请求前的回调请求
+message UserBeforeRequestReq {
+  RequestHeader header = 1;
+  string path = 2; // 请求路径
+}
+
+//UserBeforeRequestResp 用户请求前的回调响应
+message UserBeforeRequestResp {
+  ResponseHeader header = 1;
+}
+
 service userService {
   //UserRegister 用户注册
   //二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
@@ -186,9 +238,9 @@ service userService {
   //UserAccessToken 用户登录
   //登录逻辑可以从这里修改 默认是密码/手机号登录
   rpc UserAccessToken(UserAccessTokenReq) returns (UserAccessTokenResp);
-  //FlushUserAccessToken 刷新用户token
+  //RefreshUserAccessToken 刷新用户token
   //刷新逻辑可以从这里修改
-  rpc FlushUserAccessToken(FlushUserAccessTokenReq) returns (FlushUserAccessTokenResp);
+  rpc RefreshUserAccessToken(RefreshUserAccessTokenReq) returns (RefreshUserAccessTokenResp);
   //RevokeUserAccessToken 注销用户token
   //注销逻辑可以从这里修改
   rpc RevokeUserAccessToken(RevokeUserAccessTokenReq) returns (RevokeUserAccessTokenResp);
@@ -210,4 +262,16 @@ service userService {
   //ResetUserAccountMap 重置用户账号信息
   //重置账号信息逻辑可以从这里修改
   rpc ResetUserAccountMap(ResetUserAccountMapReq) returns (ResetUserAccountMapResp);
+  //UserOnlineCallback 用户上线回调
+  //用户上线回调逻辑可以从这里修改
+  rpc UserOnlineCallback(UserOnlineCallbackReq) returns (UserOnlineCallbackResp);
+  //UserOfflineCallback 用户下线回调
+  //用户下线回调逻辑可以从这里修改
+  rpc UserOfflineCallback(UserOfflineCallbackReq) returns (UserOfflineCallbackResp);
+  //UserBeforeConnect 用户连接前的回调
+  //用户连接前的回调逻辑可以从这里修改
+  rpc UserBeforeConnect(UserBeforeConnectReq) returns (UserBeforeConnectResp);
+  //UserBeforeRequest 用户请求前的回调
+  //用户请求前的回调逻辑可以从这里修改
+  rpc UserBeforeRequest(UserBeforeRequestReq) returns (UserBeforeRequestResp);
 }

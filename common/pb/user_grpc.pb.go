@@ -31,9 +31,9 @@ type UserServiceClient interface {
 	//UserAccessToken 用户登录
 	//登录逻辑可以从这里修改 默认是密码/手机号登录
 	UserAccessToken(ctx context.Context, in *UserAccessTokenReq, opts ...grpc.CallOption) (*UserAccessTokenResp, error)
-	//FlushUserAccessToken 刷新用户token
+	//RefreshUserAccessToken 刷新用户token
 	//刷新逻辑可以从这里修改
-	FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error)
+	RefreshUserAccessToken(ctx context.Context, in *RefreshUserAccessTokenReq, opts ...grpc.CallOption) (*RefreshUserAccessTokenResp, error)
 	//RevokeUserAccessToken 注销用户token
 	//注销逻辑可以从这里修改
 	RevokeUserAccessToken(ctx context.Context, in *RevokeUserAccessTokenReq, opts ...grpc.CallOption) (*RevokeUserAccessTokenResp, error)
@@ -55,6 +55,18 @@ type UserServiceClient interface {
 	//ResetUserAccountMap 重置用户账号信息
 	//重置账号信息逻辑可以从这里修改
 	ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
+	//UserOnlineCallback 用户上线回调
+	//用户上线回调逻辑可以从这里修改
+	UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error)
+	//UserOfflineCallback 用户下线回调
+	//用户下线回调逻辑可以从这里修改
+	UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error)
+	//UserBeforeConnect 用户连接前的回调
+	//用户连接前的回调逻辑可以从这里修改
+	UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
+	//UserBeforeRequest 用户请求前的回调
+	//用户请求前的回调逻辑可以从这里修改
+	UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
 }
 
 type userServiceClient struct {
@@ -92,9 +104,9 @@ func (c *userServiceClient) UserAccessToken(ctx context.Context, in *UserAccessT
 	return out, nil
 }
 
-func (c *userServiceClient) FlushUserAccessToken(ctx context.Context, in *FlushUserAccessTokenReq, opts ...grpc.CallOption) (*FlushUserAccessTokenResp, error) {
-	out := new(FlushUserAccessTokenResp)
-	err := c.cc.Invoke(ctx, "/pb.userService/FlushUserAccessToken", in, out, opts...)
+func (c *userServiceClient) RefreshUserAccessToken(ctx context.Context, in *RefreshUserAccessTokenReq, opts ...grpc.CallOption) (*RefreshUserAccessTokenResp, error) {
+	out := new(RefreshUserAccessTokenResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/RefreshUserAccessToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -164,6 +176,42 @@ func (c *userServiceClient) ResetUserAccountMap(ctx context.Context, in *ResetUs
 	return out, nil
 }
 
+func (c *userServiceClient) UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error) {
+	out := new(UserOnlineCallbackResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserOnlineCallback", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error) {
+	out := new(UserOfflineCallbackResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserOfflineCallback", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error) {
+	out := new(UserBeforeConnectResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserBeforeConnect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error) {
+	out := new(UserBeforeRequestResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserBeforeRequest", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -177,9 +225,9 @@ type UserServiceServer interface {
 	//UserAccessToken 用户登录
 	//登录逻辑可以从这里修改 默认是密码/手机号登录
 	UserAccessToken(context.Context, *UserAccessTokenReq) (*UserAccessTokenResp, error)
-	//FlushUserAccessToken 刷新用户token
+	//RefreshUserAccessToken 刷新用户token
 	//刷新逻辑可以从这里修改
-	FlushUserAccessToken(context.Context, *FlushUserAccessTokenReq) (*FlushUserAccessTokenResp, error)
+	RefreshUserAccessToken(context.Context, *RefreshUserAccessTokenReq) (*RefreshUserAccessTokenResp, error)
 	//RevokeUserAccessToken 注销用户token
 	//注销逻辑可以从这里修改
 	RevokeUserAccessToken(context.Context, *RevokeUserAccessTokenReq) (*RevokeUserAccessTokenResp, error)
@@ -201,6 +249,18 @@ type UserServiceServer interface {
 	//ResetUserAccountMap 重置用户账号信息
 	//重置账号信息逻辑可以从这里修改
 	ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error)
+	//UserOnlineCallback 用户上线回调
+	//用户上线回调逻辑可以从这里修改
+	UserOnlineCallback(context.Context, *UserOnlineCallbackReq) (*UserOnlineCallbackResp, error)
+	//UserOfflineCallback 用户下线回调
+	//用户下线回调逻辑可以从这里修改
+	UserOfflineCallback(context.Context, *UserOfflineCallbackReq) (*UserOfflineCallbackResp, error)
+	//UserBeforeConnect 用户连接前的回调
+	//用户连接前的回调逻辑可以从这里修改
+	UserBeforeConnect(context.Context, *UserBeforeConnectReq) (*UserBeforeConnectResp, error)
+	//UserBeforeRequest 用户请求前的回调
+	//用户请求前的回调逻辑可以从这里修改
+	UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -217,8 +277,8 @@ func (UnimplementedUserServiceServer) UserDestroy(context.Context, *UserDestroyR
 func (UnimplementedUserServiceServer) UserAccessToken(context.Context, *UserAccessTokenReq) (*UserAccessTokenResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserAccessToken not implemented")
 }
-func (UnimplementedUserServiceServer) FlushUserAccessToken(context.Context, *FlushUserAccessTokenReq) (*FlushUserAccessTokenResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FlushUserAccessToken not implemented")
+func (UnimplementedUserServiceServer) RefreshUserAccessToken(context.Context, *RefreshUserAccessTokenReq) (*RefreshUserAccessTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshUserAccessToken not implemented")
 }
 func (UnimplementedUserServiceServer) RevokeUserAccessToken(context.Context, *RevokeUserAccessTokenReq) (*RevokeUserAccessTokenResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserAccessToken not implemented")
@@ -240,6 +300,18 @@ func (UnimplementedUserServiceServer) GetUserInfo(context.Context, *GetUserInfoR
 }
 func (UnimplementedUserServiceServer) ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetUserAccountMap not implemented")
+}
+func (UnimplementedUserServiceServer) UserOnlineCallback(context.Context, *UserOnlineCallbackReq) (*UserOnlineCallbackResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserOnlineCallback not implemented")
+}
+func (UnimplementedUserServiceServer) UserOfflineCallback(context.Context, *UserOfflineCallbackReq) (*UserOfflineCallbackResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserOfflineCallback not implemented")
+}
+func (UnimplementedUserServiceServer) UserBeforeConnect(context.Context, *UserBeforeConnectReq) (*UserBeforeConnectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserBeforeConnect not implemented")
+}
+func (UnimplementedUserServiceServer) UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserBeforeRequest not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -308,20 +380,20 @@ func _UserService_UserAccessToken_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_FlushUserAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FlushUserAccessTokenReq)
+func _UserService_RefreshUserAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshUserAccessTokenReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).FlushUserAccessToken(ctx, in)
+		return srv.(UserServiceServer).RefreshUserAccessToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.userService/FlushUserAccessToken",
+		FullMethod: "/pb.userService/RefreshUserAccessToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).FlushUserAccessToken(ctx, req.(*FlushUserAccessTokenReq))
+		return srv.(UserServiceServer).RefreshUserAccessToken(ctx, req.(*RefreshUserAccessTokenReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -452,6 +524,78 @@ func _UserService_ResetUserAccountMap_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UserOnlineCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserOnlineCallbackReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserOnlineCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserOnlineCallback",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserOnlineCallback(ctx, req.(*UserOnlineCallbackReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UserOfflineCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserOfflineCallbackReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserOfflineCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserOfflineCallback",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserOfflineCallback(ctx, req.(*UserOfflineCallbackReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UserBeforeConnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserBeforeConnectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserBeforeConnect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserBeforeConnect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserBeforeConnect(ctx, req.(*UserBeforeConnectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UserBeforeRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserBeforeRequestReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UserBeforeRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/UserBeforeRequest",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UserBeforeRequest(ctx, req.(*UserBeforeRequestReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -472,8 +616,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_UserAccessToken_Handler,
 		},
 		{
-			MethodName: "FlushUserAccessToken",
-			Handler:    _UserService_FlushUserAccessToken_Handler,
+			MethodName: "RefreshUserAccessToken",
+			Handler:    _UserService_RefreshUserAccessToken_Handler,
 		},
 		{
 			MethodName: "RevokeUserAccessToken",
@@ -502,6 +646,22 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetUserAccountMap",
 			Handler:    _UserService_ResetUserAccountMap_Handler,
+		},
+		{
+			MethodName: "UserOnlineCallback",
+			Handler:    _UserService_UserOnlineCallback_Handler,
+		},
+		{
+			MethodName: "UserOfflineCallback",
+			Handler:    _UserService_UserOfflineCallback_Handler,
+		},
+		{
+			MethodName: "UserBeforeConnect",
+			Handler:    _UserService_UserBeforeConnect_Handler,
+		},
+		{
+			MethodName: "UserBeforeRequest",
+			Handler:    _UserService_UserBeforeRequest_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

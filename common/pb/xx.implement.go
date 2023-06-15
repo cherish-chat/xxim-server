@@ -23,3 +23,7 @@ func (x *GatewayKickWsReq) SetHeader(header *RequestHeader) {
 func (x *UserRegisterReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *UserAccessTokenReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
