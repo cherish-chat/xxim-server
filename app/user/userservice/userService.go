@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	CreateRobotReq             = pb.CreateRobotReq
+	CreateRobotResp            = pb.CreateRobotResp
 	GetSelfUserInfoReq         = pb.GetSelfUserInfoReq
 	GetSelfUserInfoResp        = pb.GetSelfUserInfoResp
 	GetUserInfoReq             = pb.GetUserInfoReq
@@ -75,6 +77,8 @@ type (
 		UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
 		// UserBeforeRequest 用户请求前的回调
 		UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
+		// CreateRobot 创建机器人
+		CreateRobot(ctx context.Context, in *CreateRobotReq, opts ...grpc.CallOption) (*CreateRobotResp, error)
 	}
 
 	defaultUserService struct {
@@ -176,4 +180,10 @@ func (m *defaultUserService) UserBeforeConnect(ctx context.Context, in *UserBefo
 func (m *defaultUserService) UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.UserBeforeRequest(ctx, in, opts...)
+}
+
+// CreateRobot 创建机器人
+func (m *defaultUserService) CreateRobot(ctx context.Context, in *CreateRobotReq, opts ...grpc.CallOption) (*CreateRobotResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.CreateRobot(ctx, in, opts...)
 }

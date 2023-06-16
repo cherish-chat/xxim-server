@@ -15,6 +15,12 @@ func (x *xMap) SS2SA(ss map[string]string) map[string]any {
 	return m
 }
 
+func (x *xMap) SSMFromString(s string) SSM {
+	ssm := make(SSM)
+	_ = Json.Unmarshal([]byte(s), &ssm)
+	return ssm
+}
+
 type SSM map[string]string
 
 func (ssm SSM) ToSA() map[string]any {

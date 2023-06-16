@@ -9,13 +9,18 @@ const (
 	AccountTypeEmail        = "email"
 
 	AccountTypeStatus = "status" // 账号状态
+	AccountTypeRole   = "role"   // 账号角色
 )
 
 const (
-	VerifyTypeSmsCode     = "smsCode"
-	VerifyTypeEmailCode   = "emailCode"
-	VerifyTypeCaptchaId   = "captchaId"
-	VerifyTypeCaptchaCode = "captchaCode"
+	AccountVerifyTypeSmsCode     = "smsCode"
+	AccountVerifyTypeEmailCode   = "emailCode"
+	AccountVerifyTypeCaptchaId   = "captchaId"
+	AccountVerifyTypeCaptchaCode = "captchaCode"
+)
+
+const (
+	AccountExtraTypeRobotCreatedBy = "robotCreatedBy" // 机器人创建者
 )
 
 // GetJwtUniqueKey 获取jwt唯一key
@@ -44,3 +49,18 @@ func (x *RequestHeader) GetJwtUniqueKey() string {
 	// 这里我选择3
 	return x.InstallId
 }
+
+// AuthErrorExtra
+
+type AuthErrorExtra struct {
+	Type    AuthErrorType `json:"type"`
+	Message string        `json:"message"`
+}
+
+type AuthErrorType string
+
+const (
+	AuthErrorTypeExpired AuthErrorType = "expired"
+	AuthErrorTypeInvalid AuthErrorType = "invalid"
+	AuthErrorTypeReplace AuthErrorType = "replace"
+)

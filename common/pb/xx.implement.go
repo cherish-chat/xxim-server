@@ -27,3 +27,11 @@ func (x *UserRegisterReq) SetHeader(header *RequestHeader) {
 func (x *UserAccessTokenReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *CreateRobotReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+func (x *RefreshUserAccessTokenReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

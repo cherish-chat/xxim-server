@@ -1,6 +1,7 @@
 package i18n
 
 import (
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 )
@@ -56,5 +57,23 @@ func NewToastHeader(level pb.ToastActionData_Level, message string) *pb.Response
 		ActionType: pb.ResponseActionType_TOAST_ACTION,
 		ActionData: utils.Json.MarshalToString(data),
 		Extra:      "",
+	}
+}
+
+func NewAuthError(typ pb.AuthErrorType, message string) *pb.ResponseHeader {
+	extra := &pb.AuthErrorExtra{
+		Type:    typ,
+		Message: message,
+	}
+	buf, _ := json.Marshal(extra)
+	return &pb.ResponseHeader{
+		Code:  pb.ResponseCode_UNAUTHORIZED,
+		Extra: string(buf),
+	}
+}
+
+func NewForbiddenError() *pb.ResponseHeader {
+	return &pb.ResponseHeader{
+		Code: pb.ResponseCode_FORBIDDEN,
 	}
 }

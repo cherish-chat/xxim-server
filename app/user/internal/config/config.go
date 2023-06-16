@@ -73,6 +73,16 @@ type Config struct {
 			// RequireCaptcha 是否验证图形验证码
 			RequireCaptcha bool `json:",optional"`
 		}
+		Robot struct {
+			// 是否允许用户创建机器人
+			AllowCreate bool `json:",optional"`
+			// 是否必填nickname
+			RequireNickname bool `json:",optional"`
+			// DefaultNickname
+			DefaultNickname string `json:",default=Robot"`
+			// RequireAvatar
+			RequireAvatar bool `json:",optional"`
+		}
 	}
 	RpcClientConf struct {
 		Dispatch zrpc.RpcClientConf

@@ -11,10 +11,9 @@ import (
 
 type JwtConfig struct {
 	PrivateKey string
-	ExpireHour int      `json:",default=24"`
-	MaxToken   int      `json:",default=5"` // 每一个key 最大token数量
-	Scope      []string `json:",optional"`
-	Scene      string   `json:",default=xxim"`
+	ExpireHour int    `json:",default=24"`
+	MaxToken   int    `json:",default=5"`    // 每一个key 最大token数量
+	Scene      string `json:",default=user"` // user,admin,other
 }
 
 type Jwt struct {
@@ -53,6 +52,7 @@ func (x *Jwt) GenerateToken(
 	uniqueKey string,
 	status int,
 	extra string,
+	scope []string,
 ) *TokenObject {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		Issuer:    "",
@@ -76,7 +76,7 @@ func (x *Jwt) GenerateToken(
 		Extra:     extra,
 		AliveTime: time.Now().UnixMilli(),
 		ExpiredAt: time.Now().Add(time.Hour * time.Duration(x.Config.ExpireHour)).UnixMilli(),
-		Scope:     x.Config.Scope,
+		Scope:     scope,
 		Scene:     x.Config.Scene,
 	}
 	return t

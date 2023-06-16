@@ -3,6 +3,9 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/common/i18n"
+	"github.com/cherish-chat/xxim-server/common/utils"
+	"regexp"
+	"strings"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -28,17 +31,67 @@ func NewUserBeforeRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 func (l *UserBeforeRequestLogic) UserBeforeRequest(in *pb.UserBeforeRequestReq) (*pb.UserBeforeRequestResp, error) {
 	// todo: add your logic here and delete this line
 	if in.Header.UserToken != "" {
-		tokenObject, err := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Header.UserToken, in.Header.GetJwtUniqueKey())
-		if err != nil {
-			l.Errorf("verifyToken error: %s", err.Error())
-			return nil, err
+		tokenObject, verifyTokenErr := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Header.UserToken, in.Header.GetJwtUniqueKey())
+		if verifyTokenErr != nil {
+			l.Errorf("verifyTokenErr: %v", verifyTokenErr)
+			var resp *pb.UserBeforeRequestResp
+			switch verifyTokenErr {
+			case utils.TokenExpiredError:
+				resp = &pb.UserBeforeRequestResp{
+					Header: i18n.NewAuthError(pb.AuthErrorTypeExpired, ""),
+				}
+			case utils.TokenReplaceError:
+				ssm := utils.Map.SSMFromString(tokenObject.Extra)
+				deviceModel := ssm.Get("deviceModel")
+				resp = &pb.UserBeforeRequestResp{
+					Header: i18n.NewAuthError(pb.AuthErrorTypeReplace, deviceModel),
+				}
+			default:
+				resp = &pb.UserBeforeRequestResp{
+					Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
+				}
+			}
+			// 如果是白名单接口，那么就不需要返回错误
+			if strings.Contains(in.Path, "/white/") {
+				resp.Header = i18n.NewOkHeader()
+			}
+			return resp, nil
 		}
 		l.Debugf("tokenObject: %+v", tokenObject)
+		// 验证权限
+		verifyScope := false
+		for _, scopeRegex := range tokenObject.Scope {
+			// 是否匹配 path 只要有一个匹配就可以
+			matched, err := regexp.MatchString(scopeRegex, in.Path)
+			if err != nil {
+				l.Errorf("regexp.MatchString error: %v", err)
+				return &pb.UserBeforeRequestResp{
+					Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
+				}, nil
+			}
+			if matched {
+				verifyScope = true
+				break
+			}
+		}
+		if !verifyScope {
+			l.Errorf("verifyScope error: %v", verifyScope)
+			return &pb.UserBeforeRequestResp{
+				Header: i18n.NewForbiddenError(),
+			}, nil
+		}
+		return &pb.UserBeforeRequestResp{
+			Header: i18n.NewOkHeader(),
+			UserId: tokenObject.UserId,
+		}, nil
+	}
+	// 如果是白名单接口，那么就不需要返回错误
+	if strings.Contains(in.Path, "/white/") {
 		return &pb.UserBeforeRequestResp{
 			Header: i18n.NewOkHeader(),
 		}, nil
 	}
 	return &pb.UserBeforeRequestResp{
-		Header: i18n.NewOkHeader(),
+		Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
 	}, nil
 }

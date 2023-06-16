@@ -142,23 +142,37 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			Do: svcCtx.GatewayService().GatewayKickWs,
 		})
 		// GatewayKeepAliveReq GatewayKeepAliveResp
-		AddWsRoute(svcCtx, "/v1/gateway/keepAlive", KeepAliveHandler(svcCtx))
+		AddWsRoute(svcCtx, "/v1/gateway/white/keepAlive", KeepAliveHandler(svcCtx))
 	}
 	// user api
 	{
 		// UserRegisterReq UserRegisterResp
-		AddUnifiedRoute(svcCtx, "/v1/user/userRegister", Route[*pb.UserRegisterReq, *pb.UserRegisterResp]{
+		AddUnifiedRoute(svcCtx, "/v1/user/white/userRegister", Route[*pb.UserRegisterReq, *pb.UserRegisterResp]{
 			NewRequest: func() *pb.UserRegisterReq {
 				return &pb.UserRegisterReq{}
 			},
 			Do: svcCtx.UserService.UserRegister,
 		})
 		// UserAccessTokenReq UserAccessTokenResp
-		AddUnifiedRoute(svcCtx, "/v1/user/userAccessToken", Route[*pb.UserAccessTokenReq, *pb.UserAccessTokenResp]{
+		AddUnifiedRoute(svcCtx, "/v1/user/white/userAccessToken", Route[*pb.UserAccessTokenReq, *pb.UserAccessTokenResp]{
 			NewRequest: func() *pb.UserAccessTokenReq {
 				return &pb.UserAccessTokenReq{}
 			},
 			Do: svcCtx.UserService.UserAccessToken,
+		})
+		// CreateRobotReq CreateRobotResp
+		AddUnifiedRoute(svcCtx, "/v1/user/createRobot", Route[*pb.CreateRobotReq, *pb.CreateRobotResp]{
+			NewRequest: func() *pb.CreateRobotReq {
+				return &pb.CreateRobotReq{}
+			},
+			Do: svcCtx.UserService.CreateRobot,
+		})
+		// RefreshUserAccessTokenReq RefreshUserAccessTokenResp
+		AddUnifiedRoute(svcCtx, "/v1/user/refreshUserAccessToken", Route[*pb.RefreshUserAccessTokenReq, *pb.RefreshUserAccessTokenResp]{
+			NewRequest: func() *pb.RefreshUserAccessTokenReq {
+				return &pb.RefreshUserAccessTokenReq{}
+			},
+			Do: svcCtx.UserService.RefreshUserAccessToken,
 		})
 	}
 	// http

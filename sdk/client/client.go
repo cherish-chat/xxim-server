@@ -27,8 +27,9 @@ type IClient interface {
 	GatewayGetConnectionByFilter(req *pb.GatewayGetConnectionByFilterReq) (resp *pb.GatewayGetConnectionByFilterResp, err error)
 	GatewayWriteDataToWs(req *pb.GatewayWriteDataToWsReq) (resp *pb.GatewayWriteDataToWsResp, err error)
 	GatewayKickWs(req *pb.GatewayKickWsReq) (resp *pb.GatewayKickWsResp, err error)
-	UserRegister(req *pb.UserRegisterReq) (resp *pb.UserRegisterResp, err error)
-	UserAccessToken(req *pb.UserAccessTokenReq) (resp *pb.UserAccessTokenResp, err error)
+
+	CreateRobot(req *pb.CreateRobotReq) (resp *pb.CreateRobotResp, err error)
+	RefreshUserAccessToken(req *pb.RefreshUserAccessTokenReq) (resp *pb.RefreshUserAccessTokenResp, err error)
 }
 
 type HttpClient struct {
@@ -64,8 +65,8 @@ func NewWsClient(config *Config) (*WsClient, error) {
 	url := fmt.Sprintf("%s%s", endpoint, "/ws?")
 	params := map[string]string{
 		"appId":       config.AppId,
-		"userId":      httpClient.getUserId(),
-		"userToken":   httpClient.getUserToken(),
+		"userId":      "",
+		"userToken":   config.UserToken,
 		"installId":   config.InstallId,
 		"platform":    config.Platform.ToString(),
 		"deviceModel": config.DeviceModel,
@@ -134,7 +135,7 @@ func (c *WsClient) heartbeat() {
 		case <-ticker.C:
 			go func() {
 				logx.Debugf("send heartbeat")
-				e := c.Request("/v1/gateway/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
+				e := c.Request("/v1/gateway/white/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
 				if e != nil {
 					logx.Errorf("heartbeat error: %v", e)
 				} else {
@@ -178,8 +179,8 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 			data, _ = proto.Marshal(&pb.GatewayApiRequest{
 				Header: &pb.RequestHeader{
 					AppId:        c.Config.AppId,
-					UserId:       c.getUserId(),
-					UserToken:    c.getUserToken(),
+					UserId:       "",
+					UserToken:    c.Config.UserToken,
 					ClientIp:     "", //客户端不需要设置 由服务端设置
 					InstallId:    c.Config.InstallId,
 					Platform:     *c.Config.Platform,
@@ -202,8 +203,8 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 			data, _ = json.Marshal(&pb.GatewayApiRequest{
 				Header: &pb.RequestHeader{
 					AppId:        c.Config.AppId,
-					UserId:       c.getUserId(),
-					UserToken:    c.getUserToken(),
+					UserId:       "",
+					UserToken:    c.Config.UserToken,
 					ClientIp:     "", //客户端不需要设置 由服务端设置
 					InstallId:    c.Config.InstallId,
 					Platform:     *c.Config.Platform,
@@ -244,6 +245,8 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		return fmt.Errorf("read response body error: %v", err)
+	} else {
+		logx.Debugf("response body: %s", string(data))
 	}
 	// unmarshal response body
 	if resp != nil {
@@ -257,10 +260,22 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 				return fmt.Errorf("resp unmarshal error: %v", err)
 			}
 		} else {
-			err = json.Unmarshal(data, resp)
+			apiResponse := &pb.GatewayApiResponse{}
+			err = json.Unmarshal(data, apiResponse)
 			if err != nil {
 				return fmt.Errorf("resp unmarshal error: %v", err)
 			}
+			if apiResponse.Header.Code != pb.ResponseCode_SUCCESS {
+				return fmt.Errorf("%s", utils.AnyString(apiResponse.Header))
+			}
+			if len(apiResponse.Body) == 0 {
+				return nil
+			}
+			err = json.Unmarshal(apiResponse.Body, resp)
+			if err != nil {
+				return fmt.Errorf("resp unmarshal error: %v", err)
+			}
+			return nil
 		}
 	}
 	return nil
@@ -347,28 +362,4 @@ func (c *WsClient) waitResponse(requestId string) chan *pb.GatewayApiResponse {
 	ch := make(chan *pb.GatewayApiResponse)
 	c.responseMap.Store(requestId, ch)
 	return ch
-}
-
-func (c *HttpClient) getUserId() string {
-	switch c.Config.Account.AuthType {
-	case AuthType_Password:
-		// TODO: 使用 username 和 password 登录, 获取 userId 和 userToken, 存储到本地
-		return ""
-	default:
-		logx.Errorf("invalid auth type: %v", c.Config.Account.AuthType)
-		os.Exit(1)
-		return ""
-	}
-}
-
-func (c *HttpClient) getUserToken() string {
-	switch c.Config.Account.AuthType {
-	case AuthType_Password:
-		// TODO: 使用 username 和 password 登录, 获取 userId 和 userToken, 存储到本地
-		return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1Mjk5ODEsImp0aSI6IjMifQ.nbeMXsmCN3xXAFahLA76tdy5iKBdLIyqo3VfH9VXGSQ"
-	default:
-		logx.Errorf("invalid auth type: %v", c.Config.Account.AuthType)
-		os.Exit(1)
-		return ""
-	}
 }

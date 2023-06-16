@@ -11,10 +11,9 @@ import (
 func TestHttpClient_UserRegister(t *testing.T) {
 	userId := "3"
 	phone := "13600000003"
-	//client := getHttpClient(t, nil)
-	client := getWsClient(t, nil)
+	client := getHttpClient(t, nil)
 	time.Sleep(1 * time.Second)
-	userRegisterResp, err := client.UserRegister(&pb.UserRegisterReq{
+	userRegisterResp, err := client.(*HttpClient).UserRegister(&pb.UserRegisterReq{
 		Header:       &pb.RequestHeader{},
 		UserId:       userId,
 		RegisterTime: nil,
@@ -36,10 +35,10 @@ func TestHttpClient_UserRegister(t *testing.T) {
 			"extra1": "extra1",
 		},
 		VerifyMap: map[string]string{
-			pb.VerifyTypeSmsCode:     "123456",
-			pb.VerifyTypeEmailCode:   "123456",
-			pb.VerifyTypeCaptchaId:   "123456",
-			pb.VerifyTypeCaptchaCode: "123456",
+			pb.AccountVerifyTypeSmsCode:     "123456",
+			pb.AccountVerifyTypeEmailCode:   "123456",
+			pb.AccountVerifyTypeCaptchaId:   "123456",
+			pb.AccountVerifyTypeCaptchaCode: "123456",
 		},
 	})
 	if err != nil {
@@ -50,10 +49,9 @@ func TestHttpClient_UserRegister(t *testing.T) {
 
 // UserAccessToken 获取用户访问令牌
 func TestHttpClient_UserAccessToken(t *testing.T) {
-	//client := getHttpClient(t, nil)
-	client := getWsClient(t, nil)
+	client := getHttpClient(t, nil)
 	time.Sleep(1 * time.Second)
-	userAccessTokenResp, err := client.UserAccessToken(&pb.UserAccessTokenReq{
+	userAccessTokenResp, err := client.(*HttpClient).UserAccessToken(&pb.UserAccessTokenReq{
 		Header: &pb.RequestHeader{
 			Platform:  1,
 			InstallId: "3",
@@ -70,4 +68,32 @@ func TestHttpClient_UserAccessToken(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(userAccessTokenResp))
+}
+
+// CreateRobot 创建机器人
+func TestHttpClient_CreateRobot(t *testing.T) {
+	client := getHttpClient(t, nil)
+	//client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	createRobotResp, err := client.CreateRobot(&pb.CreateRobotReq{
+		RobotId:  "robot11",
+		Nickname: utils.AnyPtr("机器人11"),
+		Avatar:   utils.AnyPtr("https://www.baidu.com"),
+	})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(createRobotResp))
+}
+
+// RefreshUserAccessToken 刷新用户访问令牌
+func TestHttpClient_RefreshUserAccessToken(t *testing.T) {
+	client := getHttpClient(t, nil)
+	//client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	refreshUserAccessTokenResp, err := client.RefreshUserAccessToken(&pb.RefreshUserAccessTokenReq{})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(refreshUserAccessTokenResp))
 }

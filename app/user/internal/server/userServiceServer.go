@@ -111,3 +111,9 @@ func (s *UserServiceServer) UserBeforeRequest(ctx context.Context, in *pb.UserBe
 	l := logic.NewUserBeforeRequestLogic(ctx, s.svcCtx)
 	return l.UserBeforeRequest(in)
 }
+
+// CreateRobot 创建机器人
+func (s *UserServiceServer) CreateRobot(ctx context.Context, in *pb.CreateRobotReq) (*pb.CreateRobotResp, error) {
+	l := logic.NewCreateRobotLogic(ctx, s.svcCtx)
+	return l.CreateRobot(in)
+}

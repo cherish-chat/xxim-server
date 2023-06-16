@@ -8,21 +8,15 @@ import (
 )
 
 var defaultConfig = &Config{
-	Endpoints:   []string{"http://127.0.0.1:34500"},
-	Encoding:    utils.AnyPtr(pb.EncodingProto_JSON),
-	AppId:       "",
-	InstallId:   "",
-	Platform:    nil,
-	DeviceModel: "",
-	OsVersion:   "",
-	Language:    nil,
-	Account: AccountConfig{
-		AuthType: AuthType_Password,
-		Password: &AccountConfigPassword{
-			Username: "xx",
-			Password: "xx",
-		},
-	},
+	Endpoints:       []string{"http://127.0.0.1:34500"},
+	Encoding:        utils.AnyPtr(pb.EncodingProto_JSON),
+	AppId:           "",
+	InstallId:       "",
+	Platform:        nil,
+	DeviceModel:     "",
+	OsVersion:       "",
+	Language:        nil,
+	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NTc4MjEsImp0aSI6InJvYm90MTEifQ.XsgkU0csyiOYkMZYINPx9ueSBkbFUtrX2wce6uRiHmc`, // robot11
 	KeepAliveSecond: time.Second * 30,
 }
 

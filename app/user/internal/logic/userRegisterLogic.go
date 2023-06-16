@@ -37,11 +37,14 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		UserId:       in.UserId,
 		RegisterTime: primitive.NewDateTimeFromTime(time.Now()),
 		DestroyTime:  0,
-		AccountMap:   make(bson.M),
-		Nickname:     "",
-		Avatar:       "",
-		ProfileMap:   utils.Map.SS2SA(in.ProfileMap),
-		ExtraMap:     utils.Map.SS2SA(in.ExtraMap),
+		AccountMap: bson.M{
+			pb.AccountTypeStatus: usermodel.AccountStatusNormal,
+			pb.AccountTypeRole:   usermodel.AccountRoleUser,
+		},
+		Nickname:   "",
+		Avatar:     "",
+		ProfileMap: utils.Map.SS2SA(in.ProfileMap),
+		ExtraMap:   utils.Map.SS2SA(in.ExtraMap),
 	}
 	//验证请求
 	{
@@ -154,7 +157,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				}, nil
 			}
 		}
-		smsCode, ok := in.VerifyMap[pb.VerifyTypeSmsCode]
+		smsCode, ok := in.VerifyMap[pb.AccountVerifyTypeSmsCode]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindPhone {
 				return &pb.UserRegisterResp{
@@ -224,7 +227,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		} else {
 			user.AccountMap[pb.AccountTypeEmail] = email
 		}
-		emailCode, ok := in.VerifyMap[pb.VerifyTypeEmailCode]
+		emailCode, ok := in.VerifyMap[pb.AccountVerifyTypeEmailCode]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindEmail {
 				return &pb.UserRegisterResp{
@@ -310,7 +313,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		}
 
 		//是否验证图形验证码
-		captchaId, ok := in.VerifyMap[pb.VerifyTypeCaptchaId]
+		captchaId, ok := in.VerifyMap[pb.AccountVerifyTypeCaptchaId]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireCaptcha {
 				return &pb.UserRegisterResp{
@@ -318,7 +321,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				}, nil
 			}
 		}
-		captchaCode, ok := in.VerifyMap[pb.VerifyTypeCaptchaCode]
+		captchaCode, ok := in.VerifyMap[pb.AccountVerifyTypeCaptchaCode]
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireCaptcha {
 				return &pb.UserRegisterResp{

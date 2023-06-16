@@ -67,6 +67,9 @@ type UserServiceClient interface {
 	//UserBeforeRequest 用户请求前的回调
 	//用户请求前的回调逻辑可以从这里修改
 	UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
+	//CreateRobot 创建机器人
+	//创建机器人逻辑可以从这里修改
+	CreateRobot(ctx context.Context, in *CreateRobotReq, opts ...grpc.CallOption) (*CreateRobotResp, error)
 }
 
 type userServiceClient struct {
@@ -212,6 +215,15 @@ func (c *userServiceClient) UserBeforeRequest(ctx context.Context, in *UserBefor
 	return out, nil
 }
 
+func (c *userServiceClient) CreateRobot(ctx context.Context, in *CreateRobotReq, opts ...grpc.CallOption) (*CreateRobotResp, error) {
+	out := new(CreateRobotResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/CreateRobot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -261,6 +273,9 @@ type UserServiceServer interface {
 	//UserBeforeRequest 用户请求前的回调
 	//用户请求前的回调逻辑可以从这里修改
 	UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error)
+	//CreateRobot 创建机器人
+	//创建机器人逻辑可以从这里修改
+	CreateRobot(context.Context, *CreateRobotReq) (*CreateRobotResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -312,6 +327,9 @@ func (UnimplementedUserServiceServer) UserBeforeConnect(context.Context, *UserBe
 }
 func (UnimplementedUserServiceServer) UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBeforeRequest not implemented")
+}
+func (UnimplementedUserServiceServer) CreateRobot(context.Context, *CreateRobotReq) (*CreateRobotResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRobot not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -596,6 +614,24 @@ func _UserService_UserBeforeRequest_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_CreateRobot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRobotReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateRobot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/CreateRobot",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateRobot(ctx, req.(*CreateRobotReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -662,6 +698,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserBeforeRequest",
 			Handler:    _UserService_UserBeforeRequest_Handler,
+		},
+		{
+			MethodName: "CreateRobot",
+			Handler:    _UserService_CreateRobot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

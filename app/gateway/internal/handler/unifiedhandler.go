@@ -101,6 +101,8 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			Body:      nil,
 		}, err
 	}
+	requestHeader.UserId = userBeforeRequestResp.UserId
+
 	var result *pb.GatewayApiResponse
 	body, _ := proto.Marshal(userBeforeRequestResp)
 	if len(body) > 0 {
@@ -199,6 +201,8 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			Body:      nil,
 		}, err
 	}
+	header.UserId = userBeforeRequestResp.UserId
+
 	var result *pb.GatewayApiResponse
 	body, _ := proto.Marshal(userBeforeRequestResp)
 	if len(body) > 0 {

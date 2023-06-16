@@ -11,6 +11,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	AccountStatusNormal = "0"
+)
+
+const (
+	AccountRoleUser  = "user"
+	AccountRoleRobot = "robot"
+)
+
 // User 用户 数据库模型
 type User struct {
 	Id primitive.ObjectID `bson:"_id,omitempty" json:"-"`

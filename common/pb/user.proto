@@ -226,6 +226,23 @@ message UserBeforeRequestReq {
 //UserBeforeRequestResp 用户请求前的回调响应
 message UserBeforeRequestResp {
   ResponseHeader header = 1;
+  string userId = 2; // 用户id 唯一
+}
+
+//CreateRobot 创建机器人
+
+//CreateRobotReq 创建机器人请求
+message CreateRobotReq {
+  RequestHeader header = 1;
+  string robotId = 2; // 机器人id 唯一
+  optional string nickname = 3; // 昵称
+  optional string avatar = 4; // 头像url
+}
+
+//CreateRobotResp 创建机器人响应
+message CreateRobotResp {
+  ResponseHeader header = 1;
+  string accessToken = 2; // 机器人token
 }
 
 service userService {
@@ -274,4 +291,7 @@ service userService {
   //UserBeforeRequest 用户请求前的回调
   //用户请求前的回调逻辑可以从这里修改
   rpc UserBeforeRequest(UserBeforeRequestReq) returns (UserBeforeRequestResp);
+  //CreateRobot 创建机器人
+  //创建机器人逻辑可以从这里修改
+  rpc CreateRobot(CreateRobotReq) returns (CreateRobotResp);
 }

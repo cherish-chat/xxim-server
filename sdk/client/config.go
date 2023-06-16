@@ -29,30 +29,12 @@ type Config struct {
 	Language *pb.I18NLanguage
 	// RequestTimeout is the timeout of the request. Default is 10s.
 	RequestTimeout time.Duration
-	// Account is the account of the user. Required.
-	Account AccountConfig
+	// UserToken is the token of the user. Required.
+	UserToken string
 	// CustomHeader is the custom header of the request.
 	CustomHeader string
 	// KeepAliveSecond is the keep alive second of the websocket. Default is 30s.
 	KeepAliveSecond time.Duration
-}
-type AuthType int
-
-const (
-	AuthType_Password AuthType = 1
-)
-
-type AccountConfigPassword struct {
-	// Username is the username of the user.
-	Username string
-	// Password is the password of the user.
-	Password string
-}
-
-type AccountConfig struct {
-	// 认证方式
-	AuthType AuthType
-	Password *AccountConfigPassword
 }
 
 var (
@@ -110,19 +92,8 @@ func (c *Config) Validate() error {
 		language := pb.I18NLanguage_Chinese_Simplified
 		c.Language = &language
 	}
-	switch c.Account.AuthType {
-	case AuthType_Password:
-		if c.Account.Password == nil {
-			return errors.New("password is required")
-		}
-		if c.Account.Password.Username == "" {
-			return errors.New("username is required")
-		}
-		if c.Account.Password.Password == "" {
-			return errors.New("password is required")
-		}
-	default:
-		return errors.New("unsupported auth type")
+	if c.UserToken == "" {
+		return errors.New("user token is required")
 	}
 	if c.RequestTimeout == 0 {
 		c.RequestTimeout = 10 * time.Second

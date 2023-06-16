@@ -8,6 +8,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -34,11 +35,11 @@ func (l *UserAccessTokenLogic) UserAccessToken(in *pb.UserAccessTokenReq) (*pb.U
 	_, phoneExists := in.AccountMap[pb.AccountTypePhone]
 	_, phoneCountryCodeExists := in.AccountMap[pb.AccountTypePhoneCode]
 	_, emailExists := in.AccountMap[pb.AccountTypeEmail]
-	_, smsCodeExists := in.VerifyMap[pb.VerifyTypeSmsCode]
-	_, emailCodeExists := in.VerifyMap[pb.VerifyTypeEmailCode]
+	_, smsCodeExists := in.VerifyMap[pb.AccountVerifyTypeSmsCode]
+	_, emailCodeExists := in.VerifyMap[pb.AccountVerifyTypeEmailCode]
 
-	_, captchaIdExists := in.VerifyMap[pb.VerifyTypeCaptchaId]
-	_, captchaCodeExists := in.VerifyMap[pb.VerifyTypeCaptchaCode]
+	_, captchaIdExists := in.VerifyMap[pb.AccountVerifyTypeCaptchaId]
+	_, captchaCodeExists := in.VerifyMap[pb.AccountVerifyTypeCaptchaCode]
 	if !captchaIdExists || !captchaCodeExists {
 		// 获取token是否需要图形验证码
 		if l.svcCtx.Config.Account.Login.RequireCaptcha {
@@ -173,7 +174,7 @@ func (l *UserAccessTokenLogic) LoginByPasswordEmail(ctx context.Context, in *pb.
 // LoginBySmsCode 手机号验证码登录
 func (l *UserAccessTokenLogic) LoginBySmsCode(ctx context.Context, in *pb.UserAccessTokenReq) (*pb.UserAccessTokenResp, error) {
 	phone, phoneCountryCode := in.AccountMap[pb.AccountTypePhone], in.AccountMap[pb.AccountTypePhoneCode]
-	smsCode := in.VerifyMap[pb.VerifyTypeSmsCode]
+	smsCode := in.VerifyMap[pb.AccountVerifyTypeSmsCode]
 	// 验证验证码
 	smsCodeVerifyResp, err := l.svcCtx.ThirdService.SmsCodeVerify(l.ctx, &pb.SmsCodeVerifyReq{
 		Header:    in.Header,
@@ -210,7 +211,7 @@ func (l *UserAccessTokenLogic) LoginBySmsCode(ctx context.Context, in *pb.UserAc
 // LoginByEmailCode 邮箱登录
 func (l *UserAccessTokenLogic) LoginByEmailCode(ctx context.Context, in *pb.UserAccessTokenReq) (*pb.UserAccessTokenResp, error) {
 	email := in.AccountMap[pb.AccountTypeEmail]
-	emailCode := in.VerifyMap[pb.VerifyTypeEmailCode]
+	emailCode := in.VerifyMap[pb.AccountVerifyTypeEmailCode]
 	// 验证验证码
 	emailCodeVerifyResp, err := l.svcCtx.ThirdService.EmailCodeVerify(l.ctx, &pb.EmailCodeVerifyReq{
 		Header:    in.Header,
@@ -249,7 +250,20 @@ func (l *UserAccessTokenLogic) generateToken(in *pb.UserAccessTokenReq, user *us
 		"installId":   in.Header.InstallId,
 		"deviceModel": in.Header.DeviceModel,
 	}
-	tokenObject := l.svcCtx.Jwt.GenerateToken(user.UserId, in.Header.GetJwtUniqueKey(), int(user.GetAccountMap().GetInt64(pb.AccountTypeStatus)), ssm.Marshal())
+	var scope []string
+	if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleUser {
+		scope = []string{
+			"^.*$", // 表示所有权限
+		}
+	} else if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleRobot {
+		scope = []string{
+			"^.*$", // TODO: 修改为机器人权限
+		}
+	}
+	tokenObject := l.svcCtx.Jwt.GenerateToken(user.UserId, in.Header.GetJwtUniqueKey(), int(user.GetAccountMap().GetInt64(pb.AccountTypeStatus)), ssm.Marshal(), scope)
+	if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleRobot {
+		tokenObject.ExpiredAt = time.Now().AddDate(100, 0, 0).UnixMilli()
+	}
 	err := l.svcCtx.Jwt.SetToken(l.ctx, tokenObject)
 	if err != nil {
 		l.Errorf("set token error: %v", err)
@@ -257,6 +271,7 @@ func (l *UserAccessTokenLogic) generateToken(in *pb.UserAccessTokenReq, user *us
 			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "login_failed")),
 		}
 	}
+	l.Debugf("set token: %v", tokenObject)
 	return &pb.UserAccessTokenResp{
 		UserId:      user.UserId,
 		AccessToken: tokenObject.Token,
