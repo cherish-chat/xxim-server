@@ -33,16 +33,16 @@ type (
 	UpdateUserProfileMapResp   = pb.UpdateUserProfileMapResp
 	UserAccessTokenReq         = pb.UserAccessTokenReq
 	UserAccessTokenResp        = pb.UserAccessTokenResp
+	UserAfterOfflineReq        = pb.UserAfterOfflineReq
+	UserAfterOfflineResp       = pb.UserAfterOfflineResp
+	UserAfterOnlineReq         = pb.UserAfterOnlineReq
+	UserAfterOnlineResp        = pb.UserAfterOnlineResp
 	UserBeforeConnectReq       = pb.UserBeforeConnectReq
 	UserBeforeConnectResp      = pb.UserBeforeConnectResp
 	UserBeforeRequestReq       = pb.UserBeforeRequestReq
 	UserBeforeRequestResp      = pb.UserBeforeRequestResp
 	UserDestroyReq             = pb.UserDestroyReq
 	UserDestroyResp            = pb.UserDestroyResp
-	UserOfflineCallbackReq     = pb.UserOfflineCallbackReq
-	UserOfflineCallbackResp    = pb.UserOfflineCallbackResp
-	UserOnlineCallbackReq      = pb.UserOnlineCallbackReq
-	UserOnlineCallbackResp     = pb.UserOnlineCallbackResp
 	UserRegisterReq            = pb.UserRegisterReq
 	UserRegisterResp           = pb.UserRegisterResp
 
@@ -69,10 +69,10 @@ type (
 		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		// ResetUserAccountMap 重置用户账号信息
 		ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
-		// UserOnlineCallback 用户上线回调
-		UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error)
-		// UserOfflineCallback 用户下线回调
-		UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error)
+		// UserAfterOnline 用户上线回调
+		UserAfterOnline(ctx context.Context, in *UserAfterOnlineReq, opts ...grpc.CallOption) (*UserAfterOnlineResp, error)
+		// UserAfterOffline 用户下线回调
+		UserAfterOffline(ctx context.Context, in *UserAfterOfflineReq, opts ...grpc.CallOption) (*UserAfterOfflineResp, error)
 		// UserBeforeConnect 用户连接前的回调
 		UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
 		// UserBeforeRequest 用户请求前的回调
@@ -158,16 +158,16 @@ func (m *defaultUserService) ResetUserAccountMap(ctx context.Context, in *ResetU
 	return client.ResetUserAccountMap(ctx, in, opts...)
 }
 
-// UserOnlineCallback 用户上线回调
-func (m *defaultUserService) UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error) {
+// UserAfterOnline 用户上线回调
+func (m *defaultUserService) UserAfterOnline(ctx context.Context, in *UserAfterOnlineReq, opts ...grpc.CallOption) (*UserAfterOnlineResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
-	return client.UserOnlineCallback(ctx, in, opts...)
+	return client.UserAfterOnline(ctx, in, opts...)
 }
 
-// UserOfflineCallback 用户下线回调
-func (m *defaultUserService) UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error) {
+// UserAfterOffline 用户下线回调
+func (m *defaultUserService) UserAfterOffline(ctx context.Context, in *UserAfterOfflineReq, opts ...grpc.CallOption) (*UserAfterOfflineResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
-	return client.UserOfflineCallback(ctx, in, opts...)
+	return client.UserAfterOffline(ctx, in, opts...)
 }
 
 // UserBeforeConnect 用户连接前的回调

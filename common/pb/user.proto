@@ -173,27 +173,27 @@ message ResetUserAccountMapResp {
   ResponseHeader header = 1;
 }
 
-// UserOnlineCallback 用户上线回调
+// UserAfterOnline 用户上线回调
 
-//UserOnlineCallbackReq 用户上线回调请求
-message UserOnlineCallbackReq {
+//UserAfterOnlineReq 用户上线回调请求
+message UserAfterOnlineReq {
   RequestHeader header = 1;
 }
 
-//UserOnlineCallbackResp 用户上线回调响应
-message UserOnlineCallbackResp {
+//UserAfterOnlineResp 用户上线回调响应
+message UserAfterOnlineResp {
   ResponseHeader header = 1;
 }
 
-//UserOfflineCallback 用户下线回调
+//UserAfterOffline 用户下线回调
 
-//UserOfflineCallbackReq 用户下线回调请求
-message UserOfflineCallbackReq {
+//UserAfterOfflineReq 用户下线回调请求
+message UserAfterOfflineReq {
   RequestHeader header = 1;
 }
 
-//UserOfflineCallbackResp 用户下线回调响应
-message UserOfflineCallbackResp {
+//UserAfterOfflineResp 用户下线回调响应
+message UserAfterOfflineResp {
   ResponseHeader header = 1;
 }
 
@@ -279,12 +279,12 @@ service userService {
   //ResetUserAccountMap 重置用户账号信息
   //重置账号信息逻辑可以从这里修改
   rpc ResetUserAccountMap(ResetUserAccountMapReq) returns (ResetUserAccountMapResp);
-  //UserOnlineCallback 用户上线回调
+  //UserAfterOnline 用户上线回调
   //用户上线回调逻辑可以从这里修改
-  rpc UserOnlineCallback(UserOnlineCallbackReq) returns (UserOnlineCallbackResp);
-  //UserOfflineCallback 用户下线回调
+  rpc UserAfterOnline(UserAfterOnlineReq) returns (UserAfterOnlineResp);
+  //UserAfterOffline 用户下线回调
   //用户下线回调逻辑可以从这里修改
-  rpc UserOfflineCallback(UserOfflineCallbackReq) returns (UserOfflineCallbackResp);
+  rpc UserAfterOffline(UserAfterOfflineReq) returns (UserAfterOfflineResp);
   //UserBeforeConnect 用户连接前的回调
   //用户连接前的回调逻辑可以从这里修改
   rpc UserBeforeConnect(UserBeforeConnectReq) returns (UserBeforeConnectResp);

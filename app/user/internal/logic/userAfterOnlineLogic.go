@@ -9,23 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UserOnlineCallbackLogic struct {
+type UserAfterOnlineLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewUserOnlineCallbackLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserOnlineCallbackLogic {
-	return &UserOnlineCallbackLogic{
+func NewUserAfterOnlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserAfterOnlineLogic {
+	return &UserAfterOnlineLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// UserOnlineCallback 用户上线回调
-func (l *UserOnlineCallbackLogic) UserOnlineCallback(in *pb.UserOnlineCallbackReq) (*pb.UserOnlineCallbackResp, error) {
+// UserAfterOnline 用户上线回调
+func (l *UserAfterOnlineLogic) UserAfterOnline(in *pb.UserAfterOnlineReq) (*pb.UserAfterOnlineResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.UserOnlineCallbackResp{}, nil
+	return &pb.UserAfterOnlineResp{}, nil
 }

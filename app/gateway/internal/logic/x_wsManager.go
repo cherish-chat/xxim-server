@@ -153,9 +153,9 @@ func (w *wsManager) AddSubscriber(ctx context.Context, header *pb.RequestHeader,
 	go w.clearConnectionTimer(wsConnection)
 	w.wsConnectionMap.Set(id, wsConnection)
 	go func() {
-		_, e := w.svcCtx.UserService.UserOnlineCallback(ctx, &pb.UserOnlineCallbackReq{Header: header})
+		_, e := w.svcCtx.UserService.UserAfterOnline(ctx, &pb.UserAfterOnlineReq{Header: header})
 		if e != nil {
-			logx.Errorf("UserOnlineCallback error: %s", e.Error())
+			logx.Errorf("UserAfterOnline error: %s", e.Error())
 		}
 	}()
 	return wsConnection, nil
@@ -169,9 +169,9 @@ func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCo
 	w.wsConnectionMap.Delete(header.UserId, id)
 	go func() {
 		if ok {
-			_, e := w.svcCtx.UserService.UserOfflineCallback(connection.Ctx, &pb.UserOfflineCallbackReq{Header: header})
+			_, e := w.svcCtx.UserService.UserAfterOffline(connection.Ctx, &pb.UserAfterOfflineReq{Header: header})
 			if e != nil {
-				logx.Errorf("UserOfflineCallback error: %s", e.Error())
+				logx.Errorf("UserAfterOffline error: %s", e.Error())
 			}
 		}
 	}()

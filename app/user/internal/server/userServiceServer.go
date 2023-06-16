@@ -88,16 +88,16 @@ func (s *UserServiceServer) ResetUserAccountMap(ctx context.Context, in *pb.Rese
 	return l.ResetUserAccountMap(in)
 }
 
-// UserOnlineCallback 用户上线回调
-func (s *UserServiceServer) UserOnlineCallback(ctx context.Context, in *pb.UserOnlineCallbackReq) (*pb.UserOnlineCallbackResp, error) {
-	l := logic.NewUserOnlineCallbackLogic(ctx, s.svcCtx)
-	return l.UserOnlineCallback(in)
+// UserAfterOnline 用户上线回调
+func (s *UserServiceServer) UserAfterOnline(ctx context.Context, in *pb.UserAfterOnlineReq) (*pb.UserAfterOnlineResp, error) {
+	l := logic.NewUserAfterOnlineLogic(ctx, s.svcCtx)
+	return l.UserAfterOnline(in)
 }
 
-// UserOfflineCallback 用户下线回调
-func (s *UserServiceServer) UserOfflineCallback(ctx context.Context, in *pb.UserOfflineCallbackReq) (*pb.UserOfflineCallbackResp, error) {
-	l := logic.NewUserOfflineCallbackLogic(ctx, s.svcCtx)
-	return l.UserOfflineCallback(in)
+// UserAfterOffline 用户下线回调
+func (s *UserServiceServer) UserAfterOffline(ctx context.Context, in *pb.UserAfterOfflineReq) (*pb.UserAfterOfflineResp, error) {
+	l := logic.NewUserAfterOfflineLogic(ctx, s.svcCtx)
+	return l.UserAfterOffline(in)
 }
 
 // UserBeforeConnect 用户连接前的回调

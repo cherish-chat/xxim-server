@@ -16,7 +16,8 @@ func NewConsumerServer(svcCtx *svc.ServiceContext) *ConsumerServer {
 }
 
 func (s *ConsumerServer) Start() {
-	consumerLogic := logic.NewConsumerLogic(context.Background(), s.svcCtx)
-	s.svcCtx.MQ.RegisterHandler(xmq.TopicAfterRegister, consumerLogic.AfterRegister)
+	s.svcCtx.MQ.RegisterHandler(xmq.TopicAfterRegister, func(ctx context.Context, topic string, msg []byte) error {
+		return logic.NewUserAfterRegisterLogic(ctx, s.svcCtx).AfterRegister(topic, msg)
+	})
 	go s.svcCtx.MQ.StartConsuming()
 }

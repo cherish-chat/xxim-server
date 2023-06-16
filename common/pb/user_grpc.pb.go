@@ -55,12 +55,12 @@ type UserServiceClient interface {
 	//ResetUserAccountMap 重置用户账号信息
 	//重置账号信息逻辑可以从这里修改
 	ResetUserAccountMap(ctx context.Context, in *ResetUserAccountMapReq, opts ...grpc.CallOption) (*ResetUserAccountMapResp, error)
-	//UserOnlineCallback 用户上线回调
+	//UserAfterOnline 用户上线回调
 	//用户上线回调逻辑可以从这里修改
-	UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error)
-	//UserOfflineCallback 用户下线回调
+	UserAfterOnline(ctx context.Context, in *UserAfterOnlineReq, opts ...grpc.CallOption) (*UserAfterOnlineResp, error)
+	//UserAfterOffline 用户下线回调
 	//用户下线回调逻辑可以从这里修改
-	UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error)
+	UserAfterOffline(ctx context.Context, in *UserAfterOfflineReq, opts ...grpc.CallOption) (*UserAfterOfflineResp, error)
 	//UserBeforeConnect 用户连接前的回调
 	//用户连接前的回调逻辑可以从这里修改
 	UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
@@ -179,18 +179,18 @@ func (c *userServiceClient) ResetUserAccountMap(ctx context.Context, in *ResetUs
 	return out, nil
 }
 
-func (c *userServiceClient) UserOnlineCallback(ctx context.Context, in *UserOnlineCallbackReq, opts ...grpc.CallOption) (*UserOnlineCallbackResp, error) {
-	out := new(UserOnlineCallbackResp)
-	err := c.cc.Invoke(ctx, "/pb.userService/UserOnlineCallback", in, out, opts...)
+func (c *userServiceClient) UserAfterOnline(ctx context.Context, in *UserAfterOnlineReq, opts ...grpc.CallOption) (*UserAfterOnlineResp, error) {
+	out := new(UserAfterOnlineResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserAfterOnline", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) UserOfflineCallback(ctx context.Context, in *UserOfflineCallbackReq, opts ...grpc.CallOption) (*UserOfflineCallbackResp, error) {
-	out := new(UserOfflineCallbackResp)
-	err := c.cc.Invoke(ctx, "/pb.userService/UserOfflineCallback", in, out, opts...)
+func (c *userServiceClient) UserAfterOffline(ctx context.Context, in *UserAfterOfflineReq, opts ...grpc.CallOption) (*UserAfterOfflineResp, error) {
+	out := new(UserAfterOfflineResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/UserAfterOffline", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -261,12 +261,12 @@ type UserServiceServer interface {
 	//ResetUserAccountMap 重置用户账号信息
 	//重置账号信息逻辑可以从这里修改
 	ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error)
-	//UserOnlineCallback 用户上线回调
+	//UserAfterOnline 用户上线回调
 	//用户上线回调逻辑可以从这里修改
-	UserOnlineCallback(context.Context, *UserOnlineCallbackReq) (*UserOnlineCallbackResp, error)
-	//UserOfflineCallback 用户下线回调
+	UserAfterOnline(context.Context, *UserAfterOnlineReq) (*UserAfterOnlineResp, error)
+	//UserAfterOffline 用户下线回调
 	//用户下线回调逻辑可以从这里修改
-	UserOfflineCallback(context.Context, *UserOfflineCallbackReq) (*UserOfflineCallbackResp, error)
+	UserAfterOffline(context.Context, *UserAfterOfflineReq) (*UserAfterOfflineResp, error)
 	//UserBeforeConnect 用户连接前的回调
 	//用户连接前的回调逻辑可以从这里修改
 	UserBeforeConnect(context.Context, *UserBeforeConnectReq) (*UserBeforeConnectResp, error)
@@ -316,11 +316,11 @@ func (UnimplementedUserServiceServer) GetUserInfo(context.Context, *GetUserInfoR
 func (UnimplementedUserServiceServer) ResetUserAccountMap(context.Context, *ResetUserAccountMapReq) (*ResetUserAccountMapResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetUserAccountMap not implemented")
 }
-func (UnimplementedUserServiceServer) UserOnlineCallback(context.Context, *UserOnlineCallbackReq) (*UserOnlineCallbackResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserOnlineCallback not implemented")
+func (UnimplementedUserServiceServer) UserAfterOnline(context.Context, *UserAfterOnlineReq) (*UserAfterOnlineResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserAfterOnline not implemented")
 }
-func (UnimplementedUserServiceServer) UserOfflineCallback(context.Context, *UserOfflineCallbackReq) (*UserOfflineCallbackResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserOfflineCallback not implemented")
+func (UnimplementedUserServiceServer) UserAfterOffline(context.Context, *UserAfterOfflineReq) (*UserAfterOfflineResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserAfterOffline not implemented")
 }
 func (UnimplementedUserServiceServer) UserBeforeConnect(context.Context, *UserBeforeConnectReq) (*UserBeforeConnectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBeforeConnect not implemented")
@@ -542,38 +542,38 @@ func _UserService_ResetUserAccountMap_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UserOnlineCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserOnlineCallbackReq)
+func _UserService_UserAfterOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAfterOnlineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UserOnlineCallback(ctx, in)
+		return srv.(UserServiceServer).UserAfterOnline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.userService/UserOnlineCallback",
+		FullMethod: "/pb.userService/UserAfterOnline",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UserOnlineCallback(ctx, req.(*UserOnlineCallbackReq))
+		return srv.(UserServiceServer).UserAfterOnline(ctx, req.(*UserAfterOnlineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UserOfflineCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserOfflineCallbackReq)
+func _UserService_UserAfterOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAfterOfflineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UserOfflineCallback(ctx, in)
+		return srv.(UserServiceServer).UserAfterOffline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.userService/UserOfflineCallback",
+		FullMethod: "/pb.userService/UserAfterOffline",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UserOfflineCallback(ctx, req.(*UserOfflineCallbackReq))
+		return srv.(UserServiceServer).UserAfterOffline(ctx, req.(*UserAfterOfflineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -684,12 +684,12 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_ResetUserAccountMap_Handler,
 		},
 		{
-			MethodName: "UserOnlineCallback",
-			Handler:    _UserService_UserOnlineCallback_Handler,
+			MethodName: "UserAfterOnline",
+			Handler:    _UserService_UserAfterOnline_Handler,
 		},
 		{
-			MethodName: "UserOfflineCallback",
-			Handler:    _UserService_UserOfflineCallback_Handler,
+			MethodName: "UserAfterOffline",
+			Handler:    _UserService_UserAfterOffline_Handler,
 		},
 		{
 			MethodName: "UserBeforeConnect",
