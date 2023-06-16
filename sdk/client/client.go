@@ -30,6 +30,7 @@ type IClient interface {
 
 	CreateRobot(req *pb.CreateRobotReq) (resp *pb.CreateRobotResp, err error)
 	RefreshUserAccessToken(req *pb.RefreshUserAccessTokenReq) (resp *pb.RefreshUserAccessTokenResp, err error)
+	RevokeUserAccessToken(req *pb.RevokeUserAccessTokenReq) (resp *pb.RevokeUserAccessTokenResp, err error)
 }
 
 type HttpClient struct {
@@ -194,6 +195,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					Extra:        c.Config.CustomHeader,
 				},
 				Body: data,
+				Path: path,
 			})
 		} else {
 			data, err = json.Marshal(req)
@@ -218,6 +220,7 @@ func (c *HttpClient) Request(path string, req any, resp any) error {
 					Extra:        c.Config.CustomHeader,
 				},
 				Body: data,
+				Path: path,
 			})
 		}
 		body = bytes.NewReader(data)

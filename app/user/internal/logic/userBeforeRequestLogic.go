@@ -54,31 +54,36 @@ func (l *UserBeforeRequestLogic) UserBeforeRequest(in *pb.UserBeforeRequestReq) 
 			// 如果是白名单接口，那么就不需要返回错误
 			if strings.Contains(in.Path, "/white/") {
 				resp.Header = i18n.NewOkHeader()
+				l.Debugf("white path: %v", in.Path)
+			} else {
+				l.Debugf("not white path: %v", in.Path)
 			}
 			return resp, nil
 		}
 		l.Debugf("tokenObject: %+v", tokenObject)
 		// 验证权限
-		verifyScope := false
-		for _, scopeRegex := range tokenObject.Scope {
-			// 是否匹配 path 只要有一个匹配就可以
-			matched, err := regexp.MatchString(scopeRegex, in.Path)
-			if err != nil {
-				l.Errorf("regexp.MatchString error: %v", err)
+		if !strings.Contains(in.Path, "/white/") {
+			verifyScope := false
+			for _, scopeRegex := range tokenObject.Scope {
+				// 是否匹配 path 只要有一个匹配就可以
+				matched, err := regexp.MatchString(scopeRegex, in.Path)
+				if err != nil {
+					l.Errorf("regexp.MatchString error: %v", err)
+					return &pb.UserBeforeRequestResp{
+						Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
+					}, nil
+				}
+				if matched {
+					verifyScope = true
+					break
+				}
+			}
+			if !verifyScope {
+				l.Errorf("verifyScope error: %v", verifyScope)
 				return &pb.UserBeforeRequestResp{
-					Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
+					Header: i18n.NewForbiddenError(),
 				}, nil
 			}
-			if matched {
-				verifyScope = true
-				break
-			}
-		}
-		if !verifyScope {
-			l.Errorf("verifyScope error: %v", verifyScope)
-			return &pb.UserBeforeRequestResp{
-				Header: i18n.NewForbiddenError(),
-			}, nil
 		}
 		return &pb.UserBeforeRequestResp{
 			Header: i18n.NewOkHeader(),

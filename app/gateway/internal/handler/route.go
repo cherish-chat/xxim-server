@@ -174,6 +174,13 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			},
 			Do: svcCtx.UserService.RefreshUserAccessToken,
 		})
+		// RevokeUserAccessTokenReq RevokeUserAccessTokenResp
+		AddUnifiedRoute(svcCtx, "/v1/user/revokeUserAccessToken", Route[*pb.RevokeUserAccessTokenReq, *pb.RevokeUserAccessTokenResp]{
+			NewRequest: func() *pb.RevokeUserAccessTokenReq {
+				return &pb.RevokeUserAccessTokenReq{}
+			},
+			Do: svcCtx.UserService.RevokeUserAccessToken,
+		})
 	}
 	// http
 	{

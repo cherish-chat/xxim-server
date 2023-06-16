@@ -52,11 +52,6 @@ func TestHttpClient_UserAccessToken(t *testing.T) {
 	client := getHttpClient(t, nil)
 	time.Sleep(1 * time.Second)
 	userAccessTokenResp, err := client.(*HttpClient).UserAccessToken(&pb.UserAccessTokenReq{
-		Header: &pb.RequestHeader{
-			Platform:  1,
-			InstallId: "3",
-			UserToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1Mjk5MjQsImp0aSI6IjMifQ.z_3mr5G3U_F3-XZF45lYrkCBE_eq7Qd5kuPsVCVFU1k",
-		},
 		AccountMap: map[string]string{
 			pb.AccountTypeUsername: "user3",
 			pb.AccountTypePassword: utils.Md5("123456"),
@@ -96,4 +91,16 @@ func TestHttpClient_RefreshUserAccessToken(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(refreshUserAccessTokenResp))
+}
+
+// RevokeUserAccessToken 注销用户token
+func TestHttpClient_RevokeUserAccessToken(t *testing.T) {
+	client := getHttpClient(t, nil)
+	//client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	revokeUserAccessTokenResp, err := client.RevokeUserAccessToken(&pb.RevokeUserAccessTokenReq{})
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf("%s", utils.Json.MarshalToString(revokeUserAccessTokenResp))
 }

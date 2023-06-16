@@ -35,3 +35,7 @@ func (x *CreateRobotReq) SetHeader(header *RequestHeader) {
 func (x *RefreshUserAccessTokenReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *RevokeUserAccessTokenReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

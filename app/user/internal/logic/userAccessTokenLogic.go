@@ -251,17 +251,19 @@ func (l *UserAccessTokenLogic) generateToken(in *pb.UserAccessTokenReq, user *us
 		"deviceModel": in.Header.DeviceModel,
 	}
 	var scope []string
-	if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleUser {
-		scope = []string{
-			"^.*$", // 表示所有权限
-		}
-	} else if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleRobot {
+	role := user.GetAccountMap().Get(pb.AccountTypeRole)
+	switch role {
+	case usermodel.AccountRoleRobot:
 		scope = []string{
 			"^.*$", // TODO: 修改为机器人权限
 		}
+	default:
+		scope = []string{
+			"^.*$", // 表示所有权限
+		}
 	}
 	tokenObject := l.svcCtx.Jwt.GenerateToken(user.UserId, in.Header.GetJwtUniqueKey(), int(user.GetAccountMap().GetInt64(pb.AccountTypeStatus)), ssm.Marshal(), scope)
-	if user.GetAccountMap().Get(pb.AccountTypeRole) == usermodel.AccountRoleRobot {
+	if role == usermodel.AccountRoleRobot {
 		tokenObject.ExpiredAt = time.Now().AddDate(100, 0, 0).UnixMilli()
 	}
 	err := l.svcCtx.Jwt.SetToken(l.ctx, tokenObject)

@@ -43,3 +43,17 @@ func (c *WsClient) RefreshUserAccessToken(req *pb.RefreshUserAccessTokenReq) (re
 	err = c.Request("/v1/user/refreshUserAccessToken", req, resp)
 	return
 }
+
+// RevokeUserAccessToken 注销用户token
+func (c *HttpClient) RevokeUserAccessToken(req *pb.RevokeUserAccessTokenReq) (resp *pb.RevokeUserAccessTokenResp, err error) {
+	resp = &pb.RevokeUserAccessTokenResp{}
+	err = c.Request("/v1/user/revokeUserAccessToken", req, resp)
+	return
+}
+
+// RevokeUserAccessToken 注销用户token
+func (c *WsClient) RevokeUserAccessToken(req *pb.RevokeUserAccessTokenReq) (resp *pb.RevokeUserAccessTokenResp, err error) {
+	resp = &pb.RevokeUserAccessTokenResp{}
+	err = c.Request("/v1/user/revokeUserAccessToken", req, resp)
+	return
+}

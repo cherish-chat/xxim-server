@@ -16,7 +16,7 @@ var defaultConfig = &Config{
 	DeviceModel:     "",
 	OsVersion:       "",
 	Language:        nil,
-	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NTc4MjEsImp0aSI6InJvYm90MTEifQ.XsgkU0csyiOYkMZYINPx9ueSBkbFUtrX2wce6uRiHmc`, // robot11
+	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NzA5NzAsImp0aSI6IjMifQ.HATz69UJPo6lEL0GF5eSqLkFN-9s1Ej0TJfTUGRX-90`, // 3
 	KeepAliveSecond: time.Second * 30,
 }
 
