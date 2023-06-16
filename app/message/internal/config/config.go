@@ -12,4 +12,7 @@ type Config struct {
 	Message   struct {
 		MongoCollection xmgo.MongoCollectionConf
 	}
+	Notice struct {
+		MongoCollection xmgo.MongoCollectionConf
+	}
 }

@@ -21,8 +21,8 @@ const (
 	ConversationTypeSingle ConversationType = iota
 	// ConversationTypeGroup 群聊
 	ConversationTypeGroup
-	// ConversationTypeMarketing 营销号
-	ConversationTypeMarketing
+	// ConversationTypeSubscription 订阅号
+	ConversationTypeSubscription
 )
 
 type NoticeOption struct {

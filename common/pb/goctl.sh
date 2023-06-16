@@ -35,10 +35,8 @@ function rpc() {
 protoc --proto_path=. common.proto --go_out=..
 
 rpc "conversation"
-rpc "dispatch"
 rpc "gateway"
 rpc "message"
-rpc "notice"
 rpc "third"
 rpc "user"
 rpc "world"
