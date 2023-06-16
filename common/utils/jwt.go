@@ -185,3 +185,17 @@ func (x *Jwt) VerifyToken(
 		return nil, TokenInvalidError
 	}
 }
+
+func (x *Jwt) RevokeToken(
+	ctx context.Context,
+	userId string,
+	uniqueKey string,
+) error {
+	key := fmt.Sprintf("token:%s:%s", x.Config.Scene, userId) // redis key
+	hkey := uniqueKey                                         // redis hkey
+	_, err := x.rc.HdelCtx(ctx, key, hkey)
+	if err != nil {
+		return err
+	}
+	return nil
+}

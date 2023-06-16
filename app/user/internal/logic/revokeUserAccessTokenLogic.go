@@ -25,7 +25,10 @@ func NewRevokeUserAccessTokenLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // RevokeUserAccessToken 注销用户token
 func (l *RevokeUserAccessTokenLogic) RevokeUserAccessToken(in *pb.RevokeUserAccessTokenReq) (*pb.RevokeUserAccessTokenResp, error) {
-	// todo: add your logic here and delete this line
-
+	err := l.svcCtx.Jwt.RevokeToken(l.ctx, in.Header.UserId, in.Header.GetJwtUniqueKey())
+	if err != nil {
+		l.Errorf("revoke token error: %v", err)
+		return &pb.RevokeUserAccessTokenResp{}, err
+	}
 	return &pb.RevokeUserAccessTokenResp{}, nil
 }
