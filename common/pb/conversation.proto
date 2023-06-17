@@ -11,7 +11,33 @@ message GroupCreateResp {
   ResponseHeader header = 1;
 }
 
-service conversationService {
+message FriendApplyReq {
+  RequestHeader header = 1;
+}
+
+message FriendApplyResp {
+  ResponseHeader header = 1;
+}
+
+message ConversationSettingUpdateReq {
+  RequestHeader header = 1;
+}
+
+message ConversationSettingUpdateResp {
+  ResponseHeader header = 1;
+}
+
+service groupService {
   //GroupCreate 创建群组
   rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
+}
+
+service friendService {
+  //FriendApply 添加好友
+  rpc FriendApply(FriendApplyReq) returns (FriendApplyResp) {}
+}
+
+service conversationService {
+  //ConversationSettingUpdate 更新会话设置
+  rpc ConversationSettingUpdate(ConversationSettingUpdateReq) returns (ConversationSettingUpdateResp) {}
 }

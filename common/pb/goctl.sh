@@ -13,7 +13,7 @@ function rpc() {
   cd pb
   ln -s "../../../common/pb/$filename" "$filename" || true
   ln -s "../../../common/pb/common.proto" "common.proto" || true
-  goctl rpc protoc -I="." "$filename" -v --go_out=../../../common --go-grpc_out=../../../common --zrpc_out=.. --style=goZero
+  goctl_v1.5.3 rpc protoc -I="." "$filename" -v --go_out=../../../common --go-grpc_out=../../../common --zrpc_out=.. --style=goZero -m
   # shellcheck disable=SC2164
   cd "${common_pb_path}"
   # shellcheck disable=SC2013

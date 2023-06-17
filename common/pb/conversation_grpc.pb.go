@@ -18,12 +18,188 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
+// GroupServiceClient is the client API for GroupService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type GroupServiceClient interface {
+	//GroupCreate 创建群组
+	GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error)
+}
+
+type groupServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewGroupServiceClient(cc grpc.ClientConnInterface) GroupServiceClient {
+	return &groupServiceClient{cc}
+}
+
+func (c *groupServiceClient) GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error) {
+	out := new(GroupCreateResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GroupCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GroupServiceServer is the server API for GroupService service.
+// All implementations must embed UnimplementedGroupServiceServer
+// for forward compatibility
+type GroupServiceServer interface {
+	//GroupCreate 创建群组
+	GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error)
+	mustEmbedUnimplementedGroupServiceServer()
+}
+
+// UnimplementedGroupServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedGroupServiceServer struct {
+}
+
+func (UnimplementedGroupServiceServer) GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GroupCreate not implemented")
+}
+func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
+
+// UnsafeGroupServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GroupServiceServer will
+// result in compilation errors.
+type UnsafeGroupServiceServer interface {
+	mustEmbedUnimplementedGroupServiceServer()
+}
+
+func RegisterGroupServiceServer(s grpc.ServiceRegistrar, srv GroupServiceServer) {
+	s.RegisterService(&GroupService_ServiceDesc, srv)
+}
+
+func _GroupService_GroupCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GroupCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GroupCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GroupCreate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GroupCreate(ctx, req.(*GroupCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var GroupService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.groupService",
+	HandlerType: (*GroupServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GroupCreate",
+			Handler:    _GroupService_GroupCreate_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "conversation.proto",
+}
+
+// FriendServiceClient is the client API for FriendService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FriendServiceClient interface {
+	//FriendApply 添加好友
+	FriendApply(ctx context.Context, in *FriendApplyReq, opts ...grpc.CallOption) (*FriendApplyResp, error)
+}
+
+type friendServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFriendServiceClient(cc grpc.ClientConnInterface) FriendServiceClient {
+	return &friendServiceClient{cc}
+}
+
+func (c *friendServiceClient) FriendApply(ctx context.Context, in *FriendApplyReq, opts ...grpc.CallOption) (*FriendApplyResp, error) {
+	out := new(FriendApplyResp)
+	err := c.cc.Invoke(ctx, "/pb.friendService/FriendApply", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FriendServiceServer is the server API for FriendService service.
+// All implementations must embed UnimplementedFriendServiceServer
+// for forward compatibility
+type FriendServiceServer interface {
+	//FriendApply 添加好友
+	FriendApply(context.Context, *FriendApplyReq) (*FriendApplyResp, error)
+	mustEmbedUnimplementedFriendServiceServer()
+}
+
+// UnimplementedFriendServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedFriendServiceServer struct {
+}
+
+func (UnimplementedFriendServiceServer) FriendApply(context.Context, *FriendApplyReq) (*FriendApplyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FriendApply not implemented")
+}
+func (UnimplementedFriendServiceServer) mustEmbedUnimplementedFriendServiceServer() {}
+
+// UnsafeFriendServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FriendServiceServer will
+// result in compilation errors.
+type UnsafeFriendServiceServer interface {
+	mustEmbedUnimplementedFriendServiceServer()
+}
+
+func RegisterFriendServiceServer(s grpc.ServiceRegistrar, srv FriendServiceServer) {
+	s.RegisterService(&FriendService_ServiceDesc, srv)
+}
+
+func _FriendService_FriendApply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FriendApplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FriendServiceServer).FriendApply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.friendService/FriendApply",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FriendServiceServer).FriendApply(ctx, req.(*FriendApplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// FriendService_ServiceDesc is the grpc.ServiceDesc for FriendService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FriendService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.friendService",
+	HandlerType: (*FriendServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "FriendApply",
+			Handler:    _FriendService_FriendApply_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "conversation.proto",
+}
+
 // ConversationServiceClient is the client API for ConversationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConversationServiceClient interface {
-	//GroupCreate 创建群组
-	GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error)
+	//ConversationSettingUpdate 更新会话设置
+	ConversationSettingUpdate(ctx context.Context, in *ConversationSettingUpdateReq, opts ...grpc.CallOption) (*ConversationSettingUpdateResp, error)
 }
 
 type conversationServiceClient struct {
@@ -34,9 +210,9 @@ func NewConversationServiceClient(cc grpc.ClientConnInterface) ConversationServi
 	return &conversationServiceClient{cc}
 }
 
-func (c *conversationServiceClient) GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error) {
-	out := new(GroupCreateResp)
-	err := c.cc.Invoke(ctx, "/pb.conversationService/GroupCreate", in, out, opts...)
+func (c *conversationServiceClient) ConversationSettingUpdate(ctx context.Context, in *ConversationSettingUpdateReq, opts ...grpc.CallOption) (*ConversationSettingUpdateResp, error) {
+	out := new(ConversationSettingUpdateResp)
+	err := c.cc.Invoke(ctx, "/pb.conversationService/ConversationSettingUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +223,8 @@ func (c *conversationServiceClient) GroupCreate(ctx context.Context, in *GroupCr
 // All implementations must embed UnimplementedConversationServiceServer
 // for forward compatibility
 type ConversationServiceServer interface {
-	//GroupCreate 创建群组
-	GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error)
+	//ConversationSettingUpdate 更新会话设置
+	ConversationSettingUpdate(context.Context, *ConversationSettingUpdateReq) (*ConversationSettingUpdateResp, error)
 	mustEmbedUnimplementedConversationServiceServer()
 }
 
@@ -56,8 +232,8 @@ type ConversationServiceServer interface {
 type UnimplementedConversationServiceServer struct {
 }
 
-func (UnimplementedConversationServiceServer) GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GroupCreate not implemented")
+func (UnimplementedConversationServiceServer) ConversationSettingUpdate(context.Context, *ConversationSettingUpdateReq) (*ConversationSettingUpdateResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConversationSettingUpdate not implemented")
 }
 func (UnimplementedConversationServiceServer) mustEmbedUnimplementedConversationServiceServer() {}
 
@@ -72,20 +248,20 @@ func RegisterConversationServiceServer(s grpc.ServiceRegistrar, srv Conversation
 	s.RegisterService(&ConversationService_ServiceDesc, srv)
 }
 
-func _ConversationService_GroupCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupCreateReq)
+func _ConversationService_ConversationSettingUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConversationSettingUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ConversationServiceServer).GroupCreate(ctx, in)
+		return srv.(ConversationServiceServer).ConversationSettingUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.conversationService/GroupCreate",
+		FullMethod: "/pb.conversationService/ConversationSettingUpdate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConversationServiceServer).GroupCreate(ctx, req.(*GroupCreateReq))
+		return srv.(ConversationServiceServer).ConversationSettingUpdate(ctx, req.(*ConversationSettingUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,8 +274,8 @@ var ConversationService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ConversationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GroupCreate",
-			Handler:    _ConversationService_GroupCreate_Handler,
+			MethodName: "ConversationSettingUpdate",
+			Handler:    _ConversationService_ConversationSettingUpdate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
