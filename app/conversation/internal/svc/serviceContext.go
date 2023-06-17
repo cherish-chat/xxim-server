@@ -16,24 +16,22 @@ type ServiceContext struct {
 	Redis                         *redis.Redis
 	ConversationSettingCollection *qmgo.QmgoClient
 	GroupCollection               *qmgo.QmgoClient
-	GroupMemberCollection         *qmgo.QmgoClient
+	ConversationMemberCollection  *qmgo.QmgoClient
 	FriendCollection              *qmgo.QmgoClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
-		Config:                        c,
-		Redis:                         xcache.MustNewRedis(c.RedisConf),
-		ConversationSettingCollection: xmgo.MustNewMongoCollection(c.ConversationSetting.MongoCollection, &conversationmodel.ConversationSetting{}),
-		GroupCollection:               xmgo.MustNewMongoCollection(c.Group.MongoCollection, &groupmodel.Group{}),
-		GroupMemberCollection:         xmgo.MustNewMongoCollection(c.GroupMember.MongoCollection, &groupmodel.GroupMember{}),
-		FriendCollection:              xmgo.MustNewMongoCollection(c.Friend.MongoCollection, &friendmodel.Friend{}),
+		Config:                       c,
+		Redis:                        xcache.MustNewRedis(c.RedisConf),
+		GroupCollection:              xmgo.MustNewMongoCollection(c.Group.MongoCollection, &groupmodel.Group{}),
+		ConversationMemberCollection: xmgo.MustNewMongoCollection(c.ConversationMember.MongoCollection, &conversationmodel.ConversationSetting{}),
+		FriendCollection:             xmgo.MustNewMongoCollection(c.Friend.MongoCollection, &friendmodel.Friend{}),
 	}
 	groupmodel.InitGroupModel(s.GroupCollection, s.Redis, s.Config.Group.MinGroupId)
-	groupmodel.InitGroupMemberModel(s.GroupMemberCollection, s.Redis)
 
 	friendmodel.InitFriendModel(s.FriendCollection, s.Redis)
 
-	conversationmodel.InitConversationSettingModel(s.ConversationSettingCollection, s.Redis)
+	conversationmodel.InitConversationMemberModel(s.ConversationMemberCollection, s.Redis)
 	return s
 }

@@ -8,15 +8,12 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	RedisConf           redis.RedisConf
-	ConversationSetting struct {
-		MongoCollection xmgo.MongoCollectionConf
-	}
-	Group struct {
+	RedisConf redis.RedisConf
+	Group     struct {
 		MinGroupId      int `json:",default=100000"`
 		MongoCollection xmgo.MongoCollectionConf
 	}
-	GroupMember struct {
+	ConversationMember struct {
 		MongoCollection xmgo.MongoCollectionConf
 	}
 	Friend struct {
