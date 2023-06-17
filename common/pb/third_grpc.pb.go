@@ -18,22 +18,270 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ThirdServiceClient is the client API for ThirdService service.
+// SmsServiceClient is the client API for SmsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ThirdServiceClient interface {
+type SmsServiceClient interface {
 	//SmsCodeSend 发送短信
 	//二次开发人员可以自行实现
 	SmsCodeSend(ctx context.Context, in *SmsCodeSendReq, opts ...grpc.CallOption) (*SmsCodeSendResp, error)
 	//SmsCodeVerify 验证短信
 	//二次开发人员可以自行实现
 	SmsCodeVerify(ctx context.Context, in *SmsCodeVerifyReq, opts ...grpc.CallOption) (*SmsCodeVerifyResp, error)
+}
+
+type smsServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSmsServiceClient(cc grpc.ClientConnInterface) SmsServiceClient {
+	return &smsServiceClient{cc}
+}
+
+func (c *smsServiceClient) SmsCodeSend(ctx context.Context, in *SmsCodeSendReq, opts ...grpc.CallOption) (*SmsCodeSendResp, error) {
+	out := new(SmsCodeSendResp)
+	err := c.cc.Invoke(ctx, "/pb.smsService/SmsCodeSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *smsServiceClient) SmsCodeVerify(ctx context.Context, in *SmsCodeVerifyReq, opts ...grpc.CallOption) (*SmsCodeVerifyResp, error) {
+	out := new(SmsCodeVerifyResp)
+	err := c.cc.Invoke(ctx, "/pb.smsService/SmsCodeVerify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SmsServiceServer is the server API for SmsService service.
+// All implementations must embed UnimplementedSmsServiceServer
+// for forward compatibility
+type SmsServiceServer interface {
+	//SmsCodeSend 发送短信
+	//二次开发人员可以自行实现
+	SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error)
+	//SmsCodeVerify 验证短信
+	//二次开发人员可以自行实现
+	SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error)
+	mustEmbedUnimplementedSmsServiceServer()
+}
+
+// UnimplementedSmsServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedSmsServiceServer struct {
+}
+
+func (UnimplementedSmsServiceServer) SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeSend not implemented")
+}
+func (UnimplementedSmsServiceServer) SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeVerify not implemented")
+}
+func (UnimplementedSmsServiceServer) mustEmbedUnimplementedSmsServiceServer() {}
+
+// UnsafeSmsServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SmsServiceServer will
+// result in compilation errors.
+type UnsafeSmsServiceServer interface {
+	mustEmbedUnimplementedSmsServiceServer()
+}
+
+func RegisterSmsServiceServer(s grpc.ServiceRegistrar, srv SmsServiceServer) {
+	s.RegisterService(&SmsService_ServiceDesc, srv)
+}
+
+func _SmsService_SmsCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmsCodeSendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmsServiceServer).SmsCodeSend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.smsService/SmsCodeSend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmsServiceServer).SmsCodeSend(ctx, req.(*SmsCodeSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SmsService_SmsCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SmsCodeVerifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SmsServiceServer).SmsCodeVerify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.smsService/SmsCodeVerify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SmsServiceServer).SmsCodeVerify(ctx, req.(*SmsCodeVerifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SmsService_ServiceDesc is the grpc.ServiceDesc for SmsService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SmsService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.smsService",
+	HandlerType: (*SmsServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SmsCodeSend",
+			Handler:    _SmsService_SmsCodeSend_Handler,
+		},
+		{
+			MethodName: "SmsCodeVerify",
+			Handler:    _SmsService_SmsCodeVerify_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "third.proto",
+}
+
+// EmailServiceClient is the client API for EmailService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type EmailServiceClient interface {
 	//EmailCodeSend 发送邮件
 	//二次开发人员可以自行实现
 	EmailCodeSend(ctx context.Context, in *EmailCodeSendReq, opts ...grpc.CallOption) (*EmailCodeSendResp, error)
 	//EmailCodeVerify 验证邮件
 	//二次开发人员可以自行实现
 	EmailCodeVerify(ctx context.Context, in *EmailCodeVerifyReq, opts ...grpc.CallOption) (*EmailCodeVerifyResp, error)
+}
+
+type emailServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEmailServiceClient(cc grpc.ClientConnInterface) EmailServiceClient {
+	return &emailServiceClient{cc}
+}
+
+func (c *emailServiceClient) EmailCodeSend(ctx context.Context, in *EmailCodeSendReq, opts ...grpc.CallOption) (*EmailCodeSendResp, error) {
+	out := new(EmailCodeSendResp)
+	err := c.cc.Invoke(ctx, "/pb.emailService/EmailCodeSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *emailServiceClient) EmailCodeVerify(ctx context.Context, in *EmailCodeVerifyReq, opts ...grpc.CallOption) (*EmailCodeVerifyResp, error) {
+	out := new(EmailCodeVerifyResp)
+	err := c.cc.Invoke(ctx, "/pb.emailService/EmailCodeVerify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// EmailServiceServer is the server API for EmailService service.
+// All implementations must embed UnimplementedEmailServiceServer
+// for forward compatibility
+type EmailServiceServer interface {
+	//EmailCodeSend 发送邮件
+	//二次开发人员可以自行实现
+	EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error)
+	//EmailCodeVerify 验证邮件
+	//二次开发人员可以自行实现
+	EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error)
+	mustEmbedUnimplementedEmailServiceServer()
+}
+
+// UnimplementedEmailServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedEmailServiceServer struct {
+}
+
+func (UnimplementedEmailServiceServer) EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeSend not implemented")
+}
+func (UnimplementedEmailServiceServer) EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeVerify not implemented")
+}
+func (UnimplementedEmailServiceServer) mustEmbedUnimplementedEmailServiceServer() {}
+
+// UnsafeEmailServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EmailServiceServer will
+// result in compilation errors.
+type UnsafeEmailServiceServer interface {
+	mustEmbedUnimplementedEmailServiceServer()
+}
+
+func RegisterEmailServiceServer(s grpc.ServiceRegistrar, srv EmailServiceServer) {
+	s.RegisterService(&EmailService_ServiceDesc, srv)
+}
+
+func _EmailService_EmailCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailCodeSendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmailServiceServer).EmailCodeSend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.emailService/EmailCodeSend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmailServiceServer).EmailCodeSend(ctx, req.(*EmailCodeSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EmailService_EmailCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailCodeVerifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmailServiceServer).EmailCodeVerify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.emailService/EmailCodeVerify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmailServiceServer).EmailCodeVerify(ctx, req.(*EmailCodeVerifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// EmailService_ServiceDesc is the grpc.ServiceDesc for EmailService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var EmailService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.emailService",
+	HandlerType: (*EmailServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "EmailCodeSend",
+			Handler:    _EmailService_EmailCodeSend_Handler,
+		},
+		{
+			MethodName: "EmailCodeVerify",
+			Handler:    _EmailService_EmailCodeVerify_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "third.proto",
+}
+
+// CaptchaServiceClient is the client API for CaptchaService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CaptchaServiceClient interface {
 	//GetCaptcha 获取图形验证码
 	//二次开发人员可以自行实现
 	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaResp, error)
@@ -42,266 +290,118 @@ type ThirdServiceClient interface {
 	CaptchaVerify(ctx context.Context, in *CaptchaVerifyReq, opts ...grpc.CallOption) (*CaptchaVerifyResp, error)
 }
 
-type thirdServiceClient struct {
+type captchaServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewThirdServiceClient(cc grpc.ClientConnInterface) ThirdServiceClient {
-	return &thirdServiceClient{cc}
+func NewCaptchaServiceClient(cc grpc.ClientConnInterface) CaptchaServiceClient {
+	return &captchaServiceClient{cc}
 }
 
-func (c *thirdServiceClient) SmsCodeSend(ctx context.Context, in *SmsCodeSendReq, opts ...grpc.CallOption) (*SmsCodeSendResp, error) {
-	out := new(SmsCodeSendResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/SmsCodeSend", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *thirdServiceClient) SmsCodeVerify(ctx context.Context, in *SmsCodeVerifyReq, opts ...grpc.CallOption) (*SmsCodeVerifyResp, error) {
-	out := new(SmsCodeVerifyResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/SmsCodeVerify", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *thirdServiceClient) EmailCodeSend(ctx context.Context, in *EmailCodeSendReq, opts ...grpc.CallOption) (*EmailCodeSendResp, error) {
-	out := new(EmailCodeSendResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/EmailCodeSend", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *thirdServiceClient) EmailCodeVerify(ctx context.Context, in *EmailCodeVerifyReq, opts ...grpc.CallOption) (*EmailCodeVerifyResp, error) {
-	out := new(EmailCodeVerifyResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/EmailCodeVerify", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *thirdServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaResp, error) {
+func (c *captchaServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*GetCaptchaResp, error) {
 	out := new(GetCaptchaResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/GetCaptcha", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.captchaService/GetCaptcha", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *thirdServiceClient) CaptchaVerify(ctx context.Context, in *CaptchaVerifyReq, opts ...grpc.CallOption) (*CaptchaVerifyResp, error) {
+func (c *captchaServiceClient) CaptchaVerify(ctx context.Context, in *CaptchaVerifyReq, opts ...grpc.CallOption) (*CaptchaVerifyResp, error) {
 	out := new(CaptchaVerifyResp)
-	err := c.cc.Invoke(ctx, "/pb.thirdService/CaptchaVerify", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.captchaService/CaptchaVerify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ThirdServiceServer is the server API for ThirdService service.
-// All implementations must embed UnimplementedThirdServiceServer
+// CaptchaServiceServer is the server API for CaptchaService service.
+// All implementations must embed UnimplementedCaptchaServiceServer
 // for forward compatibility
-type ThirdServiceServer interface {
-	//SmsCodeSend 发送短信
-	//二次开发人员可以自行实现
-	SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error)
-	//SmsCodeVerify 验证短信
-	//二次开发人员可以自行实现
-	SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error)
-	//EmailCodeSend 发送邮件
-	//二次开发人员可以自行实现
-	EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error)
-	//EmailCodeVerify 验证邮件
-	//二次开发人员可以自行实现
-	EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error)
+type CaptchaServiceServer interface {
 	//GetCaptcha 获取图形验证码
 	//二次开发人员可以自行实现
 	GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaResp, error)
 	//CaptchaVerify 验证图形验证码
 	//二次开发人员可以自行实现
 	CaptchaVerify(context.Context, *CaptchaVerifyReq) (*CaptchaVerifyResp, error)
-	mustEmbedUnimplementedThirdServiceServer()
+	mustEmbedUnimplementedCaptchaServiceServer()
 }
 
-// UnimplementedThirdServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedThirdServiceServer struct {
+// UnimplementedCaptchaServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedCaptchaServiceServer struct {
 }
 
-func (UnimplementedThirdServiceServer) SmsCodeSend(context.Context, *SmsCodeSendReq) (*SmsCodeSendResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeSend not implemented")
-}
-func (UnimplementedThirdServiceServer) SmsCodeVerify(context.Context, *SmsCodeVerifyReq) (*SmsCodeVerifyResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SmsCodeVerify not implemented")
-}
-func (UnimplementedThirdServiceServer) EmailCodeSend(context.Context, *EmailCodeSendReq) (*EmailCodeSendResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeSend not implemented")
-}
-func (UnimplementedThirdServiceServer) EmailCodeVerify(context.Context, *EmailCodeVerifyReq) (*EmailCodeVerifyResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EmailCodeVerify not implemented")
-}
-func (UnimplementedThirdServiceServer) GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaResp, error) {
+func (UnimplementedCaptchaServiceServer) GetCaptcha(context.Context, *GetCaptchaReq) (*GetCaptchaResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCaptcha not implemented")
 }
-func (UnimplementedThirdServiceServer) CaptchaVerify(context.Context, *CaptchaVerifyReq) (*CaptchaVerifyResp, error) {
+func (UnimplementedCaptchaServiceServer) CaptchaVerify(context.Context, *CaptchaVerifyReq) (*CaptchaVerifyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CaptchaVerify not implemented")
 }
-func (UnimplementedThirdServiceServer) mustEmbedUnimplementedThirdServiceServer() {}
+func (UnimplementedCaptchaServiceServer) mustEmbedUnimplementedCaptchaServiceServer() {}
 
-// UnsafeThirdServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ThirdServiceServer will
+// UnsafeCaptchaServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CaptchaServiceServer will
 // result in compilation errors.
-type UnsafeThirdServiceServer interface {
-	mustEmbedUnimplementedThirdServiceServer()
+type UnsafeCaptchaServiceServer interface {
+	mustEmbedUnimplementedCaptchaServiceServer()
 }
 
-func RegisterThirdServiceServer(s grpc.ServiceRegistrar, srv ThirdServiceServer) {
-	s.RegisterService(&ThirdService_ServiceDesc, srv)
+func RegisterCaptchaServiceServer(s grpc.ServiceRegistrar, srv CaptchaServiceServer) {
+	s.RegisterService(&CaptchaService_ServiceDesc, srv)
 }
 
-func _ThirdService_SmsCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SmsCodeSendReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ThirdServiceServer).SmsCodeSend(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.thirdService/SmsCodeSend",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).SmsCodeSend(ctx, req.(*SmsCodeSendReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ThirdService_SmsCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SmsCodeVerifyReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ThirdServiceServer).SmsCodeVerify(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.thirdService/SmsCodeVerify",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).SmsCodeVerify(ctx, req.(*SmsCodeVerifyReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ThirdService_EmailCodeSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailCodeSendReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ThirdServiceServer).EmailCodeSend(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.thirdService/EmailCodeSend",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).EmailCodeSend(ctx, req.(*EmailCodeSendReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ThirdService_EmailCodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailCodeVerifyReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ThirdServiceServer).EmailCodeVerify(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.thirdService/EmailCodeVerify",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).EmailCodeVerify(ctx, req.(*EmailCodeVerifyReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ThirdService_GetCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CaptchaService_GetCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCaptchaReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ThirdServiceServer).GetCaptcha(ctx, in)
+		return srv.(CaptchaServiceServer).GetCaptcha(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.thirdService/GetCaptcha",
+		FullMethod: "/pb.captchaService/GetCaptcha",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).GetCaptcha(ctx, req.(*GetCaptchaReq))
+		return srv.(CaptchaServiceServer).GetCaptcha(ctx, req.(*GetCaptchaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ThirdService_CaptchaVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CaptchaService_CaptchaVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CaptchaVerifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ThirdServiceServer).CaptchaVerify(ctx, in)
+		return srv.(CaptchaServiceServer).CaptchaVerify(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.thirdService/CaptchaVerify",
+		FullMethod: "/pb.captchaService/CaptchaVerify",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ThirdServiceServer).CaptchaVerify(ctx, req.(*CaptchaVerifyReq))
+		return srv.(CaptchaServiceServer).CaptchaVerify(ctx, req.(*CaptchaVerifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ThirdService_ServiceDesc is the grpc.ServiceDesc for ThirdService service.
+// CaptchaService_ServiceDesc is the grpc.ServiceDesc for CaptchaService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ThirdService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.thirdService",
-	HandlerType: (*ThirdServiceServer)(nil),
+var CaptchaService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.captchaService",
+	HandlerType: (*CaptchaServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SmsCodeSend",
-			Handler:    _ThirdService_SmsCodeSend_Handler,
-		},
-		{
-			MethodName: "SmsCodeVerify",
-			Handler:    _ThirdService_SmsCodeVerify_Handler,
-		},
-		{
-			MethodName: "EmailCodeSend",
-			Handler:    _ThirdService_EmailCodeSend_Handler,
-		},
-		{
-			MethodName: "EmailCodeVerify",
-			Handler:    _ThirdService_EmailCodeVerify_Handler,
-		},
-		{
 			MethodName: "GetCaptcha",
-			Handler:    _ThirdService_GetCaptcha_Handler,
+			Handler:    _CaptchaService_GetCaptcha_Handler,
 		},
 		{
 			MethodName: "CaptchaVerify",
-			Handler:    _ThirdService_CaptchaVerify_Handler,
+			Handler:    _CaptchaService_CaptchaVerify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

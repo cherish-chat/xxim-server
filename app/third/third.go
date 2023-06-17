@@ -5,7 +5,9 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/third/internal/config"
-	"github.com/cherish-chat/xxim-server/app/third/internal/server"
+	captchaserviceServer "github.com/cherish-chat/xxim-server/app/third/internal/server/captchaservice"
+	emailserviceServer "github.com/cherish-chat/xxim-server/app/third/internal/server/emailservice"
+	smsserviceServer "github.com/cherish-chat/xxim-server/app/third/internal/server/smsservice"
 	"github.com/cherish-chat/xxim-server/app/third/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -24,10 +26,11 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewThirdServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterThirdServiceServer(grpcServer, svr)
+		pb.RegisterSmsServiceServer(grpcServer, smsserviceServer.NewSmsServiceServer(ctx))
+		pb.RegisterEmailServiceServer(grpcServer, emailserviceServer.NewEmailServiceServer(ctx))
+		pb.RegisterCaptchaServiceServer(grpcServer, captchaserviceServer.NewCaptchaServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

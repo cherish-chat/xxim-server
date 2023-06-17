@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -82,7 +82,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 		return
 	}
 	c.SetReadLimit(math.MaxInt32)
-	beforeConnectResp, err := h.svcCtx.UserService.UserBeforeConnect(r.Context(), &pb.UserBeforeConnectReq{Header: header})
+	beforeConnectResp, err := h.svcCtx.CallbackService.UserBeforeConnect(r.Context(), &pb.UserBeforeConnectReq{Header: header})
 	if err != nil {
 		logger.Errorf("beforeConnect error: %v", err)
 		c.Close(websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeServerInternalError), err.Error())
@@ -98,7 +98,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	connectionId := utils.Snowflake.Int64()
 	defer func() {
 		logger.Debugf("removing subscriber: %s", connectionId)
-		err := logic.WsManager.RemoveSubscriber(header, connectionId, websocket.StatusNormalClosure, "finished")
+		err := gatewayservicelogic.WsManager.RemoveSubscriber(header, connectionId, websocket.StatusNormalClosure, "finished")
 		if err != nil {
 			logger.Errorf("failed to remove subscriber: %v", err)
 			return
@@ -106,7 +106,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 			logger.Debugf("removed subscriber: %s", connectionId)
 		}
 	}()
-	connection, err := logic.WsManager.AddSubscriber(ctx, header, c, connectionId)
+	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, c, connectionId)
 	if err != nil {
 		logger.Errorf("failed to add subscriber: %v", err)
 		c.Close(websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeServerInternalError), err.Error())
@@ -150,7 +150,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	}
 }
 
-func (h *WsHandler) onReceive(ctx context.Context, connection *logic.WsConnection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
+func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelogic.WsConnection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
 	apiRequest := &pb.GatewayApiRequest{}
 	if connection.Header.Encoding == pb.EncodingProto_JSON {
 		err := json.Unmarshal(msg, apiRequest)

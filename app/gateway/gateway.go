@@ -2,14 +2,15 @@ package main
 
 import (
 	"flag"
-	"github.com/cherish-chat/xxim-server/common/xconf"
+	"github.com/cherish-chat/xxim-server/app/gateway/internal/server"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/server"
+	gatewayserviceServer "github.com/cherish-chat/xxim-server/app/gateway/internal/server/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
+	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
@@ -22,12 +23,11 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	xconf.MustLoad(*configFile, &c)
+	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewGatewayServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterGatewayServiceServer(grpcServer, svr)
+		pb.RegisterGatewayServiceServer(grpcServer, gatewayserviceServer.NewGatewayServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

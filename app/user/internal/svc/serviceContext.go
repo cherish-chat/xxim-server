@@ -1,7 +1,9 @@
 package svc
 
 import (
-	"github.com/cherish-chat/xxim-server/app/third/thirdservice"
+	"github.com/cherish-chat/xxim-server/app/third/client/captchaservice"
+	"github.com/cherish-chat/xxim-server/app/third/client/emailservice"
+	"github.com/cherish-chat/xxim-server/app/third/client/smsservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/config"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -18,9 +20,12 @@ type ServiceContext struct {
 	Config         config.Config
 	Redis          *redis.Redis
 	UserCollection *qmgo.QmgoClient
-	ThirdService   thirdservice.ThirdService
 	MQ             xmq.MQ
 	Jwt            *utils.Jwt
+
+	SmsService     smsservice.SmsService
+	EmailService   emailservice.EmailService
+	CaptchaService captchaservice.CaptchaService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -29,11 +34,19 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Redis:          xcache.MustNewRedis(c.RedisConf),
 		UserCollection: xmgo.MustNewMongoCollection(c.User.MongoCollection, &usermodel.User{}),
 	}
-	s.ThirdService = thirdservice.NewThirdService(zrpc.MustNewClient(
-		c.RpcClientConf.Third,
-		zrpc.WithNonBlock(),
-		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
-	))
+
+	//third rpc
+	{
+		thirdClient := zrpc.MustNewClient(
+			c.RpcClientConf.Third,
+			zrpc.WithNonBlock(),
+			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+		)
+		s.SmsService = smsservice.NewSmsService(thirdClient)
+		s.EmailService = emailservice.NewEmailService(thirdClient)
+		s.CaptchaService = captchaservice.NewCaptchaService(thirdClient)
+	}
+
 	s.MQ = xmq.NewAsynq(s.Config.RedisConf, 1, s.Config.Log.Level)
 	s.Jwt = utils.NewJwt(s.Config.Account.JwtConfig, s.Redis)
 	return s

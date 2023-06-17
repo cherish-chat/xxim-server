@@ -2,6 +2,9 @@ package gatewayservicelogic
 
 import (
 	"context"
+	"github.com/cherish-chat/xxim-server/common/i18n"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -23,9 +26,19 @@ func NewGatewayKeepAliveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-// KeepAlive 保持连接
 func (l *GatewayKeepAliveLogic) GatewayKeepAlive(in *pb.GatewayKeepAliveReq) (*pb.GatewayKeepAliveResp, error) {
-	// todo: add your logic here and delete this line
+	return &pb.GatewayKeepAliveResp{}, status.Error(codes.Unimplemented, "cannot call method GatewayKeepAlive")
+}
 
-	return &pb.GatewayKeepAliveResp{}, nil
+// KeepAlive 保持连接
+// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
+// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
+func (l *GatewayKeepAliveLogic) KeepAlive(connection *WsConnection, c *pb.GatewayApiRequest) (*pb.GatewayApiResponse, error) {
+	WsManager.KeepAlive(l.ctx, connection)
+	return &pb.GatewayApiResponse{
+		Header:    i18n.NewOkHeader(),
+		RequestId: c.RequestId,
+		Path:      c.Path,
+		Body:      nil,
+	}, nil
 }

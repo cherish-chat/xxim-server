@@ -5,7 +5,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/world/internal/config"
-	"github.com/cherish-chat/xxim-server/app/world/internal/server"
+	worldserviceServer "github.com/cherish-chat/xxim-server/app/world/internal/server/worldservice"
 	"github.com/cherish-chat/xxim-server/app/world/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -24,10 +24,9 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewWorldServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterWorldServiceServer(grpcServer, svr)
+		pb.RegisterWorldServiceServer(grpcServer, worldserviceServer.NewWorldServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

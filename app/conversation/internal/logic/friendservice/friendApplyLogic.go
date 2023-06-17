@@ -25,7 +25,7 @@ func NewFriendApplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 
 // FriendApply 添加好友
 func (l *FriendApplyLogic) FriendApply(in *pb.FriendApplyReq) (*pb.FriendApplyResp, error) {
-	// todo: add your logic here and delete this line
-
+	// 查询两个用户信息和用户设置
+	//l.svcCtx.InfoService.GetUserModelById()
 	return &pb.FriendApplyResp{}, nil
 }

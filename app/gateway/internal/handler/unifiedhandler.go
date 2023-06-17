@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -89,7 +89,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	requestHeader.GatewayPodIp = utils.GetPodIp()
 
 	// beforeRequest
-	userBeforeRequestResp, err := svcCtx.UserService.UserBeforeRequest(ctx.Request.Context(), &pb.UserBeforeRequestReq{
+	userBeforeRequestResp, err := svcCtx.CallbackService.UserBeforeRequest(ctx.Request.Context(), &pb.UserBeforeRequestReq{
 		Header: requestHeader,
 		Path:   apiRequest.Path,
 	})
@@ -144,7 +144,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 	svcCtx *svc.ServiceContext,
 	ctx context.Context,
-	connection *logic.WsConnection,
+	connection *gatewayservicelogic.WsConnection,
 	apiRequest *pb.GatewayApiRequest,
 	request REQ,
 	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
@@ -189,7 +189,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 	}
 
 	//beforeRequest
-	userBeforeRequestResp, err := svcCtx.UserService.UserBeforeRequest(ctx, &pb.UserBeforeRequestReq{
+	userBeforeRequestResp, err := svcCtx.CallbackService.UserBeforeRequest(ctx, &pb.UserBeforeRequestReq{
 		Header: header,
 		Path:   apiRequest.Path,
 	})

@@ -2,7 +2,7 @@ package handler
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -31,7 +31,7 @@ type Route[REQ ReqInterface, RESP RespInterface] struct {
 //var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error){}
 
 var httpRouteMap = map[string]gin.HandlerFunc{}
-var wsRouteMap = map[string]func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error){}
+var wsRouteMap = map[string]func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error){}
 
 func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceContext, path string, route Route[REQ, RESP]) {
 	request := route.NewRequest()
@@ -67,7 +67,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 		return
 	})
 	// ws
-	AddWsRoute(svcCtx, path, func(ctx context.Context, connection *logic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	AddWsRoute(svcCtx, path, func(ctx context.Context, connection *gatewayservicelogic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
 		requestHeader := connection.Header
@@ -99,7 +99,7 @@ func AddHttpRoute(path string, handlerFunc gin.HandlerFunc) {
 	httpRouteMap[path] = handlerFunc
 }
 
-func AddWsRoute(svcCtx *svc.ServiceContext, path string, handlerFunc func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
+func AddWsRoute(svcCtx *svc.ServiceContext, path string, handlerFunc func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
 	wsRouteMap[path] = handlerFunc
 }
 
@@ -151,35 +151,35 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			NewRequest: func() *pb.UserRegisterReq {
 				return &pb.UserRegisterReq{}
 			},
-			Do: svcCtx.UserService.UserRegister,
+			Do: svcCtx.AccountService.UserRegister,
 		})
 		// UserAccessTokenReq UserAccessTokenResp
 		AddUnifiedRoute(svcCtx, "/v1/user/white/userAccessToken", Route[*pb.UserAccessTokenReq, *pb.UserAccessTokenResp]{
 			NewRequest: func() *pb.UserAccessTokenReq {
 				return &pb.UserAccessTokenReq{}
 			},
-			Do: svcCtx.UserService.UserAccessToken,
+			Do: svcCtx.AccountService.UserAccessToken,
 		})
 		// CreateRobotReq CreateRobotResp
 		AddUnifiedRoute(svcCtx, "/v1/user/createRobot", Route[*pb.CreateRobotReq, *pb.CreateRobotResp]{
 			NewRequest: func() *pb.CreateRobotReq {
 				return &pb.CreateRobotReq{}
 			},
-			Do: svcCtx.UserService.CreateRobot,
+			Do: svcCtx.AccountService.CreateRobot,
 		})
 		// RefreshUserAccessTokenReq RefreshUserAccessTokenResp
 		AddUnifiedRoute(svcCtx, "/v1/user/refreshUserAccessToken", Route[*pb.RefreshUserAccessTokenReq, *pb.RefreshUserAccessTokenResp]{
 			NewRequest: func() *pb.RefreshUserAccessTokenReq {
 				return &pb.RefreshUserAccessTokenReq{}
 			},
-			Do: svcCtx.UserService.RefreshUserAccessToken,
+			Do: svcCtx.AccountService.RefreshUserAccessToken,
 		})
 		// RevokeUserAccessTokenReq RevokeUserAccessTokenResp
 		AddUnifiedRoute(svcCtx, "/v1/user/revokeUserAccessToken", Route[*pb.RevokeUserAccessTokenReq, *pb.RevokeUserAccessTokenResp]{
 			NewRequest: func() *pb.RevokeUserAccessTokenReq {
 				return &pb.RevokeUserAccessTokenReq{}
 			},
-			Do: svcCtx.UserService.RevokeUserAccessToken,
+			Do: svcCtx.AccountService.RevokeUserAccessToken,
 		})
 	}
 	// http

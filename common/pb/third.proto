@@ -132,19 +132,25 @@ message CaptchaVerifyResp {
   bool success = 2;
 }
 
-service thirdService {
+service smsService {
   //SmsCodeSend 发送短信
   //二次开发人员可以自行实现
   rpc SmsCodeSend(SmsCodeSendReq) returns (SmsCodeSendResp) {}
   //SmsCodeVerify 验证短信
   //二次开发人员可以自行实现
   rpc SmsCodeVerify(SmsCodeVerifyReq) returns (SmsCodeVerifyResp) {}
+}
+
+service emailService {
   //EmailCodeSend 发送邮件
   //二次开发人员可以自行实现
   rpc EmailCodeSend(EmailCodeSendReq) returns (EmailCodeSendResp) {}
   //EmailCodeVerify 验证邮件
   //二次开发人员可以自行实现
   rpc EmailCodeVerify(EmailCodeVerifyReq) returns (EmailCodeVerifyResp) {}
+}
+
+service captchaService {
   //GetCaptcha 获取图形验证码
   //二次开发人员可以自行实现
   rpc GetCaptcha(GetCaptchaReq) returns (GetCaptchaResp) {}

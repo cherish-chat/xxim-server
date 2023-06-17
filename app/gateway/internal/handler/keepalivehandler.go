@@ -2,18 +2,18 @@ package handler
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
-	return func(ctx context.Context, connection *logic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	return func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
-		response, err = logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive(connection, c)
+		response, err = gatewayservicelogic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive(connection, c)
 		if err != nil {
 			logx.WithContext(ctx).Errorf("logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive: %v", err)
 			if response == nil {

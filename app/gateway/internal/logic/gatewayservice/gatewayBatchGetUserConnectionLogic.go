@@ -23,9 +23,13 @@ func NewGatewayBatchGetUserConnectionLogic(ctx context.Context, svcCtx *svc.Serv
 	}
 }
 
-// GatewayBatchGetUserConnection 批量获取用户的连接
+// GatewayBatchGetUserConnection 获取用户的连接
+// 二次开发人员建议不修改此处逻辑
 func (l *GatewayBatchGetUserConnectionLogic) GatewayBatchGetUserConnection(in *pb.GatewayBatchGetUserConnectionReq) (*pb.GatewayBatchGetUserConnectionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GatewayBatchGetUserConnectionResp{}, nil
+	wsConnections := WsManager.wsConnectionMap.GetByUserIds(in.UserIds)
+	var resp = &pb.GatewayBatchGetUserConnectionResp{}
+	for _, wsConnection := range wsConnections {
+		resp.Connections = append(resp.Connections, wsConnection.ToPb())
+	}
+	return resp, nil
 }

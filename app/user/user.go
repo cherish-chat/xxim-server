@@ -2,10 +2,13 @@ package main
 
 import (
 	"flag"
+	"github.com/cherish-chat/xxim-server/app/user/internal/server"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/config"
-	"github.com/cherish-chat/xxim-server/app/user/internal/server"
+	accountserviceServer "github.com/cherish-chat/xxim-server/app/user/internal/server/accountservice"
+	callbackserviceServer "github.com/cherish-chat/xxim-server/app/user/internal/server/callbackservice"
+	infoserviceServer "github.com/cherish-chat/xxim-server/app/user/internal/server/infoservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -24,13 +27,14 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewUserServiceServer(ctx)
 	consumerServer := server.NewConsumerServer(ctx)
 
 	consumerServer.Start()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterUserServiceServer(grpcServer, svr)
+		pb.RegisterAccountServiceServer(grpcServer, accountserviceServer.NewAccountServiceServer(ctx))
+		pb.RegisterInfoServiceServer(grpcServer, infoserviceServer.NewInfoServiceServer(ctx))
+		pb.RegisterCallbackServiceServer(grpcServer, callbackserviceServer.NewCallbackServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

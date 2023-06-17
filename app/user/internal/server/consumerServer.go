@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/app/user/internal/logic"
+	"github.com/cherish-chat/xxim-server/app/user/internal/logic/callbackservice"
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/xmq"
 )
@@ -17,7 +17,7 @@ func NewConsumerServer(svcCtx *svc.ServiceContext) *ConsumerServer {
 
 func (s *ConsumerServer) Start() {
 	s.svcCtx.MQ.RegisterHandler(xmq.TopicAfterRegister, func(ctx context.Context, topic string, msg []byte) error {
-		return logic.NewUserAfterRegisterLogic(ctx, s.svcCtx).AfterRegister(topic, msg)
+		return callbackservicelogic.NewUserAfterRegisterLogic(ctx, s.svcCtx).AfterRegister(topic, msg)
 	})
 	go s.svcCtx.MQ.StartConsuming()
 }

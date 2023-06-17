@@ -1,9 +1,11 @@
 package svc
 
 import (
-	"github.com/cherish-chat/xxim-server/app/gateway/gatewayservice"
+	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
-	"github.com/cherish-chat/xxim-server/app/user/userservice"
+	"github.com/cherish-chat/xxim-server/app/user/client/accountservice"
+	"github.com/cherish-chat/xxim-server/app/user/client/callbackservice"
+	"github.com/cherish-chat/xxim-server/app/user/client/infoservice"
 	"github.com/cherish-chat/xxim-server/common/xcache"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -12,21 +14,28 @@ import (
 )
 
 type ServiceContext struct {
-	Config         config.Config
-	gatewayService gatewayservice.GatewayService
-	UserService    userservice.UserService
-	Redis          *redis.Redis
+	Config config.Config
+	Redis  *redis.Redis
+
+	gatewayService  gatewayservice.GatewayService
+	CallbackService callbackservice.CallbackService
+	AccountService  accountservice.AccountService
+	InfoService     infoservice.InfoService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+
+	userClient := zrpc.MustNewClient(
+		c.RpcClientConf.User,
+		zrpc.WithNonBlock(),
+		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+	)
 	s := &ServiceContext{
-		Config: c,
-		UserService: userservice.NewUserService(zrpc.MustNewClient(
-			c.RpcClientConf.User,
-			zrpc.WithNonBlock(),
-			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
-		)),
-		Redis: xcache.MustNewRedis(c.RedisConf),
+		Config:          c,
+		CallbackService: callbackservice.NewCallbackService(userClient),
+		AccountService:  accountservice.NewAccountService(userClient),
+		InfoService:     infoservice.NewInfoService(userClient),
+		Redis:           xcache.MustNewRedis(c.RedisConf),
 	}
 	return s
 }

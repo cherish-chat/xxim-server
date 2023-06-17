@@ -1,26 +1,13 @@
 package svc
 
-import (
-	"github.com/cherish-chat/xxim-server/app/message/internal/config"
-	"github.com/cherish-chat/xxim-server/app/message/messagemodel"
-	"github.com/cherish-chat/xxim-server/common/xcache"
-	"github.com/cherish-chat/xxim-server/common/xmgo"
-	"github.com/qiniu/qmgo"
-	"github.com/zeromicro/go-zero/core/stores/redis"
-)
+import "github.com/cherish-chat/xxim-server/app/message/internal/config"
 
 type ServiceContext struct {
-	Config            config.Config
-	Redis             *redis.Redis
-	MessageCollection *qmgo.QmgoClient
+	Config config.Config
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	s := &ServiceContext{
-		Config:            c,
-		Redis:             xcache.MustNewRedis(c.RedisConf),
-		MessageCollection: xmgo.MustNewMongoCollection(c.Message.MongoCollection, &messagemodel.Message{}),
+	return &ServiceContext{
+		Config: c,
 	}
-	messagemodel.InitMessageModel(s.MessageCollection, s.Redis)
-	return s
 }

@@ -19,4 +19,9 @@ type Config struct {
 	Friend struct {
 		MongoCollection xmgo.MongoCollectionConf
 	}
+	RpcClientConf struct {
+		Dispatch zrpc.RpcClientConf
+		User     zrpc.RpcClientConf
+		Third    zrpc.RpcClientConf
+	}
 }

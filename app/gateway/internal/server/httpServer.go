@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/handler"
-	"github.com/cherish-chat/xxim-server/app/gateway/internal/logic"
+	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/middleware"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func NewHttpServer(svcCtx *svc.ServiceContext) *HttpServer {
 		middleware.ApiLog(svcCtx),  // api 日志
 	)
 	handler.SetupRoutes(s.svcCtx, s.ginEngine)
-	logic.InitWsManager(s.svcCtx)
+	gatewayservicelogic.InitWsManager(s.svcCtx)
 	if s.svcCtx.Config.Mode != "pro" {
 		gin.SetMode(gin.DebugMode)
 	} else {

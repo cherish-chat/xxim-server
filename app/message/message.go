@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/zeromicro/go-zero/core/logx"
+	"fmt"
 
 	"github.com/cherish-chat/xxim-server/app/message/internal/config"
-	"github.com/cherish-chat/xxim-server/app/message/internal/server"
+	messageserviceServer "github.com/cherish-chat/xxim-server/app/message/internal/server/messageservice"
 	"github.com/cherish-chat/xxim-server/app/message/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -24,10 +24,9 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewMessageServiceServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		pb.RegisterMessageServiceServer(grpcServer, svr)
+		pb.RegisterMessageServiceServer(grpcServer, messageserviceServer.NewMessageServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
@@ -35,6 +34,6 @@ func main() {
 	})
 	defer s.Stop()
 
-	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

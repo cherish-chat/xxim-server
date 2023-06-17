@@ -245,7 +245,28 @@ message CreateRobotResp {
   string accessToken = 2; // 机器人token
 }
 
-service userService {
+//GetUserModel 获取用户模型
+
+//GetUserModelReq 获取用户模型请求
+message GetUserModelByIdReq {
+  RequestHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  message Opt {
+    // 是否携带用户设置列表
+    bool withUserSettings = 1;
+    repeated string userSettingKeys = 2; // 用户设置key列表 如果withUserSettings为false 则该字段无效
+  }
+  optional Opt opt = 3;
+}
+
+//GetUserModelByIdResp 获取用户模型响应
+message GetUserModelByIdResp {
+  ResponseHeader header = 1;
+  bytes userModelJson = 2; // 用户模型json
+  bytes userSettingsJson = 3; // 用户设置json 他是[]UserSetting的json序列化
+}
+
+service accountService {
   //UserRegister 用户注册
   //二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
   rpc UserRegister(UserRegisterReq) returns (UserRegisterResp);
@@ -264,6 +285,15 @@ service userService {
   //UpdateUserAccountMap 更新用户账号信息
   //更新账号信息逻辑可以从这里修改 默认：如果是修改密码，需要旧密码或手机验证码。如果修改绑定手机号，需要验证新手机号的验证码
   rpc UpdateUserAccountMap(UpdateUserAccountMapReq) returns (UpdateUserAccountMapResp);
+  //ResetUserAccountMap 重置用户账号信息
+  //重置账号信息逻辑可以从这里修改
+  rpc ResetUserAccountMap(ResetUserAccountMapReq) returns (ResetUserAccountMapResp);
+  //CreateRobot 创建机器人
+  //创建机器人逻辑可以从这里修改
+  rpc CreateRobot(CreateRobotReq) returns (CreateRobotResp);
+}
+
+service infoService {
   //UpdateUserProfileMap 更新用户个人信息
   //更新个人信息逻辑可以从这里修改
   rpc UpdateUserProfileMap(UpdateUserProfileMapReq) returns (UpdateUserProfileMapResp);
@@ -276,9 +306,12 @@ service userService {
   //GetUserInfo 获取用户信息
   //获取用户信息逻辑可以从这里修改
   rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
-  //ResetUserAccountMap 重置用户账号信息
-  //重置账号信息逻辑可以从这里修改
-  rpc ResetUserAccountMap(ResetUserAccountMapReq) returns (ResetUserAccountMapResp);
+  //GetUserModelById 获取用户模型
+  //获取用户模型逻辑可以从这里修改
+  rpc GetUserModelById(GetUserModelByIdReq) returns (GetUserModelByIdResp);
+}
+
+service callbackService {
   //UserAfterOnline 用户上线回调
   //用户上线回调逻辑可以从这里修改
   rpc UserAfterOnline(UserAfterOnlineReq) returns (UserAfterOnlineResp);
@@ -291,7 +324,4 @@ service userService {
   //UserBeforeRequest 用户请求前的回调
   //用户请求前的回调逻辑可以从这里修改
   rpc UserBeforeRequest(UserBeforeRequestReq) returns (UserBeforeRequestResp);
-  //CreateRobot 创建机器人
-  //创建机器人逻辑可以从这里修改
-  rpc CreateRobot(CreateRobotReq) returns (CreateRobotResp);
 }
