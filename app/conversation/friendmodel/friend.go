@@ -4,6 +4,7 @@ import (
 	"github.com/qiniu/qmgo"
 	opts "github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -14,7 +15,7 @@ type Friend struct {
 	// FriendId 好友ID 被申请加好友的用户ID
 	FriendId string `json:"friendId" gorm:"column:friendId;type:char(32);primary_key;not null" bson:"friendId"`
 	// BeFriendTime 成为好友时间 13位时间戳
-	BeFriendTime int64 `json:"beFriendTime" gorm:"column:beFriendTime;type:bigint(13);not null" bson:"beFriendTime"`
+	BeFriendTime primitive.DateTime `json:"beFriendTime" gorm:"column:beFriendTime;type:bigint(13);not null" bson:"beFriendTime"`
 }
 
 // TableName 表名

@@ -10,9 +10,10 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	RedisConf redis.RedisConf
-	User      struct {
-		MongoCollection xmgo.MongoCollectionConf
+	RedisConf       redis.RedisConf
+	MongoCollection struct {
+		User        xmgo.MongoCollectionConf
+		UserSetting xmgo.MongoCollectionConf
 	}
 	Account struct {
 		//JwtConfig jwt配置

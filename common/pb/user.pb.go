@@ -1975,7 +1975,7 @@ type GetUserModelByIdResp struct {
 
 	Header           *ResponseHeader `protobuf:"bytes,1,opt,name=header,proto3" json:"header"`
 	UserModelJson    []byte          `protobuf:"bytes,2,opt,name=userModelJson,proto3" json:"userModelJson"`       // 用户模型json
-	UserSettingsJson []byte          `protobuf:"bytes,3,opt,name=userSettingsJson,proto3" json:"userSettingsJson"` // 用户设置json 他是[]UserSetting的json序列化
+	UserSettingsJson []byte          `protobuf:"bytes,3,opt,name=userSettingsJson,proto3" json:"userSettingsJson"` // 用户设置json 他是map[string]usermodel.UserSetting的json
 }
 
 func (x *GetUserModelByIdResp) Reset() {

@@ -263,7 +263,7 @@ message GetUserModelByIdReq {
 message GetUserModelByIdResp {
   ResponseHeader header = 1;
   bytes userModelJson = 2; // 用户模型json
-  bytes userSettingsJson = 3; // 用户设置json 他是[]UserSetting的json序列化
+  bytes userSettingsJson = 3; // 用户设置json 他是map[string]usermodel.UserSetting的json
 }
 
 service accountService {

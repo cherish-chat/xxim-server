@@ -45,7 +45,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 			logx.WithContext(ctx.Request.Context()).Errorf("UnifiedHandleHttp: %s, error: %v", path, err)
 			if response == nil {
 				response = &pb.GatewayApiResponse{
-					Header: i18n.NewServerError(requestHeader),
+					Header: i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 					Body:   nil,
 				}
 			}
@@ -76,7 +76,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 			logx.WithContext(ctx).Errorf("UnifiedHandleWs: %s, error: %v", path, err)
 			if response == nil {
 				response = &pb.GatewayApiResponse{
-					Header: i18n.NewServerError(requestHeader),
+					Header: i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 					Body:   nil,
 				}
 			}
@@ -180,6 +180,16 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 				return &pb.RevokeUserAccessTokenReq{}
 			},
 			Do: svcCtx.AccountService.RevokeUserAccessToken,
+		})
+	}
+	// friend api
+	{
+		//FriendApplyReq FriendApplyResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/friendApply", Route[*pb.FriendApplyReq, *pb.FriendApplyResp]{
+			NewRequest: func() *pb.FriendApplyReq {
+				return &pb.FriendApplyReq{}
+			},
+			Do: svcCtx.FriendService.FriendApply,
 		})
 	}
 	// http

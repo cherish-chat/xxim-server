@@ -31,6 +31,8 @@ type IClient interface {
 	CreateRobot(req *pb.CreateRobotReq) (resp *pb.CreateRobotResp, err error)
 	RefreshUserAccessToken(req *pb.RefreshUserAccessTokenReq) (resp *pb.RefreshUserAccessTokenResp, err error)
 	RevokeUserAccessToken(req *pb.RevokeUserAccessTokenReq) (resp *pb.RevokeUserAccessTokenResp, err error)
+
+	FriendApply(req *pb.FriendApplyReq) (resp *pb.FriendApplyResp, err error)
 }
 
 type HttpClient struct {
@@ -334,7 +336,7 @@ func (c *WsClient) Request(path string, req any, resp any) error {
 		return ErrRequestTimeout
 	case response := <-ch:
 		if response.GetHeader().GetCode() != pb.ResponseCode_SUCCESS {
-			return fmt.Errorf("response error: %v", response.GetHeader().GetCode())
+			return fmt.Errorf("%v", utils.AnyString(response.GetHeader()))
 		}
 		if resp != nil {
 			getBody := response.GetBody()

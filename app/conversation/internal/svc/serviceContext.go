@@ -29,9 +29,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config:                       c,
 		Redis:                        xcache.MustNewRedis(c.RedisConf),
-		GroupCollection:              xmgo.MustNewMongoCollection(c.Group.MongoCollection, &groupmodel.Group{}),
-		ConversationMemberCollection: xmgo.MustNewMongoCollection(c.ConversationMember.MongoCollection, &conversationmodel.ConversationSetting{}),
-		FriendCollection:             xmgo.MustNewMongoCollection(c.Friend.MongoCollection, &friendmodel.Friend{}),
+		GroupCollection:              xmgo.MustNewMongoCollection(c.MongoCollection.Group, &groupmodel.Group{}),
+		ConversationMemberCollection: xmgo.MustNewMongoCollection(c.MongoCollection.ConversationMember, &conversationmodel.ConversationSetting{}),
+		FriendCollection:             xmgo.MustNewMongoCollection(c.MongoCollection.Friend, &friendmodel.Friend{}),
 
 		InfoService: infoservice.NewInfoService(zrpc.MustNewClient(
 			c.RpcClientConf.User,

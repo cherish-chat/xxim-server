@@ -11,7 +11,7 @@ func Get(lang pb.I18NLanguage, zh string) (result string) {
 	return zh
 }
 
-func NewServerError(reqHeader *pb.RequestHeader) *pb.ResponseHeader {
+func NewServerError(reqHeader *pb.RequestHeader, env string, err error) *pb.ResponseHeader {
 	language := pb.I18NLanguage_Chinese_Simplified
 	if reqHeader != nil {
 		language = reqHeader.GetLanguage()
@@ -19,6 +19,12 @@ func NewServerError(reqHeader *pb.RequestHeader) *pb.ResponseHeader {
 	data := &pb.ToastActionData{
 		Level:   pb.ToastActionData_ERROR,
 		Message: Get(language, "服务繁忙，请稍后再试"),
+	}
+	if env != "pro" && err != nil {
+		data = &pb.ToastActionData{
+			Level:   pb.ToastActionData_ERROR,
+			Message: err.Error(),
+		}
 	}
 	return &pb.ResponseHeader{
 		Code:       pb.ResponseCode_SERVER_ERROR,

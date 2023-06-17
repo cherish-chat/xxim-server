@@ -11,9 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//AccountStatus 账户状态
+
 const (
 	AccountStatusNormal = "0"
 )
+
+//AccountRole 账户角色
 
 const (
 	AccountRoleUser  = "user"

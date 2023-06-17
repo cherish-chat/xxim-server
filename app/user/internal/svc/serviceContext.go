@@ -17,11 +17,14 @@ import (
 )
 
 type ServiceContext struct {
-	Config         config.Config
-	Redis          *redis.Redis
-	UserCollection *qmgo.QmgoClient
-	MQ             xmq.MQ
-	Jwt            *utils.Jwt
+	Config config.Config
+	Redis  *redis.Redis
+
+	UserCollection        *qmgo.QmgoClient
+	UserSettingCollection *qmgo.QmgoClient
+
+	MQ  xmq.MQ
+	Jwt *utils.Jwt
 
 	SmsService     smsservice.SmsService
 	EmailService   emailservice.EmailService
@@ -30,9 +33,10 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	s := &ServiceContext{
-		Config:         c,
-		Redis:          xcache.MustNewRedis(c.RedisConf),
-		UserCollection: xmgo.MustNewMongoCollection(c.User.MongoCollection, &usermodel.User{}),
+		Config:                c,
+		Redis:                 xcache.MustNewRedis(c.RedisConf),
+		UserCollection:        xmgo.MustNewMongoCollection(c.MongoCollection.User, &usermodel.User{}),
+		UserSettingCollection: xmgo.MustNewMongoCollection(c.MongoCollection.UserSetting, &usermodel.UserSetting{}),
 	}
 
 	//third rpc

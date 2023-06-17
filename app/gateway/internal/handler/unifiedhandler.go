@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/i18n"
@@ -9,6 +10,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 	"strings"
 )
@@ -95,7 +97,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	})
 	if err != nil {
 		return &pb.GatewayApiResponse{
-			Header:    i18n.NewServerError(requestHeader),
+			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Body:      nil,
@@ -131,11 +133,24 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			Body:      MarshalResponse(requestHeader, response),
 		}
 	} else {
-		result = &pb.GatewayApiResponse{
-			Header:    i18n.NewOkHeader(),
-			RequestId: apiRequest.RequestId,
-			Path:      apiRequest.Path,
-			Body:      nil,
+		if err != nil {
+			statusErr, ok := status.FromError(err)
+			if ok {
+				err = errors.New(statusErr.Message())
+			}
+			result = &pb.GatewayApiResponse{
+				Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      nil,
+			}
+		} else {
+			result = &pb.GatewayApiResponse{
+				Header:    i18n.NewOkHeader(),
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      nil,
+			}
 		}
 	}
 	return result, err
@@ -151,8 +166,8 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 ) (*pb.GatewayApiResponse, error) {
 	// 请求体中的数据 反序列化到 request 中
 	// 判断是json还是protobuf
-	header := apiRequest.Header
-	if header.Encoding == pb.EncodingProto_JSON {
+	requestHeader := apiRequest.Header
+	if requestHeader.Encoding == pb.EncodingProto_JSON {
 		err := utils.Json.Unmarshal(apiRequest.Body, request)
 		if err != nil {
 			return &pb.GatewayApiResponse{
@@ -162,7 +177,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 				Body:      nil,
 			}, err
 		}
-	} else if header.Encoding == pb.EncodingProto_PROTOBUF {
+	} else if requestHeader.Encoding == pb.EncodingProto_PROTOBUF {
 		err := proto.Unmarshal(apiRequest.Body, request)
 		if err != nil {
 			return &pb.GatewayApiResponse{
@@ -178,8 +193,8 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			Body:   nil,
 		}, nil
 	}
-	request.SetHeader(header)
-	if header == nil {
+	request.SetHeader(requestHeader)
+	if requestHeader == nil {
 		return &pb.GatewayApiResponse{
 			Header:    i18n.NewInvalidDataError("invalid request header"),
 			Body:      nil,
@@ -190,18 +205,18 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 
 	//beforeRequest
 	userBeforeRequestResp, err := svcCtx.CallbackService.UserBeforeRequest(ctx, &pb.UserBeforeRequestReq{
-		Header: header,
+		Header: requestHeader,
 		Path:   apiRequest.Path,
 	})
 	if err != nil {
 		return &pb.GatewayApiResponse{
-			Header:    i18n.NewServerError(header),
+			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Body:      nil,
 		}, err
 	}
-	header.UserId = userBeforeRequestResp.UserId
+	requestHeader.UserId = userBeforeRequestResp.UserId
 
 	var result *pb.GatewayApiResponse
 	body, _ := proto.Marshal(userBeforeRequestResp)
@@ -212,7 +227,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Body:      MarshalResponse(header, userBeforeRequestResp),
+				Body:      MarshalResponse(requestHeader, userBeforeRequestResp),
 			}, nil
 		}
 	}
@@ -228,14 +243,27 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Header:    responseHeader,
-			Body:      MarshalResponse(header, response),
+			Body:      MarshalResponse(requestHeader, response),
 		}
 	} else {
-		result = &pb.GatewayApiResponse{
-			RequestId: apiRequest.RequestId,
-			Path:      apiRequest.Path,
-			Header:    i18n.NewOkHeader(),
-			Body:      nil,
+		if err != nil {
+			statusErr, ok := status.FromError(err)
+			if ok {
+				err = errors.New(statusErr.Message())
+			}
+			result = &pb.GatewayApiResponse{
+				Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      nil,
+			}
+		} else {
+			result = &pb.GatewayApiResponse{
+				Header:    i18n.NewOkHeader(),
+				RequestId: apiRequest.RequestId,
+				Path:      apiRequest.Path,
+				Body:      nil,
+			}
 		}
 	}
 	return result, err

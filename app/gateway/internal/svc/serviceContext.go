@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/user/client/accountservice"
@@ -17,10 +18,13 @@ type ServiceContext struct {
 	Config config.Config
 	Redis  *redis.Redis
 
-	gatewayService  gatewayservice.GatewayService
+	gatewayService gatewayservice.GatewayService
+	//User
 	CallbackService callbackservice.CallbackService
 	AccountService  accountservice.AccountService
 	InfoService     infoservice.InfoService
+	//Conversation
+	FriendService friendservice.FriendService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -30,11 +34,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		zrpc.WithNonBlock(),
 		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
 	)
+	conversationClient := zrpc.MustNewClient(
+		c.RpcClientConf.Conversation,
+		zrpc.WithNonBlock(),
+		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+	)
 	s := &ServiceContext{
 		Config:          c,
 		CallbackService: callbackservice.NewCallbackService(userClient),
 		AccountService:  accountservice.NewAccountService(userClient),
 		InfoService:     infoservice.NewInfoService(userClient),
+		FriendService:   friendservice.NewFriendService(conversationClient),
 		Redis:           xcache.MustNewRedis(c.RedisConf),
 	}
 	return s

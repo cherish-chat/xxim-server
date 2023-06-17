@@ -18,7 +18,7 @@ func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, conn
 			logx.WithContext(ctx).Errorf("logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive: %v", err)
 			if response == nil {
 				response = &pb.GatewayApiResponse{
-					Header: i18n.NewServerError(connection.Header),
+					Header: i18n.NewServerError(connection.Header, svcCtx.Config.Mode, err),
 					Body:   nil,
 				}
 			}

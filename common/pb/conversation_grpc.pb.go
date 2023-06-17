@@ -112,6 +112,8 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 type FriendServiceClient interface {
 	//FriendApply 添加好友
 	FriendApply(ctx context.Context, in *FriendApplyReq, opts ...grpc.CallOption) (*FriendApplyResp, error)
+	//FriendApplyHandle 处理好友申请
+	FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error)
 }
 
 type friendServiceClient struct {
@@ -131,12 +133,23 @@ func (c *friendServiceClient) FriendApply(ctx context.Context, in *FriendApplyRe
 	return out, nil
 }
 
+func (c *friendServiceClient) FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error) {
+	out := new(FriendApplyHandleResp)
+	err := c.cc.Invoke(ctx, "/pb.friendService/FriendApplyHandle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FriendServiceServer is the server API for FriendService service.
 // All implementations must embed UnimplementedFriendServiceServer
 // for forward compatibility
 type FriendServiceServer interface {
 	//FriendApply 添加好友
 	FriendApply(context.Context, *FriendApplyReq) (*FriendApplyResp, error)
+	//FriendApplyHandle 处理好友申请
+	FriendApplyHandle(context.Context, *FriendApplyHandleReq) (*FriendApplyHandleResp, error)
 	mustEmbedUnimplementedFriendServiceServer()
 }
 
@@ -146,6 +159,9 @@ type UnimplementedFriendServiceServer struct {
 
 func (UnimplementedFriendServiceServer) FriendApply(context.Context, *FriendApplyReq) (*FriendApplyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FriendApply not implemented")
+}
+func (UnimplementedFriendServiceServer) FriendApplyHandle(context.Context, *FriendApplyHandleReq) (*FriendApplyHandleResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FriendApplyHandle not implemented")
 }
 func (UnimplementedFriendServiceServer) mustEmbedUnimplementedFriendServiceServer() {}
 
@@ -178,6 +194,24 @@ func _FriendService_FriendApply_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FriendService_FriendApplyHandle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FriendApplyHandleReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FriendServiceServer).FriendApplyHandle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.friendService/FriendApplyHandle",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FriendServiceServer).FriendApplyHandle(ctx, req.(*FriendApplyHandleReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FriendService_ServiceDesc is the grpc.ServiceDesc for FriendService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -188,6 +222,10 @@ var FriendService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FriendApply",
 			Handler:    _FriendService_FriendApply_Handler,
+		},
+		{
+			MethodName: "FriendApplyHandle",
+			Handler:    _FriendService_FriendApplyHandle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

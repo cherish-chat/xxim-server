@@ -15,6 +15,8 @@ import (
 type (
 	ConversationSettingUpdateReq  = pb.ConversationSettingUpdateReq
 	ConversationSettingUpdateResp = pb.ConversationSettingUpdateResp
+	FriendApplyHandleReq          = pb.FriendApplyHandleReq
+	FriendApplyHandleResp         = pb.FriendApplyHandleResp
 	FriendApplyReq                = pb.FriendApplyReq
 	FriendApplyResp               = pb.FriendApplyResp
 	GroupCreateReq                = pb.GroupCreateReq
@@ -23,6 +25,8 @@ type (
 	FriendService interface {
 		// FriendApply 添加好友
 		FriendApply(ctx context.Context, in *FriendApplyReq, opts ...grpc.CallOption) (*FriendApplyResp, error)
+		// FriendApplyHandle 处理好友申请
+		FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error)
 	}
 
 	defaultFriendService struct {
@@ -40,4 +44,10 @@ func NewFriendService(cli zrpc.Client) FriendService {
 func (m *defaultFriendService) FriendApply(ctx context.Context, in *FriendApplyReq, opts ...grpc.CallOption) (*FriendApplyResp, error) {
 	client := pb.NewFriendServiceClient(m.cli.Conn())
 	return client.FriendApply(ctx, in, opts...)
+}
+
+// FriendApplyHandle 处理好友申请
+func (m *defaultFriendService) FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error) {
+	client := pb.NewFriendServiceClient(m.cli.Conn())
+	return client.FriendApplyHandle(ctx, in, opts...)
 }

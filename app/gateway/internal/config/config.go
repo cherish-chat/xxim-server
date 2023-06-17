@@ -27,9 +27,10 @@ type Config struct {
 		KeepAliveSecond       int `json:",default=60"` // 检测是否存活时，如果超过n秒没有收到客户端的消息，则关闭连接
 	}
 	RpcClientConf struct {
-		Dispatch zrpc.RpcClientConf
-		User     zrpc.RpcClientConf
-		Third    zrpc.RpcClientConf
+		Dispatch     zrpc.RpcClientConf
+		User         zrpc.RpcClientConf
+		Conversation zrpc.RpcClientConf
+		Third        zrpc.RpcClientConf
 	}
 	RedisConf redis.RedisConf
 }

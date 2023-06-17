@@ -13,9 +13,27 @@ message GroupCreateResp {
 
 message FriendApplyReq {
   RequestHeader header = 1;
+  string toUserId = 2;
+  //Message 附加消息
+  optional string message = 3;
+  //Answer 附加回答
+  optional string answer = 4;
 }
 
 message FriendApplyResp {
+  ResponseHeader header = 1;
+}
+
+message FriendApplyHandleReq {
+  RequestHeader header = 1;
+  optional string applyId = 2;
+  //Agree 是否同意
+  bool agree = 3;
+  //同意后发送的第一条消息
+  optional string firstMessage = 4;
+}
+
+message FriendApplyHandleResp {
   ResponseHeader header = 1;
 }
 
@@ -35,6 +53,8 @@ service groupService {
 service friendService {
   //FriendApply 添加好友
   rpc FriendApply(FriendApplyReq) returns (FriendApplyResp) {}
+  //FriendApplyHandle 处理好友申请
+  rpc FriendApplyHandle(FriendApplyHandleReq) returns (FriendApplyHandleResp) {}
 }
 
 service conversationService {
