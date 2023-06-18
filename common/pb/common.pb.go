@@ -575,6 +575,104 @@ func (WebsocketCustomCloseCode) EnumDescriptor() ([]byte, []int) {
 	return file_common_proto_rawDescGZIP(), []int{5}
 }
 
+//ConversationType 会话类型
+type ConversationType int32
+
+const (
+	// 单聊
+	ConversationType_Single ConversationType = 0
+	// 群聊
+	ConversationType_Group ConversationType = 1
+	// 订阅号
+	ConversationType_Subscription ConversationType = 2
+)
+
+// Enum value maps for ConversationType.
+var (
+	ConversationType_name = map[int32]string{
+		0: "Single",
+		1: "Group",
+		2: "Subscription",
+	}
+	ConversationType_value = map[string]int32{
+		"Single":       0,
+		"Group":        1,
+		"Subscription": 2,
+	}
+)
+
+func (x ConversationType) Enum() *ConversationType {
+	p := new(ConversationType)
+	*p = x
+	return p
+}
+
+func (x ConversationType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ConversationType) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[6].Descriptor()
+}
+
+func (ConversationType) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[6]
+}
+
+func (x ConversationType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ConversationType.Descriptor instead.
+func (ConversationType) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{6}
+}
+
+//NoticeContentType 通知内容类型
+type NoticeContentType int32
+
+const (
+	// 有新的好友请求
+	NoticeContentType_NewFriendRequest NoticeContentType = 0
+)
+
+// Enum value maps for NoticeContentType.
+var (
+	NoticeContentType_name = map[int32]string{
+		0: "NewFriendRequest",
+	}
+	NoticeContentType_value = map[string]int32{
+		"NewFriendRequest": 0,
+	}
+)
+
+func (x NoticeContentType) Enum() *NoticeContentType {
+	p := new(NoticeContentType)
+	*p = x
+	return p
+}
+
+func (x NoticeContentType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NoticeContentType) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_proto_enumTypes[7].Descriptor()
+}
+
+func (NoticeContentType) Type() protoreflect.EnumType {
+	return &file_common_proto_enumTypes[7]
+}
+
+func (x NoticeContentType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use NoticeContentType.Descriptor instead.
+func (NoticeContentType) EnumDescriptor() ([]byte, []int) {
+	return file_common_proto_rawDescGZIP(), []int{7}
+}
+
 type ToastActionData_Level int32
 
 const (
@@ -608,11 +706,11 @@ func (x ToastActionData_Level) String() string {
 }
 
 func (ToastActionData_Level) Descriptor() protoreflect.EnumDescriptor {
-	return file_common_proto_enumTypes[6].Descriptor()
+	return file_common_proto_enumTypes[8].Descriptor()
 }
 
 func (ToastActionData_Level) Type() protoreflect.EnumType {
-	return &file_common_proto_enumTypes[6]
+	return &file_common_proto_enumTypes[8]
 }
 
 func (x ToastActionData_Level) Number() protoreflect.EnumNumber {
@@ -654,11 +752,11 @@ func (x AlertActionData_ButtonType) String() string {
 }
 
 func (AlertActionData_ButtonType) Descriptor() protoreflect.EnumDescriptor {
-	return file_common_proto_enumTypes[7].Descriptor()
+	return file_common_proto_enumTypes[9].Descriptor()
 }
 
 func (AlertActionData_ButtonType) Type() protoreflect.EnumType {
-	return &file_common_proto_enumTypes[7]
+	return &file_common_proto_enumTypes[9]
 }
 
 func (x AlertActionData_ButtonType) Number() protoreflect.EnumNumber {
@@ -1201,8 +1299,14 @@ var file_common_proto_rawDesc = []byte{
 	0x64, 0x65, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c,
 	0x45, 0x72, 0x72, 0x6f, 0x72, 0x10, 0xa3, 0x1f, 0x12, 0x1e, 0x0a, 0x19, 0x43, 0x6c, 0x6f, 0x73,
 	0x65, 0x43, 0x6f, 0x64, 0x65, 0x48, 0x65, 0x61, 0x72, 0x74, 0x62, 0x65, 0x61, 0x74, 0x54, 0x69,
-	0x6d, 0x65, 0x6f, 0x75, 0x74, 0x10, 0xa4, 0x1f, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6d, 0x65, 0x6f, 0x75, 0x74, 0x10, 0xa4, 0x1f, 0x2a, 0x3b, 0x0a, 0x10, 0x43, 0x6f, 0x6e, 0x76,
+	0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0a, 0x0a, 0x06,
+	0x53, 0x69, 0x6e, 0x67, 0x6c, 0x65, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x47, 0x72, 0x6f, 0x75,
+	0x70, 0x10, 0x01, 0x12, 0x10, 0x0a, 0x0c, 0x53, 0x75, 0x62, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x10, 0x02, 0x2a, 0x29, 0x0a, 0x11, 0x4e, 0x6f, 0x74, 0x69, 0x63, 0x65, 0x43,
+	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x10, 0x4e, 0x65,
+	0x77, 0x46, 0x72, 0x69, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x10, 0x00,
+	0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1217,7 +1321,7 @@ func file_common_proto_rawDescGZIP() []byte {
 	return file_common_proto_rawDescData
 }
 
-var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_common_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
 var file_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_common_proto_goTypes = []interface{}{
 	(Platform)(0),                   // 0: pb.Platform
@@ -1226,19 +1330,21 @@ var file_common_proto_goTypes = []interface{}{
 	(ResponseCode)(0),               // 3: pb.ResponseCode
 	(ResponseActionType)(0),         // 4: pb.ResponseActionType
 	(WebsocketCustomCloseCode)(0),   // 5: pb.WebsocketCustomCloseCode
-	(ToastActionData_Level)(0),      // 6: pb.ToastActionData.Level
-	(AlertActionData_ButtonType)(0), // 7: pb.AlertActionData.ButtonType
-	(*RequestHeader)(nil),           // 8: pb.RequestHeader
-	(*ToastActionData)(nil),         // 9: pb.ToastActionData
-	(*AlertActionData)(nil),         // 10: pb.AlertActionData
-	(*ResponseHeader)(nil),          // 11: pb.ResponseHeader
+	(ConversationType)(0),           // 6: pb.ConversationType
+	(NoticeContentType)(0),          // 7: pb.NoticeContentType
+	(ToastActionData_Level)(0),      // 8: pb.ToastActionData.Level
+	(AlertActionData_ButtonType)(0), // 9: pb.AlertActionData.ButtonType
+	(*RequestHeader)(nil),           // 10: pb.RequestHeader
+	(*ToastActionData)(nil),         // 11: pb.ToastActionData
+	(*AlertActionData)(nil),         // 12: pb.AlertActionData
+	(*ResponseHeader)(nil),          // 13: pb.ResponseHeader
 }
 var file_common_proto_depIdxs = []int32{
 	0, // 0: pb.RequestHeader.platform:type_name -> pb.Platform
 	1, // 1: pb.RequestHeader.language:type_name -> pb.I18nLanguage
 	2, // 2: pb.RequestHeader.encoding:type_name -> pb.EncodingProto
-	6, // 3: pb.ToastActionData.level:type_name -> pb.ToastActionData.Level
-	7, // 4: pb.AlertActionData.buttonType:type_name -> pb.AlertActionData.ButtonType
+	8, // 3: pb.ToastActionData.level:type_name -> pb.ToastActionData.Level
+	9, // 4: pb.AlertActionData.buttonType:type_name -> pb.AlertActionData.ButtonType
 	3, // 5: pb.ResponseHeader.code:type_name -> pb.ResponseCode
 	4, // 6: pb.ResponseHeader.actionType:type_name -> pb.ResponseActionType
 	7, // [7:7] is the sub-list for method output_type
@@ -1308,7 +1414,7 @@ func file_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_common_proto_rawDesc,
-			NumEnums:      8,
+			NumEnums:      10,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,

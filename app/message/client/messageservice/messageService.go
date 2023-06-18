@@ -13,8 +13,16 @@ import (
 )
 
 type (
-	MessageInsertReq  = pb.MessageInsertReq
-	MessageInsertResp = pb.MessageInsertResp
+	ListNoticeReq                 = pb.ListNoticeReq
+	ListNoticeResp                = pb.ListNoticeResp
+	MessageInsertReq              = pb.MessageInsertReq
+	MessageInsertResp             = pb.MessageInsertResp
+	Notice                        = pb.Notice
+	NoticeBatchSendReq            = pb.NoticeBatchSendReq
+	NoticeBatchSendResp           = pb.NoticeBatchSendResp
+	NoticeContentNewFriendRequest = pb.NoticeContentNewFriendRequest
+	NoticeSendReq                 = pb.NoticeSendReq
+	NoticeSendResp                = pb.NoticeSendResp
 
 	MessageService interface {
 		// MessageInsert 插入消息

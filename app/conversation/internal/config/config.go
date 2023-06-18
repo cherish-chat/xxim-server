@@ -14,14 +14,17 @@ type Config struct {
 		Group              xmgo.MongoCollectionConf
 		ConversationMember xmgo.MongoCollectionConf
 		Friend             xmgo.MongoCollectionConf
+		FriendApplyRecord  xmgo.MongoCollectionConf
 	}
 	Group struct {
 		MinGroupId int `json:",default=100000"`
 	}
 	RpcClientConf struct {
-		Dispatch zrpc.RpcClientConf
-		User     zrpc.RpcClientConf
-		Third    zrpc.RpcClientConf
+		Dispatch     zrpc.RpcClientConf
+		User         zrpc.RpcClientConf
+		Conversation zrpc.RpcClientConf
+		Third        zrpc.RpcClientConf
+		Message      zrpc.RpcClientConf
 	}
 	Friend struct {
 		DefaultApplySetting string `json:",default={}"`

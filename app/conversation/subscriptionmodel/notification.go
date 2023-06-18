@@ -6,6 +6,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	ConversationIdFriendNotification = "friend_notification" // 好友通知
+)
+
 type SubscriptionType int8
 
 const (

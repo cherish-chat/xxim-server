@@ -3,6 +3,8 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
+//GroupCreate 创建群组
+
 message GroupCreateReq {
   RequestHeader header = 1;
 }
@@ -10,6 +12,23 @@ message GroupCreateReq {
 message GroupCreateResp {
   ResponseHeader header = 1;
 }
+
+service groupService {
+  //GroupCreate 创建群组
+  rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
+}
+
+//FriendApplyStatus 好友申请状态
+enum FriendApplyStatus {
+  //Applying 申请中
+  Applying = 0;
+  //Accepted 已同意
+  Accepted = 1;
+  //Rejected 已拒绝
+  Rejected = 2;
+}
+
+//FriendApply 申请添加好友
 
 message FriendApplyReq {
   RequestHeader header = 1;
@@ -24,9 +43,11 @@ message FriendApplyResp {
   ResponseHeader header = 1;
 }
 
+//FriendApplyHandle 处理好友申请
+
 message FriendApplyHandleReq {
   RequestHeader header = 1;
-  optional string applyId = 2;
+  string applyId = 2;
   //Agree 是否同意
   bool agree = 3;
   //同意后发送的第一条消息
@@ -37,17 +58,44 @@ message FriendApplyHandleResp {
   ResponseHeader header = 1;
 }
 
-message ConversationSettingUpdateReq {
+//ListFriendApply 列出好友申请 给app用的
+
+message ListFriendApplyReq {
   RequestHeader header = 1;
+  //Cursor 游标
+  int64 cursor = 2;
+  //Limit 限制
+  int64 limit = 3;
+  //Filter 过滤器
+  message Filter {
+    optional FriendApplyStatus status = 1;
+  }
+  //Option 选项
+  message Option {
+    bool includeApplyByMe = 1; //包含我发出的申请
+  }
+  Filter filter = 4;
+  Option option = 5;
 }
 
-message ConversationSettingUpdateResp {
+message ListFriendApplyResp {
   ResponseHeader header = 1;
-}
-
-service groupService {
-  //GroupCreate 创建群组
-  rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
+  //Cursor 游标
+  int64 cursor = 2;
+  //List 列表
+  message FriendApply {
+    //ApplyId 申请id
+    string applyId = 1;
+    //FromUserId 申请人id
+    string fromUserId = 2;
+    //ToUserId 被申请人id
+    string toUserId = 3;
+    //Message 附加消息
+    string message = 4;
+    //Answer 附加回答
+    string answer = 5;
+  }
+  repeated FriendApply friendApplyList = 3;
 }
 
 service friendService {
@@ -55,8 +103,17 @@ service friendService {
   rpc FriendApply(FriendApplyReq) returns (FriendApplyResp) {}
   //FriendApplyHandle 处理好友申请
   rpc FriendApplyHandle(FriendApplyHandleReq) returns (FriendApplyHandleResp) {}
+  //ListFriendApply 列出好友申请
+  rpc ListFriendApply(ListFriendApplyReq) returns (ListFriendApplyResp) {}
 }
 
+message ConversationSettingUpdateReq {
+  RequestHeader header = 1;
+}
+
+message ConversationSettingUpdateResp {
+  ResponseHeader header = 1;
+}
 service conversationService {
   //ConversationSettingUpdate 更新会话设置
   rpc ConversationSettingUpdate(ConversationSettingUpdateReq) returns (ConversationSettingUpdateResp) {}

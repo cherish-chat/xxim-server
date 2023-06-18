@@ -86,7 +86,10 @@ type Config struct {
 		}
 	}
 	RpcClientConf struct {
-		Dispatch zrpc.RpcClientConf
-		Third    zrpc.RpcClientConf
+		Dispatch     zrpc.RpcClientConf
+		User         zrpc.RpcClientConf
+		Conversation zrpc.RpcClientConf
+		Third        zrpc.RpcClientConf
+		Message      zrpc.RpcClientConf
 	}
 }

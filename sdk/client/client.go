@@ -33,6 +33,10 @@ type IClient interface {
 	RevokeUserAccessToken(req *pb.RevokeUserAccessTokenReq) (resp *pb.RevokeUserAccessTokenResp, err error)
 
 	FriendApply(req *pb.FriendApplyReq) (resp *pb.FriendApplyResp, err error)
+	ListFriendApply(req *pb.ListFriendApplyReq) (resp *pb.ListFriendApplyResp, err error)
+	FriendApplyHandle(req *pb.FriendApplyHandleReq) (resp *pb.FriendApplyHandleResp, err error)
+
+	ListNotice(req *pb.ListNoticeReq) (resp *pb.ListNoticeResp, err error)
 }
 
 type HttpClient struct {

@@ -7,5 +7,12 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	RedisConf redis.RedisConf
+	RedisConf     redis.RedisConf
+	RpcClientConf struct {
+		Dispatch     zrpc.RpcClientConf
+		User         zrpc.RpcClientConf
+		Conversation zrpc.RpcClientConf
+		Third        zrpc.RpcClientConf
+		Message      zrpc.RpcClientConf
+	}
 }

@@ -43,3 +43,15 @@ func (x *RevokeUserAccessTokenReq) SetHeader(header *RequestHeader) {
 func (x *FriendApplyReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *ListFriendApplyReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+func (x *FriendApplyHandleReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+func (x *ListNoticeReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

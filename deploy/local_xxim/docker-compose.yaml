@@ -117,7 +117,7 @@ services:
     image: mongo
     container_name: mongors0-1
     environment:
-      - "TZ=Asia/Shanghai"
+      - TZ=Asia/Shanghai
       - "MONGO_INITDB_ROOT_USERNAME=root"
       - "MONGO_INITDB_ROOT_PASSWORD=123456"
     entrypoint:
@@ -136,7 +136,7 @@ services:
     image: mongo
     container_name: mongors0-2
     environment:
-      - "TZ=Asia/Shanghai"
+      - TZ=Asia/Shanghai
       - "MONGO_INITDB_ROOT_USERNAME=root"
       - "MONGO_INITDB_ROOT_PASSWORD=123456"
     entrypoint:
@@ -157,7 +157,7 @@ services:
     image: mongo
     container_name: mongors0-3
     environment:
-      - "TZ=Asia/Shanghai"
+      - TZ=Asia/Shanghai
       - "MONGO_INITDB_ROOT_USERNAME=root"
       - "MONGO_INITDB_ROOT_PASSWORD=123456"
     entrypoint:

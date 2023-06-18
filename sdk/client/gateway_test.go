@@ -8,15 +8,17 @@ import (
 )
 
 var defaultConfig = &Config{
-	Endpoints:       []string{"http://127.0.0.1:34500"},
-	Encoding:        utils.AnyPtr(pb.EncodingProto_JSON),
-	AppId:           "",
-	InstallId:       "",
-	Platform:        nil,
-	DeviceModel:     "",
-	OsVersion:       "",
-	Language:        nil,
-	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NzA5NzAsImp0aSI6IjMifQ.HATz69UJPo6lEL0GF5eSqLkFN-9s1Ej0TJfTUGRX-90`, // 3
+	Endpoints:   []string{"http://127.0.0.1:34500"},
+	Encoding:    utils.AnyPtr(pb.EncodingProto_JSON),
+	AppId:       "",
+	InstallId:   "",
+	Platform:    nil,
+	DeviceModel: "",
+	OsVersion:   "",
+	Language:    nil,
+	//UserToken:   `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NzA5NzAsImp0aSI6IjMifQ.HATz69UJPo6lEL0GF5eSqLkFN-9s1Ej0TJfTUGRX-90`, // 3
+	//UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3NjU4NTQsImp0aSI6IjIifQ.hOXp17_KUXI_HjJRKGFvI6xRiUBKvT_2p4rKKqBTOqM`, // 2
+	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3ODAzMzcsImp0aSI6IjEifQ.oveSP7-bsAe4CUX0JcRmWZFtySG-Egady5tzuRmVJTE`, // 1
 	KeepAliveSecond: time.Second * 30,
 }
 

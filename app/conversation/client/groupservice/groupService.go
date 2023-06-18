@@ -13,14 +13,19 @@ import (
 )
 
 type (
-	ConversationSettingUpdateReq  = pb.ConversationSettingUpdateReq
-	ConversationSettingUpdateResp = pb.ConversationSettingUpdateResp
-	FriendApplyHandleReq          = pb.FriendApplyHandleReq
-	FriendApplyHandleResp         = pb.FriendApplyHandleResp
-	FriendApplyReq                = pb.FriendApplyReq
-	FriendApplyResp               = pb.FriendApplyResp
-	GroupCreateReq                = pb.GroupCreateReq
-	GroupCreateResp               = pb.GroupCreateResp
+	ConversationSettingUpdateReq    = pb.ConversationSettingUpdateReq
+	ConversationSettingUpdateResp   = pb.ConversationSettingUpdateResp
+	FriendApplyHandleReq            = pb.FriendApplyHandleReq
+	FriendApplyHandleResp           = pb.FriendApplyHandleResp
+	FriendApplyReq                  = pb.FriendApplyReq
+	FriendApplyResp                 = pb.FriendApplyResp
+	GroupCreateReq                  = pb.GroupCreateReq
+	GroupCreateResp                 = pb.GroupCreateResp
+	ListFriendApplyReq              = pb.ListFriendApplyReq
+	ListFriendApplyReq_Filter       = pb.ListFriendApplyReq_Filter
+	ListFriendApplyReq_Option       = pb.ListFriendApplyReq_Option
+	ListFriendApplyResp             = pb.ListFriendApplyResp
+	ListFriendApplyResp_FriendApply = pb.ListFriendApplyResp_FriendApply
 
 	GroupService interface {
 		// GroupCreate 创建群组

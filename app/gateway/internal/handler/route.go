@@ -191,7 +191,32 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			},
 			Do: svcCtx.FriendService.FriendApply,
 		})
+		//ListFriendApplyReq ListFriendApplyResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/listFriendApply", Route[*pb.ListFriendApplyReq, *pb.ListFriendApplyResp]{
+			NewRequest: func() *pb.ListFriendApplyReq {
+				return &pb.ListFriendApplyReq{}
+			},
+			Do: svcCtx.FriendService.ListFriendApply,
+		})
+		//FriendApplyHandleReq FriendApplyHandleResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/friendApplyHandle", Route[*pb.FriendApplyHandleReq, *pb.FriendApplyHandleResp]{
+			NewRequest: func() *pb.FriendApplyHandleReq {
+				return &pb.FriendApplyHandleReq{}
+			},
+			Do: svcCtx.FriendService.FriendApplyHandle,
+		})
 	}
+	// notice api
+	{
+		//ListNoticeReq ListNoticeResp
+		AddUnifiedRoute(svcCtx, "/v1/notice/listNotice", Route[*pb.ListNoticeReq, *pb.ListNoticeResp]{
+			NewRequest: func() *pb.ListNoticeReq {
+				return &pb.ListNoticeReq{}
+			},
+			Do: svcCtx.NoticeService.ListNotice,
+		})
+	}
+
 	// http
 	{
 		apiGroup := engine.Group("/api")

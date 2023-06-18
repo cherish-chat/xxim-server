@@ -31,6 +31,7 @@ type Config struct {
 		User         zrpc.RpcClientConf
 		Conversation zrpc.RpcClientConf
 		Third        zrpc.RpcClientConf
+		Message      zrpc.RpcClientConf
 	}
 	RedisConf redis.RedisConf
 }

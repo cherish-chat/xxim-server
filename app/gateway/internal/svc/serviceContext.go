@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
+	"github.com/cherish-chat/xxim-server/app/message/client/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/accountservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/callbackservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/infoservice"
@@ -25,6 +26,8 @@ type ServiceContext struct {
 	InfoService     infoservice.InfoService
 	//Conversation
 	FriendService friendservice.FriendService
+	//Message
+	NoticeService noticeservice.NoticeService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,12 +42,19 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		zrpc.WithNonBlock(),
 		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
 	)
+	messageClient := zrpc.MustNewClient(
+		c.RpcClientConf.Message,
+		zrpc.WithNonBlock(),
+		zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+	)
+
 	s := &ServiceContext{
 		Config:          c,
 		CallbackService: callbackservice.NewCallbackService(userClient),
 		AccountService:  accountservice.NewAccountService(userClient),
 		InfoService:     infoservice.NewInfoService(userClient),
 		FriendService:   friendservice.NewFriendService(conversationClient),
+		NoticeService:   noticeservice.NewNoticeService(messageClient),
 		Redis:           xcache.MustNewRedis(c.RedisConf),
 	}
 	return s

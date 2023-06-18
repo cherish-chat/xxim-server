@@ -16,3 +16,96 @@ service messageService {
   //二次开发时，需要实现该接口
   rpc MessageInsert(MessageInsertReq) returns (MessageInsertResp);
 }
+
+/*
+ //发送者
+  message Sender {
+    //发送者id
+    string id = 1;
+    //发送者名称
+    string name = 2;
+    //发送者头像
+    string avatar = 3;
+    //extra
+    string extra = 11;
+  }
+  Sender sender = 4; // 有可能是系统 那么该值为空
+
+
+
+
+ */
+
+
+//Notice 通知
+message Notice {
+  //通知id 因为通知永远都是服务端发送给客户端的，所以通知id一定唯一。
+  string NoticeId = 1;
+  //发送到哪个会话
+  string conversationId = 2; // 单聊: 那么该值为接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
+  //会话类型
+  ConversationType conversationType = 3;
+  //通知内容
+  string content = 4;
+  //通知类型
+  NoticeContentType contentType = 5;
+  //通知的更新时间
+  int64 updateTime = 6;
+}
+
+//NoticeContentNewFriendRequest 通知内容-新的好友请求
+message NoticeContentNewFriendRequest {}
+
+//NoticeSend 通知发送
+
+message NoticeSendReq {
+  RequestHeader header = 1;
+  Notice notice = 2;
+  //追加用户
+  repeated string userIds = 3;
+  //是否广播
+  bool broadcast = 4;
+}
+
+message NoticeSendResp {
+  ResponseHeader header = 1;
+}
+
+//NoticeBatchSend 通知批量发送
+
+message NoticeBatchSendReq {
+  RequestHeader header = 1;
+  repeated NoticeSendReq notices = 2;
+}
+
+message NoticeBatchSendResp {
+  ResponseHeader header = 1;
+}
+
+//ListNoticeReq 获取通知列表
+
+message ListNoticeReq {
+  RequestHeader header = 1;
+  //会话id
+  string conversationId = 2;
+  //会话类型
+  ConversationType conversationType = 3;
+  //UpdateTimeGt 通知更新时间大于
+  int64 UpdateTimeGt = 4;
+  //Limit 限制条数
+  int64 Limit = 5;
+}
+
+message ListNoticeResp {
+  ResponseHeader header = 1;
+  repeated Notice notices = 2;
+}
+
+service noticeService {
+  //NoticeSend 通知发送
+  rpc NoticeSend(NoticeSendReq) returns (NoticeSendResp);
+  //NoticeBatchSend 通知批量发送
+  rpc NoticeBatchSend(NoticeBatchSendReq) returns (NoticeBatchSendResp);
+  //ListNotice 获取通知列表
+  rpc ListNotice(ListNoticeReq) returns (ListNoticeResp);
+}

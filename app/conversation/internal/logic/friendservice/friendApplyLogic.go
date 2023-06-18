@@ -3,10 +3,16 @@ package friendservicelogic
 import (
 	"context"
 	"errors"
+	"github.com/cherish-chat/xxim-server/app/conversation/friendmodel"
+	"github.com/cherish-chat/xxim-server/app/conversation/subscriptionmodel"
+	"github.com/cherish-chat/xxim-server/app/message/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/zeromicro/go-zero/core/mr"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 
 	"github.com/cherish-chat/xxim-server/app/conversation/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -30,6 +36,22 @@ func NewFriendApplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 
 // FriendApply 添加好友
 func (l *FriendApplyLogic) FriendApply(in *pb.FriendApplyReq) (*pb.FriendApplyResp, error) {
+	//预先验证
+	{
+		//是否允许申请加好友
+		if !utils.EnumInSlice(in.Header.Platform, l.svcCtx.Config.Friend.AllowPlatform) {
+			return &pb.FriendApplyResp{
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_not_allow_platform")),
+			}, nil
+		}
+		//是不是相同id
+		if in.Header.UserId == in.ToUserId {
+			return &pb.FriendApplyResp{
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_same_id")),
+			}, nil
+		}
+	}
+
 	// 查询两个用户信息和用户设置
 	var (
 		fromUserId       = in.Header.UserId
@@ -50,19 +72,8 @@ func (l *FriendApplyLogic) FriendApply(in *pb.FriendApplyReq) (*pb.FriendApplyRe
 		return &pb.FriendApplyResp{}, err
 	}
 
-	//是否允许申请加好友
-	if !utils.EnumInSlice(in.Header.Platform, l.svcCtx.Config.Friend.AllowPlatform) {
-		return &pb.FriendApplyResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_not_allow_platform")),
-		}, nil
-	}
 	//验证用户信息
 	friendApplyResp, err := l.verifyUserInfo_(in, fromUserInfo, toUserInfo)
-	if err != nil {
-		return friendApplyResp, err
-	}
-	//验证用户设置
-	friendApplyResp, skipApply, err := l.verifyUserSetting_(in, fromUserInfo, toUserInfo, toUserSettingMap)
 	if err != nil {
 		return friendApplyResp, err
 	}
@@ -76,10 +87,31 @@ func (l *FriendApplyLogic) FriendApply(in *pb.FriendApplyReq) (*pb.FriendApplyRe
 	if err != nil {
 		return friendApplyResp, err
 	}
-
+	//验证from用户是否已经申请过to用户
+	exist, err := l.verifyApplyExist_(in, fromUserInfo, toUserInfo)
+	if err != nil {
+		return friendApplyResp, err
+	}
+	if exist {
+		return &pb.FriendApplyResp{
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_already")),
+		}, nil
+	}
+	//验证to用户是否已经申请过from用户
+	skipApply, err := l.verifyApplyExist_(in, toUserInfo, fromUserInfo)
+	if err != nil {
+		return friendApplyResp, err
+	}
+	if !skipApply {
+		//验证用户设置
+		friendApplyResp, skipApply, err = l.verifyUserSetting_(in, fromUserInfo, toUserInfo, toUserSettingMap)
+		if err != nil {
+			return friendApplyResp, err
+		}
+	}
 	//跳过申请
 	if skipApply {
-		err = NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AddFriend(in, fromUserInfo, toUserInfo)
+		err = NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AddFriend(fromUserInfo.UserId, toUserInfo.UserId)
 		return &pb.FriendApplyResp{}, err
 	}
 
@@ -153,7 +185,7 @@ func (l *FriendApplyLogic) verifyUserInfo_(in *pb.FriendApplyReq, fromUserInfo *
 	case "", "0":
 		//正常
 	default:
-		//TODO: 账号状态异常
+		//账号状态异常
 		return &pb.FriendApplyResp{
 			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_from_user_status_error")),
 		}, nil
@@ -164,7 +196,7 @@ func (l *FriendApplyLogic) verifyUserInfo_(in *pb.FriendApplyReq, fromUserInfo *
 	case "", "0":
 		//正常
 	default:
-		//TODO: 账号状态异常
+		//账号状态异常
 		return &pb.FriendApplyResp{
 			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_from_user_status_error")),
 		}, nil
@@ -210,10 +242,8 @@ func (l *FriendApplyLogic) verifyUserSetting_(in *pb.FriendApplyReq, fromUserInf
 	case usermodel.UserSettingFriendApplyTypeAny:
 		return nil, true, nil
 	case usermodel.UserSettingFriendApplyTypeVerifyMessage:
-		// TODO: 发送验证消息
 		return nil, false, nil
 	case usermodel.UserSettingFriendApplyTypeAnswerQuestion:
-		// TODO: 验证答案
 		if in.Answer == nil {
 			err = errors.New("friend apply answer question empty")
 			l.Errorf("friend apply answer question empty")
@@ -229,10 +259,28 @@ func (l *FriendApplyLogic) verifyUserSetting_(in *pb.FriendApplyReq, fromUserInf
 		}
 		return nil, true, nil
 	case usermodel.UserSettingFriendApplyTypeAnswerQuestionAndConfirm:
-		// TODO: 填写答案，并发送验证消息
+		if in.Answer == nil || *in.Answer == "" {
+			err = errors.New("friend apply answer question empty")
+			l.Errorf("friend apply answer question empty")
+			return &pb.FriendApplyResp{
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_answer_question_error")),
+			}, false, err
+		}
 		return nil, false, nil
 	case usermodel.UserSettingFriendApplyTypeAnswerQuestionAndConfirmWithRightAnswer:
-		// TODO：验证答案，并发送验证消息
+		if in.Answer == nil {
+			err = errors.New("friend apply answer question empty")
+			l.Errorf("friend apply answer question empty")
+			return &pb.FriendApplyResp{
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_answer_question_error")),
+			}, false, err
+		}
+		answer := *in.Answer
+		if answer != userSettingFriendApply.Answer {
+			return &pb.FriendApplyResp{
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_answer_question_error")),
+			}, false, errors.New("friend apply answer question error")
+		}
 		return nil, false, nil
 	case usermodel.UserSettingFriendApplyTypeNoOne:
 		return &pb.FriendApplyResp{
@@ -244,12 +292,36 @@ func (l *FriendApplyLogic) verifyUserSetting_(in *pb.FriendApplyReq, fromUserInf
 }
 
 func (l *FriendApplyLogic) handle_(in *pb.FriendApplyReq, fromUserInfo *usermodel.User, toUserInfo *usermodel.User, settingMap map[string]*usermodel.UserSetting) error {
-	//TODO: handle your logic here and delete this line
+	message := ""
+	if in.Message != nil {
+		message = *in.Message
+	}
+	answer := ""
+	if in.Answer != nil {
+		answer = *in.Answer
+	}
+	friendApplyRecord := &friendmodel.FriendApplyRecord{
+		ApplyId:        utils.Snowflake.String(),
+		FromId:         fromUserInfo.UserId,
+		ToId:           toUserInfo.UserId,
+		Message:        message,
+		Answer:         answer,
+		ApplyTime:      primitive.NewDateTimeFromTime(time.Now()),
+		Status:         friendmodel.FriendApplyStatusApplying,
+		FromDeleteTime: 0,
+		ToDeleteTime:   0,
+	}
+	_, err := l.svcCtx.FriendApplyRecordCollection.InsertOne(l.ctx, friendApplyRecord)
+	if err != nil {
+		l.Errorf("insert friend apply record error: %v", err)
+		return err
+	}
+	go l.sendNotice_(in, fromUserInfo, toUserInfo, friendApplyRecord)
 	return nil
 }
 
 func (l *FriendApplyLogic) verifyAreFriend_(in *pb.FriendApplyReq, fromUser *usermodel.User, toUser *usermodel.User) (*pb.FriendApplyResp, error) {
-	yes, err := NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AreFriends(in, fromUser, toUser)
+	yes, err := NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AreFriends(fromUser.UserId, toUser.UserId)
 	if err != nil {
 		return &pb.FriendApplyResp{
 			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "friend_apply_error")),
@@ -264,7 +336,7 @@ func (l *FriendApplyLogic) verifyAreFriend_(in *pb.FriendApplyReq, fromUser *use
 }
 
 func (l *FriendApplyLogic) verifyFriendLimit_(in *pb.FriendApplyReq, fromUser *usermodel.User, toUser *usermodel.User) (*pb.FriendApplyResp, error) {
-	yes, msg, err := NewFriendApplyHandleLogic(l.ctx, l.svcCtx).IsFriendLimit(in, fromUser, toUser)
+	yes, msg, err := NewFriendApplyHandleLogic(l.ctx, l.svcCtx).IsFriendLimit(fromUser.UserId, toUser.UserId)
 	if err != nil {
 		return &pb.FriendApplyResp{
 			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, msg),
@@ -276,4 +348,43 @@ func (l *FriendApplyLogic) verifyFriendLimit_(in *pb.FriendApplyReq, fromUser *u
 		}, errors.New("friend apply friend limit")
 	}
 	return nil, nil
+}
+
+func (l *FriendApplyLogic) verifyApplyExist_(in *pb.FriendApplyReq, fromUser *usermodel.User, toUser *usermodel.User) (bool, error) {
+	count, err := l.svcCtx.FriendApplyRecordCollection.Find(l.ctx, bson.M{
+		"fromId": fromUser.UserId,
+		"toId":   toUser.UserId,
+		"status": friendmodel.FriendApplyStatusApplying,
+	}).Count()
+	if err != nil {
+		l.Errorf("verify apply exist error: %v", err)
+		return false, err
+	}
+	if count > 0 {
+		return true, nil
+	}
+	return false, nil
+}
+
+func (l *FriendApplyLogic) sendNotice_(in *pb.FriendApplyReq, fromUser *usermodel.User, toUser *usermodel.User, friendApplyRecord *friendmodel.FriendApplyRecord) {
+	notice := &noticemodel.BroadcastNotice{
+		NoticeId:         utils.Snowflake.String(),
+		ConversationId:   subscriptionmodel.ConversationIdFriendNotification,
+		ConversationType: pb.ConversationType_Subscription,
+		Content:          utils.Json.MarshalToString(&pb.NoticeContentNewFriendRequest{}),
+		ContentType:      pb.NoticeContentType_NewFriendRequest,
+		UpdateTime:       primitive.NewDateTimeFromTime(time.Now()),
+	}
+	utils.Retry.Do(func() error {
+		_, err := l.svcCtx.NoticeService.NoticeSend(context.Background(), &pb.NoticeSendReq{
+			Header:    in.Header,
+			Notice:    notice.ToPb(),
+			UserIds:   []string{toUser.UserId},
+			Broadcast: false,
+		})
+		if err != nil {
+			l.Errorf("send notice error: %v", err)
+		}
+		return err
+	})
 }

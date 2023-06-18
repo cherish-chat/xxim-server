@@ -33,3 +33,9 @@ func (s *FriendServiceServer) FriendApplyHandle(ctx context.Context, in *pb.Frie
 	l := friendservicelogic.NewFriendApplyHandleLogic(ctx, s.svcCtx)
 	return l.FriendApplyHandle(in)
 }
+
+// ListFriendApply 列出好友申请
+func (s *FriendServiceServer) ListFriendApply(ctx context.Context, in *pb.ListFriendApplyReq) (*pb.ListFriendApplyResp, error) {
+	l := friendservicelogic.NewListFriendApplyLogic(ctx, s.svcCtx)
+	return l.ListFriendApply(in)
+}
