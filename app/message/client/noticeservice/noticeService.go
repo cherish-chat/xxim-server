@@ -15,8 +15,21 @@ import (
 type (
 	ListNoticeReq                 = pb.ListNoticeReq
 	ListNoticeResp                = pb.ListNoticeResp
+	Message                       = pb.Message
+	MessageBatchSendReq           = pb.MessageBatchSendReq
+	MessageBatchSendResp          = pb.MessageBatchSendResp
+	MessageContentText            = pb.MessageContentText
+	MessageContentText_Item       = pb.MessageContentText_Item
+	MessageContentText_Item_At    = pb.MessageContentText_Item_At
+	MessageContentText_Item_Image = pb.MessageContentText_Item_Image
 	MessageInsertReq              = pb.MessageInsertReq
 	MessageInsertResp             = pb.MessageInsertResp
+	MessagePushReq                = pb.MessagePushReq
+	MessagePushResp               = pb.MessagePushResp
+	MessageSendReq                = pb.MessageSendReq
+	MessageSendResp               = pb.MessageSendResp
+	Message_Option                = pb.Message_Option
+	Message_Sender                = pb.Message_Sender
 	Notice                        = pb.Notice
 	NoticeBatchSendReq            = pb.NoticeBatchSendReq
 	NoticeBatchSendResp           = pb.NoticeBatchSendResp

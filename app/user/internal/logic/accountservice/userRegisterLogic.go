@@ -76,13 +76,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		}
 		if l.svcCtx.Config.Account.UsernameUnique {
 			//用户名上锁
-			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserUsernameLockKey(username), 5)
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserUsername(username), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_lock_error")),
 				}, nil
 			}
-			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserUsernameLockKey(username))
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserUsername(username))
 			//检查用户名是否已存在
 			found := &usermodel.User{}
 			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{
@@ -189,13 +189,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		}
 		if l.svcCtx.Config.Account.PhoneUnique {
 			//手机号上锁
-			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserPhoneLockKey(phone, phoneCode), 5)
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserPhone(phone, phoneCode), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_lock_error")),
 				}, nil
 			}
-			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserPhoneLockKey(phone, phoneCode))
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserPhone(phone, phoneCode))
 			//检查用户名是否已存在
 			found := &usermodel.User{}
 			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{
@@ -265,13 +265,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		}
 		if l.svcCtx.Config.Account.EmailUnique {
 			//手机号上锁
-			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.UserEmailLockKey(email), 5)
+			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserEmail(email), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_lock_error")),
 				}, nil
 			}
-			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.UserEmailLockKey(email))
+			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserEmail(email))
 			//检查用户名是否已存在
 			found := &usermodel.User{}
 			err = l.svcCtx.UserCollection.Find(l.ctx, bson.M{

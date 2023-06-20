@@ -55,3 +55,7 @@ func (x *FriendApplyHandleReq) SetHeader(header *RequestHeader) {
 func (x *ListNoticeReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *MessageBatchSendReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

@@ -25,6 +25,12 @@ type MessageServiceClient interface {
 	//MessageInsert 插入消息
 	//二次开发时，需要实现该接口
 	MessageInsert(ctx context.Context, in *MessageInsertReq, opts ...grpc.CallOption) (*MessageInsertResp, error)
+	//MessageSend 发送消息
+	MessageSend(ctx context.Context, in *MessageSendReq, opts ...grpc.CallOption) (*MessageSendResp, error)
+	//MessageBatchSend 批量发送消息
+	MessageBatchSend(ctx context.Context, in *MessageBatchSendReq, opts ...grpc.CallOption) (*MessageBatchSendResp, error)
+	//MessagePush 推送消息
+	MessagePush(ctx context.Context, in *MessagePushReq, opts ...grpc.CallOption) (*MessagePushResp, error)
 }
 
 type messageServiceClient struct {
@@ -44,6 +50,33 @@ func (c *messageServiceClient) MessageInsert(ctx context.Context, in *MessageIns
 	return out, nil
 }
 
+func (c *messageServiceClient) MessageSend(ctx context.Context, in *MessageSendReq, opts ...grpc.CallOption) (*MessageSendResp, error) {
+	out := new(MessageSendResp)
+	err := c.cc.Invoke(ctx, "/pb.messageService/MessageSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageServiceClient) MessageBatchSend(ctx context.Context, in *MessageBatchSendReq, opts ...grpc.CallOption) (*MessageBatchSendResp, error) {
+	out := new(MessageBatchSendResp)
+	err := c.cc.Invoke(ctx, "/pb.messageService/MessageBatchSend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messageServiceClient) MessagePush(ctx context.Context, in *MessagePushReq, opts ...grpc.CallOption) (*MessagePushResp, error) {
+	out := new(MessagePushResp)
+	err := c.cc.Invoke(ctx, "/pb.messageService/MessagePush", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MessageServiceServer is the server API for MessageService service.
 // All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
@@ -51,6 +84,12 @@ type MessageServiceServer interface {
 	//MessageInsert 插入消息
 	//二次开发时，需要实现该接口
 	MessageInsert(context.Context, *MessageInsertReq) (*MessageInsertResp, error)
+	//MessageSend 发送消息
+	MessageSend(context.Context, *MessageSendReq) (*MessageSendResp, error)
+	//MessageBatchSend 批量发送消息
+	MessageBatchSend(context.Context, *MessageBatchSendReq) (*MessageBatchSendResp, error)
+	//MessagePush 推送消息
+	MessagePush(context.Context, *MessagePushReq) (*MessagePushResp, error)
 	mustEmbedUnimplementedMessageServiceServer()
 }
 
@@ -60,6 +99,15 @@ type UnimplementedMessageServiceServer struct {
 
 func (UnimplementedMessageServiceServer) MessageInsert(context.Context, *MessageInsertReq) (*MessageInsertResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MessageInsert not implemented")
+}
+func (UnimplementedMessageServiceServer) MessageSend(context.Context, *MessageSendReq) (*MessageSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MessageSend not implemented")
+}
+func (UnimplementedMessageServiceServer) MessageBatchSend(context.Context, *MessageBatchSendReq) (*MessageBatchSendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MessageBatchSend not implemented")
+}
+func (UnimplementedMessageServiceServer) MessagePush(context.Context, *MessagePushReq) (*MessagePushResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MessagePush not implemented")
 }
 func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
@@ -92,6 +140,60 @@ func _MessageService_MessageInsert_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessageService_MessageSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageSendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).MessageSend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.messageService/MessageSend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).MessageSend(ctx, req.(*MessageSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageService_MessageBatchSend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessageBatchSendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).MessageBatchSend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.messageService/MessageBatchSend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).MessageBatchSend(ctx, req.(*MessageBatchSendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessageService_MessagePush_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MessagePushReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessageServiceServer).MessagePush(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.messageService/MessagePush",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessageServiceServer).MessagePush(ctx, req.(*MessagePushReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +204,18 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MessageInsert",
 			Handler:    _MessageService_MessageInsert_Handler,
+		},
+		{
+			MethodName: "MessageSend",
+			Handler:    _MessageService_MessageSend_Handler,
+		},
+		{
+			MethodName: "MessageBatchSend",
+			Handler:    _MessageService_MessageBatchSend_Handler,
+		},
+		{
+			MethodName: "MessagePush",
+			Handler:    _MessageService_MessagePush_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

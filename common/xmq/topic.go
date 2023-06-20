@@ -3,5 +3,6 @@ package xmq
 const (
 	TopicAfterRegister Topic = "user:afterRegister"
 
-	TopicNoticeBatchSend Topic = "notice:batchSend"
+	TopicMessageBatchSend Topic = "message:batchSend"
+	TopicNoticeBatchSend  Topic = "notice:batchSend"
 )

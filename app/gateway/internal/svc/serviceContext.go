@@ -4,6 +4,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
+	"github.com/cherish-chat/xxim-server/app/message/client/messageservice"
 	"github.com/cherish-chat/xxim-server/app/message/client/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/accountservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/callbackservice"
@@ -27,7 +28,8 @@ type ServiceContext struct {
 	//Conversation
 	FriendService friendservice.FriendService
 	//Message
-	NoticeService noticeservice.NoticeService
+	NoticeService  noticeservice.NoticeService
+	MessageService messageservice.MessageService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -55,6 +57,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		InfoService:     infoservice.NewInfoService(userClient),
 		FriendService:   friendservice.NewFriendService(conversationClient),
 		NoticeService:   noticeservice.NewNoticeService(messageClient),
+		MessageService:  messageservice.NewMessageService(messageClient),
 		Redis:           xcache.MustNewRedis(c.RedisConf),
 	}
 	return s

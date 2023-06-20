@@ -196,3 +196,24 @@ enum NoticeContentType {
   // 有新的好友请求
   NewFriendRequest = 0;
 }
+
+//MessageContentType 消息内容类型
+enum MessageContentType {
+  // 图文
+  Text = 0;
+  // Markdown
+  Markdown = 1;
+  // 图片
+  Image = 2;
+  // 语音
+  Voice = 3;
+  // 视频
+  Video = 4;
+
+  // 正在输入
+  Typing = 101;
+  // 已读
+  Read = 102;
+  // 撤回
+  Recall = 103;
+}

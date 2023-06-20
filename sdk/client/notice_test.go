@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conversation/subscriptionmodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"testing"
@@ -13,9 +14,9 @@ func TestHttpClient_ListNotice(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyResp, err := client.ListNotice(&pb.ListNoticeReq{
-		ConversationId:   "friend_notification",
+		ConversationId:   subscriptionmodel.ConversationIdFriendNotification,
 		ConversationType: pb.ConversationType_Subscription,
-		UpdateTimeGt:     0,
+		UpdateTimeGt:     1687105599171,
 		Limit:            100,
 	})
 	if err != nil {

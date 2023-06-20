@@ -216,6 +216,16 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			Do: svcCtx.NoticeService.ListNotice,
 		})
 	}
+	// message api
+	{
+		//MessageBatchSendReq MessageBatchSendResp
+		AddUnifiedRoute(svcCtx, "/v1/message/messageBatchSend", Route[*pb.MessageBatchSendReq, *pb.MessageBatchSendResp]{
+			NewRequest: func() *pb.MessageBatchSendReq {
+				return &pb.MessageBatchSendReq{}
+			},
+			Do: svcCtx.MessageService.MessageBatchSend,
+		})
+	}
 
 	// http
 	{

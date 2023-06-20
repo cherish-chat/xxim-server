@@ -86,7 +86,7 @@ func InitGroupModel(coll *qmgo.QmgoClient, rc *redis.Redis, minGroupId int) {
 		}
 	}
 	// 保存到redis
-	err = rc.Set(xcache.IncrKeyGroupId, utils.AnyString(group.GroupId))
+	err = rc.Set(xcache.RedisVal.IncrKeyGroupId, utils.AnyString(group.GroupId))
 	if err != nil {
 		logx.Errorf(`rc.Set(xcache.IncrKeyGroupId, utils.AnyString(group.GroupId)) error: %v`, err)
 		os.Exit(1)
@@ -96,7 +96,7 @@ func InitGroupModel(coll *qmgo.QmgoClient, rc *redis.Redis, minGroupId int) {
 
 func (x *xGroupModel) GenerateGroupId() int {
 	// 从redis中获取
-	groupId, err := x.rc.Incr(xcache.IncrKeyGroupId)
+	groupId, err := x.rc.Incr(xcache.RedisVal.IncrKeyGroupId)
 	if err != nil {
 		logx.Errorf("x.rc.Incr(xcache.IncrKeyGroupId) error: %v", err)
 		return 0

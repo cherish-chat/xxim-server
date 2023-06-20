@@ -37,6 +37,8 @@ type IClient interface {
 	FriendApplyHandle(req *pb.FriendApplyHandleReq) (resp *pb.FriendApplyHandleResp, err error)
 
 	ListNotice(req *pb.ListNoticeReq) (resp *pb.ListNoticeResp, err error)
+
+	MessageBatchSend(req *pb.MessageBatchSendReq) (resp *pb.MessageBatchSendResp, err error)
 }
 
 type HttpClient struct {
