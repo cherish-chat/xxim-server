@@ -1,6 +1,8 @@
 package pb
 
-import "strings"
+import (
+	"strings"
+)
 
 func (x EncodingProto) ContentType() string {
 	switch x {

@@ -4,17 +4,18 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/zeromicro/go-zero/core/mr"
 	"testing"
 	"time"
 )
 
 // MessageBatchSend 批量发送消息
 func TestHttpClient_MessageBatchSend(t *testing.T) {
-	client := getHttpClient(t, nil)
-	//client := getWsClient(t, nil)
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	var messages []*pb.Message
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 1; i++ {
 		messages = append(messages, generateMessageToFriend(&pb.Message_Sender{
 			Id:     "1",
 			Name:   "哈哈",
@@ -32,6 +33,36 @@ func TestHttpClient_MessageBatchSend(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(messageBatchSendResp))
+}
+
+// MessageBatchSend 压力测试
+func TestHttpClient_MessageBatchSend_Pressure(t *testing.T) {
+	var fs []func()
+	goroutineCount := 100
+	loopCount := 1000
+	client := getWsClient(t, nil)
+	time.Sleep(1 * time.Second)
+	message := generateMessageToFriend(&pb.Message_Sender{
+		Id:     "1",
+		Name:   "哈哈",
+		Avatar: "头像",
+		Extra:  "xx",
+	}, "2", "你好你好", map[string]string{
+		"platformSource": "Test",
+	})
+	for i := 0; i < goroutineCount; i++ {
+		fs = append(fs, func() {
+			for j := 0; j < loopCount; j++ {
+				_, _ = client.MessageBatchSend(&pb.MessageBatchSendReq{
+					Messages:     []*pb.Message{message},
+					DisableQueue: false,
+				})
+			}
+		})
+	}
+	t.Logf("开始时间: %s", time.Now().Format("2006-01-02 15:04:05.000"))
+	mr.FinishVoid(fs...)
+	t.Logf("结束时间: %s", time.Now().Format("2006-01-02 15:04:05.000"))
 }
 
 func generateMessageToFriend(

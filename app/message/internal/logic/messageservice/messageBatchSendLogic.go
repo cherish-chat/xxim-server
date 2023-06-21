@@ -50,9 +50,9 @@ func (l *MessageBatchSendLogic) MessageBatchSend(in *pb.MessageBatchSendReq) (*p
 			}))
 			if err != nil {
 				l.Errorf("produce message error: %v", err)
-				return nil, err
+				return &pb.MessageBatchSendResp{}, err
 			}
-			return nil, nil
+			return &pb.MessageBatchSendResp{}, nil
 		}
 	}
 
@@ -67,5 +67,5 @@ func (l *MessageBatchSendLogic) MessageBatchSend(in *pb.MessageBatchSendReq) (*p
 // validate 验证是否允许发送消息
 func (l *MessageBatchSendLogic) validate(in *pb.MessageBatchSendReq) (*pb.MessageBatchSendResp, error) {
 	// TODO: 验证是否允许发送消息
-	return nil, nil
+	return &pb.MessageBatchSendResp{}, nil
 }

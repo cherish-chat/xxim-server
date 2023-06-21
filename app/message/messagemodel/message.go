@@ -129,6 +129,7 @@ func (m *Message) ToPb() *pb.Message {
 			NeedDecrypt:      m.Option.NeedDecrypt,
 			CountUnread:      m.Option.CountUnread,
 		},
+		//ExtraMap: utils.Json.MarshalToString(extraMap),
 		ExtraMap: extraMap,
 	}
 }

@@ -1,6 +1,8 @@
 package pb
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
 	SingleChatConversationSeparator = "&"

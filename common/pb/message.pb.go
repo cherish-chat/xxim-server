@@ -714,7 +714,7 @@ type Notice struct {
 	//通知id 因为通知永远都是服务端发送给客户端的，所以通知id一定唯一。
 	NoticeId string `protobuf:"bytes,1,opt,name=NoticeId,proto3" json:"NoticeId"`
 	//发送到哪个会话
-	ConversationId string `protobuf:"bytes,2,opt,name=conversationId,proto3" json:"conversationId"` // 单聊: 那么该值为接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
+	ConversationId string `protobuf:"bytes,2,opt,name=conversationId,proto3" json:"conversationId"` // 单聊: 那么该值为发送者和接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
 	//会话类型
 	ConversationType ConversationType `protobuf:"varint,3,opt,name=conversationType,proto3,enum=pb.ConversationType" json:"conversationType"`
 	//通知内容

@@ -9,7 +9,6 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 	"strings"
@@ -18,9 +17,10 @@ import (
 func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	svcCtx *svc.ServiceContext,
 	ctx *gin.Context,
-	request REQ,
-	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
-) (*pb.GatewayApiResponse, error) {
+	route Route[REQ, RESP],
+) (REQ, *pb.GatewayApiResponse, error) {
+	request := route.RequestPool.NewRequest()
+	do := route.Do
 	// 请求体中的数据 反序列化到 request 中
 	contentType := ctx.ContentType()
 	encoding := pb.EncodingProto_PROTOBUF
@@ -30,14 +30,14 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		// json
 		err := ctx.ShouldBindJSON(apiRequest)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				Header: i18n.NewInvalidDataError(err.Error()),
 				Body:   nil,
 			}, err
 		}
 		err = utils.Json.Unmarshal(apiRequest.Body, request)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
@@ -52,7 +52,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		apiRequest := &pb.GatewayApiRequest{}
 		err := proto.Unmarshal(body, apiRequest)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
@@ -61,7 +61,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		}
 		err = proto.Unmarshal(apiRequest.Body, request)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
@@ -70,7 +70,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		}
 		request.SetHeader(apiRequest.Header)
 	} else {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Header:    i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf"),
@@ -79,7 +79,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	}
 	requestHeader := request.GetHeader()
 	if requestHeader == nil {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Header:    i18n.NewInvalidDataError("invalid request header"),
@@ -96,7 +96,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		Path:   apiRequest.Path,
 	})
 	if err != nil {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
@@ -110,7 +110,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	if len(body) > 0 {
 		responseHeader := userBeforeRequestResp.GetHeader()
 		if responseHeader != nil && responseHeader.Code != pb.ResponseCode_SUCCESS {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
@@ -153,7 +153,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			}
 		}
 	}
-	return result, err
+	return request, result, err
 }
 
 func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
@@ -161,16 +161,17 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 	ctx context.Context,
 	connection *gatewayservicelogic.WsConnection,
 	apiRequest *pb.GatewayApiRequest,
-	request REQ,
-	do func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error),
-) (*pb.GatewayApiResponse, error) {
+	route Route[REQ, RESP],
+) (REQ, *pb.GatewayApiResponse, error) {
+	request := route.RequestPool.NewRequest()
+	do := route.Do
 	// 请求体中的数据 反序列化到 request 中
 	// 判断是json还是protobuf
 	requestHeader := apiRequest.Header
 	if requestHeader.Encoding == pb.EncodingProto_JSON {
 		err := utils.Json.Unmarshal(apiRequest.Body, request)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
@@ -180,7 +181,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 	} else if requestHeader.Encoding == pb.EncodingProto_PROTOBUF {
 		err := proto.Unmarshal(apiRequest.Body, request)
 		if err != nil {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
@@ -188,14 +189,14 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			}, err
 		}
 	} else {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			Header: i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf"),
 			Body:   nil,
 		}, nil
 	}
 	request.SetHeader(requestHeader)
 	if requestHeader == nil {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			Header:    i18n.NewInvalidDataError("invalid request header"),
 			Body:      nil,
 			RequestId: apiRequest.RequestId,
@@ -209,7 +210,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 		Path:   apiRequest.Path,
 	})
 	if err != nil {
-		return &pb.GatewayApiResponse{
+		return request, &pb.GatewayApiResponse{
 			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
@@ -223,7 +224,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 	if len(body) > 0 {
 		responseHeader := userBeforeRequestResp.GetHeader()
 		if responseHeader != nil && responseHeader.Code != pb.ResponseCode_SUCCESS {
-			return &pb.GatewayApiResponse{
+			return request, &pb.GatewayApiResponse{
 				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
@@ -231,7 +232,6 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			}, nil
 		}
 	}
-
 	response, err := do(ctx, request)
 	body, _ = proto.Marshal(response)
 	if len(body) > 0 {
@@ -266,7 +266,7 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			}
 		}
 	}
-	return result, err
+	return request, result, err
 }
 
 func MarshalResponse(requestHeader *pb.RequestHeader, data proto.Message) []byte {

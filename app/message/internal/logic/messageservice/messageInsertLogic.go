@@ -54,6 +54,9 @@ func loopInsertMsgList(svcCtx *svc.ServiceContext) {
 			if len(msgDataList) == 0 {
 				continue
 			}
+			if len(msgDataList) > 1 {
+				logx.Infof("SendMsgListSyncLogic.SendMsgListSync msgDataList.len: %d", len(msgDataList))
+			}
 			_, err := insertMsgList(svcCtx, &pb.MessageInsertReq{
 				Messages: msgDataList,
 			})
@@ -128,11 +131,13 @@ func insertMsgList(svcCtx *svc.ServiceContext, in *pb.MessageInsertReq) (*pb.Mes
 		}
 	}
 
-	_, err := NewMessagePushLogic(ctx, svcCtx).MessagePush(&pb.MessagePushReq{
-		Header:  in.Header,
-		Message: newMessages,
-	})
-	return &pb.MessageInsertResp{}, err
+	go func() {
+		_, _ = NewMessagePushLogic(ctx, svcCtx).MessagePush(&pb.MessagePushReq{
+			Header:  in.Header,
+			Message: newMessages,
+		})
+	}()
+	return &pb.MessageInsertResp{}, nil
 }
 
 // MessageInsert 插入消息
