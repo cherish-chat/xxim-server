@@ -233,6 +233,16 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			Do: svcCtx.FriendService.FriendApplyHandle,
 		})
 	}
+	// group api
+	{
+		//GroupCreateReq GroupCreateResp
+		AddUnifiedRoute(svcCtx, "/v1/group/groupCreate", Route[*pb.GroupCreateReq, *pb.GroupCreateResp]{
+			RequestPool: NewRequestPool(func() *pb.GroupCreateReq {
+				return &pb.GroupCreateReq{}
+			}),
+			Do: svcCtx.GroupService.GroupCreate,
+		})
+	}
 	// notice api
 	{
 		//ListNoticeReq ListNoticeResp

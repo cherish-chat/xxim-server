@@ -15,6 +15,12 @@ import (
 type (
 	ConversationSettingUpdateReq    = pb.ConversationSettingUpdateReq
 	ConversationSettingUpdateResp   = pb.ConversationSettingUpdateResp
+	CountCreateGroupReq             = pb.CountCreateGroupReq
+	CountCreateGroupResp            = pb.CountCreateGroupResp
+	CountFriendReq                  = pb.CountFriendReq
+	CountFriendResp                 = pb.CountFriendResp
+	CountJoinGroupReq               = pb.CountJoinGroupReq
+	CountJoinGroupResp              = pb.CountJoinGroupResp
 	FriendApplyHandleReq            = pb.FriendApplyHandleReq
 	FriendApplyHandleResp           = pb.FriendApplyHandleResp
 	FriendApplyReq                  = pb.FriendApplyReq

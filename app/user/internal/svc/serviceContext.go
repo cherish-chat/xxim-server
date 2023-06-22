@@ -1,6 +1,8 @@
 package svc
 
 import (
+	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
+	"github.com/cherish-chat/xxim-server/app/conversation/client/groupservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/captchaservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/emailservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/smsservice"
@@ -29,6 +31,8 @@ type ServiceContext struct {
 	SmsService     smsservice.SmsService
 	EmailService   emailservice.EmailService
 	CaptchaService captchaservice.CaptchaService
+	FriendService  friendservice.FriendService
+	GroupService   groupservice.GroupService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -49,6 +53,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		s.SmsService = smsservice.NewSmsService(thirdClient)
 		s.EmailService = emailservice.NewEmailService(thirdClient)
 		s.CaptchaService = captchaservice.NewCaptchaService(thirdClient)
+	}
+	// conversation rpc
+	{
+		conversationClient := zrpc.MustNewClient(
+			c.RpcClientConf.Conversation,
+			zrpc.WithNonBlock(),
+			zrpc.WithTimeout(time.Duration(c.Timeout)*time.Millisecond),
+		)
+		s.FriendService = friendservice.NewFriendService(conversationClient)
+		s.GroupService = groupservice.NewGroupService(conversationClient)
 	}
 
 	s.MQ = xmq.NewAsynq(s.Config.RedisConf, 1, s.Config.Log.Level)

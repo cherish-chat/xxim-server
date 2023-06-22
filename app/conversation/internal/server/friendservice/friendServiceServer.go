@@ -39,3 +39,9 @@ func (s *FriendServiceServer) ListFriendApply(ctx context.Context, in *pb.ListFr
 	l := friendservicelogic.NewListFriendApplyLogic(ctx, s.svcCtx)
 	return l.ListFriendApply(in)
 }
+
+// CountFriend 统计好友数量
+func (s *FriendServiceServer) CountFriend(ctx context.Context, in *pb.CountFriendReq) (*pb.CountFriendResp, error) {
+	l := friendservicelogic.NewCountFriendLogic(ctx, s.svcCtx)
+	return l.CountFriend(in)
+}

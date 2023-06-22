@@ -15,6 +15,12 @@ import (
 type (
 	ConversationSettingUpdateReq    = pb.ConversationSettingUpdateReq
 	ConversationSettingUpdateResp   = pb.ConversationSettingUpdateResp
+	CountCreateGroupReq             = pb.CountCreateGroupReq
+	CountCreateGroupResp            = pb.CountCreateGroupResp
+	CountFriendReq                  = pb.CountFriendReq
+	CountFriendResp                 = pb.CountFriendResp
+	CountJoinGroupReq               = pb.CountJoinGroupReq
+	CountJoinGroupResp              = pb.CountJoinGroupResp
 	FriendApplyHandleReq            = pb.FriendApplyHandleReq
 	FriendApplyHandleResp           = pb.FriendApplyHandleResp
 	FriendApplyReq                  = pb.FriendApplyReq
@@ -34,6 +40,8 @@ type (
 		FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error)
 		// ListFriendApply 列出好友申请
 		ListFriendApply(ctx context.Context, in *ListFriendApplyReq, opts ...grpc.CallOption) (*ListFriendApplyResp, error)
+		// CountFriend 统计好友数量
+		CountFriend(ctx context.Context, in *CountFriendReq, opts ...grpc.CallOption) (*CountFriendResp, error)
 	}
 
 	defaultFriendService struct {
@@ -63,4 +71,10 @@ func (m *defaultFriendService) FriendApplyHandle(ctx context.Context, in *Friend
 func (m *defaultFriendService) ListFriendApply(ctx context.Context, in *ListFriendApplyReq, opts ...grpc.CallOption) (*ListFriendApplyResp, error) {
 	client := pb.NewFriendServiceClient(m.cli.Conn())
 	return client.ListFriendApply(ctx, in, opts...)
+}
+
+// CountFriend 统计好友数量
+func (m *defaultFriendService) CountFriend(ctx context.Context, in *CountFriendReq, opts ...grpc.CallOption) (*CountFriendResp, error) {
+	client := pb.NewFriendServiceClient(m.cli.Conn())
+	return client.CountFriend(ctx, in, opts...)
 }

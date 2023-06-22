@@ -111,7 +111,7 @@ func (l *FriendApplyLogic) FriendApply(in *pb.FriendApplyReq) (*pb.FriendApplyRe
 	}
 	//跳过申请
 	if skipApply {
-		err = NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AddFriend(fromUserInfo.UserId, toUserInfo.UserId)
+		err = NewFriendApplyHandleLogic(l.ctx, l.svcCtx).AddFriend(fromUserInfo.UserId, toUserInfo)
 		return &pb.FriendApplyResp{}, err
 	}
 

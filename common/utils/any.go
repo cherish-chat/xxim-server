@@ -29,6 +29,30 @@ func AnyInSlice[T AnyInSliceType](v T, slice []T) bool {
 	return false
 }
 
+func AnySet[T AnyInSliceType](list []T) []T {
+	// 去重
+	set := make(map[T]int)
+	for i, item := range list {
+		_, ok := set[item]
+		if !ok {
+			set[item] = i
+		}
+	}
+	result := make([]T, 0)
+	for item, _ := range set {
+		result = append(result, item)
+	}
+	//排序 根据 set[item] 的值
+	for i := 0; i < len(result); i++ {
+		for j := i + 1; j < len(result); j++ {
+			if set[result[i]] > set[result[j]] {
+				result[i], result[j] = result[j], result[i]
+			}
+		}
+	}
+	return result
+}
+
 func AnyString(o any) string {
 	switch v := o.(type) {
 	case string:

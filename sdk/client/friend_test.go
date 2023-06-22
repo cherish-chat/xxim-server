@@ -13,7 +13,7 @@ func TestHttpClient_FriendApply(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyResp, err := client.FriendApply(&pb.FriendApplyReq{
-		ToUserId: "1",
+		ToUserId: "2",
 	})
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -48,7 +48,7 @@ func TestHttpClient_FriendApplyHandle(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyHandleResp, err := client.FriendApplyHandle(&pb.FriendApplyHandleReq{
-		ApplyId:      "df59b28d9e45bd5fcdf1aa3b3dac85cd",
+		ApplyId:      "4d35f233b59136d7280656f677e43fe5",
 		Agree:        true,
 		FirstMessage: nil,
 	})

@@ -15,6 +15,12 @@ import (
 type (
 	ConversationSettingUpdateReq    = pb.ConversationSettingUpdateReq
 	ConversationSettingUpdateResp   = pb.ConversationSettingUpdateResp
+	CountCreateGroupReq             = pb.CountCreateGroupReq
+	CountCreateGroupResp            = pb.CountCreateGroupResp
+	CountFriendReq                  = pb.CountFriendReq
+	CountFriendResp                 = pb.CountFriendResp
+	CountJoinGroupReq               = pb.CountJoinGroupReq
+	CountJoinGroupResp              = pb.CountJoinGroupResp
 	FriendApplyHandleReq            = pb.FriendApplyHandleReq
 	FriendApplyHandleResp           = pb.FriendApplyHandleResp
 	FriendApplyReq                  = pb.FriendApplyReq
@@ -30,6 +36,10 @@ type (
 	GroupService interface {
 		// GroupCreate 创建群组
 		GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error)
+		// CountJoinGroup 统计加入的群组数量
+		CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error)
+		// CountCreateGroup 统计创建的群组数量
+		CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error)
 	}
 
 	defaultGroupService struct {
@@ -47,4 +57,16 @@ func NewGroupService(cli zrpc.Client) GroupService {
 func (m *defaultGroupService) GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.GroupCreate(ctx, in, opts...)
+}
+
+// CountJoinGroup 统计加入的群组数量
+func (m *defaultGroupService) CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.CountJoinGroup(ctx, in, opts...)
+}
+
+// CountCreateGroup 统计创建的群组数量
+func (m *defaultGroupService) CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.CountCreateGroup(ctx, in, opts...)
 }

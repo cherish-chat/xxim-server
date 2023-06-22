@@ -22,6 +22,9 @@ type (
 	GetUserModelByIdReq        = pb.GetUserModelByIdReq
 	GetUserModelByIdReq_Opt    = pb.GetUserModelByIdReq_Opt
 	GetUserModelByIdResp       = pb.GetUserModelByIdResp
+	GetUserModelByIdsReq       = pb.GetUserModelByIdsReq
+	GetUserModelByIdsReq_Opt   = pb.GetUserModelByIdsReq_Opt
+	GetUserModelByIdsResp      = pb.GetUserModelByIdsResp
 	RefreshUserAccessTokenReq  = pb.RefreshUserAccessTokenReq
 	RefreshUserAccessTokenResp = pb.RefreshUserAccessTokenResp
 	ResetUserAccountMapReq     = pb.ResetUserAccountMapReq
@@ -30,6 +33,8 @@ type (
 	RevokeUserAccessTokenResp  = pb.RevokeUserAccessTokenResp
 	UpdateUserAccountMapReq    = pb.UpdateUserAccountMapReq
 	UpdateUserAccountMapResp   = pb.UpdateUserAccountMapResp
+	UpdateUserCountMapReq      = pb.UpdateUserCountMapReq
+	UpdateUserCountMapResp     = pb.UpdateUserCountMapResp
 	UpdateUserExtraMapReq      = pb.UpdateUserExtraMapReq
 	UpdateUserExtraMapResp     = pb.UpdateUserExtraMapResp
 	UpdateUserProfileMapReq    = pb.UpdateUserProfileMapReq

@@ -2,6 +2,7 @@ package accountservicelogic
 
 import (
 	"context"
+	"fmt"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -10,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"net/url"
 	"time"
 
 	"github.com/cherish-chat/xxim-server/app/user/internal/svc"
@@ -298,6 +300,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "nickname_required")),
 				}, nil
+			} else {
+				switch l.svcCtx.Config.Account.Register.DefaultNicknameRule {
+				case "random":
+					user.Nickname = fmt.Sprintf("%s%d", l.svcCtx.Config.Account.Register.RandomNicknamePrefix, utils.Random.Int(4))
+				case "fixed":
+					user.Nickname = l.svcCtx.Config.Account.Register.FixedNickname
+				}
 			}
 		} else {
 			user.Nickname = *in.Nickname
@@ -308,6 +317,15 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 				return &pb.UserRegisterResp{
 					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "avatar_required")),
 				}, nil
+			} else {
+				switch l.svcCtx.Config.Account.Register.DefaultAvatarRule {
+				case "byName":
+					//根据昵称生成
+					user.Avatar = fmt.Sprintf("/image/generateAvatar?text=%s&w=200&h=200&bg=%s&fg=%s", url.QueryEscape(user.Nickname), utils.Random.SliceString(l.svcCtx.Config.Account.Register.ByNameAvatarBgColors), utils.Random.SliceString(l.svcCtx.Config.Account.Register.ByNameAvatarFgColors))
+				case "fixed":
+					//固定
+					user.Avatar = l.svcCtx.Config.Account.Register.FixedAvatar
+				}
 			}
 		} else {
 			user.Avatar = *in.Avatar

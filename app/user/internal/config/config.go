@@ -49,8 +49,22 @@ type Config struct {
 			RequirePassword bool `json:",optional"`
 			// 是否必填nickname
 			RequireNickname bool `json:",optional"`
+			// 默认昵称规则
+			DefaultNicknameRule string `json:",options=random|fixed"` // random:随机生成，fixed:固定昵称
+			//FixedNickname 固定昵称
+			FixedNickname string `json:",default=用户"` // 固定昵称 只有DefaultNicknameRule=fixed时有效
+			//RandomNicknamePrefix 随机昵称前缀
+			RandomNicknamePrefix string `json:",default=用户"` // 随机昵称前缀 只有DefaultNicknameRule=random时有效
 			// 是否必填avatar
 			RequireAvatar bool `json:",optional"`
+			//默认头像规则
+			DefaultAvatarRule string `json:",options=byName|fixed"` // byName:根据昵称生成，fixed:固定头像
+			//ByNameAvatarBgColors 根据昵称生成头像的背景颜色 ex: ["#ffffff","#000000"]
+			ByNameAvatarBgColors []string
+			//ByNameAvatarFgColors 根据昵称生成头像的字体颜色 ex: ["#ffffff","#000000"]
+			ByNameAvatarFgColors []string
+			//FixedAvatar 固定头像
+			FixedAvatar string `json:",default=group_avatar.png"` // 固定头像 只有DefaultAvatarRule=fixed时有效
 			// 是否必须绑定手机号
 			RequireBindPhone bool `json:",optional"`
 			// 是否必须绑定邮箱

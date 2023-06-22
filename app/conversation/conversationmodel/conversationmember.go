@@ -1,14 +1,17 @@
 package conversationmodel
 
 import (
+	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/qiniu/qmgo"
 	opts "github.com/qiniu/qmgo/options"
 	"github.com/zeromicro/go-zero/core/stores/redis"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ValueType int8
-type ConversationType int8
+type ConversationType = pb.ConversationType
 
 const (
 	// ValueTypeString 字符串
@@ -48,11 +51,11 @@ type ConversationMember struct {
 	// ConversationType 会话类型
 	ConversationType ConversationType `json:"conversationType"`
 	// MemberUserId 群成员ID
-	MemberUserId int `bson:"memberUserId"`
+	MemberUserId string `bson:"memberUserId"`
 	// JoinTime 加入时间
-	JoinTime int `bson:"joinTime"`
+	JoinTime primitive.DateTime `bson:"joinTime"`
 	// JoinSource 加入来源
-	JoinSource string `bson:"joinSource"`
+	JoinSource bson.M `bson:"joinSource,omitempty"`
 	// Settings 群成员设置
 	Settings []*ConversationSetting ` bson:"settings"`
 }

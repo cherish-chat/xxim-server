@@ -9,16 +9,16 @@ import (
 
 // UserRegister 注册用户
 func TestHttpClient_UserRegister(t *testing.T) {
-	userId := "3"
-	phone := "13600000003"
+	userId := "9"
+	phone := "13600000009"
 	client := getHttpClient(t, nil)
 	time.Sleep(1 * time.Second)
 	userRegisterResp, err := client.(*HttpClient).UserRegister(&pb.UserRegisterReq{
 		Header:       &pb.RequestHeader{},
 		UserId:       userId,
 		RegisterTime: nil,
-		Nickname:     utils.AnyPtr("用户" + userId),
-		Avatar:       utils.AnyPtr("https://www.baidu.com"),
+		//Nickname:     utils.AnyPtr("用户" + userId),
+		//Avatar:       utils.AnyPtr("https://www.baidu.com"),
 		AccountMap: map[string]string{
 			pb.AccountTypeUsername:     "user" + userId,
 			pb.AccountTypePassword:     utils.Md5("123456"),
@@ -53,7 +53,7 @@ func TestHttpClient_UserAccessToken(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	userAccessTokenResp, err := client.(*HttpClient).UserAccessToken(&pb.UserAccessTokenReq{
 		AccountMap: map[string]string{
-			pb.AccountTypeUsername: "user1",
+			pb.AccountTypeUsername: "user4",
 			pb.AccountTypePassword: utils.Md5("123456"),
 		},
 		VerifyMap:  nil,

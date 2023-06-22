@@ -36,7 +36,7 @@ type User struct {
 	// DestroyTime 注销时间
 	DestroyTime primitive.DateTime `bson:"destroyTime,omitempty" json:"destroyTime,omitempty"`
 	// AccountMap 账户object
-	AccountMap bson.M `bson:"accountMap" json:"accountMap"`
+	AccountMap bson.M `bson:"accountMap,omitempty" json:"accountMap"`
 
 	// 基本信息
 	// Nickname 昵称
@@ -44,10 +44,12 @@ type User struct {
 	// Avatar 头像
 	Avatar string `bson:"avatar" json:"avatar"`
 	// ProfileMap 个人资料
-	ProfileMap bson.M `bson:"profileMap" json:"profileMap"`
+	ProfileMap bson.M `bson:"profileMap,omitempty" json:"profileMap"`
+	// CountMap 计数信息
+	CountMap bson.M `bson:"countMap,omitempty" json:"countMap"`
 
 	// ExtraMap 扩展信息
-	ExtraMap bson.M `bson:"extraMap" json:"extraMap"`
+	ExtraMap bson.M `bson:"extraMap,omitempty" json:"extraMap"`
 }
 
 func (m *User) GetIndexes() []opts.IndexModel {
@@ -77,6 +79,32 @@ func (m *User) GetIndexes() []opts.IndexModel {
 
 func (m *User) GetAccountMap() utils.SSM {
 	return utils.NewSSMFromBsonM(m.AccountMap)
+}
+
+type UserCountMap struct {
+	// FriendCount 好友数量
+	FriendCount int64
+	// JoinGroupCount 加入群组数量
+	JoinGroupCount int64
+	// CreateGroupCount 创建群组数量
+	CreateGroupCount int64
+}
+
+func (m *User) GetCountMap() UserCountMap {
+	countMap := UserCountMap{}
+	c, ok := m.CountMap[pb.UpdateUserCountMapReq_friendCount.String()]
+	if ok {
+		countMap.FriendCount = utils.Number.Any2Int64(c)
+	}
+	c, ok = m.CountMap[pb.UpdateUserCountMapReq_joinGroupCount.String()]
+	if ok {
+		countMap.JoinGroupCount = utils.Number.Any2Int64(c)
+	}
+	c, ok = m.CountMap[pb.UpdateUserCountMapReq_createGroupCount.String()]
+	if ok {
+		countMap.CreateGroupCount = utils.Number.Any2Int64(c)
+	}
+	return countMap
 }
 
 type xUserModel struct {

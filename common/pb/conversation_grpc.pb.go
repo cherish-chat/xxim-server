@@ -24,6 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 type GroupServiceClient interface {
 	//GroupCreate 创建群组
 	GroupCreate(ctx context.Context, in *GroupCreateReq, opts ...grpc.CallOption) (*GroupCreateResp, error)
+	//CountJoinGroup 统计加入的群组数量
+	CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error)
+	//CountCreateGroup 统计创建的群组数量
+	CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error)
 }
 
 type groupServiceClient struct {
@@ -43,12 +47,34 @@ func (c *groupServiceClient) GroupCreate(ctx context.Context, in *GroupCreateReq
 	return out, nil
 }
 
+func (c *groupServiceClient) CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error) {
+	out := new(CountJoinGroupResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/CountJoinGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error) {
+	out := new(CountCreateGroupResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/CountCreateGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
 type GroupServiceServer interface {
 	//GroupCreate 创建群组
 	GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error)
+	//CountJoinGroup 统计加入的群组数量
+	CountJoinGroup(context.Context, *CountJoinGroupReq) (*CountJoinGroupResp, error)
+	//CountCreateGroup 统计创建的群组数量
+	CountCreateGroup(context.Context, *CountCreateGroupReq) (*CountCreateGroupResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -58,6 +84,12 @@ type UnimplementedGroupServiceServer struct {
 
 func (UnimplementedGroupServiceServer) GroupCreate(context.Context, *GroupCreateReq) (*GroupCreateResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GroupCreate not implemented")
+}
+func (UnimplementedGroupServiceServer) CountJoinGroup(context.Context, *CountJoinGroupReq) (*CountJoinGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountJoinGroup not implemented")
+}
+func (UnimplementedGroupServiceServer) CountCreateGroup(context.Context, *CountCreateGroupReq) (*CountCreateGroupResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountCreateGroup not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -90,6 +122,42 @@ func _GroupService_GroupCreate_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_CountJoinGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountJoinGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).CountJoinGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/CountJoinGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).CountJoinGroup(ctx, req.(*CountJoinGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_CountCreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountCreateGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).CountCreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/CountCreateGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).CountCreateGroup(ctx, req.(*CountCreateGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +168,14 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GroupCreate",
 			Handler:    _GroupService_GroupCreate_Handler,
+		},
+		{
+			MethodName: "CountJoinGroup",
+			Handler:    _GroupService_CountJoinGroup_Handler,
+		},
+		{
+			MethodName: "CountCreateGroup",
+			Handler:    _GroupService_CountCreateGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -116,6 +192,8 @@ type FriendServiceClient interface {
 	FriendApplyHandle(ctx context.Context, in *FriendApplyHandleReq, opts ...grpc.CallOption) (*FriendApplyHandleResp, error)
 	//ListFriendApply 列出好友申请
 	ListFriendApply(ctx context.Context, in *ListFriendApplyReq, opts ...grpc.CallOption) (*ListFriendApplyResp, error)
+	//CountFriend 统计好友数量
+	CountFriend(ctx context.Context, in *CountFriendReq, opts ...grpc.CallOption) (*CountFriendResp, error)
 }
 
 type friendServiceClient struct {
@@ -153,6 +231,15 @@ func (c *friendServiceClient) ListFriendApply(ctx context.Context, in *ListFrien
 	return out, nil
 }
 
+func (c *friendServiceClient) CountFriend(ctx context.Context, in *CountFriendReq, opts ...grpc.CallOption) (*CountFriendResp, error) {
+	out := new(CountFriendResp)
+	err := c.cc.Invoke(ctx, "/pb.friendService/CountFriend", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FriendServiceServer is the server API for FriendService service.
 // All implementations must embed UnimplementedFriendServiceServer
 // for forward compatibility
@@ -163,6 +250,8 @@ type FriendServiceServer interface {
 	FriendApplyHandle(context.Context, *FriendApplyHandleReq) (*FriendApplyHandleResp, error)
 	//ListFriendApply 列出好友申请
 	ListFriendApply(context.Context, *ListFriendApplyReq) (*ListFriendApplyResp, error)
+	//CountFriend 统计好友数量
+	CountFriend(context.Context, *CountFriendReq) (*CountFriendResp, error)
 	mustEmbedUnimplementedFriendServiceServer()
 }
 
@@ -178,6 +267,9 @@ func (UnimplementedFriendServiceServer) FriendApplyHandle(context.Context, *Frie
 }
 func (UnimplementedFriendServiceServer) ListFriendApply(context.Context, *ListFriendApplyReq) (*ListFriendApplyResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFriendApply not implemented")
+}
+func (UnimplementedFriendServiceServer) CountFriend(context.Context, *CountFriendReq) (*CountFriendResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CountFriend not implemented")
 }
 func (UnimplementedFriendServiceServer) mustEmbedUnimplementedFriendServiceServer() {}
 
@@ -246,6 +338,24 @@ func _FriendService_ListFriendApply_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FriendService_CountFriend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CountFriendReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FriendServiceServer).CountFriend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.friendService/CountFriend",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FriendServiceServer).CountFriend(ctx, req.(*CountFriendReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FriendService_ServiceDesc is the grpc.ServiceDesc for FriendService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -264,6 +374,10 @@ var FriendService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFriendApply",
 			Handler:    _FriendService_ListFriendApply_Handler,
+		},
+		{
+			MethodName: "CountFriend",
+			Handler:    _FriendService_CountFriend_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

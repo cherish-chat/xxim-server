@@ -34,6 +34,12 @@ func (s *InfoServiceServer) UpdateUserExtraMap(ctx context.Context, in *pb.Updat
 	return l.UpdateUserExtraMap(in)
 }
 
+// UpdateUserCountMap 更新用户计数信息
+func (s *InfoServiceServer) UpdateUserCountMap(ctx context.Context, in *pb.UpdateUserCountMapReq) (*pb.UpdateUserCountMapResp, error) {
+	l := infoservicelogic.NewUpdateUserCountMapLogic(ctx, s.svcCtx)
+	return l.UpdateUserCountMap(in)
+}
+
 // GetSelfUserInfo 获取自己的用户信息
 func (s *InfoServiceServer) GetSelfUserInfo(ctx context.Context, in *pb.GetSelfUserInfoReq) (*pb.GetSelfUserInfoResp, error) {
 	l := infoservicelogic.NewGetSelfUserInfoLogic(ctx, s.svcCtx)
@@ -50,4 +56,10 @@ func (s *InfoServiceServer) GetUserInfo(ctx context.Context, in *pb.GetUserInfoR
 func (s *InfoServiceServer) GetUserModelById(ctx context.Context, in *pb.GetUserModelByIdReq) (*pb.GetUserModelByIdResp, error) {
 	l := infoservicelogic.NewGetUserModelByIdLogic(ctx, s.svcCtx)
 	return l.GetUserModelById(in)
+}
+
+// GetUserModelByIds 批量获取用户模型
+func (s *InfoServiceServer) GetUserModelByIds(ctx context.Context, in *pb.GetUserModelByIdsReq) (*pb.GetUserModelByIdsResp, error) {
+	l := infoservicelogic.NewGetUserModelByIdsLogic(ctx, s.svcCtx)
+	return l.GetUserModelByIds(in)
 }

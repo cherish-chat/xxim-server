@@ -22,6 +22,9 @@ type (
 	GetUserModelByIdReq        = pb.GetUserModelByIdReq
 	GetUserModelByIdReq_Opt    = pb.GetUserModelByIdReq_Opt
 	GetUserModelByIdResp       = pb.GetUserModelByIdResp
+	GetUserModelByIdsReq       = pb.GetUserModelByIdsReq
+	GetUserModelByIdsReq_Opt   = pb.GetUserModelByIdsReq_Opt
+	GetUserModelByIdsResp      = pb.GetUserModelByIdsResp
 	RefreshUserAccessTokenReq  = pb.RefreshUserAccessTokenReq
 	RefreshUserAccessTokenResp = pb.RefreshUserAccessTokenResp
 	ResetUserAccountMapReq     = pb.ResetUserAccountMapReq
@@ -30,6 +33,8 @@ type (
 	RevokeUserAccessTokenResp  = pb.RevokeUserAccessTokenResp
 	UpdateUserAccountMapReq    = pb.UpdateUserAccountMapReq
 	UpdateUserAccountMapResp   = pb.UpdateUserAccountMapResp
+	UpdateUserCountMapReq      = pb.UpdateUserCountMapReq
+	UpdateUserCountMapResp     = pb.UpdateUserCountMapResp
 	UpdateUserExtraMapReq      = pb.UpdateUserExtraMapReq
 	UpdateUserExtraMapResp     = pb.UpdateUserExtraMapResp
 	UpdateUserProfileMapReq    = pb.UpdateUserProfileMapReq
@@ -54,12 +59,16 @@ type (
 		UpdateUserProfileMap(ctx context.Context, in *UpdateUserProfileMapReq, opts ...grpc.CallOption) (*UpdateUserProfileMapResp, error)
 		// UpdateUserExtraMap 更新用户扩展信息
 		UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error)
+		// UpdateUserCountMap 更新用户计数信息
+		UpdateUserCountMap(ctx context.Context, in *UpdateUserCountMapReq, opts ...grpc.CallOption) (*UpdateUserCountMapResp, error)
 		// GetSelfUserInfo 获取自己的用户信息
 		GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error)
 		// GetUserInfo 获取用户信息
 		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		// GetUserModelById 获取用户模型
 		GetUserModelById(ctx context.Context, in *GetUserModelByIdReq, opts ...grpc.CallOption) (*GetUserModelByIdResp, error)
+		// GetUserModelByIds 批量获取用户模型
+		GetUserModelByIds(ctx context.Context, in *GetUserModelByIdsReq, opts ...grpc.CallOption) (*GetUserModelByIdsResp, error)
 	}
 
 	defaultInfoService struct {
@@ -85,6 +94,12 @@ func (m *defaultInfoService) UpdateUserExtraMap(ctx context.Context, in *UpdateU
 	return client.UpdateUserExtraMap(ctx, in, opts...)
 }
 
+// UpdateUserCountMap 更新用户计数信息
+func (m *defaultInfoService) UpdateUserCountMap(ctx context.Context, in *UpdateUserCountMapReq, opts ...grpc.CallOption) (*UpdateUserCountMapResp, error) {
+	client := pb.NewInfoServiceClient(m.cli.Conn())
+	return client.UpdateUserCountMap(ctx, in, opts...)
+}
+
 // GetSelfUserInfo 获取自己的用户信息
 func (m *defaultInfoService) GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error) {
 	client := pb.NewInfoServiceClient(m.cli.Conn())
@@ -101,4 +116,10 @@ func (m *defaultInfoService) GetUserInfo(ctx context.Context, in *GetUserInfoReq
 func (m *defaultInfoService) GetUserModelById(ctx context.Context, in *GetUserModelByIdReq, opts ...grpc.CallOption) (*GetUserModelByIdResp, error) {
 	client := pb.NewInfoServiceClient(m.cli.Conn())
 	return client.GetUserModelById(ctx, in, opts...)
+}
+
+// GetUserModelByIds 批量获取用户模型
+func (m *defaultInfoService) GetUserModelByIds(ctx context.Context, in *GetUserModelByIdsReq, opts ...grpc.CallOption) (*GetUserModelByIdsResp, error) {
+	client := pb.NewInfoServiceClient(m.cli.Conn())
+	return client.GetUserModelByIds(ctx, in, opts...)
 }

@@ -35,7 +35,7 @@ type Subscription struct {
 	// 封面
 	Cover string `bson:"cover" json:"cover"`
 	// 扩展字段
-	Extra bson.M `bson:"extra" json:"extra"`
+	ExtraMap bson.M `bson:"extraMap,omitempty" json:"extraMap"`
 }
 
 func (m *Subscription) GetIndexes() []opts.IndexModel {

@@ -120,6 +120,34 @@ message UpdateUserExtraMapResp {
   ResponseHeader header = 1;
 }
 
+//UpdateUserCountMapReq 更新用户计数信息请求
+message UpdateUserCountMapReq {
+  RequestHeader header = 1;
+
+  enum CountType {
+    friendCount = 0; // 好友数量
+    joinGroupCount = 1; // 加入群数量
+    createGroupCount = 2; // 创建群数量
+  }
+  CountType countType = 2;
+
+  enum Algorithm {
+    add = 0; // 加
+    sub = 1; // 减
+    fixed = 2; // 固定
+  }
+  Algorithm algorithm = 3;
+  int64 count = 4;
+
+  //是否统计 统计后同步到数据库
+  bool statistics = 5;
+}
+
+//UpdateUserCountMapResp 更新用户计数信息响应
+message UpdateUserCountMapResp {
+  ResponseHeader header = 1;
+}
+
 //GetSelfUserInfo 获取自己的用户信息
 
 //GetSelfUserInfoReq 获取自己的用户信息请求
@@ -266,6 +294,25 @@ message GetUserModelByIdResp {
   bytes userSettingsJson = 3; // 用户设置json 他是map[string]usermodel.UserSetting的json
 }
 
+//GetUserModelByIdsReq 批量获取用户模型请求
+message GetUserModelByIdsReq {
+  RequestHeader header = 1;
+  repeated string userIds = 2; // 用户id列表
+  message Opt {
+    // 是否携带用户设置列表
+    bool withUserSettings = 1;
+    repeated string userSettingKeys = 2; // 用户设置key列表 如果withUserSettings为false 则该字段无效
+  }
+  optional Opt opt = 3;
+}
+
+//GetUserModelByIdsResp 批量获取用户模型响应
+message GetUserModelByIdsResp {
+  ResponseHeader header = 1;
+  map<string, bytes> userModelJsons = 2; // 用户模型json列表
+  map<string, bytes> userSettingsJsons = 3; // 用户设置json列表 value是map[string]usermodel.UserSetting的json
+}
+
 service accountService {
   //UserRegister 用户注册
   //二次开发人员可以传递自定义参数 如果不满足你的需求 你可以修改该proto文件
@@ -300,6 +347,9 @@ service infoService {
   //UpdateUserExtraMap 更新用户扩展信息
   //更新扩展信息逻辑可以从这里修改
   rpc UpdateUserExtraMap(UpdateUserExtraMapReq) returns (UpdateUserExtraMapResp);
+  //UpdateUserCountMap 更新用户计数信息
+  //更新计数信息逻辑可以从这里修改
+  rpc UpdateUserCountMap(UpdateUserCountMapReq) returns (UpdateUserCountMapResp);
   //GetSelfUserInfo 获取自己的用户信息
   //获取自己的用户信息逻辑可以从这里修改
   rpc GetSelfUserInfo(GetSelfUserInfoReq) returns (GetSelfUserInfoResp);
@@ -309,6 +359,9 @@ service infoService {
   //GetUserModelById 获取用户模型
   //获取用户模型逻辑可以从这里修改
   rpc GetUserModelById(GetUserModelByIdReq) returns (GetUserModelByIdResp);
+  //GetUserModelByIds 批量获取用户模型
+  //批量获取用户模型逻辑可以从这里修改
+  rpc GetUserModelByIds(GetUserModelByIdsReq) returns (GetUserModelByIdsResp);
 }
 
 service callbackService {

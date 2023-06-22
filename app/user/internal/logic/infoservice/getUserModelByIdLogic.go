@@ -68,7 +68,7 @@ func (l *GetUserModelByIdLogic) GetUserModelById(in *pb.GetUserModelByIdReq) (*p
 				"k": bson.M{
 					"$in": notExistsKeys,
 				},
-			}).All(&userSettings)
+			}).All(&notExistsUserSettings)
 			if err != nil {
 				l.Errorf("get user settings error: %v", err)
 				return &pb.GetUserModelByIdResp{}, err

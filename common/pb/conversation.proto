@@ -7,15 +7,45 @@ import "common.proto";
 
 message GroupCreateReq {
   RequestHeader header = 1;
+  optional string name = 2;
+  optional string avatar = 3;
+  repeated string memberList = 4;
+  map<string, string> infoMap = 5;
+  map<string, string> extraMap = 6;
 }
 
 message GroupCreateResp {
   ResponseHeader header = 1;
+  string groupId = 2;
+}
+
+//CountJoinGroupReq 统计加入的群组数量
+message CountJoinGroupReq {
+  RequestHeader header = 1;
+}
+
+message CountJoinGroupResp {
+  ResponseHeader header = 1;
+  int64 count = 2;
+}
+
+//CountCreateGroupReq 统计创建的群组数量
+message CountCreateGroupReq {
+  RequestHeader header = 1;
+}
+
+message CountCreateGroupResp {
+  ResponseHeader header = 1;
+  int64 count = 2;
 }
 
 service groupService {
   //GroupCreate 创建群组
   rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
+  //CountJoinGroup 统计加入的群组数量
+  rpc CountJoinGroup(CountJoinGroupReq) returns (CountJoinGroupResp) {}
+  //CountCreateGroup 统计创建的群组数量
+  rpc CountCreateGroup(CountCreateGroupReq) returns (CountCreateGroupResp) {}
 }
 
 //FriendApplyStatus 好友申请状态
@@ -98,6 +128,16 @@ message ListFriendApplyResp {
   repeated FriendApply friendApplyList = 3;
 }
 
+//CountFriendReq 统计好友数量
+message CountFriendReq {
+  RequestHeader header = 1;
+}
+
+message CountFriendResp {
+  ResponseHeader header = 1;
+  int64 count = 2;
+}
+
 service friendService {
   //FriendApply 添加好友
   rpc FriendApply(FriendApplyReq) returns (FriendApplyResp) {}
@@ -105,6 +145,8 @@ service friendService {
   rpc FriendApplyHandle(FriendApplyHandleReq) returns (FriendApplyHandleResp) {}
   //ListFriendApply 列出好友申请
   rpc ListFriendApply(ListFriendApplyReq) returns (ListFriendApplyResp) {}
+  //CountFriend 统计好友数量
+  rpc CountFriend(CountFriendReq) returns (CountFriendResp) {}
 }
 
 message ConversationSettingUpdateReq {

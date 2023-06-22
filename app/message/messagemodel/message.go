@@ -61,7 +61,7 @@ type Message struct {
 	// Option 选项
 	Option MessageOptions `bson:"option" json:"option"`
 	// ExtraMap example: {"platformSource": "windows"}
-	ExtraMap bson.M `bson:"extraMap" json:"extraMap"`
+	ExtraMap bson.M `bson:"extraMap,omitempty" json:"extraMap"`
 }
 
 func (m *Message) GetIndexes() []opts.IndexModel {

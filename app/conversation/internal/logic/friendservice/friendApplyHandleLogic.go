@@ -5,8 +5,10 @@ import (
 	"errors"
 	"github.com/cherish-chat/xxim-server/app/conversation/friendmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"github.com/cherish-chat/xxim-server/common/utils"
 	opts "github.com/qiniu/qmgo/options"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,13 +71,26 @@ func (l *FriendApplyHandleLogic) FriendApplyHandle(in *pb.FriendApplyHandleReq) 
 		})
 		return &pb.FriendApplyHandleResp{}, nil
 	} else {
+		toUser := &usermodel.User{}
+		getUserModelByIdResp, err := l.svcCtx.InfoService.GetUserModelById(l.ctx, &pb.GetUserModelByIdReq{
+			UserId: friendApplyRecord.ToId,
+		})
+		if err != nil {
+			l.Errorf("get user model by id error: %v", err)
+			return &pb.FriendApplyHandleResp{}, err
+		}
+		err = utils.Json.Unmarshal(getUserModelByIdResp.UserModelJson, toUser)
+		if err != nil {
+			l.Errorf("unmarshal user model json error: %v", err)
+			return &pb.FriendApplyHandleResp{}, err
+		}
 		//验证是否已经是好友
 		areFriend, err := l.AreFriends(friendApplyRecord.FromId, friendApplyRecord.ToId)
 		if err != nil {
 			return nil, err
 		}
 		if areFriend {
-			_ = l.AddFriend(friendApplyRecord.FromId, friendApplyRecord.ToId)
+			_ = l.AddFriend(friendApplyRecord.FromId, toUser)
 			return nil, nil
 		}
 		//验证两人的好友数量上限
@@ -89,7 +104,7 @@ func (l *FriendApplyHandleLogic) FriendApplyHandle(in *pb.FriendApplyHandleReq) 
 			}, err
 		}
 		// 加好友
-		err = l.AddFriend(friendApplyRecord.FromId, friendApplyRecord.ToId)
+		err = l.AddFriend(friendApplyRecord.FromId, toUser)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +112,8 @@ func (l *FriendApplyHandleLogic) FriendApplyHandle(in *pb.FriendApplyHandleReq) 
 	}
 }
 
-func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUserId string) error {
+func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUser *usermodel.User) error {
+	toUserId := toUser.UserId
 	//把好友申请记录 没处理的都设为同意
 	_, _ = l.svcCtx.FriendApplyRecordCollection.UpdateAll(l.ctx, bson.M{
 		"fromId": fromUserId,
@@ -133,6 +149,60 @@ func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUserId string) e
 	_, _ = l.svcCtx.FriendCollection.InsertMany(l.ctx, models, opts.InsertManyOptions{
 		InsertManyOptions: options.InsertMany().SetOrdered(false), // 插入失败不报错
 	})
+	//更新用户加群数量
+	go func() {
+		for _, userId := range []string{fromUserId, toUserId} {
+			_, err := l.svcCtx.InfoService.UpdateUserCountMap(context.Background(), &pb.UpdateUserCountMapReq{
+				Header:     &pb.RequestHeader{UserId: userId},
+				CountType:  pb.UpdateUserCountMapReq_friendCount,
+				Algorithm:  pb.UpdateUserCountMapReq_add,
+				Count:      1,
+				Statistics: true,
+			})
+			if err != nil {
+				l.Errorf("update user count map error: %v", err)
+			}
+		}
+	}()
+	//发消息
+	go func() {
+		_, err := l.svcCtx.MessageService.MessageSend(context.Background(), &pb.MessageSendReq{
+			Header: &pb.RequestHeader{UserId: fromUserId},
+			Message: &pb.Message{
+				ConversationId:   pb.GetSingleChatConversationId(fromUserId, toUserId),
+				ConversationType: pb.ConversationType_Single,
+				Sender: &pb.Message_Sender{
+					Id:     toUserId,
+					Name:   toUser.Nickname,
+					Avatar: toUser.Avatar,
+					Extra:  "",
+				},
+				Content: utils.Json.MarshalToBytes(&pb.MessageContentText{
+					Items: []*pb.MessageContentText_Item{{
+						Type:  pb.MessageContentText_Item_TEXT,
+						Text:  l.svcCtx.Config.Friend.DefaultSayHello,
+						Image: nil,
+						At:    nil,
+					}},
+				}),
+				ContentType: pb.MessageContentType_Text,
+				SendTime:    time.Now().UnixMilli(),
+				Option: &pb.Message_Option{
+					StorageForServer: true,
+					StorageForClient: true,
+					NeedDecrypt:      false,
+					CountUnread:      true,
+				},
+				ExtraMap: map[string]string{
+					"platformSource": "server",
+				},
+			},
+			DisableQueue: false,
+		})
+		if err != nil {
+			l.Errorf("send message error: %v", err)
+		}
+	}()
 	return nil
 }
 

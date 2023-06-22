@@ -36,6 +36,8 @@ type IClient interface {
 	ListFriendApply(req *pb.ListFriendApplyReq) (resp *pb.ListFriendApplyResp, err error)
 	FriendApplyHandle(req *pb.FriendApplyHandleReq) (resp *pb.FriendApplyHandleResp, err error)
 
+	GroupCreate(req *pb.GroupCreateReq) (resp *pb.GroupCreateResp, err error)
+
 	ListNotice(req *pb.ListNoticeReq) (resp *pb.ListNoticeResp, err error)
 
 	MessageBatchSend(req *pb.MessageBatchSendReq) (resp *pb.MessageBatchSendResp, err error)

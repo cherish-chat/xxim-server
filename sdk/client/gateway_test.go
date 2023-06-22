@@ -16,9 +16,10 @@ var defaultConfig = &Config{
 	DeviceModel: "",
 	OsVersion:   "",
 	Language:    nil,
+	UserToken:   `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDMxMTUzMzMsImp0aSI6IjQifQ.Ki1lKJF5CSA-gzOZYQi4IDvt8CJhxuXNRmofa40gIns`, // 4
 	//UserToken:   `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI1NzA5NzAsImp0aSI6IjMifQ.HATz69UJPo6lEL0GF5eSqLkFN-9s1Ej0TJfTUGRX-90`, // 3
-	//UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3NjU4NTQsImp0aSI6IjIifQ.hOXp17_KUXI_HjJRKGFvI6xRiUBKvT_2p4rKKqBTOqM`, // 2
-	UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3ODAzMzcsImp0aSI6IjEifQ.oveSP7-bsAe4CUX0JcRmWZFtySG-Egady5tzuRmVJTE`, // 1
+	//UserToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3NjU4NTQsImp0aSI6IjIifQ.hOXp17_KUXI_HjJRKGFvI6xRiUBKvT_2p4rKKqBTOqM`, // 2
+	//UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3ODAzMzcsImp0aSI6IjEifQ.oveSP7-bsAe4CUX0JcRmWZFtySG-Egady5tzuRmVJTE`, // 1
 	KeepAliveSecond: time.Second * 30,
 }
 

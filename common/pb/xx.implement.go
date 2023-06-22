@@ -59,3 +59,7 @@ func (x *ListNoticeReq) SetHeader(header *RequestHeader) {
 func (x *MessageBatchSendReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *GroupCreateReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}

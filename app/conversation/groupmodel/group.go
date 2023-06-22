@@ -9,8 +9,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"gorm.io/gorm"
 	"os"
 )
 
@@ -24,7 +24,7 @@ type Group struct {
 	GroupAvatar string `json:"groupAvatar" gorm:"column:groupAvatar;type:varchar(255);not null" bson:"groupAvatar"`
 	//GroupInfo 自定义群信息
 	//如果没有查询需要，不要SELECT这个字段
-	GroupInfo bson.M `json:"groupInfo" gorm:"column:groupInfo;type:text;not null;" bson:"groupInfo"`
+	GroupInfo bson.M `json:"groupInfo" gorm:"column:groupInfo;type:text;not null;" bson:"groupInfo,omitempty"`
 
 	//OwnerUserId 群主id
 	OwnerUserId string `json:"ownerUserId" gorm:"column:ownerUserId;type:char(32);not null" bson:"ownerUserId"`
@@ -32,16 +32,13 @@ type Group struct {
 	//如果没有查询需要，不要SELECT这个字段，因为这个字段可能会很大，群管理员上限是1900人，因为65535/33=1985.90
 	ManagerUserIds []string `json:"managerUserIds" gorm:"column:managerUserIds;type:text;not null" bson:"managerUserIds"`
 	//CreatedAt 创建时间 13位时间戳
-	CreateTime int64 `json:"createTime" gorm:"column:createTime;type:bigint;not null;index;" bson:"createTime"`
+	CreateTime primitive.DateTime `json:"createTime" gorm:"column:createTime;type:bigint;not null;index;" bson:"createTime"`
 	//UpdatedAt 更新时间 13位时间戳
-	UpdateTime int64 `json:"updateTime" gorm:"column:updateTime;type:bigint;not null" bson:"updateTime"`
+	UpdateTime primitive.DateTime `json:"updateTime" gorm:"column:updateTime;type:bigint;not null" bson:"updateTime"`
 	//DismissTime 解散时间 13位时间戳
-	DismissTime int64 `json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;default:0;index;" bson:"dismissTime"`
+	DismissTime primitive.DateTime `json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;default:0;index;" bson:"dismissTime"`
 	//MemberCount 成员数量
 	MemberCount int `json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;" bson:"memberCount"`
-
-	//RemarkForAdmin 管理员设置的备注
-	RemarkForAdmin string `json:"remarkForAdmin" gorm:"column:remarkForAdmin;type:varchar(32);not null;default:'';" bson:"remarkForAdmin"`
 }
 
 // TableName 表名
@@ -58,6 +55,10 @@ func (m *Group) GetIndexes() []opts.IndexModel {
 	}, {
 		Key: []string{"-createTime"},
 	}}
+}
+
+func (m *Group) GroupIdString() string {
+	return utils.AnyString(m.GroupId)
 }
 
 type xGroupModel struct {
@@ -104,9 +105,10 @@ func (x *xGroupModel) GenerateGroupId() int {
 	return int(groupId)
 }
 
-func (x *xGroupModel) Insert(ctx context.Context, tx gorm.DB, group *Group) error {
+func (x *xGroupModel) Insert(ctx context.Context, group *Group) error {
 	if group.GroupId == 0 {
 		group.GroupId = x.GenerateGroupId()
 	}
-	return tx.WithContext(ctx).Create(group).Error
+	_, err := x.coll.InsertOne(ctx, group)
+	return err
 }

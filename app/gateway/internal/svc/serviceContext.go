@@ -2,6 +2,7 @@ package svc
 
 import (
 	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
+	"github.com/cherish-chat/xxim-server/app/conversation/client/groupservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/config"
 	"github.com/cherish-chat/xxim-server/app/message/client/messageservice"
@@ -27,6 +28,7 @@ type ServiceContext struct {
 	InfoService     infoservice.InfoService
 	//Conversation
 	FriendService friendservice.FriendService
+	GroupService  groupservice.GroupService
 	//Message
 	NoticeService  noticeservice.NoticeService
 	MessageService messageservice.MessageService
@@ -56,6 +58,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AccountService:  accountservice.NewAccountService(userClient),
 		InfoService:     infoservice.NewInfoService(userClient),
 		FriendService:   friendservice.NewFriendService(conversationClient),
+		GroupService:    groupservice.NewGroupService(conversationClient),
 		NoticeService:   noticeservice.NewNoticeService(messageClient),
 		MessageService:  messageservice.NewMessageService(messageClient),
 		Redis:           xcache.MustNewRedis(c.RedisConf),

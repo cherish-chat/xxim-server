@@ -398,6 +398,9 @@ type InfoServiceClient interface {
 	//UpdateUserExtraMap 更新用户扩展信息
 	//更新扩展信息逻辑可以从这里修改
 	UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error)
+	//UpdateUserCountMap 更新用户计数信息
+	//更新计数信息逻辑可以从这里修改
+	UpdateUserCountMap(ctx context.Context, in *UpdateUserCountMapReq, opts ...grpc.CallOption) (*UpdateUserCountMapResp, error)
 	//GetSelfUserInfo 获取自己的用户信息
 	//获取自己的用户信息逻辑可以从这里修改
 	GetSelfUserInfo(ctx context.Context, in *GetSelfUserInfoReq, opts ...grpc.CallOption) (*GetSelfUserInfoResp, error)
@@ -407,6 +410,9 @@ type InfoServiceClient interface {
 	//GetUserModelById 获取用户模型
 	//获取用户模型逻辑可以从这里修改
 	GetUserModelById(ctx context.Context, in *GetUserModelByIdReq, opts ...grpc.CallOption) (*GetUserModelByIdResp, error)
+	//GetUserModelByIds 批量获取用户模型
+	//批量获取用户模型逻辑可以从这里修改
+	GetUserModelByIds(ctx context.Context, in *GetUserModelByIdsReq, opts ...grpc.CallOption) (*GetUserModelByIdsResp, error)
 }
 
 type infoServiceClient struct {
@@ -429,6 +435,15 @@ func (c *infoServiceClient) UpdateUserProfileMap(ctx context.Context, in *Update
 func (c *infoServiceClient) UpdateUserExtraMap(ctx context.Context, in *UpdateUserExtraMapReq, opts ...grpc.CallOption) (*UpdateUserExtraMapResp, error) {
 	out := new(UpdateUserExtraMapResp)
 	err := c.cc.Invoke(ctx, "/pb.infoService/UpdateUserExtraMap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infoServiceClient) UpdateUserCountMap(ctx context.Context, in *UpdateUserCountMapReq, opts ...grpc.CallOption) (*UpdateUserCountMapResp, error) {
+	out := new(UpdateUserCountMapResp)
+	err := c.cc.Invoke(ctx, "/pb.infoService/UpdateUserCountMap", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -462,6 +477,15 @@ func (c *infoServiceClient) GetUserModelById(ctx context.Context, in *GetUserMod
 	return out, nil
 }
 
+func (c *infoServiceClient) GetUserModelByIds(ctx context.Context, in *GetUserModelByIdsReq, opts ...grpc.CallOption) (*GetUserModelByIdsResp, error) {
+	out := new(GetUserModelByIdsResp)
+	err := c.cc.Invoke(ctx, "/pb.infoService/GetUserModelByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InfoServiceServer is the server API for InfoService service.
 // All implementations must embed UnimplementedInfoServiceServer
 // for forward compatibility
@@ -472,6 +496,9 @@ type InfoServiceServer interface {
 	//UpdateUserExtraMap 更新用户扩展信息
 	//更新扩展信息逻辑可以从这里修改
 	UpdateUserExtraMap(context.Context, *UpdateUserExtraMapReq) (*UpdateUserExtraMapResp, error)
+	//UpdateUserCountMap 更新用户计数信息
+	//更新计数信息逻辑可以从这里修改
+	UpdateUserCountMap(context.Context, *UpdateUserCountMapReq) (*UpdateUserCountMapResp, error)
 	//GetSelfUserInfo 获取自己的用户信息
 	//获取自己的用户信息逻辑可以从这里修改
 	GetSelfUserInfo(context.Context, *GetSelfUserInfoReq) (*GetSelfUserInfoResp, error)
@@ -481,6 +508,9 @@ type InfoServiceServer interface {
 	//GetUserModelById 获取用户模型
 	//获取用户模型逻辑可以从这里修改
 	GetUserModelById(context.Context, *GetUserModelByIdReq) (*GetUserModelByIdResp, error)
+	//GetUserModelByIds 批量获取用户模型
+	//批量获取用户模型逻辑可以从这里修改
+	GetUserModelByIds(context.Context, *GetUserModelByIdsReq) (*GetUserModelByIdsResp, error)
 	mustEmbedUnimplementedInfoServiceServer()
 }
 
@@ -494,6 +524,9 @@ func (UnimplementedInfoServiceServer) UpdateUserProfileMap(context.Context, *Upd
 func (UnimplementedInfoServiceServer) UpdateUserExtraMap(context.Context, *UpdateUserExtraMapReq) (*UpdateUserExtraMapResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserExtraMap not implemented")
 }
+func (UnimplementedInfoServiceServer) UpdateUserCountMap(context.Context, *UpdateUserCountMapReq) (*UpdateUserCountMapResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserCountMap not implemented")
+}
 func (UnimplementedInfoServiceServer) GetSelfUserInfo(context.Context, *GetSelfUserInfoReq) (*GetSelfUserInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSelfUserInfo not implemented")
 }
@@ -502,6 +535,9 @@ func (UnimplementedInfoServiceServer) GetUserInfo(context.Context, *GetUserInfoR
 }
 func (UnimplementedInfoServiceServer) GetUserModelById(context.Context, *GetUserModelByIdReq) (*GetUserModelByIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserModelById not implemented")
+}
+func (UnimplementedInfoServiceServer) GetUserModelByIds(context.Context, *GetUserModelByIdsReq) (*GetUserModelByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserModelByIds not implemented")
 }
 func (UnimplementedInfoServiceServer) mustEmbedUnimplementedInfoServiceServer() {}
 
@@ -548,6 +584,24 @@ func _InfoService_UpdateUserExtraMap_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(InfoServiceServer).UpdateUserExtraMap(ctx, req.(*UpdateUserExtraMapReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfoService_UpdateUserCountMap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserCountMapReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServiceServer).UpdateUserCountMap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.infoService/UpdateUserCountMap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServiceServer).UpdateUserCountMap(ctx, req.(*UpdateUserCountMapReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -606,6 +660,24 @@ func _InfoService_GetUserModelById_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InfoService_GetUserModelByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserModelByIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServiceServer).GetUserModelByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.infoService/GetUserModelByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServiceServer).GetUserModelByIds(ctx, req.(*GetUserModelByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InfoService_ServiceDesc is the grpc.ServiceDesc for InfoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -622,6 +694,10 @@ var InfoService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _InfoService_UpdateUserExtraMap_Handler,
 		},
 		{
+			MethodName: "UpdateUserCountMap",
+			Handler:    _InfoService_UpdateUserCountMap_Handler,
+		},
+		{
 			MethodName: "GetSelfUserInfo",
 			Handler:    _InfoService_GetSelfUserInfo_Handler,
 		},
@@ -632,6 +708,10 @@ var InfoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserModelById",
 			Handler:    _InfoService_GetUserModelById_Handler,
+		},
+		{
+			MethodName: "GetUserModelByIds",
+			Handler:    _InfoService_GetUserModelByIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

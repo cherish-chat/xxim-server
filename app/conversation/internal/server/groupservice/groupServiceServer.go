@@ -27,3 +27,15 @@ func (s *GroupServiceServer) GroupCreate(ctx context.Context, in *pb.GroupCreate
 	l := groupservicelogic.NewGroupCreateLogic(ctx, s.svcCtx)
 	return l.GroupCreate(in)
 }
+
+// CountJoinGroup 统计加入的群组数量
+func (s *GroupServiceServer) CountJoinGroup(ctx context.Context, in *pb.CountJoinGroupReq) (*pb.CountJoinGroupResp, error) {
+	l := groupservicelogic.NewCountJoinGroupLogic(ctx, s.svcCtx)
+	return l.CountJoinGroup(in)
+}
+
+// CountCreateGroup 统计创建的群组数量
+func (s *GroupServiceServer) CountCreateGroup(ctx context.Context, in *pb.CountCreateGroupReq) (*pb.CountCreateGroupResp, error) {
+	l := groupservicelogic.NewCountCreateGroupLogic(ctx, s.svcCtx)
+	return l.CountCreateGroup(in)
+}

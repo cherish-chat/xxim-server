@@ -44,7 +44,10 @@ func (m *UserSetting) GetIndexes() []opts.IndexModel {
 //UserSettingKey 用户设置key
 
 const (
+	//UserSettingKeyFriendApply 好友申请设置
 	UserSettingKeyFriendApply = "friendApply"
+	//UserSettingKeyAllowBeInvitedGroup 允许被邀请进群
+	UserSettingKeyAllowBeInvitedGroup = "allowBeInvitedGroup"
 )
 
 type UserSettingFriendApplyType int32
