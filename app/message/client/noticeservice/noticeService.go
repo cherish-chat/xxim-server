@@ -14,6 +14,7 @@ import (
 
 type (
 	ListNoticeReq                 = pb.ListNoticeReq
+	ListNoticeReq_Conversation    = pb.ListNoticeReq_Conversation
 	ListNoticeResp                = pb.ListNoticeResp
 	Message                       = pb.Message
 	MessageBatchSendReq           = pb.MessageBatchSendReq
@@ -34,6 +35,7 @@ type (
 	NoticeBatchSendReq            = pb.NoticeBatchSendReq
 	NoticeBatchSendResp           = pb.NoticeBatchSendResp
 	NoticeContentNewFriendRequest = pb.NoticeContentNewFriendRequest
+	NoticeContentNewGroup         = pb.NoticeContentNewGroup
 	NoticeSendReq                 = pb.NoticeSendReq
 	NoticeSendResp                = pb.NoticeSendResp
 

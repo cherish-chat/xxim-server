@@ -5,11 +5,13 @@ import "fmt"
 type xRedisVal struct {
 	IncrKeyGroupId    string
 	HashKeyConvMaxSeq string
+	IncrKeyNoticeSort string
 }
 
 var RedisVal = &xRedisVal{
 	IncrKeyGroupId:    "group:i:group_id",
 	HashKeyConvMaxSeq: "max_seq",
+	IncrKeyNoticeSort: "notice:i:sort",
 }
 
 func (x *xRedisVal) LockKeyUserUsername(username string) string {

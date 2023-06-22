@@ -6,6 +6,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/message/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/cherish-chat/xxim-server/common/xcache"
 	"github.com/cherish-chat/xxim-server/common/xmgo"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,6 +40,15 @@ func (l *ConsumerLogic) NoticeBatchSend(topic string, msg []byte) error {
 		// upsert
 		bulk := l.svcCtx.BroadcastNoticeCollection.Bulk()
 		for _, notice := range broadcastNotices {
+			if notice.Sort == 0 {
+				//生成一个唯一的sort
+				sort, e := l.svcCtx.Redis.Incr(xcache.RedisVal.IncrKeyNoticeSort)
+				if e != nil {
+					l.Errorf("incr notice sort error: %v", e)
+					return e
+				}
+				notice.Sort = sort
+			}
 			bulk.Upsert(bson.M{
 				"conversationId":   notice.ConversationId,
 				"conversationType": notice.ConversationType,
@@ -91,6 +101,15 @@ func (l *ConsumerLogic) NoticeBatchSend(topic string, msg []byte) error {
 		bulk := l.svcCtx.SubscriptionNoticeCollection.Bulk()
 
 		for _, notice := range subscriptionNotices {
+			if notice.Sort == 0 {
+				//生成一个唯一的sort
+				sort, e := l.svcCtx.Redis.Incr(xcache.RedisVal.IncrKeyNoticeSort)
+				if e != nil {
+					l.Errorf("incr notice sort error: %v", e)
+					return e
+				}
+				notice.Sort = sort
+			}
 			bulk = bulk.Upsert(bson.M{
 				"userId":         notice.UserId,
 				"subscriptionId": notice.SubscriptionId,

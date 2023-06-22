@@ -53,7 +53,7 @@ func TestHttpClient_UserAccessToken(t *testing.T) {
 	time.Sleep(1 * time.Second)
 	userAccessTokenResp, err := client.(*HttpClient).UserAccessToken(&pb.UserAccessTokenReq{
 		AccountMap: map[string]string{
-			pb.AccountTypeUsername: "user4",
+			pb.AccountTypeUsername: "user5",
 			pb.AccountTypePassword: utils.Md5("123456"),
 		},
 		VerifyMap:  nil,

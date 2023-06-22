@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/conversation/conversationmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/groupmodel"
+	"github.com/cherish-chat/xxim-server/app/message/noticemodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -256,6 +257,28 @@ func (l *GroupCreateLogic) GroupCreate(in *pb.GroupCreateReq) (*pb.GroupCreateRe
 		if err != nil {
 			l.Errorf("send message error: %v", err)
 		}
+	}()
+	//发通知
+	go func() {
+		notice := &noticemodel.BroadcastNotice{
+			NoticeId:         utils.Snowflake.String(),
+			ConversationId:   group.GroupIdString(),
+			ConversationType: pb.ConversationType_Group,
+			Content:          utils.Json.MarshalToString(&pb.NoticeContentNewGroup{}),
+			ContentType:      pb.NoticeContentType_NewGroup,
+			UpdateTime:       primitive.NewDateTimeFromTime(time.Now()),
+		}
+		utils.Retry.Do(func() error {
+			_, err := l.svcCtx.NoticeService.NoticeSend(context.Background(), &pb.NoticeSendReq{
+				Header:    in.Header,
+				Notice:    notice.ToPb(),
+				Broadcast: true,
+			})
+			if err != nil {
+				l.Errorf("send notice error: %v", err)
+			}
+			return err
+		})
 	}()
 	return &pb.GroupCreateResp{GroupId: utils.AnyString(group.GroupId)}, nil
 }

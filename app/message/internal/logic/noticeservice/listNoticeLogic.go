@@ -5,10 +5,8 @@ import (
 	"github.com/cherish-chat/xxim-server/app/message/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/message/noticemodel"
 	"github.com/cherish-chat/xxim-server/common/pb"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ListNoticeLogic struct {
@@ -28,13 +26,20 @@ func NewListNoticeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListNo
 // ListNotice 获取通知列表
 func (l *ListNoticeLogic) ListNotice(in *pb.ListNoticeReq) (*pb.ListNoticeResp, error) {
 	var broadcastResults []*noticemodel.BroadcastNotice
-	err := l.svcCtx.BroadcastNoticeCollection.Find(l.ctx, bson.M{
-		"conversationId":   in.ConversationId,
-		"conversationType": in.ConversationType,
-		"updateTime": bson.M{
-			"$gt": primitive.DateTime(in.UpdateTimeGt),
+	filter := bson.M{
+		"sort": bson.M{
+			"$gt": in.SortGt,
 		},
-	}).Sort("updateTime").Limit(in.Limit).All(&broadcastResults)
+	}
+	or := make([]bson.M, 0)
+	for _, conversation := range in.ConvList {
+		or = append(or, bson.M{
+			"conversationId":   conversation.ConversationId,
+			"conversationType": conversation.ConversationType,
+		})
+	}
+	filter["$or"] = or
+	err := l.svcCtx.BroadcastNoticeCollection.Find(l.ctx, filter).Sort("sort").Limit(in.Limit).All(&broadcastResults)
 	if err != nil {
 		l.Errorf("find broadcast notice error: %v", err)
 		return nil, err
@@ -43,14 +48,26 @@ func (l *ListNoticeLogic) ListNotice(in *pb.ListNoticeReq) (*pb.ListNoticeResp, 
 	var subscriptionResults []*noticemodel.SubscriptionNotice
 	var contentMap = make(map[string]*noticemodel.SubscriptionNoticeContent)
 	var contentIds []string
-	if in.ConversationType == pb.ConversationType_Subscription {
-		err = l.svcCtx.SubscriptionNoticeCollection.Find(l.ctx, bson.M{
-			"userId":         in.Header.UserId,
-			"subscriptionId": in.ConversationId,
-			"updateTime": bson.M{
-				"$gt": primitive.DateTime(in.UpdateTimeGt),
+	{
+		filter := bson.M{
+			"userId": in.Header.UserId,
+			//"subscriptionId": in.ConversationId,
+			"sort": bson.M{
+				"$gt": in.SortGt,
 			},
-		}).Sort("updateTime").Limit(in.Limit).All(&subscriptionResults)
+		}
+		var subscriptionIds []string
+		for _, conversation := range in.ConvList {
+			if conversation.ConversationType == pb.ConversationType_Subscription {
+				subscriptionIds = append(subscriptionIds, conversation.ConversationId)
+			}
+		}
+		if len(subscriptionIds) > 0 {
+			filter["subscriptionId"] = bson.M{
+				"$in": subscriptionIds,
+			}
+		}
+		err = l.svcCtx.SubscriptionNoticeCollection.Find(l.ctx, filter).Sort("sort").Limit(in.Limit).All(&subscriptionResults)
 		if err != nil {
 			l.Errorf("find subscription notice error: %v", err)
 			return nil, err

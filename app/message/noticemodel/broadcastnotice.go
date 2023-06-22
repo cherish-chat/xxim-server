@@ -20,6 +20,7 @@ type BroadcastNotice struct {
 	Content          string             `bson:"content" json:"content"`
 	ContentType      NoticeContentType  `bson:"contentType" json:"contentType"`
 	UpdateTime       primitive.DateTime `bson:"updateTime" json:"updateTime"`
+	Sort             int64              `bson:"sort" json:"sort"`
 }
 
 func (m *BroadcastNotice) GetIndexes() []opts.IndexModel {
@@ -27,7 +28,9 @@ func (m *BroadcastNotice) GetIndexes() []opts.IndexModel {
 		Key:          []string{"noticeId"},
 		IndexOptions: options.Index().SetUnique(true),
 	}, {
-		Key: []string{"-updateTime"},
+		Key: []string{"-sort"},
+	}, {
+		Key: []string{"conversationId", "conversationType"},
 	}, {
 		Key:          []string{"conversationId", "conversationType", "contentType"},
 		IndexOptions: options.Index().SetUnique(true),
@@ -42,6 +45,7 @@ func (m *BroadcastNotice) ToPb() *pb.Notice {
 		Content:          m.Content,
 		ContentType:      m.ContentType,
 		UpdateTime:       int64(m.UpdateTime),
+		Sort:             m.Sort,
 	}
 }
 
@@ -53,5 +57,6 @@ func BroadcastNoticeFromPb(in *pb.Notice) *BroadcastNotice {
 		Content:          in.Content,
 		ContentType:      in.ContentType,
 		UpdateTime:       primitive.DateTime(in.UpdateTime),
+		Sort:             in.Sort,
 	}
 }

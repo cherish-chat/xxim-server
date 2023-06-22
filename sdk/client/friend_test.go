@@ -13,7 +13,7 @@ func TestHttpClient_FriendApply(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyResp, err := client.FriendApply(&pb.FriendApplyReq{
-		ToUserId: "2",
+		ToUserId: "5",
 	})
 	if err != nil {
 		t.Fatalf(err.Error())

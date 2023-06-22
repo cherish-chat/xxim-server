@@ -160,7 +160,7 @@ service messageService {
 //Notice 通知
 message Notice {
   //通知id 因为通知永远都是服务端发送给客户端的，所以通知id一定唯一。
-  string NoticeId = 1;
+  string noticeId = 1;
   //发送到哪个会话
   string conversationId = 2; // 单聊: 那么该值为发送者和接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
   //会话类型
@@ -171,10 +171,14 @@ message Notice {
   NoticeContentType contentType = 5;
   //通知的更新时间
   int64 updateTime = 6;
+  //排序
+  int64 sort = 7;
 }
 
 //NoticeContentNewFriendRequest 通知内容-新的好友请求
 message NoticeContentNewFriendRequest {}
+//NoticeContentNewGroup 通知内容-新的群组
+message NoticeContentNewGroup {}
 
 //NoticeSend 通知发送
 
@@ -206,14 +210,18 @@ message NoticeBatchSendResp {
 
 message ListNoticeReq {
   RequestHeader header = 1;
+  message Conversation {
+    //会话id
+    string conversationId = 1;
+    //会话类型
+    ConversationType conversationType = 2;
+  }
   //会话id
-  string conversationId = 2;
-  //会话类型
-  ConversationType conversationType = 3;
-  //UpdateTimeGt 通知更新时间大于
-  int64 UpdateTimeGt = 4;
+  repeated Conversation convList = 2;
+  //SortGt 排序大于
+  int64 SortGt = 3;
   //Limit 限制条数
-  int64 Limit = 5;
+  int64 Limit = 4;
 }
 
 message ListNoticeResp {

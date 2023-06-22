@@ -14,6 +14,7 @@ type SubscriptionNotice struct {
 	ContentType    NoticeContentType  `bson:"contentType" json:"contentType"`
 	ContentId      string             `bson:"contentId" json:"contentId"`
 	UpdateTime     primitive.DateTime `bson:"updateTime" json:"updateTime"`
+	Sort           int64              `bson:"sort" json:"sort"`
 }
 
 type SubscriptionNoticeContent struct {
@@ -26,7 +27,9 @@ func (m *SubscriptionNotice) GetIndexes() []opts.IndexModel {
 		Key:          []string{"subscriptionId", "userId", "contentType"},
 		IndexOptions: options.Index().SetUnique(true),
 	}, {
-		Key: []string{"-updateTime"},
+		Key: []string{"-sort"},
+	}, {
+		Key: []string{"subscriptionId"},
 	}, {
 		Key:          []string{"noticeType"},
 		IndexOptions: nil,
@@ -41,5 +44,6 @@ func (m *SubscriptionNotice) ToPb(content string) *pb.Notice {
 		Content:          content,
 		ContentType:      m.ContentType,
 		UpdateTime:       int64(m.UpdateTime),
+		Sort:             m.Sort,
 	}
 }
