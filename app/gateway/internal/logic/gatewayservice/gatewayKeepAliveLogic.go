@@ -35,6 +35,12 @@ func (l *GatewayKeepAliveLogic) GatewayKeepAlive(in *pb.GatewayKeepAliveReq) (*p
 // 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
 func (l *GatewayKeepAliveLogic) KeepAlive(connection *WsConnection, c *pb.GatewayApiRequest) (*pb.GatewayApiResponse, error) {
 	WsManager.KeepAlive(l.ctx, connection)
+	_, err := l.svcCtx.CallbackService.UserAfterKeepAlive(l.ctx, &pb.UserAfterKeepAliveReq{
+		Header: c.Header,
+	})
+	if err != nil {
+		l.Errorf("UserAfterKeepAlive error: %v", err)
+	}
 	return &pb.GatewayApiResponse{
 		Header:    i18n.NewOkHeader(),
 		RequestId: c.RequestId,

@@ -3,58 +3,6 @@ package pb;
 option go_package = "./pb";
 import "common.proto";
 
-//Message 消息
-message Message {
-  //MessageId 消息id 由服务端插入时生成
-  string messageId = 1;
-  //UUID 客户端生成的id 由客户端生成 在客户端保证唯一性
-  string uuid = 2;
-
-  //发送到哪个会话
-  string conversationId = 3; // 单聊: 那么该值为接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
-  //会话类型
-  ConversationType conversationType = 4;
-  //发送者
-  message Sender {
-    //发送者id
-    string id = 1;
-    //发送者名称
-    string name = 2;
-    //发送者头像
-    string avatar = 3;
-    //extra
-    string extra = 11;
-  }
-  Sender sender = 5; // 有可能是系统 那么该值为空
-
-  //消息内容
-  bytes content = 6;
-  //消息类型
-  MessageContentType contentType = 7;
-
-  //发送时间 由客户端生成
-  int64 sendTime = 8;
-  //插入时间 由服务端生成
-  int64 insertTime = 9;
-  //在会话中的消息顺序
-  int64 seq = 10;
-
-  //选项
-  message Option {
-    //服务端是否保存该消息
-    bool storageForServer = 1;
-    //客户端是否保存该消息
-    bool storageForClient = 2;
-    //是否需要解密 （端对端加密技术，服务端无法解密）
-    bool needDecrypt = 3;
-    //消息是否需要计入未读数
-    bool countUnread = 4;
-  }
-  Option option = 16;
-  //extraMap, example: {"platformSource": "windows"}
-  map<string, string> extraMap = 17;
-}
-
 //MessageSendReq 发送消息请求
 message MessageSendReq {
   RequestHeader header = 1;
@@ -157,28 +105,17 @@ service messageService {
   rpc MessagePush(MessagePushReq) returns (MessagePushResp);
 }
 
-//Notice 通知
-message Notice {
-  //通知id 因为通知永远都是服务端发送给客户端的，所以通知id一定唯一。
-  string noticeId = 1;
-  //发送到哪个会话
-  string conversationId = 2; // 单聊: 那么该值为发送者和接受者的id；群聊：那么该值为群id；订阅号：那么该值为订阅号id
-  //会话类型
-  ConversationType conversationType = 3;
-  //通知内容
-  string content = 4;
-  //通知类型
-  NoticeContentType contentType = 5;
-  //通知的更新时间
-  int64 updateTime = 6;
-  //排序
-  int64 sort = 7;
-}
-
 //NoticeContentNewFriendRequest 通知内容-新的好友请求
 message NoticeContentNewFriendRequest {}
-//NoticeContentNewGroup 通知内容-新的群组
-message NoticeContentNewGroup {}
+//NoticeContentJoinNewGroup 通知内容-加入新群
+message NoticeContentJoinNewGroup {
+  string groupId = 1;
+}
+//NoticeContentOnlineStatus 通知内容-用户在线状态
+message NoticeContentOnlineStatus {
+  string userId = 1; // 用户id
+  bool online = 2; // 是在线还是离线
+}
 
 //NoticeSend 通知发送
 
@@ -228,6 +165,7 @@ message ListNoticeResp {
   ResponseHeader header = 1;
   repeated Notice notices = 2;
 }
+
 
 service noticeService {
   //NoticeSend 通知发送

@@ -2,7 +2,6 @@ package gatewayservicelogic
 
 import (
 	"context"
-
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -38,6 +37,7 @@ func (l *GatewayWriteDataToWsLogic) GatewayWriteDataToWs(in *pb.GatewayWriteData
 	for _, connection := range gatewayGetConnectionByFilterResp.GetConnections() {
 		success := WsManager.WriteData(connection.Id, in.Data)
 		if success {
+			logx.Debugf("write data to ws success, connection: %v", connection)
 			resp.SuccessConnections = append(resp.SuccessConnections, connection)
 		}
 	}

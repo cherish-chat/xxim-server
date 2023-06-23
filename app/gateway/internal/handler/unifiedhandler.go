@@ -103,7 +103,6 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			Body:      nil,
 		}, err
 	}
-	requestHeader.UserId = userBeforeRequestResp.UserId
 
 	var result *pb.GatewayApiResponse
 	body, _ := proto.Marshal(userBeforeRequestResp)
@@ -217,7 +216,6 @@ func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
 			Body:      nil,
 		}, err
 	}
-	requestHeader.UserId = userBeforeRequestResp.UserId
 
 	var result *pb.GatewayApiResponse
 	body, _ := proto.Marshal(userBeforeRequestResp)
@@ -279,6 +277,28 @@ func MarshalResponse(requestHeader *pb.RequestHeader, data proto.Message) []byte
 		return protobuf
 	case pb.EncodingProto_JSON:
 		json, _ := utils.Json.Marshal(data)
+		return json
+	default:
+		return nil
+	}
+}
+
+func MarshalWriteData(requestHeader *pb.RequestHeader, data *pb.GatewayApiResponse) []byte {
+	if requestHeader == nil {
+		return nil
+	}
+	writeData := &pb.GatewayWriteDataContent{
+		DataType: pb.GatewayWriteDataType_Response,
+		Response: data,
+		Message:  nil,
+		Notice:   nil,
+	}
+	switch requestHeader.Encoding {
+	case pb.EncodingProto_PROTOBUF:
+		protobuf, _ := proto.Marshal(writeData)
+		return protobuf
+	case pb.EncodingProto_JSON:
+		json, _ := utils.Json.Marshal(writeData)
 		return json
 	default:
 		return nil

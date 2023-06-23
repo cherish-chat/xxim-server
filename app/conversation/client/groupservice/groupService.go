@@ -13,25 +13,43 @@ import (
 )
 
 type (
-	ConversationSettingUpdateReq    = pb.ConversationSettingUpdateReq
-	ConversationSettingUpdateResp   = pb.ConversationSettingUpdateResp
-	CountCreateGroupReq             = pb.CountCreateGroupReq
-	CountCreateGroupResp            = pb.CountCreateGroupResp
-	CountFriendReq                  = pb.CountFriendReq
-	CountFriendResp                 = pb.CountFriendResp
-	CountJoinGroupReq               = pb.CountJoinGroupReq
-	CountJoinGroupResp              = pb.CountJoinGroupResp
-	FriendApplyHandleReq            = pb.FriendApplyHandleReq
-	FriendApplyHandleResp           = pb.FriendApplyHandleResp
-	FriendApplyReq                  = pb.FriendApplyReq
-	FriendApplyResp                 = pb.FriendApplyResp
-	GroupCreateReq                  = pb.GroupCreateReq
-	GroupCreateResp                 = pb.GroupCreateResp
-	ListFriendApplyReq              = pb.ListFriendApplyReq
-	ListFriendApplyReq_Filter       = pb.ListFriendApplyReq_Filter
-	ListFriendApplyReq_Option       = pb.ListFriendApplyReq_Option
-	ListFriendApplyResp             = pb.ListFriendApplyResp
-	ListFriendApplyResp_FriendApply = pb.ListFriendApplyResp_FriendApply
+	ConversationSettingUpdateReq              = pb.ConversationSettingUpdateReq
+	ConversationSettingUpdateResp             = pb.ConversationSettingUpdateResp
+	CountCreateGroupReq                       = pb.CountCreateGroupReq
+	CountCreateGroupResp                      = pb.CountCreateGroupResp
+	CountFriendReq                            = pb.CountFriendReq
+	CountFriendResp                           = pb.CountFriendResp
+	CountJoinGroupReq                         = pb.CountJoinGroupReq
+	CountJoinGroupResp                        = pb.CountJoinGroupResp
+	FriendApplyHandleReq                      = pb.FriendApplyHandleReq
+	FriendApplyHandleResp                     = pb.FriendApplyHandleResp
+	FriendApplyReq                            = pb.FriendApplyReq
+	FriendApplyResp                           = pb.FriendApplyResp
+	GroupCreateReq                            = pb.GroupCreateReq
+	GroupCreateResp                           = pb.GroupCreateResp
+	GroupSubscribeReq                         = pb.GroupSubscribeReq
+	GroupSubscribeResp                        = pb.GroupSubscribeResp
+	ListFriendApplyReq                        = pb.ListFriendApplyReq
+	ListFriendApplyReq_Filter                 = pb.ListFriendApplyReq_Filter
+	ListFriendApplyReq_Option                 = pb.ListFriendApplyReq_Option
+	ListFriendApplyResp                       = pb.ListFriendApplyResp
+	ListFriendApplyResp_FriendApply           = pb.ListFriendApplyResp_FriendApply
+	ListGroupSubscribersReq                   = pb.ListGroupSubscribersReq
+	ListGroupSubscribersReq_Filter            = pb.ListGroupSubscribersReq_Filter
+	ListGroupSubscribersReq_Option            = pb.ListGroupSubscribersReq_Option
+	ListGroupSubscribersResp                  = pb.ListGroupSubscribersResp
+	ListGroupSubscribersResp_Subscriber       = pb.ListGroupSubscribersResp_Subscriber
+	ListJoinedGroupsReq                       = pb.ListJoinedGroupsReq
+	ListJoinedGroupsReq_Filter                = pb.ListJoinedGroupsReq_Filter
+	ListJoinedGroupsReq_Filter_SettingKV      = pb.ListJoinedGroupsReq_Filter_SettingKV
+	ListJoinedGroupsReq_Option                = pb.ListJoinedGroupsReq_Option
+	ListJoinedGroupsResp                      = pb.ListJoinedGroupsResp
+	ListJoinedGroupsResp_Group                = pb.ListJoinedGroupsResp_Group
+	ListJoinedGroupsResp_Group_SelfMemberInfo = pb.ListJoinedGroupsResp_Group_SelfMemberInfo
+	SubscriptionAfterOnlineReq                = pb.SubscriptionAfterOnlineReq
+	SubscriptionAfterOnlineResp               = pb.SubscriptionAfterOnlineResp
+	SubscriptionSubscribeReq                  = pb.SubscriptionSubscribeReq
+	SubscriptionSubscribeResp                 = pb.SubscriptionSubscribeResp
 
 	GroupService interface {
 		// GroupCreate 创建群组
@@ -40,6 +58,12 @@ type (
 		CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error)
 		// CountCreateGroup 统计创建的群组数量
 		CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error)
+		// GroupSubscribe 群组订阅
+		GroupSubscribe(ctx context.Context, in *GroupSubscribeReq, opts ...grpc.CallOption) (*GroupSubscribeResp, error)
+		// ListJoinedGroups 列出加入的群组
+		ListJoinedGroups(ctx context.Context, in *ListJoinedGroupsReq, opts ...grpc.CallOption) (*ListJoinedGroupsResp, error)
+		// ListGroupSubscribers 列出群组订阅者
+		ListGroupSubscribers(ctx context.Context, in *ListGroupSubscribersReq, opts ...grpc.CallOption) (*ListGroupSubscribersResp, error)
 	}
 
 	defaultGroupService struct {
@@ -69,4 +93,22 @@ func (m *defaultGroupService) CountJoinGroup(ctx context.Context, in *CountJoinG
 func (m *defaultGroupService) CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error) {
 	client := pb.NewGroupServiceClient(m.cli.Conn())
 	return client.CountCreateGroup(ctx, in, opts...)
+}
+
+// GroupSubscribe 群组订阅
+func (m *defaultGroupService) GroupSubscribe(ctx context.Context, in *GroupSubscribeReq, opts ...grpc.CallOption) (*GroupSubscribeResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.GroupSubscribe(ctx, in, opts...)
+}
+
+// ListJoinedGroups 列出加入的群组
+func (m *defaultGroupService) ListJoinedGroups(ctx context.Context, in *ListJoinedGroupsReq, opts ...grpc.CallOption) (*ListJoinedGroupsResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ListJoinedGroups(ctx, in, opts...)
+}
+
+// ListGroupSubscribers 列出群组订阅者
+func (m *defaultGroupService) ListGroupSubscribers(ctx context.Context, in *ListGroupSubscribersReq, opts ...grpc.CallOption) (*ListGroupSubscribersResp, error) {
+	client := pb.NewGroupServiceClient(m.cli.Conn())
+	return client.ListGroupSubscribers(ctx, in, opts...)
 }

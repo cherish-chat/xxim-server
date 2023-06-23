@@ -21,7 +21,7 @@ func TestHttpClient_MessageBatchSend(t *testing.T) {
 			Name:   "哈哈",
 			Avatar: "头像",
 			Extra:  "xx",
-		}, "2", "你好你好", map[string]string{
+		}, "5", "你好你好", map[string]string{
 			"platformSource": "Test",
 		}))
 	}

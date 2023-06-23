@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
 	"github.com/cherish-chat/xxim-server/app/conversation/client/groupservice"
+	"github.com/cherish-chat/xxim-server/app/conversation/client/subscriptionservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/captchaservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/emailservice"
 	"github.com/cherish-chat/xxim-server/app/third/client/smsservice"
@@ -28,11 +29,12 @@ type ServiceContext struct {
 	MQ  xmq.MQ
 	Jwt *utils.Jwt
 
-	SmsService     smsservice.SmsService
-	EmailService   emailservice.EmailService
-	CaptchaService captchaservice.CaptchaService
-	FriendService  friendservice.FriendService
-	GroupService   groupservice.GroupService
+	SmsService          smsservice.SmsService
+	EmailService        emailservice.EmailService
+	CaptchaService      captchaservice.CaptchaService
+	FriendService       friendservice.FriendService
+	GroupService        groupservice.GroupService
+	SubscriptionService subscriptionservice.SubscriptionService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -63,6 +65,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		)
 		s.FriendService = friendservice.NewFriendService(conversationClient)
 		s.GroupService = groupservice.NewGroupService(conversationClient)
+		s.SubscriptionService = subscriptionservice.NewSubscriptionService(conversationClient)
 	}
 
 	s.MQ = xmq.NewAsynq(s.Config.RedisConf, 1, s.Config.Log.Level)

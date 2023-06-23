@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/app/conversation/friendmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/groupmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/internal/config"
+	"github.com/cherish-chat/xxim-server/app/conversation/subscriptionmodel"
 	"github.com/cherish-chat/xxim-server/app/message/client/messageservice"
 	"github.com/cherish-chat/xxim-server/app/message/client/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/user/client/infoservice"
@@ -21,9 +22,11 @@ type ServiceContext struct {
 	Redis                         *redis.Redis
 	ConversationSettingCollection *qmgo.QmgoClient
 	GroupCollection               *qmgo.QmgoClient
+	GroupSubscribeCollection      *qmgo.QmgoClient
 	ConversationMemberCollection  *qmgo.QmgoClient
 	FriendCollection              *qmgo.QmgoClient
 	FriendApplyRecordCollection   *qmgo.QmgoClient
+	SubscriptionCollection        *qmgo.QmgoClient
 
 	InfoService    infoservice.InfoService
 	NoticeService  noticeservice.NoticeService
@@ -46,9 +49,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                       c,
 		Redis:                        xcache.MustNewRedis(c.RedisConf),
 		GroupCollection:              xmgo.MustNewMongoCollection(c.MongoCollection.Group, &groupmodel.Group{}),
-		ConversationMemberCollection: xmgo.MustNewMongoCollection(c.MongoCollection.ConversationMember, &conversationmodel.ConversationSetting{}),
+		GroupSubscribeCollection:     xmgo.MustNewMongoCollection(c.MongoCollection.GroupSubscribe, &groupmodel.GroupSubscribe{}),
+		ConversationMemberCollection: xmgo.MustNewMongoCollection(c.MongoCollection.ConversationMember, &conversationmodel.ConversationMember{}),
 		FriendCollection:             xmgo.MustNewMongoCollection(c.MongoCollection.Friend, &friendmodel.Friend{}),
 		FriendApplyRecordCollection:  xmgo.MustNewMongoCollection(c.MongoCollection.FriendApplyRecord, &friendmodel.FriendApplyRecord{}),
+		SubscriptionCollection:       xmgo.MustNewMongoCollection(c.MongoCollection.Subscription, &subscriptionmodel.Subscription{}),
 
 		InfoService:    infoservice.NewInfoService(userClient),
 		NoticeService:  noticeservice.NewNoticeService(messageClient),
@@ -59,5 +64,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	friendmodel.InitFriendModel(s.FriendCollection, s.Redis)
 
 	conversationmodel.InitConversationMemberModel(s.ConversationMemberCollection, s.Redis)
+
+	subscriptionmodel.InitSystemSubscription(s.SubscriptionCollection)
 	return s
 }

@@ -46,6 +46,12 @@ func (s *GatewayServiceServer) GatewayWriteDataToWs(ctx context.Context, in *pb.
 	return l.GatewayWriteDataToWs(in)
 }
 
+// GatewayWriteDataToWsWrapper 向用户的连接写入数据
+func (s *GatewayServiceServer) GatewayWriteDataToWsWrapper(ctx context.Context, in *pb.GatewayWriteDataToWsWrapperReq) (*pb.GatewayWriteDataToWsResp, error) {
+	l := gatewayservicelogic.NewGatewayWriteDataToWsWrapperLogic(ctx, s.svcCtx)
+	return l.GatewayWriteDataToWsWrapper(in)
+}
+
 // GatewayKickWs 踢出用户的连接
 func (s *GatewayServiceServer) GatewayKickWs(ctx context.Context, in *pb.GatewayKickWsReq) (*pb.GatewayKickWsResp, error) {
 	l := gatewayservicelogic.NewGatewayKickWsLogic(ctx, s.svcCtx)

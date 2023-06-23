@@ -22,7 +22,7 @@ func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, conn
 					Body:   nil,
 				}
 			}
-			return response.Header.Code, MarshalResponse(connection.Header, response), nil
+			return response.Header.Code, MarshalWriteData(connection.Header, response), nil
 		}
 		if response == nil {
 			response = &pb.GatewayApiResponse{
@@ -33,6 +33,6 @@ func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, conn
 		if response.GetHeader() == nil {
 			response.Header = i18n.NewOkHeader()
 		}
-		return response.Header.Code, MarshalResponse(connection.Header, response), nil
+		return response.Header.Code, MarshalWriteData(connection.Header, response), nil
 	}
 }

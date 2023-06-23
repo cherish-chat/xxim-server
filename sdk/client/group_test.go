@@ -9,8 +9,8 @@ import (
 
 // GroupCreate 创建群
 func TestHttpClient_GroupCreate(t *testing.T) {
-	client := getHttpClient(t, nil)
-	//client := getWsClient(t, nil)
+	//client := getHttpClient(t, nil)
+	client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	groupCreateResp, err := client.GroupCreate(&pb.GroupCreateReq{
 		Name:       nil,
@@ -25,4 +25,5 @@ func TestHttpClient_GroupCreate(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(groupCreateResp))
+	time.Sleep(300 * time.Second)
 }

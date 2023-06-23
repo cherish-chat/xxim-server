@@ -34,6 +34,9 @@ type GatewayServiceClient interface {
 	// GatewayWriteDataToWs 向用户的连接写入数据
 	// 二次开发人员不建议修改此处逻辑
 	GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
+	// GatewayWriteDataToWsWrapper 向用户的连接写入数据
+	// 二次开发人员不建议修改此处逻辑
+	GatewayWriteDataToWsWrapper(ctx context.Context, in *GatewayWriteDataToWsWrapperReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
 	// GatewayKickWs 踢出用户的连接
 	// 二次开发人员可以在此处修改踢出用户连接的逻辑
 	// 比如踢出连接之前，先给用户发送一条消息
@@ -88,6 +91,15 @@ func (c *gatewayServiceClient) GatewayWriteDataToWs(ctx context.Context, in *Gat
 	return out, nil
 }
 
+func (c *gatewayServiceClient) GatewayWriteDataToWsWrapper(ctx context.Context, in *GatewayWriteDataToWsWrapperReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
+	out := new(GatewayWriteDataToWsResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/GatewayWriteDataToWsWrapper", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gatewayServiceClient) GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error) {
 	out := new(GatewayKickWsResp)
 	err := c.cc.Invoke(ctx, "/pb.gatewayService/GatewayKickWs", in, out, opts...)
@@ -122,6 +134,9 @@ type GatewayServiceServer interface {
 	// GatewayWriteDataToWs 向用户的连接写入数据
 	// 二次开发人员不建议修改此处逻辑
 	GatewayWriteDataToWs(context.Context, *GatewayWriteDataToWsReq) (*GatewayWriteDataToWsResp, error)
+	// GatewayWriteDataToWsWrapper 向用户的连接写入数据
+	// 二次开发人员不建议修改此处逻辑
+	GatewayWriteDataToWsWrapper(context.Context, *GatewayWriteDataToWsWrapperReq) (*GatewayWriteDataToWsResp, error)
 	// GatewayKickWs 踢出用户的连接
 	// 二次开发人员可以在此处修改踢出用户连接的逻辑
 	// 比如踢出连接之前，先给用户发送一条消息
@@ -148,6 +163,9 @@ func (UnimplementedGatewayServiceServer) GatewayGetConnectionByFilter(context.Co
 }
 func (UnimplementedGatewayServiceServer) GatewayWriteDataToWs(context.Context, *GatewayWriteDataToWsReq) (*GatewayWriteDataToWsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GatewayWriteDataToWs not implemented")
+}
+func (UnimplementedGatewayServiceServer) GatewayWriteDataToWsWrapper(context.Context, *GatewayWriteDataToWsWrapperReq) (*GatewayWriteDataToWsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GatewayWriteDataToWsWrapper not implemented")
 }
 func (UnimplementedGatewayServiceServer) GatewayKickWs(context.Context, *GatewayKickWsReq) (*GatewayKickWsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GatewayKickWs not implemented")
@@ -240,6 +258,24 @@ func _GatewayService_GatewayWriteDataToWs_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GatewayService_GatewayWriteDataToWsWrapper_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayWriteDataToWsWrapperReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).GatewayWriteDataToWsWrapper(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.gatewayService/GatewayWriteDataToWsWrapper",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).GatewayWriteDataToWsWrapper(ctx, req.(*GatewayWriteDataToWsWrapperReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GatewayService_GatewayKickWs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GatewayKickWsReq)
 	if err := dec(in); err != nil {
@@ -298,6 +334,10 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GatewayWriteDataToWs",
 			Handler:    _GatewayService_GatewayWriteDataToWs_Handler,
+		},
+		{
+			MethodName: "GatewayWriteDataToWsWrapper",
+			Handler:    _GatewayService_GatewayWriteDataToWsWrapper_Handler,
 		},
 		{
 			MethodName: "GatewayKickWs",

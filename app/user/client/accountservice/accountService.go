@@ -41,6 +41,8 @@ type (
 	UpdateUserProfileMapResp   = pb.UpdateUserProfileMapResp
 	UserAccessTokenReq         = pb.UserAccessTokenReq
 	UserAccessTokenResp        = pb.UserAccessTokenResp
+	UserAfterKeepAliveReq      = pb.UserAfterKeepAliveReq
+	UserAfterKeepAliveResp     = pb.UserAfterKeepAliveResp
 	UserAfterOfflineReq        = pb.UserAfterOfflineReq
 	UserAfterOfflineResp       = pb.UserAfterOfflineResp
 	UserAfterOnlineReq         = pb.UserAfterOnlineReq

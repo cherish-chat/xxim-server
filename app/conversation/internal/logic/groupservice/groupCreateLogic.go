@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/conversation/conversationmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/groupmodel"
-	"github.com/cherish-chat/xxim-server/app/message/noticemodel"
+	"github.com/cherish-chat/xxim-server/app/conversation/subscriptionmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/utils"
@@ -168,9 +168,9 @@ func (l *GroupCreateLogic) GroupCreate(in *pb.GroupCreateReq) (*pb.GroupCreateRe
 		}
 	}
 	conversationMembers := make([]*conversationmodel.ConversationMember, 0)
-	for _, memberId := range in.MemberList {
+	for _, memberId := range append(in.MemberList, in.Header.UserId) {
 		conversationMembers = append(conversationMembers, &conversationmodel.ConversationMember{
-			ConversationId:   group.GroupId,
+			ConversationId:   group.GroupIdString(),
 			ConversationType: pb.ConversationType_Group,
 			MemberUserId:     memberId,
 			JoinTime:         primitive.NewDateTimeFromTime(now),
@@ -178,10 +178,10 @@ func (l *GroupCreateLogic) GroupCreate(in *pb.GroupCreateReq) (*pb.GroupCreateRe
 				"event": "groupCreate",
 				"from":  in.Header.UserId,
 			},
-			Settings: make([]*conversationmodel.ConversationSetting, 0),
+			Settings: bson.M{},
 		})
 	}
-	if len(in.MemberList) > 0 {
+	if len(append(in.MemberList, in.Header.UserId)) > 0 {
 		_, err := l.svcCtx.ConversationMemberCollection.InsertMany(l.ctx, conversationMembers)
 		if err != nil {
 			l.Errorf("insert conversation member error: %v", err)
@@ -260,19 +260,22 @@ func (l *GroupCreateLogic) GroupCreate(in *pb.GroupCreateReq) (*pb.GroupCreateRe
 	}()
 	//发通知
 	go func() {
-		notice := &noticemodel.BroadcastNotice{
-			NoticeId:         utils.Snowflake.String(),
-			ConversationId:   group.GroupIdString(),
-			ConversationType: pb.ConversationType_Group,
-			Content:          utils.Json.MarshalToString(&pb.NoticeContentNewGroup{}),
-			ContentType:      pb.NoticeContentType_NewGroup,
-			UpdateTime:       primitive.NewDateTimeFromTime(time.Now()),
-		}
 		utils.Retry.Do(func() error {
 			_, err := l.svcCtx.NoticeService.NoticeSend(context.Background(), &pb.NoticeSendReq{
-				Header:    in.Header,
-				Notice:    notice.ToPb(),
-				Broadcast: true,
+				Header: in.Header,
+				Notice: &pb.Notice{
+					NoticeId:         utils.Snowflake.String(),
+					ConversationId:   subscriptionmodel.ConversationIdGroupHelper,
+					ConversationType: pb.ConversationType_Subscription,
+					Content: utils.Json.MarshalToString(&pb.NoticeContentJoinNewGroup{
+						GroupId: group.GroupIdString(),
+					}),
+					ContentType: pb.NoticeContentType_JoinNewGroup,
+					UpdateTime:  time.Now().UnixMilli(),
+					Sort:        0,
+				},
+				Broadcast: false,
+				UserIds:   append(in.MemberList, in.Header.UserId),
 			})
 			if err != nil {
 				l.Errorf("send notice error: %v", err)

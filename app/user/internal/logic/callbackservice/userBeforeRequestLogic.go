@@ -87,7 +87,6 @@ func (l *UserBeforeRequestLogic) UserBeforeRequest(in *pb.UserBeforeRequestReq) 
 		}
 		return &pb.UserBeforeRequestResp{
 			Header: i18n.NewOkHeader(),
-			UserId: tokenObject.UserId,
 		}, nil
 	}
 	// 如果是白名单接口，那么就不需要返回错误

@@ -27,5 +27,14 @@ func NewUserAfterOnlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 func (l *UserAfterOnlineLogic) UserAfterOnline(in *pb.UserAfterOnlineReq) (*pb.UserAfterOnlineResp, error) {
 	// todo: add your logic here and delete this line
 
+	//1. 订阅号的逻辑
+	{
+		_, err := l.svcCtx.SubscriptionService.SubscriptionAfterOnline(l.ctx, &pb.SubscriptionAfterOnlineReq{
+			Header: in.Header,
+		})
+		if err != nil {
+			l.Errorf("subscription after online error: %v", err)
+		}
+	}
 	return &pb.UserAfterOnlineResp{}, nil
 }

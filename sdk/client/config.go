@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/sdk/store"
+	"github.com/zeromicro/go-zero/core/logx"
 	"runtime"
 	"strconv"
 	"time"
@@ -35,6 +36,8 @@ type Config struct {
 	CustomHeader string
 	// KeepAliveSecond is the keep alive second of the websocket. Default is 30s.
 	KeepAliveSecond time.Duration
+	// LogConf is the log configuration of the client.
+	LogConf logx.LogConf
 }
 
 var (
@@ -42,6 +45,7 @@ var (
 )
 
 func (c *Config) Validate() error {
+	logx.SetUp(c.LogConf)
 	if len(c.Endpoints) == 0 {
 		return ErrNoEndpoint
 	}

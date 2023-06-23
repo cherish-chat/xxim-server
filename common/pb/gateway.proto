@@ -19,6 +19,28 @@ message GatewayApiResponse {
   bytes body = 4;
 }
 
+//GatewayWriteDataType 写入数据类型
+enum GatewayWriteDataType {
+  //返回响应
+  Response = 0;
+  //主动推送message
+  PushMessage = 1;
+  //主动推送notice
+  PushNotice = 2;
+}
+
+//GatewayWriteDataContent 写入数据内容
+message GatewayWriteDataContent {
+  //写入数据类型
+  GatewayWriteDataType dataType = 1;
+  //响应
+  optional GatewayApiResponse response = 2;
+  //主动推送message
+  optional Message message = 3;
+  //主动推送notice
+  optional Notice notice = 4;
+}
+
 //WsConnection ws连接
 message WsConnection {
   int64 id = 1;
@@ -66,12 +88,19 @@ message GatewayGetConnectionByFilterResp {
 message GatewayWriteDataToWsReq {
   RequestHeader header = 1;
   GatewayGetConnectionFilter filter = 2;
-  bytes data = 3;
+  GatewayWriteDataContent data = 3;
 }
 
 message GatewayWriteDataToWsResp {
   ResponseHeader header = 1;
   repeated WsConnection successConnections = 2;
+}
+
+//GatewayWriteDataToWsWrapperReq 写入数据到ws连接
+message GatewayWriteDataToWsWrapperReq {
+  RequestHeader header = 1;
+  GatewayGetConnectionFilter filter = 2;
+  GatewayWriteDataContent data = 3;
 }
 
 //GatewayKickWsReq 踢出ws连接
@@ -109,6 +138,9 @@ service gatewayService {
   // GatewayWriteDataToWs 向用户的连接写入数据
   // 二次开发人员不建议修改此处逻辑
   rpc GatewayWriteDataToWs(GatewayWriteDataToWsReq) returns (GatewayWriteDataToWsResp);
+  // GatewayWriteDataToWsWrapper 向用户的连接写入数据
+  // 二次开发人员不建议修改此处逻辑
+  rpc GatewayWriteDataToWsWrapper(GatewayWriteDataToWsWrapperReq) returns (GatewayWriteDataToWsResp);
   // GatewayKickWs 踢出用户的连接
   // 二次开发人员可以在此处修改踢出用户连接的逻辑
   // 比如踢出连接之前，先给用户发送一条消息

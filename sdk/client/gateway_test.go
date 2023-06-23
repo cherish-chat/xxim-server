@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/zeromicro/go-zero/core/logx"
 	"testing"
 	"time"
 )
@@ -22,6 +23,22 @@ var defaultConfig = &Config{
 	//UserToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3NjU4NTQsImp0aSI6IjIifQ.hOXp17_KUXI_HjJRKGFvI6xRiUBKvT_2p4rKKqBTOqM`, // 2
 	//UserToken:       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ4NDI3ODAzMzcsImp0aSI6IjEifQ.oveSP7-bsAe4CUX0JcRmWZFtySG-Egady5tzuRmVJTE`, // 1
 	KeepAliveSecond: time.Second * 30,
+	LogConf: logx.LogConf{
+		ServiceName:         "sdk",
+		Mode:                "console",
+		Encoding:            "json",
+		TimeFormat:          "",
+		Path:                "",
+		Level:               "info",
+		MaxContentLength:    0,
+		Compress:            false,
+		Stat:                false,
+		KeepDays:            0,
+		StackCooldownMillis: 0,
+		MaxBackups:          0,
+		MaxSize:             0,
+		Rotation:            "",
+	},
 }
 
 func getHttpClient(t *testing.T, config *Config) IClient {
@@ -95,37 +112,6 @@ func TestHttpClient_GatewayGetConnectionByFilter(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(gatewayGetConnectionByFilterResp))
-}
-
-// GatewayWriteDataToWs 向用户连接写入数据
-func TestHttpClient_GatewayWriteDataToWs(t *testing.T) {
-	//client := getHttpClient(t, nil)
-	client := getWsClient(t, nil)
-	time.Sleep(1 * time.Second)
-	gatewayWriteDataToWsResp, err := client.GatewayWriteDataToWs(&pb.GatewayWriteDataToWsReq{
-		Header: &pb.RequestHeader{},
-		Filter: &pb.GatewayGetConnectionFilter{
-			UserIds: []string{
-				"",
-			},
-		},
-		Data: utils.Json.MarshalToBytes(&pb.GatewayApiResponse{
-			Header: &pb.ResponseHeader{
-				Code:       pb.ResponseCode_SUCCESS,
-				ActionType: 0,
-				ActionData: "",
-				Extra:      "sdfghjklkjhgfds",
-			},
-			RequestId: "1234567890987654321",
-			Path:      "aaa/aaaa/aaaaa",
-			Body:      []byte("1234567890"),
-		}),
-	})
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
-	t.Logf("%s", utils.Json.MarshalToString(gatewayWriteDataToWsResp))
-	time.Sleep(1 * time.Second)
 }
 
 // GatewayKickWs 踢出用户连接

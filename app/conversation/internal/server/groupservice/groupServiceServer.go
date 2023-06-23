@@ -39,3 +39,21 @@ func (s *GroupServiceServer) CountCreateGroup(ctx context.Context, in *pb.CountC
 	l := groupservicelogic.NewCountCreateGroupLogic(ctx, s.svcCtx)
 	return l.CountCreateGroup(in)
 }
+
+// GroupSubscribe 群组订阅
+func (s *GroupServiceServer) GroupSubscribe(ctx context.Context, in *pb.GroupSubscribeReq) (*pb.GroupSubscribeResp, error) {
+	l := groupservicelogic.NewGroupSubscribeLogic(ctx, s.svcCtx)
+	return l.GroupSubscribe(in)
+}
+
+// ListJoinedGroups 列出加入的群组
+func (s *GroupServiceServer) ListJoinedGroups(ctx context.Context, in *pb.ListJoinedGroupsReq) (*pb.ListJoinedGroupsResp, error) {
+	l := groupservicelogic.NewListJoinedGroupsLogic(ctx, s.svcCtx)
+	return l.ListJoinedGroups(in)
+}
+
+// ListGroupSubscribers 列出群组订阅者
+func (s *GroupServiceServer) ListGroupSubscribers(ctx context.Context, in *pb.ListGroupSubscribersReq) (*pb.ListGroupSubscribersResp, error) {
+	l := groupservicelogic.NewListGroupSubscribersLogic(ctx, s.svcCtx)
+	return l.ListGroupSubscribers(in)
+}

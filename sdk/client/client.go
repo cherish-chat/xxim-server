@@ -119,40 +119,55 @@ func (c *WsClient) loopRead() {
 			logx.Errorf("read message error: %v", err)
 			continue
 		}
-		var resp pb.GatewayApiResponse
+		var writeData pb.GatewayWriteDataContent
 		if *c.Config.Encoding == pb.EncodingProto_PROTOBUF {
-			err = proto.Unmarshal(message, &resp)
+			err = proto.Unmarshal(message, &writeData)
 		} else {
-			err = json.Unmarshal(message, &resp)
+			err = json.Unmarshal(message, &writeData)
 		}
 		if err != nil {
-			logx.Errorf("unmarshal message error: %v", err)
+			logx.Errorf("unmarshal message error: %v, message: %s", err, message)
 			continue
 		}
-		ch, ok := c.responseMap.Load(resp.RequestId)
-		if !ok {
-			logx.Infof("response not found, data: %s", string(message))
-			continue
+		if writeData.DataType == pb.GatewayWriteDataType_Response {
+			var resp = writeData.Response
+			if resp == nil {
+				logx.Errorf("response is nil: %v", string(message))
+				return
+			}
+			ch, ok := c.responseMap.Load(resp.RequestId)
+			if !ok {
+				logx.Infof("response not found, data: %s", string(message))
+				continue
+			}
+			ch.(chan *pb.GatewayApiResponse) <- resp
+		} else if writeData.DataType == pb.GatewayWriteDataType_PushMessage {
+			go c.onNewMessage(writeData.Message)
+		} else if writeData.DataType == pb.GatewayWriteDataType_PushNotice {
+			go c.onNewNotice(writeData.Notice)
 		}
-		ch.(chan *pb.GatewayApiResponse) <- &resp
+
+	}
+}
+
+func (c *WsClient) KeepAlive() {
+	logx.Debugf("send heartbeat")
+	e := c.Request("/v1/gateway/white/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
+	if e != nil {
+		logx.Errorf("heartbeat error: %v", e)
+	} else {
+		logx.Debugf("heartbeat success")
 	}
 }
 
 func (c *WsClient) heartbeat() {
+	c.KeepAlive()
 	ticker := time.NewTicker(c.Config.KeepAliveSecond)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ticker.C:
-			go func() {
-				logx.Debugf("send heartbeat")
-				e := c.Request("/v1/gateway/white/keepAlive", &pb.GatewayKeepAliveReq{}, &pb.GatewayKeepAliveResp{})
-				if e != nil {
-					logx.Errorf("heartbeat error: %v", e)
-				} else {
-					logx.Debugf("heartbeat success")
-				}
-			}()
+			go c.KeepAlive()
 		}
 	}
 }
@@ -375,4 +390,8 @@ func (c *WsClient) waitResponse(requestId string) chan *pb.GatewayApiResponse {
 	ch := make(chan *pb.GatewayApiResponse)
 	c.responseMap.Store(requestId, ch)
 	return ch
+}
+
+func (c *WsClient) onNewMessage(message *pb.Message) {
+	logx.Infof("onNewMessage: %s", utils.AnyString(message))
 }

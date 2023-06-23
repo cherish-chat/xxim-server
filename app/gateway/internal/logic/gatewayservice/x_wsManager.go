@@ -2,9 +2,11 @@ package gatewayservicelogic
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
 	"sync"
 	"time"
@@ -102,6 +104,7 @@ func (w *WsConnectionMap) SetAliveTime(ctx context.Context, connectionId int64, 
 
 func (w *WsConnectionMap) Set(connectionId int64, value *WsConnection) {
 	w.idConnectionMapLock.Lock()
+	w.idConnectionMap[connectionId] = value
 	w.idConnectionMapLock.Unlock()
 	w.userIdsMapLock.Lock()
 	w.userIdsMap[value.Header.UserId] = append(w.userIdsMap[value.Header.UserId], value)
@@ -201,13 +204,20 @@ func (w *wsManager) KeepAlive(ctx context.Context, connection *WsConnection) {
 	w.wsConnectionMap.SetAliveTime(ctx, connection.Id, time.Now())
 }
 
-func (w *wsManager) WriteData(id int64, data []byte) bool {
+func (w *wsManager) WriteData(id int64, writeData *pb.GatewayWriteDataContent) bool {
 	wsConnection, ok := w.wsConnectionMap.GetByConnectionId(id)
 	if !ok {
 		return false
 	}
+	var data []byte
+	if wsConnection.Header.GetEncoding() == pb.EncodingProto_JSON {
+		data, _ = json.Marshal(writeData)
+	} else {
+		data, _ = proto.Marshal(writeData)
+	}
 	err := wsConnection.Connection.Write(wsConnection.Ctx, websocket.MessageText, data)
 	if err != nil {
+		logx.Debugf("WriteData error:%v, %s", wsConnection.Header, err.Error())
 		return false
 	}
 	return true

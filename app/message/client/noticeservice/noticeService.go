@@ -16,7 +16,6 @@ type (
 	ListNoticeReq                 = pb.ListNoticeReq
 	ListNoticeReq_Conversation    = pb.ListNoticeReq_Conversation
 	ListNoticeResp                = pb.ListNoticeResp
-	Message                       = pb.Message
 	MessageBatchSendReq           = pb.MessageBatchSendReq
 	MessageBatchSendResp          = pb.MessageBatchSendResp
 	MessageContentText            = pb.MessageContentText
@@ -29,13 +28,11 @@ type (
 	MessagePushResp               = pb.MessagePushResp
 	MessageSendReq                = pb.MessageSendReq
 	MessageSendResp               = pb.MessageSendResp
-	Message_Option                = pb.Message_Option
-	Message_Sender                = pb.Message_Sender
-	Notice                        = pb.Notice
 	NoticeBatchSendReq            = pb.NoticeBatchSendReq
 	NoticeBatchSendResp           = pb.NoticeBatchSendResp
+	NoticeContentJoinNewGroup     = pb.NoticeContentJoinNewGroup
 	NoticeContentNewFriendRequest = pb.NoticeContentNewFriendRequest
-	NoticeContentNewGroup         = pb.NoticeContentNewGroup
+	NoticeContentOnlineStatus     = pb.NoticeContentOnlineStatus
 	NoticeSendReq                 = pb.NoticeSendReq
 	NoticeSendResp                = pb.NoticeSendResp
 

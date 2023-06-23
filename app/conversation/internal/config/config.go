@@ -12,9 +12,11 @@ type Config struct {
 	RedisConf       redis.RedisConf
 	MongoCollection struct {
 		Group              xmgo.MongoCollectionConf
+		GroupSubscribe     xmgo.MongoCollectionConf
 		ConversationMember xmgo.MongoCollectionConf
 		Friend             xmgo.MongoCollectionConf
 		FriendApplyRecord  xmgo.MongoCollectionConf
+		Subscription       xmgo.MongoCollectionConf
 	}
 	Group struct {
 		MinGroupId int `json:",default=100000"`

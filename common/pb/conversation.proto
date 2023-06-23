@@ -39,6 +39,101 @@ message CountCreateGroupResp {
   int64 count = 2;
 }
 
+//GroupSubscribe 群组订阅
+
+message GroupSubscribeReq {
+  RequestHeader header = 1;
+}
+
+message GroupSubscribeResp {
+  ResponseHeader header = 1;
+}
+
+//ListJoinedGroups 列出加入的群组
+
+message ListJoinedGroupsReq {
+  RequestHeader header = 1;
+  //Cursor 游标
+  int64 cursor = 2;
+  //Limit 限制
+  int64 limit = 3;
+  //Filter 过滤器
+  message Filter {
+    message SettingKV {
+      enum Operator {
+        // 等于
+        Equal = 0;
+        // 不等于
+        NotEqual = 1;
+      }
+      ConversationSettingKey key = 1;
+      string value = 2;
+      Operator operator = 3;
+      bool orNotExists = 4;
+      bool orExists = 5;
+    }
+    //使用setting中的字段过滤
+    repeated SettingKV settingList = 1;
+  }
+  //Option 选项
+  message Option {
+    //IncludeGroupInfo 是否包含群组信息 默认只有群id
+    bool includeGroupInfo = 1;
+    //IncludeSelfMemberInfo 是否包含自己的成员信息
+    bool includeSelfMemberInfo = 2;
+  }
+  Filter filter = 4;
+  Option option = 5;
+}
+
+message ListJoinedGroupsResp {
+  ResponseHeader header = 1;
+  //List 列表
+  message Group {
+    //GroupId 群组id
+    string groupId = 1;
+    message SelfMemberInfo {
+      int64 joinTime = 1;
+    }
+    optional SelfMemberInfo selfMemberInfo = 31;
+  }
+  repeated Group groupList = 3;
+}
+
+//ListGroupSubscribersReq 列出群组订阅者
+message ListGroupSubscribersReq{
+  RequestHeader header = 1;
+  //GroupId 群组id
+  string groupId = 2;
+  //Cursor 游标
+  int64 cursor = 3;
+  //Limit 限制
+  int64 limit = 4;
+  //Filter 过滤器
+  message Filter {
+    //subscribeTimeGte 订阅时间大于等于
+    int64 subscribeTimeGte = 1;
+  }
+  //Option 选项
+  message Option {
+  }
+  Filter filter = 5;
+  Option option = 6;
+}
+
+message ListGroupSubscribersResp{
+  ResponseHeader header = 1;
+  //Cursor 游标
+  //List 列表
+  message Subscriber {
+    //UserId 用户id
+    string userId = 1;
+    //SubscribeTime 订阅时间
+    int64 subscribeTime = 2;
+  }
+  repeated Subscriber subscriberList = 2;
+}
+
 service groupService {
   //GroupCreate 创建群组
   rpc GroupCreate(GroupCreateReq) returns (GroupCreateResp) {}
@@ -46,6 +141,12 @@ service groupService {
   rpc CountJoinGroup(CountJoinGroupReq) returns (CountJoinGroupResp) {}
   //CountCreateGroup 统计创建的群组数量
   rpc CountCreateGroup(CountCreateGroupReq) returns (CountCreateGroupResp) {}
+  //GroupSubscribe 群组订阅
+  rpc GroupSubscribe(GroupSubscribeReq) returns (GroupSubscribeResp) {}
+  //ListJoinedGroups 列出加入的群组
+  rpc ListJoinedGroups(ListJoinedGroupsReq) returns (ListJoinedGroupsResp) {}
+  //ListGroupSubscribers 列出群组订阅者
+  rpc ListGroupSubscribers(ListGroupSubscribersReq) returns (ListGroupSubscribersResp) {}
 }
 
 //FriendApplyStatus 好友申请状态
@@ -159,4 +260,31 @@ message ConversationSettingUpdateResp {
 service conversationService {
   //ConversationSettingUpdate 更新会话设置
   rpc ConversationSettingUpdate(ConversationSettingUpdateReq) returns (ConversationSettingUpdateResp) {}
+}
+
+//SubscriptionSubscribe 订阅号订阅
+
+message SubscriptionSubscribeReq {
+  RequestHeader header = 1;
+}
+
+message SubscriptionSubscribeResp {
+  ResponseHeader header = 1;
+}
+
+//SubscriptionAfterOnline 订阅号在做用户上线后的操作
+
+message SubscriptionAfterOnlineReq {
+  RequestHeader header = 1;
+}
+
+message SubscriptionAfterOnlineResp {
+  ResponseHeader header = 1;
+}
+
+service subscriptionService {
+  //SubscriptionSubscribe 订阅号订阅
+  rpc SubscriptionSubscribe(SubscriptionSubscribeReq) returns (SubscriptionSubscribeResp) {}
+  //SubscriptionAfterOnline 订阅号在做用户上线后的操作
+  rpc SubscriptionAfterOnline(SubscriptionAfterOnlineReq) returns (SubscriptionAfterOnlineResp) {}
 }

@@ -10,44 +10,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type ValueType int8
 type ConversationType = pb.ConversationType
-
-const (
-	// ValueTypeString 字符串
-	ValueTypeString ValueType = iota
-	// ValueTypeBool 布尔值
-	ValueTypeBool
-	// ValueTypeInt 整数
-	ValueTypeInt
-	// ValueTypeFloat 浮点数
-	ValueTypeFloat
-	// ValueTypeArrayJson 数组JSON
-	ValueTypeArrayJson
-	// ValueTypeMapJson MapJSON
-	ValueTypeMapJson
-	// ValueTypeFileUrl 文件url;
-	// valueTypeExt会记录允许的拓展名;
-	// example: [".png", ".jpg", ".jpeg", ".gif", ".bmp"]
-	ValueTypeFileUrl
-)
-
-type ConversationSetting struct {
-	// K key
-	K string `bson:"k" json:"k"`
-	// G group 分组
-	G string `bson:"g" json:"g"`
-	// V value
-	V string `bson:"v" json:"v"`
-	// ValueType 值类型
-	ValueType ValueType `bson:"valueType" json:"valueType"`
-	// ValueTypeExt 值类型扩展
-	ValueTypeExt string `bson:"valueTypeExt" json:"valueTypeExt"`
-}
+type ConversationSettingKey = pb.ConversationSettingKey
 
 type ConversationMember struct {
 	// ConversationId 群组ID
-	ConversationId int `bson:"conversationId"`
+	ConversationId string `bson:"conversationId"`
 	// ConversationType 会话类型
 	ConversationType ConversationType `json:"conversationType"`
 	// MemberUserId 群成员ID
@@ -57,7 +25,7 @@ type ConversationMember struct {
 	// JoinSource 加入来源
 	JoinSource bson.M `bson:"joinSource,omitempty"`
 	// Settings 群成员设置
-	Settings []*ConversationSetting ` bson:"settings"`
+	Settings bson.M ` bson:"settings,omitempty"`
 }
 
 func (m *ConversationMember) TableName() string {

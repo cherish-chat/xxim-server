@@ -369,7 +369,7 @@ func (l *FriendApplyLogic) verifyApplyExist_(in *pb.FriendApplyReq, fromUser *us
 func (l *FriendApplyLogic) sendNotice_(in *pb.FriendApplyReq, fromUser *usermodel.User, toUser *usermodel.User, friendApplyRecord *friendmodel.FriendApplyRecord) {
 	notice := &noticemodel.BroadcastNotice{
 		NoticeId:         utils.Snowflake.String(),
-		ConversationId:   subscriptionmodel.ConversationIdFriendNotification,
+		ConversationId:   subscriptionmodel.ConversationIdFriendHelper,
 		ConversationType: pb.ConversationType_Subscription,
 		Content:          utils.Json.MarshalToString(&pb.NoticeContentNewFriendRequest{}),
 		ContentType:      pb.NoticeContentType_NewFriendRequest,

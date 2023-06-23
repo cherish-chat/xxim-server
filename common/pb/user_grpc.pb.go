@@ -734,6 +734,9 @@ type CallbackServiceClient interface {
 	//UserBeforeRequest 用户请求前的回调
 	//用户请求前的回调逻辑可以从这里修改
 	UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
+	//UserAfterKeepAlive 用户保活回调
+	//用户保活回调逻辑可以从这里修改
+	UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error)
 }
 
 type callbackServiceClient struct {
@@ -780,6 +783,15 @@ func (c *callbackServiceClient) UserBeforeRequest(ctx context.Context, in *UserB
 	return out, nil
 }
 
+func (c *callbackServiceClient) UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error) {
+	out := new(UserAfterKeepAliveResp)
+	err := c.cc.Invoke(ctx, "/pb.callbackService/UserAfterKeepAlive", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CallbackServiceServer is the server API for CallbackService service.
 // All implementations must embed UnimplementedCallbackServiceServer
 // for forward compatibility
@@ -796,6 +808,9 @@ type CallbackServiceServer interface {
 	//UserBeforeRequest 用户请求前的回调
 	//用户请求前的回调逻辑可以从这里修改
 	UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error)
+	//UserAfterKeepAlive 用户保活回调
+	//用户保活回调逻辑可以从这里修改
+	UserAfterKeepAlive(context.Context, *UserAfterKeepAliveReq) (*UserAfterKeepAliveResp, error)
 	mustEmbedUnimplementedCallbackServiceServer()
 }
 
@@ -814,6 +829,9 @@ func (UnimplementedCallbackServiceServer) UserBeforeConnect(context.Context, *Us
 }
 func (UnimplementedCallbackServiceServer) UserBeforeRequest(context.Context, *UserBeforeRequestReq) (*UserBeforeRequestResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserBeforeRequest not implemented")
+}
+func (UnimplementedCallbackServiceServer) UserAfterKeepAlive(context.Context, *UserAfterKeepAliveReq) (*UserAfterKeepAliveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserAfterKeepAlive not implemented")
 }
 func (UnimplementedCallbackServiceServer) mustEmbedUnimplementedCallbackServiceServer() {}
 
@@ -900,6 +918,24 @@ func _CallbackService_UserBeforeRequest_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CallbackService_UserAfterKeepAlive_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAfterKeepAliveReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CallbackServiceServer).UserAfterKeepAlive(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.callbackService/UserAfterKeepAlive",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CallbackServiceServer).UserAfterKeepAlive(ctx, req.(*UserAfterKeepAliveReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CallbackService_ServiceDesc is the grpc.ServiceDesc for CallbackService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -922,6 +958,10 @@ var CallbackService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserBeforeRequest",
 			Handler:    _CallbackService_UserBeforeRequest_Handler,
+		},
+		{
+			MethodName: "UserAfterKeepAlive",
+			Handler:    _CallbackService_UserAfterKeepAlive_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

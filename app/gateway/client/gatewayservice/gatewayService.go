@@ -26,8 +26,10 @@ type (
 	GatewayKeepAliveResp              = pb.GatewayKeepAliveResp
 	GatewayKickWsReq                  = pb.GatewayKickWsReq
 	GatewayKickWsResp                 = pb.GatewayKickWsResp
+	GatewayWriteDataContent           = pb.GatewayWriteDataContent
 	GatewayWriteDataToWsReq           = pb.GatewayWriteDataToWsReq
 	GatewayWriteDataToWsResp          = pb.GatewayWriteDataToWsResp
+	GatewayWriteDataToWsWrapperReq    = pb.GatewayWriteDataToWsWrapperReq
 	WsConnection                      = pb.WsConnection
 
 	GatewayService interface {
@@ -39,6 +41,8 @@ type (
 		GatewayGetConnectionByFilter(ctx context.Context, in *GatewayGetConnectionByFilterReq, opts ...grpc.CallOption) (*GatewayGetConnectionByFilterResp, error)
 		// GatewayWriteDataToWs 向用户的连接写入数据
 		GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
+		// GatewayWriteDataToWsWrapper 向用户的连接写入数据
+		GatewayWriteDataToWsWrapper(ctx context.Context, in *GatewayWriteDataToWsWrapperReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error)
 		// GatewayKickWs 踢出用户的连接
 		GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error)
 		// KeepAlive 保持连接
@@ -78,6 +82,12 @@ func (m *defaultGatewayService) GatewayGetConnectionByFilter(ctx context.Context
 func (m *defaultGatewayService) GatewayWriteDataToWs(ctx context.Context, in *GatewayWriteDataToWsReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayWriteDataToWs(ctx, in, opts...)
+}
+
+// GatewayWriteDataToWsWrapper 向用户的连接写入数据
+func (m *defaultGatewayService) GatewayWriteDataToWsWrapper(ctx context.Context, in *GatewayWriteDataToWsWrapperReq, opts ...grpc.CallOption) (*GatewayWriteDataToWsResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.GatewayWriteDataToWsWrapper(ctx, in, opts...)
 }
 
 // GatewayKickWs 踢出用户的连接

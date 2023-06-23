@@ -41,6 +41,8 @@ type (
 	UpdateUserProfileMapResp   = pb.UpdateUserProfileMapResp
 	UserAccessTokenReq         = pb.UserAccessTokenReq
 	UserAccessTokenResp        = pb.UserAccessTokenResp
+	UserAfterKeepAliveReq      = pb.UserAfterKeepAliveReq
+	UserAfterKeepAliveResp     = pb.UserAfterKeepAliveResp
 	UserAfterOfflineReq        = pb.UserAfterOfflineReq
 	UserAfterOfflineResp       = pb.UserAfterOfflineResp
 	UserAfterOnlineReq         = pb.UserAfterOnlineReq
@@ -63,6 +65,8 @@ type (
 		UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
 		// UserBeforeRequest 用户请求前的回调
 		UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
+		// UserAfterKeepAlive 用户保活回调
+		UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error)
 	}
 
 	defaultCallbackService struct {
@@ -98,4 +102,10 @@ func (m *defaultCallbackService) UserBeforeConnect(ctx context.Context, in *User
 func (m *defaultCallbackService) UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error) {
 	client := pb.NewCallbackServiceClient(m.cli.Conn())
 	return client.UserBeforeRequest(ctx, in, opts...)
+}
+
+// UserAfterKeepAlive 用户保活回调
+func (m *defaultCallbackService) UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error) {
+	client := pb.NewCallbackServiceClient(m.cli.Conn())
+	return client.UserAfterKeepAlive(ctx, in, opts...)
 }

@@ -241,6 +241,7 @@ message UserBeforeConnectResp {
   WebsocketCustomCloseCode closeCode = 3;
   // 如果不允许建立连接，返回的错误信息
   string closeReason = 4;
+  string userId = 5; // 成功的话返回用户id
 }
 
 //UserBeforeRequest 用户请求前的回调
@@ -254,7 +255,18 @@ message UserBeforeRequestReq {
 //UserBeforeRequestResp 用户请求前的回调响应
 message UserBeforeRequestResp {
   ResponseHeader header = 1;
-  string userId = 2; // 用户id 唯一
+}
+
+//UserAfterKeepAlive 用户保活回调
+
+//UserAfterKeepAliveReq 用户保活回调请求
+message UserAfterKeepAliveReq {
+  RequestHeader header = 1;
+}
+
+//UserAfterKeepAliveResp 用户保活回调响应
+message UserAfterKeepAliveResp {
+  ResponseHeader header = 1;
 }
 
 //CreateRobot 创建机器人
@@ -377,4 +389,7 @@ service callbackService {
   //UserBeforeRequest 用户请求前的回调
   //用户请求前的回调逻辑可以从这里修改
   rpc UserBeforeRequest(UserBeforeRequestReq) returns (UserBeforeRequestResp);
+  //UserAfterKeepAlive 用户保活回调
+  //用户保活回调逻辑可以从这里修改
+  rpc UserAfterKeepAlive(UserAfterKeepAliveReq) returns (UserAfterKeepAliveResp);
 }

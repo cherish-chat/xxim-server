@@ -92,18 +92,21 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 		c.Close(websocket.StatusCode(beforeConnectResp.CloseCode), beforeConnectResp.CloseReason)
 		return
 	}
+
+	header.UserId = beforeConnectResp.UserId
+
 	defer c.Close(websocket.StatusInternalError, "")
 
 	ctx, cancelFunc := context.WithCancel(r.Context())
 	connectionId := utils.Snowflake.Int64()
 	defer func() {
-		logger.Debugf("removing subscriber: %s", connectionId)
+		logger.Debugf("removing subscriber: %d", connectionId)
 		err := gatewayservicelogic.WsManager.RemoveSubscriber(header, connectionId, websocket.StatusNormalClosure, "finished")
 		if err != nil {
 			logger.Errorf("failed to remove subscriber: %v", err)
 			return
 		} else {
-			logger.Debugf("removed subscriber: %s", connectionId)
+			logger.Debugf("removed subscriber: %d", connectionId)
 		}
 	}()
 	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, c, connectionId)

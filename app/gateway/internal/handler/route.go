@@ -107,7 +107,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 					Body:   nil,
 				}
 			}
-			return response.Header.Code, MarshalResponse(requestHeader, response), nil
+			return response.Header.Code, MarshalWriteData(requestHeader, response), nil
 		}
 		if response == nil {
 			response = &pb.GatewayApiResponse{
@@ -118,7 +118,7 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 		if response.GetHeader() == nil {
 			response.Header = i18n.NewOkHeader()
 		}
-		return response.Header.Code, MarshalResponse(requestHeader, response), nil
+		return response.Header.Code, MarshalWriteData(requestHeader, response), nil
 	})
 }
 

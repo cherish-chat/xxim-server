@@ -135,5 +135,37 @@ func (l *ConsumerLogic) pushBroadcastNotice(broadcastNotices []*noticemodel.Broa
 }
 
 func (l *ConsumerLogic) pushSubscriptionNotice(subscriptionNoticeContents []*noticemodel.SubscriptionNoticeContent, subscriptionNotices []*noticemodel.SubscriptionNotice) {
-	l.Debugf("push subscription notice: %v, %v", subscriptionNoticeContents, subscriptionNotices)
+	for _, notice := range subscriptionNotices {
+		content := ""
+		for _, contentItem := range subscriptionNoticeContents {
+			if contentItem.ContentId == notice.ContentId {
+				content = contentItem.Content
+				break
+			}
+		}
+		pbNotice := &pb.Notice{
+			NoticeId:         utils.AnyString(notice.Sort),
+			ConversationId:   notice.SubscriptionId,
+			ConversationType: pb.ConversationType_Subscription,
+			Content:          content,
+			ContentType:      notice.ContentType,
+			UpdateTime:       int64(notice.UpdateTime),
+			Sort:             notice.Sort,
+		}
+		gatewayWriteDataToWsResp, err := l.svcCtx.GatewayService.GatewayWriteDataToWsWrapper(context.Background(), &pb.GatewayWriteDataToWsWrapperReq{
+			Filter: &pb.GatewayGetConnectionFilter{
+				UserIds: []string{notice.UserId},
+			},
+			Data: &pb.GatewayWriteDataContent{
+				DataType: pb.GatewayWriteDataType_PushNotice,
+				Response: nil,
+				Message:  nil,
+				Notice:   pbNotice,
+			},
+		})
+		if err != nil {
+			l.Errorf("push subscription notice error: %v", err)
+		}
+		_ = gatewayWriteDataToWsResp
+	}
 }

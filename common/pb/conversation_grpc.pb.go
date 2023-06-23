@@ -28,6 +28,12 @@ type GroupServiceClient interface {
 	CountJoinGroup(ctx context.Context, in *CountJoinGroupReq, opts ...grpc.CallOption) (*CountJoinGroupResp, error)
 	//CountCreateGroup 统计创建的群组数量
 	CountCreateGroup(ctx context.Context, in *CountCreateGroupReq, opts ...grpc.CallOption) (*CountCreateGroupResp, error)
+	//GroupSubscribe 群组订阅
+	GroupSubscribe(ctx context.Context, in *GroupSubscribeReq, opts ...grpc.CallOption) (*GroupSubscribeResp, error)
+	//ListJoinedGroups 列出加入的群组
+	ListJoinedGroups(ctx context.Context, in *ListJoinedGroupsReq, opts ...grpc.CallOption) (*ListJoinedGroupsResp, error)
+	//ListGroupSubscribers 列出群组订阅者
+	ListGroupSubscribers(ctx context.Context, in *ListGroupSubscribersReq, opts ...grpc.CallOption) (*ListGroupSubscribersResp, error)
 }
 
 type groupServiceClient struct {
@@ -65,6 +71,33 @@ func (c *groupServiceClient) CountCreateGroup(ctx context.Context, in *CountCrea
 	return out, nil
 }
 
+func (c *groupServiceClient) GroupSubscribe(ctx context.Context, in *GroupSubscribeReq, opts ...grpc.CallOption) (*GroupSubscribeResp, error) {
+	out := new(GroupSubscribeResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/GroupSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) ListJoinedGroups(ctx context.Context, in *ListJoinedGroupsReq, opts ...grpc.CallOption) (*ListJoinedGroupsResp, error) {
+	out := new(ListJoinedGroupsResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ListJoinedGroups", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) ListGroupSubscribers(ctx context.Context, in *ListGroupSubscribersReq, opts ...grpc.CallOption) (*ListGroupSubscribersResp, error) {
+	out := new(ListGroupSubscribersResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/ListGroupSubscribers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GroupServiceServer is the server API for GroupService service.
 // All implementations must embed UnimplementedGroupServiceServer
 // for forward compatibility
@@ -75,6 +108,12 @@ type GroupServiceServer interface {
 	CountJoinGroup(context.Context, *CountJoinGroupReq) (*CountJoinGroupResp, error)
 	//CountCreateGroup 统计创建的群组数量
 	CountCreateGroup(context.Context, *CountCreateGroupReq) (*CountCreateGroupResp, error)
+	//GroupSubscribe 群组订阅
+	GroupSubscribe(context.Context, *GroupSubscribeReq) (*GroupSubscribeResp, error)
+	//ListJoinedGroups 列出加入的群组
+	ListJoinedGroups(context.Context, *ListJoinedGroupsReq) (*ListJoinedGroupsResp, error)
+	//ListGroupSubscribers 列出群组订阅者
+	ListGroupSubscribers(context.Context, *ListGroupSubscribersReq) (*ListGroupSubscribersResp, error)
 	mustEmbedUnimplementedGroupServiceServer()
 }
 
@@ -90,6 +129,15 @@ func (UnimplementedGroupServiceServer) CountJoinGroup(context.Context, *CountJoi
 }
 func (UnimplementedGroupServiceServer) CountCreateGroup(context.Context, *CountCreateGroupReq) (*CountCreateGroupResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountCreateGroup not implemented")
+}
+func (UnimplementedGroupServiceServer) GroupSubscribe(context.Context, *GroupSubscribeReq) (*GroupSubscribeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GroupSubscribe not implemented")
+}
+func (UnimplementedGroupServiceServer) ListJoinedGroups(context.Context, *ListJoinedGroupsReq) (*ListJoinedGroupsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListJoinedGroups not implemented")
+}
+func (UnimplementedGroupServiceServer) ListGroupSubscribers(context.Context, *ListGroupSubscribersReq) (*ListGroupSubscribersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroupSubscribers not implemented")
 }
 func (UnimplementedGroupServiceServer) mustEmbedUnimplementedGroupServiceServer() {}
 
@@ -158,6 +206,60 @@ func _GroupService_CountCreateGroup_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GroupService_GroupSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GroupSubscribeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).GroupSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/GroupSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).GroupSubscribe(ctx, req.(*GroupSubscribeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_ListJoinedGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListJoinedGroupsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ListJoinedGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ListJoinedGroups",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ListJoinedGroups(ctx, req.(*ListJoinedGroupsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_ListGroupSubscribers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupSubscribersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).ListGroupSubscribers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/ListGroupSubscribers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).ListGroupSubscribers(ctx, req.(*ListGroupSubscribersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GroupService_ServiceDesc is the grpc.ServiceDesc for GroupService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +278,18 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CountCreateGroup",
 			Handler:    _GroupService_CountCreateGroup_Handler,
+		},
+		{
+			MethodName: "GroupSubscribe",
+			Handler:    _GroupService_GroupSubscribe_Handler,
+		},
+		{
+			MethodName: "ListJoinedGroups",
+			Handler:    _GroupService_ListJoinedGroups_Handler,
+		},
+		{
+			MethodName: "ListGroupSubscribers",
+			Handler:    _GroupService_ListGroupSubscribers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -466,6 +580,132 @@ var ConversationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConversationSettingUpdate",
 			Handler:    _ConversationService_ConversationSettingUpdate_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "conversation.proto",
+}
+
+// SubscriptionServiceClient is the client API for SubscriptionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SubscriptionServiceClient interface {
+	//SubscriptionSubscribe 订阅号订阅
+	SubscriptionSubscribe(ctx context.Context, in *SubscriptionSubscribeReq, opts ...grpc.CallOption) (*SubscriptionSubscribeResp, error)
+	//SubscriptionAfterOnline 订阅号在做用户上线后的操作
+	SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error)
+}
+
+type subscriptionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSubscriptionServiceClient(cc grpc.ClientConnInterface) SubscriptionServiceClient {
+	return &subscriptionServiceClient{cc}
+}
+
+func (c *subscriptionServiceClient) SubscriptionSubscribe(ctx context.Context, in *SubscriptionSubscribeReq, opts ...grpc.CallOption) (*SubscriptionSubscribeResp, error) {
+	out := new(SubscriptionSubscribeResp)
+	err := c.cc.Invoke(ctx, "/pb.subscriptionService/SubscriptionSubscribe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error) {
+	out := new(SubscriptionAfterOnlineResp)
+	err := c.cc.Invoke(ctx, "/pb.subscriptionService/SubscriptionAfterOnline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SubscriptionServiceServer is the server API for SubscriptionService service.
+// All implementations must embed UnimplementedSubscriptionServiceServer
+// for forward compatibility
+type SubscriptionServiceServer interface {
+	//SubscriptionSubscribe 订阅号订阅
+	SubscriptionSubscribe(context.Context, *SubscriptionSubscribeReq) (*SubscriptionSubscribeResp, error)
+	//SubscriptionAfterOnline 订阅号在做用户上线后的操作
+	SubscriptionAfterOnline(context.Context, *SubscriptionAfterOnlineReq) (*SubscriptionAfterOnlineResp, error)
+	mustEmbedUnimplementedSubscriptionServiceServer()
+}
+
+// UnimplementedSubscriptionServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedSubscriptionServiceServer struct {
+}
+
+func (UnimplementedSubscriptionServiceServer) SubscriptionSubscribe(context.Context, *SubscriptionSubscribeReq) (*SubscriptionSubscribeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionSubscribe not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) SubscriptionAfterOnline(context.Context, *SubscriptionAfterOnlineReq) (*SubscriptionAfterOnlineResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionAfterOnline not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) mustEmbedUnimplementedSubscriptionServiceServer() {}
+
+// UnsafeSubscriptionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SubscriptionServiceServer will
+// result in compilation errors.
+type UnsafeSubscriptionServiceServer interface {
+	mustEmbedUnimplementedSubscriptionServiceServer()
+}
+
+func RegisterSubscriptionServiceServer(s grpc.ServiceRegistrar, srv SubscriptionServiceServer) {
+	s.RegisterService(&SubscriptionService_ServiceDesc, srv)
+}
+
+func _SubscriptionService_SubscriptionSubscribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscriptionSubscribeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).SubscriptionSubscribe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.subscriptionService/SubscriptionSubscribe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).SubscriptionSubscribe(ctx, req.(*SubscriptionSubscribeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_SubscriptionAfterOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscriptionAfterOnlineReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).SubscriptionAfterOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.subscriptionService/SubscriptionAfterOnline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).SubscriptionAfterOnline(ctx, req.(*SubscriptionAfterOnlineReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SubscriptionService_ServiceDesc is the grpc.ServiceDesc for SubscriptionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.subscriptionService",
+	HandlerType: (*SubscriptionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SubscriptionSubscribe",
+			Handler:    _SubscriptionService_SubscriptionSubscribe_Handler,
+		},
+		{
+			MethodName: "SubscriptionAfterOnline",
+			Handler:    _SubscriptionService_SubscriptionAfterOnline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

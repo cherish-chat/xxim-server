@@ -1,13 +1,24 @@
 package subscriptionmodel
 
 import (
+	"context"
+	"github.com/qiniu/qmgo"
 	opts "github.com/qiniu/qmgo/options"
+	"github.com/zeromicro/go-zero/core/logx"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"os"
 )
 
 const (
-	ConversationIdFriendNotification = "friend_notification" // 好友通知
+	UserDefaultSubscriptionIdPrefix = "uds_"
+)
+
+const (
+	//ConversationIdFriendHelper 好友助手
+	ConversationIdFriendHelper = "friend_helper"
+	//ConversationIdGroupHelper 群助手
+	ConversationIdGroupHelper = "group_helper"
 )
 
 type SubscriptionType int8
@@ -45,4 +56,61 @@ func (m *Subscription) GetIndexes() []opts.IndexModel {
 			IndexOptions: options.Index().SetUnique(true),
 		},
 	}
+}
+
+func InitSystemSubscription(coll *qmgo.QmgoClient) {
+	subs := []*Subscription{
+		{
+			SubscriptionType: SubscriptionTypeSystem,
+			SubscriptionId:   ConversationIdFriendHelper,
+			Avatar:           "/images/system/avatar/friend_helper.png",
+			Nickname:         "好友助手",
+			Bio:              "该账号为系统账号，用于向您推送有关好友的系统通知",
+			Cover:            "/images/system/cover/friend_helper.png",
+			ExtraMap: map[string]interface{}{
+				"friendHelper": "true",
+			},
+		},
+		{
+			SubscriptionType: SubscriptionTypeSystem,
+			SubscriptionId:   ConversationIdGroupHelper,
+			Avatar:           "/images/system/avatar/group_helper.png",
+			Nickname:         "群助手",
+			Bio:              "群助手",
+			Cover:            "/images/system/cover/group_helper.png",
+			ExtraMap: map[string]interface{}{
+				"groupHelper": "true",
+			},
+		},
+	}
+	for _, sub := range subs {
+		//如果查询不到则插入
+		count, err := coll.Find(context.Background(), bson.M{
+			"subscriptionId":   sub.SubscriptionId,
+			"subscriptionType": sub.SubscriptionType,
+		}).Count()
+		if err != nil {
+			logx.Errorf("InitSystemSubscription Find error: %v", err)
+			os.Exit(1)
+		}
+		if count == 0 {
+			logx.Infof("InitSystemSubscription Insert: %v", sub)
+			_, err = coll.Upsert(context.Background(), bson.M{
+				"subscriptionId":   sub.SubscriptionId,
+				"subscriptionType": sub.SubscriptionType,
+			}, sub, opts.UpsertOptions{
+				ReplaceOptions: options.Replace().SetUpsert(true),
+			})
+			if err != nil {
+				logx.Errorf("InitSystemSubscription Upsert error: %v", err)
+				os.Exit(1)
+			}
+		} else {
+			logx.Infof("InitSystemSubscription Find: %v", sub)
+		}
+	}
+}
+
+func UserDefaultSubscriptionId(uid string) string {
+	return UserDefaultSubscriptionIdPrefix + uid
 }

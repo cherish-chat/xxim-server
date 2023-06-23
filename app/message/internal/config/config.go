@@ -15,6 +15,7 @@ type Config struct {
 		Conversation zrpc.RpcClientConf
 		Third        zrpc.RpcClientConf
 		Message      zrpc.RpcClientConf
+		Gateway      zrpc.RpcClientConf
 	}
 	MongoCollection struct {
 		BroadcastNotice           xmgo.MongoCollectionConf
