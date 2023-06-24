@@ -27,7 +27,7 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 
 在线体验：[惺惺](https://xxim.cherish.chat) ｜ [企业](https://enterprise.cherish.chat/)
 
-全平台sdk：[xxim-sdk-rust](https://github.com/cherish-chat/unified-sdk)
+全平台sdk：[xxim-sdk-rust](https://github.com/cherish-chat/xxim-sdk-rust)
 正在开发中，欢迎各原生平台开发者加入。通用sdk选择使用`rust`开发，因为`rust`的性能和安全性都是目前最好的。
 
 #### 包括但不限于：
