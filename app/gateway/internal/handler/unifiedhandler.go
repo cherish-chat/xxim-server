@@ -118,6 +118,8 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		}
 	}
 
+	requestHeader.UserId = userBeforeRequestResp.UserId
+
 	response, err := do(ctx.Request.Context(), request)
 	body, _ = proto.Marshal(response)
 	if len(body) > 0 {

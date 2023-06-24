@@ -52,7 +52,7 @@ type Subscription struct {
 func (m *Subscription) GetIndexes() []opts.IndexModel {
 	return []opts.IndexModel{
 		{
-			Key:          []string{"subscriptionId", "subscriptionType"},
+			Key:          []string{"subscriptionId"},
 			IndexOptions: options.Index().SetUnique(true),
 		},
 	}
@@ -108,6 +108,13 @@ func InitSystemSubscription(coll *qmgo.QmgoClient) {
 		} else {
 			logx.Infof("InitSystemSubscription Find: %v", sub)
 		}
+	}
+}
+
+func UserSubscribedSystemConversationIds() []string {
+	return []string{
+		ConversationIdFriendHelper,
+		ConversationIdGroupHelper,
 	}
 }
 

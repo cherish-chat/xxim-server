@@ -28,22 +28,22 @@ func NewGroupSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gr
 // GroupSubscribe 群组订阅
 func (l *GroupSubscribeLogic) GroupSubscribe(in *pb.GroupSubscribeReq) (*pb.GroupSubscribeResp, error) {
 	// 1. 获取用户加入的群组
-	listJoinedGroupsResp, err := NewListJoinedGroupsLogic(l.ctx, l.svcCtx).ListJoinedGroups(&pb.ListJoinedGroupsReq{
-		Header: in.Header,
-		Cursor: 0,
-		Limit:  int64(l.svcCtx.Config.Group.JoinedMaxCount),
-		Filter: &pb.ListJoinedGroupsReq_Filter{
-			SettingList: []*pb.ListJoinedGroupsReq_Filter_SettingKV{{
+	listJoinedGroupsResp, err := l.svcCtx.ConversationService.ListJoinedConversations(l.ctx, &pb.ListJoinedConversationsReq{
+		Header:           in.Header,
+		ConversationType: pb.ConversationType_Group,
+		Cursor:           0,
+		Limit:            int64(l.svcCtx.Config.Group.JoinedMaxCount),
+		Filter: &pb.ListJoinedConversationsReq_Filter{
+			SettingList: []*pb.ListJoinedConversationsReq_Filter_SettingKV{{
 				//是否被屏蔽这个key != "true" or 不存在
 				Key:         pb.ConversationSettingKey_IsBlocked, // 是否被屏蔽
 				Value:       "true",
-				Operator:    pb.ListJoinedGroupsReq_Filter_SettingKV_NotEqual,
+				Operator:    pb.ListJoinedConversationsReq_Filter_SettingKV_NotEqual,
 				OrNotExists: true,
 				OrExists:    false,
 			}},
 		},
-		Option: &pb.ListJoinedGroupsReq_Option{
-			IncludeGroupInfo:      false,
+		Option: &pb.ListJoinedConversationsReq_Option{
 			IncludeSelfMemberInfo: true,
 		},
 	})
@@ -52,13 +52,13 @@ func (l *GroupSubscribeLogic) GroupSubscribe(in *pb.GroupSubscribeReq) (*pb.Grou
 		return &pb.GroupSubscribeResp{}, err
 	}
 
-	if len(listJoinedGroupsResp.GetGroupList()) == 0 {
+	if len(listJoinedGroupsResp.GetConversationList()) == 0 {
 		return &pb.GroupSubscribeResp{}, nil
 	}
 
 	var groupIds []string
-	for _, group := range listJoinedGroupsResp.GetGroupList() {
-		groupIds = append(groupIds, group.GetGroupId())
+	for _, group := range listJoinedGroupsResp.GetConversationList() {
+		groupIds = append(groupIds, group.GetConversationId())
 	}
 
 	// 2. 批量更新用户的群组订阅时间

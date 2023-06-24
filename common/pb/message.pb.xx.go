@@ -17,6 +17,16 @@ func GetSingleChatConversationId(id1 string, id2 string) string {
 	}
 }
 
+func ParseSingleChatConversationId(convId string) (id1 string, id2 string) {
+	split := strings.Split(convId, SingleChatConversationSeparator)
+	if len(split) != 2 {
+		return
+	}
+	id1 = split[0]
+	id2 = split[1]
+	return
+}
+
 func GetSingleChatOtherId(convId string, id1 string) (id2 string) {
 	split := strings.Split(convId, SingleChatConversationSeparator)
 	if len(split) != 2 {

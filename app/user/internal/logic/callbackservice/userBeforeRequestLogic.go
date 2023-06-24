@@ -29,7 +29,6 @@ func NewUserBeforeRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // UserBeforeRequest 用户请求前的回调
 func (l *UserBeforeRequestLogic) UserBeforeRequest(in *pb.UserBeforeRequestReq) (*pb.UserBeforeRequestResp, error) {
-	// todo: add your logic here and delete this line
 	if in.Header.UserToken != "" {
 		tokenObject, verifyTokenErr := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Header.UserToken, in.Header.GetJwtUniqueKey())
 		if verifyTokenErr != nil {
@@ -87,6 +86,7 @@ func (l *UserBeforeRequestLogic) UserBeforeRequest(in *pb.UserBeforeRequestReq) 
 		}
 		return &pb.UserBeforeRequestResp{
 			Header: i18n.NewOkHeader(),
+			UserId: tokenObject.UserId,
 		}, nil
 	}
 	// 如果是白名单接口，那么就不需要返回错误

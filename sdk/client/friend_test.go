@@ -13,7 +13,7 @@ func TestHttpClient_FriendApply(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyResp, err := client.FriendApply(&pb.FriendApplyReq{
-		ToUserId: "5",
+		ToUserId: "6",
 	})
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -48,7 +48,7 @@ func TestHttpClient_FriendApplyHandle(t *testing.T) {
 	//client := getWsClient(t, nil)
 	time.Sleep(1 * time.Second)
 	friendApplyHandleResp, err := client.FriendApplyHandle(&pb.FriendApplyHandleReq{
-		ApplyId:      "4d35f233b59136d7280656f677e43fe5",
+		ApplyId:      "7893157afdaeac4b37a3ac7b9bf86c64",
 		Agree:        true,
 		FirstMessage: nil,
 	})
@@ -56,4 +56,14 @@ func TestHttpClient_FriendApplyHandle(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 	t.Logf("%s", utils.Json.MarshalToString(friendApplyHandleResp))
+}
+
+func TestOnline_1(t *testing.T) {
+	_ = getWsClient(t, nil)
+	time.Sleep(1 * time.Hour)
+}
+
+func TestOnline_2(t *testing.T) {
+	_ = getWsClient(t, nil)
+	time.Sleep(1 * time.Hour)
 }

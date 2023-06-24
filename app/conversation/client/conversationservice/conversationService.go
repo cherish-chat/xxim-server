@@ -13,47 +13,59 @@ import (
 )
 
 type (
-	ConversationSettingUpdateReq              = pb.ConversationSettingUpdateReq
-	ConversationSettingUpdateResp             = pb.ConversationSettingUpdateResp
-	CountCreateGroupReq                       = pb.CountCreateGroupReq
-	CountCreateGroupResp                      = pb.CountCreateGroupResp
-	CountFriendReq                            = pb.CountFriendReq
-	CountFriendResp                           = pb.CountFriendResp
-	CountJoinGroupReq                         = pb.CountJoinGroupReq
-	CountJoinGroupResp                        = pb.CountJoinGroupResp
-	FriendApplyHandleReq                      = pb.FriendApplyHandleReq
-	FriendApplyHandleResp                     = pb.FriendApplyHandleResp
-	FriendApplyReq                            = pb.FriendApplyReq
-	FriendApplyResp                           = pb.FriendApplyResp
-	GroupCreateReq                            = pb.GroupCreateReq
-	GroupCreateResp                           = pb.GroupCreateResp
-	GroupSubscribeReq                         = pb.GroupSubscribeReq
-	GroupSubscribeResp                        = pb.GroupSubscribeResp
-	ListFriendApplyReq                        = pb.ListFriendApplyReq
-	ListFriendApplyReq_Filter                 = pb.ListFriendApplyReq_Filter
-	ListFriendApplyReq_Option                 = pb.ListFriendApplyReq_Option
-	ListFriendApplyResp                       = pb.ListFriendApplyResp
-	ListFriendApplyResp_FriendApply           = pb.ListFriendApplyResp_FriendApply
-	ListGroupSubscribersReq                   = pb.ListGroupSubscribersReq
-	ListGroupSubscribersReq_Filter            = pb.ListGroupSubscribersReq_Filter
-	ListGroupSubscribersReq_Option            = pb.ListGroupSubscribersReq_Option
-	ListGroupSubscribersResp                  = pb.ListGroupSubscribersResp
-	ListGroupSubscribersResp_Subscriber       = pb.ListGroupSubscribersResp_Subscriber
-	ListJoinedGroupsReq                       = pb.ListJoinedGroupsReq
-	ListJoinedGroupsReq_Filter                = pb.ListJoinedGroupsReq_Filter
-	ListJoinedGroupsReq_Filter_SettingKV      = pb.ListJoinedGroupsReq_Filter_SettingKV
-	ListJoinedGroupsReq_Option                = pb.ListJoinedGroupsReq_Option
-	ListJoinedGroupsResp                      = pb.ListJoinedGroupsResp
-	ListJoinedGroupsResp_Group                = pb.ListJoinedGroupsResp_Group
-	ListJoinedGroupsResp_Group_SelfMemberInfo = pb.ListJoinedGroupsResp_Group_SelfMemberInfo
-	SubscriptionAfterOnlineReq                = pb.SubscriptionAfterOnlineReq
-	SubscriptionAfterOnlineResp               = pb.SubscriptionAfterOnlineResp
-	SubscriptionSubscribeReq                  = pb.SubscriptionSubscribeReq
-	SubscriptionSubscribeResp                 = pb.SubscriptionSubscribeResp
+	ConversationSettingUpdateReq                            = pb.ConversationSettingUpdateReq
+	ConversationSettingUpdateResp                           = pb.ConversationSettingUpdateResp
+	CountCreateGroupReq                                     = pb.CountCreateGroupReq
+	CountCreateGroupResp                                    = pb.CountCreateGroupResp
+	CountFriendReq                                          = pb.CountFriendReq
+	CountFriendResp                                         = pb.CountFriendResp
+	CountJoinGroupReq                                       = pb.CountJoinGroupReq
+	CountJoinGroupResp                                      = pb.CountJoinGroupResp
+	DeleteUserSubscriptionReq                               = pb.DeleteUserSubscriptionReq
+	DeleteUserSubscriptionResp                              = pb.DeleteUserSubscriptionResp
+	FriendApplyHandleReq                                    = pb.FriendApplyHandleReq
+	FriendApplyHandleResp                                   = pb.FriendApplyHandleResp
+	FriendApplyReq                                          = pb.FriendApplyReq
+	FriendApplyResp                                         = pb.FriendApplyResp
+	GroupCreateReq                                          = pb.GroupCreateReq
+	GroupCreateResp                                         = pb.GroupCreateResp
+	GroupSubscribeReq                                       = pb.GroupSubscribeReq
+	GroupSubscribeResp                                      = pb.GroupSubscribeResp
+	ListFriendApplyReq                                      = pb.ListFriendApplyReq
+	ListFriendApplyReq_Filter                               = pb.ListFriendApplyReq_Filter
+	ListFriendApplyReq_Option                               = pb.ListFriendApplyReq_Option
+	ListFriendApplyResp                                     = pb.ListFriendApplyResp
+	ListFriendApplyResp_FriendApply                         = pb.ListFriendApplyResp_FriendApply
+	ListGroupSubscribersReq                                 = pb.ListGroupSubscribersReq
+	ListGroupSubscribersReq_Filter                          = pb.ListGroupSubscribersReq_Filter
+	ListGroupSubscribersReq_Option                          = pb.ListGroupSubscribersReq_Option
+	ListGroupSubscribersResp                                = pb.ListGroupSubscribersResp
+	ListGroupSubscribersResp_Subscriber                     = pb.ListGroupSubscribersResp_Subscriber
+	ListJoinedConversationsReq                              = pb.ListJoinedConversationsReq
+	ListJoinedConversationsReq_Filter                       = pb.ListJoinedConversationsReq_Filter
+	ListJoinedConversationsReq_Filter_SettingKV             = pb.ListJoinedConversationsReq_Filter_SettingKV
+	ListJoinedConversationsReq_Option                       = pb.ListJoinedConversationsReq_Option
+	ListJoinedConversationsResp                             = pb.ListJoinedConversationsResp
+	ListJoinedConversationsResp_Conversation                = pb.ListJoinedConversationsResp_Conversation
+	ListJoinedConversationsResp_Conversation_SelfMemberInfo = pb.ListJoinedConversationsResp_Conversation_SelfMemberInfo
+	ListSubscriptionSubscribersReq                          = pb.ListSubscriptionSubscribersReq
+	ListSubscriptionSubscribersReq_Filter                   = pb.ListSubscriptionSubscribersReq_Filter
+	ListSubscriptionSubscribersReq_Option                   = pb.ListSubscriptionSubscribersReq_Option
+	ListSubscriptionSubscribersResp                         = pb.ListSubscriptionSubscribersResp
+	ListSubscriptionSubscribersResp_Subscriber              = pb.ListSubscriptionSubscribersResp_Subscriber
+	SubscriptionAfterOnlineReq                              = pb.SubscriptionAfterOnlineReq
+	SubscriptionAfterOnlineResp                             = pb.SubscriptionAfterOnlineResp
+	SubscriptionSubscribeReq                                = pb.SubscriptionSubscribeReq
+	SubscriptionSubscribeResp                               = pb.SubscriptionSubscribeResp
+	UpsertUserSubscriptionReq                               = pb.UpsertUserSubscriptionReq
+	UpsertUserSubscriptionResp                              = pb.UpsertUserSubscriptionResp
+	UserSubscription                                        = pb.UserSubscription
 
 	ConversationService interface {
 		// ConversationSettingUpdate 更新会话设置
 		ConversationSettingUpdate(ctx context.Context, in *ConversationSettingUpdateReq, opts ...grpc.CallOption) (*ConversationSettingUpdateResp, error)
+		// ListJoinedConversations 列出加入的会话
+		ListJoinedConversations(ctx context.Context, in *ListJoinedConversationsReq, opts ...grpc.CallOption) (*ListJoinedConversationsResp, error)
 	}
 
 	defaultConversationService struct {
@@ -71,4 +83,10 @@ func NewConversationService(cli zrpc.Client) ConversationService {
 func (m *defaultConversationService) ConversationSettingUpdate(ctx context.Context, in *ConversationSettingUpdateReq, opts ...grpc.CallOption) (*ConversationSettingUpdateResp, error) {
 	client := pb.NewConversationServiceClient(m.cli.Conn())
 	return client.ConversationSettingUpdate(ctx, in, opts...)
+}
+
+// ListJoinedConversations 列出加入的会话
+func (m *defaultConversationService) ListJoinedConversations(ctx context.Context, in *ListJoinedConversationsReq, opts ...grpc.CallOption) (*ListJoinedConversationsResp, error) {
+	client := pb.NewConversationServiceClient(m.cli.Conn())
+	return client.ListJoinedConversations(ctx, in, opts...)
 }

@@ -42,7 +42,13 @@ func (m *ConversationMember) GetIndexes() []opts.IndexModel {
 	}, {
 		Key: []string{"memberUserId"},
 	}, {
+		Key: []string{"memberUserId", "conversationType"},
+	}, {
 		Key: []string{"joinTime"},
+	}, {
+		Key: []string{"settings." + pb.ConversationSettingKey_IsBlocked.String()},
+	}, {
+		Key: []string{"settings." + pb.ConversationSettingKey_IsMuted.String()},
 	}}
 }
 

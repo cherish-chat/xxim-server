@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/cherish-chat/xxim-server/app/conversation/friendmodel"
 	"github.com/cherish-chat/xxim-server/app/conversation/internal/svc"
+	"github.com/cherish-chat/xxim-server/app/conversation/subscriptionmodel"
 	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -113,6 +114,8 @@ func (l *FriendApplyHandleLogic) FriendApplyHandle(in *pb.FriendApplyHandleReq) 
 }
 
 func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUser *usermodel.User) error {
+	var now = time.Now()
+
 	toUserId := toUser.UserId
 	//把好友申请记录 没处理的都设为同意
 	_, _ = l.svcCtx.FriendApplyRecordCollection.UpdateAll(l.ctx, bson.M{
@@ -134,8 +137,39 @@ func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUser *usermodel.
 		},
 	})
 
+	//互相订阅好友动态
+	_, err := l.svcCtx.SubscriptionService.UpsertUserSubscription(l.ctx, &pb.UpsertUserSubscriptionReq{
+		Header: &pb.RequestHeader{UserId: fromUserId},
+		UserSubscription: &pb.UserSubscription{
+			SubscriptionId: subscriptionmodel.UserDefaultSubscriptionId(toUserId),
+			Subscriber:     fromUserId,
+			SubscribeTime:  now.UnixMilli(),
+			ExtraMap: map[string]string{
+				"excludeContentTypes": "-1,-2",
+			},
+		},
+	})
+	if err != nil {
+		l.Errorf("upsert user subscription error: %v", err)
+		return err
+	}
+	_, err = l.svcCtx.SubscriptionService.UpsertUserSubscription(l.ctx, &pb.UpsertUserSubscriptionReq{
+		Header: &pb.RequestHeader{UserId: toUserId},
+		UserSubscription: &pb.UserSubscription{
+			SubscriptionId: subscriptionmodel.UserDefaultSubscriptionId(fromUserId),
+			Subscriber:     toUserId,
+			SubscribeTime:  now.UnixMilli(),
+			ExtraMap: map[string]string{
+				"excludeContentTypes": "-1,-2",
+			},
+		},
+	})
+	if err != nil {
+		l.Errorf("upsert user subscription error: %v", err)
+		return err
+	}
+
 	var models []*friendmodel.Friend
-	var now = time.Now()
 	var bsonNow = primitive.NewDateTimeFromTime(now)
 	models = append(models, &friendmodel.Friend{
 		UserId:       fromUserId,

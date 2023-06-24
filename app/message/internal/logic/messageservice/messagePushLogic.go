@@ -73,7 +73,25 @@ func (l *MessagePushLogic) pushGroupMessage(in *pb.MessagePushReq, message *pb.M
 }
 
 func (l *MessagePushLogic) pushSubscriptionMessage(in *pb.MessagePushReq, message *pb.Message) {
-
+	subscriptionId := message.ConversationId
+	listSubscriptionSubscribersResp, err := l.svcCtx.SubscriptionService.ListSubscriptionSubscribers(l.ctx, &pb.ListSubscriptionSubscribersReq{
+		SubscriptionId: subscriptionId,
+		Cursor:         0,
+		Limit:          0,
+		Filter: &pb.ListSubscriptionSubscribersReq_Filter{
+			SubscribeTimeGte: time.Now().UnixMilli() - 1000*60*5, // 5分钟内在线的用户
+		},
+		Option: &pb.ListSubscriptionSubscribersReq_Option{},
+	})
+	if err != nil {
+		l.Errorf("get subscription subscribers error: %v", err)
+		return
+	}
+	var userIds []string
+	for _, subscriber := range listSubscriptionSubscribersResp.SubscriberList {
+		userIds = append(userIds, subscriber.UserId)
+	}
+	l.pushMessageToUserIds(in, message, userIds)
 }
 
 func (l *MessagePushLogic) pushMessageToUserIds(in *pb.MessagePushReq, message *pb.Message, userIds []string) {

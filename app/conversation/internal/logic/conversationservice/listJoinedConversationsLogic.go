@@ -1,4 +1,4 @@
-package groupservicelogic
+package conversationservicelogic
 
 import (
 	"context"
@@ -12,22 +12,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ListJoinedGroupsLogic struct {
+type ListJoinedConversationsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewListJoinedGroupsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListJoinedGroupsLogic {
-	return &ListJoinedGroupsLogic{
+func NewListJoinedConversationsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListJoinedConversationsLogic {
+	return &ListJoinedConversationsLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// ListJoinedGroups 列出加入的群组
-func (l *ListJoinedGroupsLogic) ListJoinedGroups(in *pb.ListJoinedGroupsReq) (*pb.ListJoinedGroupsResp, error) {
+// ListJoinedConversations 列出加入的会话
+func (l *ListJoinedConversationsLogic) ListJoinedConversations(in *pb.ListJoinedConversationsReq) (*pb.ListJoinedConversationsResp, error) {
 	{
 		if in.Limit == 0 {
 			in.Limit = 20
@@ -35,7 +35,8 @@ func (l *ListJoinedGroupsLogic) ListJoinedGroups(in *pb.ListJoinedGroupsReq) (*p
 	}
 
 	filter := bson.M{
-		"memberUserId": in.Header.UserId,
+		"memberUserId":     in.Header.UserId,
+		"conversationType": in.ConversationType,
 	}
 	// filter
 	{
@@ -43,7 +44,7 @@ func (l *ListJoinedGroupsLogic) ListJoinedGroups(in *pb.ListJoinedGroupsReq) (*p
 			for _, kv := range in.GetFilter().GetSettingList() {
 				k := "settings." + kv.GetKey().String()
 				switch kv.Operator {
-				case pb.ListJoinedGroupsReq_Filter_SettingKV_Equal:
+				case pb.ListJoinedConversationsReq_Filter_SettingKV_Equal:
 					if kv.OrExists {
 						filter["$or"] = []bson.M{
 							{
@@ -58,7 +59,7 @@ func (l *ListJoinedGroupsLogic) ListJoinedGroups(in *pb.ListJoinedGroupsReq) (*p
 					} else {
 						filter[k] = kv.GetValue()
 					}
-				case pb.ListJoinedGroupsReq_Filter_SettingKV_NotEqual:
+				case pb.ListJoinedConversationsReq_Filter_SettingKV_NotEqual:
 					if kv.OrNotExists {
 						filter["$or"] = []bson.M{
 							{
@@ -89,26 +90,26 @@ func (l *ListJoinedGroupsLogic) ListJoinedGroups(in *pb.ListJoinedGroupsReq) (*p
 	err := queryI.All(&conversationMembers)
 	if err != nil {
 		l.Errorf("find conversation member error: %v", err)
-		return &pb.ListJoinedGroupsResp{}, err
+		return &pb.ListJoinedConversationsResp{}, err
 	}
-	resp := &pb.ListJoinedGroupsResp{
-		GroupList: make([]*pb.ListJoinedGroupsResp_Group, 0),
+	resp := &pb.ListJoinedConversationsResp{
+		ConversationList: make([]*pb.ListJoinedConversationsResp_Conversation, 0),
 	}
-	groupMap := make(map[string]*pb.ListJoinedGroupsResp_Group)
+	conversationMap := make(map[string]*pb.ListJoinedConversationsResp_Conversation)
 	for _, conversationMember := range conversationMembers {
-		groupMap[conversationMember.ConversationId] = &pb.ListJoinedGroupsResp_Group{
-			GroupId: conversationMember.ConversationId,
-			SelfMemberInfo: &pb.ListJoinedGroupsResp_Group_SelfMemberInfo{
+		conversationMap[conversationMember.ConversationId] = &pb.ListJoinedConversationsResp_Conversation{
+			ConversationId: conversationMember.ConversationId,
+			SelfMemberInfo: &pb.ListJoinedConversationsResp_Conversation_SelfMemberInfo{
 				JoinTime: int64(conversationMember.JoinTime),
 			},
 		}
 	}
-	for _, group := range groupMap {
-		resp.GroupList = append(resp.GroupList, group)
+	for _, conversation := range conversationMap {
+		resp.ConversationList = append(resp.ConversationList, conversation)
 	}
 	// sort by join time asc
-	sort.Slice(resp.GroupList, func(i, j int) bool {
-		return resp.GroupList[i].SelfMemberInfo.JoinTime < resp.GroupList[j].SelfMemberInfo.JoinTime
+	sort.Slice(resp.ConversationList, func(i, j int) bool {
+		return resp.ConversationList[i].SelfMemberInfo.JoinTime < resp.ConversationList[j].SelfMemberInfo.JoinTime
 	})
 	return resp, nil
 }

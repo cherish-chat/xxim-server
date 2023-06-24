@@ -27,3 +27,9 @@ func (s *ConversationServiceServer) ConversationSettingUpdate(ctx context.Contex
 	l := conversationservicelogic.NewConversationSettingUpdateLogic(ctx, s.svcCtx)
 	return l.ConversationSettingUpdate(in)
 }
+
+// ListJoinedConversations 列出加入的会话
+func (s *ConversationServiceServer) ListJoinedConversations(ctx context.Context, in *pb.ListJoinedConversationsReq) (*pb.ListJoinedConversationsResp, error) {
+	l := conversationservicelogic.NewListJoinedConversationsLogic(ctx, s.svcCtx)
+	return l.ListJoinedConversations(in)
+}

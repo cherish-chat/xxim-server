@@ -255,6 +255,7 @@ message UserBeforeRequestReq {
 //UserBeforeRequestResp 用户请求前的回调响应
 message UserBeforeRequestResp {
   ResponseHeader header = 1;
+  string userId = 2; // 用户id
 }
 
 //UserAfterKeepAlive 用户保活回调

@@ -33,3 +33,21 @@ func (s *SubscriptionServiceServer) SubscriptionAfterOnline(ctx context.Context,
 	l := subscriptionservicelogic.NewSubscriptionAfterOnlineLogic(ctx, s.svcCtx)
 	return l.SubscriptionAfterOnline(in)
 }
+
+// UpsertUserSubscription 更新用户订阅的订阅号
+func (s *SubscriptionServiceServer) UpsertUserSubscription(ctx context.Context, in *pb.UpsertUserSubscriptionReq) (*pb.UpsertUserSubscriptionResp, error) {
+	l := subscriptionservicelogic.NewUpsertUserSubscriptionLogic(ctx, s.svcCtx)
+	return l.UpsertUserSubscription(in)
+}
+
+// DeleteUserSubscription 删除用户订阅的订阅号
+func (s *SubscriptionServiceServer) DeleteUserSubscription(ctx context.Context, in *pb.DeleteUserSubscriptionReq) (*pb.DeleteUserSubscriptionResp, error) {
+	l := subscriptionservicelogic.NewDeleteUserSubscriptionLogic(ctx, s.svcCtx)
+	return l.DeleteUserSubscription(in)
+}
+
+// ListSubscriptionSubscribers 列出订阅号订阅者
+func (s *SubscriptionServiceServer) ListSubscriptionSubscribers(ctx context.Context, in *pb.ListSubscriptionSubscribersReq) (*pb.ListSubscriptionSubscribersResp, error) {
+	l := subscriptionservicelogic.NewListSubscriptionSubscribersLogic(ctx, s.svcCtx)
+	return l.ListSubscriptionSubscribers(in)
+}

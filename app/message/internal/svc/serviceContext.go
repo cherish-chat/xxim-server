@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/cherish-chat/xxim-server/app/conversation/client/friendservice"
 	"github.com/cherish-chat/xxim-server/app/conversation/client/groupservice"
+	"github.com/cherish-chat/xxim-server/app/conversation/client/subscriptionservice"
 	"github.com/cherish-chat/xxim-server/app/gateway/client/gatewayservice"
 	"github.com/cherish-chat/xxim-server/app/message/client/messageservice"
 	"github.com/cherish-chat/xxim-server/app/message/client/noticeservice"
@@ -40,8 +41,9 @@ type ServiceContext struct {
 	AccountService  accountservice.AccountService
 	InfoService     infoservice.InfoService
 	//Conversation
-	FriendService friendservice.FriendService
-	GroupService  groupservice.GroupService
+	FriendService       friendservice.FriendService
+	GroupService        groupservice.GroupService
+	SubscriptionService subscriptionservice.SubscriptionService
 	//Message
 	NoticeService  noticeservice.NoticeService
 	MessageService messageservice.MessageService
@@ -79,14 +81,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SubscriptionNoticeContentCollection: xmgo.MustNewMongoCollection(c.MongoCollection.SubscriptionNoticeContent, &noticemodel.SubscriptionNoticeContent{}),
 		MessageCollection:                   xmgo.MustNewMongoCollection(c.MongoCollection.Message, &messagemodel.Message{}),
 
-		CallbackService: callbackservice.NewCallbackService(userClient),
-		AccountService:  accountservice.NewAccountService(userClient),
-		InfoService:     infoservice.NewInfoService(userClient),
-		FriendService:   friendservice.NewFriendService(conversationClient),
-		GroupService:    groupservice.NewGroupService(conversationClient),
-		NoticeService:   noticeservice.NewNoticeService(messageClient),
-		MessageService:  messageservice.NewMessageService(messageClient),
-		GatewayService:  gatewayservice.NewGatewayService(gatewayClient),
+		CallbackService:     callbackservice.NewCallbackService(userClient),
+		AccountService:      accountservice.NewAccountService(userClient),
+		InfoService:         infoservice.NewInfoService(userClient),
+		FriendService:       friendservice.NewFriendService(conversationClient),
+		GroupService:        groupservice.NewGroupService(conversationClient),
+		SubscriptionService: subscriptionservice.NewSubscriptionService(conversationClient),
+		NoticeService:       noticeservice.NewNoticeService(messageClient),
+		MessageService:      messageservice.NewMessageService(messageClient),
+		GatewayService:      gatewayservice.NewGatewayService(gatewayClient),
 	}
 
 	s.SendMsgTokenLimiter = limit.NewTokenLimiter(

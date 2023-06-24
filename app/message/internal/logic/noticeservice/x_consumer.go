@@ -11,6 +11,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type ConsumerLogic struct {
@@ -20,7 +21,7 @@ type ConsumerLogic struct {
 }
 
 func NewConsumerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConsumerLogic {
-	return &ConsumerLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
+	return &ConsumerLogic{ctx: context.Background(), svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
 func (l *ConsumerLogic) NoticeBatchSend(topic string, msg []byte) error {
@@ -131,7 +132,18 @@ func (l *ConsumerLogic) NoticeBatchSend(topic string, msg []byte) error {
 }
 
 func (l *ConsumerLogic) pushBroadcastNotice(broadcastNotices []*noticemodel.BroadcastNotice) {
-	l.Debugf("push broadcast notice: %v", broadcastNotices)
+	for _, notice := range broadcastNotices {
+		switch notice.ConversationType {
+		case pb.ConversationType_Single:
+			l.pushBroadcastNoticeToSingle(notice)
+		case pb.ConversationType_Group:
+			l.pushBroadcastNoticeToGroup(notice)
+		case pb.ConversationType_Subscription:
+			l.pushBroadcastNoticeToSubscription(notice)
+		default:
+			return
+		}
+	}
 }
 
 func (l *ConsumerLogic) pushSubscriptionNotice(subscriptionNoticeContents []*noticemodel.SubscriptionNoticeContent, subscriptionNotices []*noticemodel.SubscriptionNotice) {
@@ -168,4 +180,122 @@ func (l *ConsumerLogic) pushSubscriptionNotice(subscriptionNoticeContents []*not
 		}
 		_ = gatewayWriteDataToWsResp
 	}
+}
+
+func (l *ConsumerLogic) pushBroadcastNoticeToSingle(notice *noticemodel.BroadcastNotice) {
+	pbNotice := &pb.Notice{
+		NoticeId:         utils.AnyString(notice.Sort),
+		ConversationId:   notice.ConversationId,
+		ConversationType: pb.ConversationType_Single,
+		Content:          notice.Content,
+		ContentType:      notice.ContentType,
+		UpdateTime:       int64(notice.UpdateTime),
+		Sort:             notice.Sort,
+	}
+	id1, id2 := pb.ParseSingleChatConversationId(pbNotice.ConversationId)
+	gatewayWriteDataToWsResp, err := l.svcCtx.GatewayService.GatewayWriteDataToWsWrapper(context.Background(), &pb.GatewayWriteDataToWsWrapperReq{
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: []string{id1, id2},
+		},
+		Data: &pb.GatewayWriteDataContent{
+			DataType: pb.GatewayWriteDataType_PushNotice,
+			Response: nil,
+			Message:  nil,
+			Notice:   pbNotice,
+		},
+	})
+	if err != nil {
+		l.Errorf("push broadcast notice to single error: %v", err)
+	}
+	_ = gatewayWriteDataToWsResp
+}
+
+func (l *ConsumerLogic) pushBroadcastNoticeToGroup(notice *noticemodel.BroadcastNotice) {
+	groupId := notice.ConversationId
+	listGroupSubscribersResp, err := l.svcCtx.GroupService.ListGroupSubscribers(l.ctx, &pb.ListGroupSubscribersReq{
+		GroupId: groupId,
+		Cursor:  0,
+		Limit:   0,
+		Filter: &pb.ListGroupSubscribersReq_Filter{
+			SubscribeTimeGte: time.Now().UnixMilli() - 1000*60*5, // 5分钟内在线的用户
+		},
+		Option: &pb.ListGroupSubscribersReq_Option{},
+	})
+	if err != nil {
+		l.Errorf("get group subscribers error: %v", err)
+		return
+	}
+	var userIds []string
+	for _, subscriber := range listGroupSubscribersResp.SubscriberList {
+		userIds = append(userIds, subscriber.UserId)
+	}
+	pbNotice := &pb.Notice{
+		NoticeId:         utils.AnyString(notice.Sort),
+		ConversationId:   notice.ConversationId,
+		ConversationType: pb.ConversationType_Group,
+		Content:          notice.Content,
+		ContentType:      notice.ContentType,
+		UpdateTime:       int64(notice.UpdateTime),
+		Sort:             notice.Sort,
+	}
+	gatewayWriteDataToWsResp, err := l.svcCtx.GatewayService.GatewayWriteDataToWsWrapper(context.Background(), &pb.GatewayWriteDataToWsWrapperReq{
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: userIds,
+		},
+		Data: &pb.GatewayWriteDataContent{
+			DataType: pb.GatewayWriteDataType_PushNotice,
+			Response: nil,
+			Message:  nil,
+			Notice:   pbNotice,
+		},
+	})
+	if err != nil {
+		l.Errorf("push broadcast notice to group error: %v", err)
+	}
+	_ = gatewayWriteDataToWsResp
+}
+
+func (l *ConsumerLogic) pushBroadcastNoticeToSubscription(notice *noticemodel.BroadcastNotice) {
+	subscriptionId := notice.ConversationId
+	listSubscriptionSubscribersResp, err := l.svcCtx.SubscriptionService.ListSubscriptionSubscribers(l.ctx, &pb.ListSubscriptionSubscribersReq{
+		SubscriptionId: subscriptionId,
+		Cursor:         0,
+		Limit:          0,
+		Filter: &pb.ListSubscriptionSubscribersReq_Filter{
+			SubscribeTimeGte: time.Now().UnixMilli() - 1000*60*5, // 5分钟内在线的用户
+		},
+		Option: &pb.ListSubscriptionSubscribersReq_Option{},
+	})
+	if err != nil {
+		l.Errorf("get subscription subscribers error: %v", err)
+		return
+	}
+	var userIds []string
+	for _, subscriber := range listSubscriptionSubscribersResp.SubscriberList {
+		userIds = append(userIds, subscriber.UserId)
+	}
+	pbNotice := &pb.Notice{
+		NoticeId:         utils.AnyString(notice.Sort),
+		ConversationId:   notice.ConversationId,
+		ConversationType: pb.ConversationType_Subscription,
+		Content:          notice.Content,
+		ContentType:      notice.ContentType,
+		UpdateTime:       int64(notice.UpdateTime),
+		Sort:             notice.Sort,
+	}
+	gatewayWriteDataToWsResp, err := l.svcCtx.GatewayService.GatewayWriteDataToWsWrapper(context.Background(), &pb.GatewayWriteDataToWsWrapperReq{
+		Filter: &pb.GatewayGetConnectionFilter{
+			UserIds: userIds,
+		},
+		Data: &pb.GatewayWriteDataContent{
+			DataType: pb.GatewayWriteDataType_PushNotice,
+			Response: nil,
+			Message:  nil,
+			Notice:   pbNotice,
+		},
+	})
+	if err != nil {
+		l.Errorf("push broadcast notice to subscription error: %v", err)
+	}
+	_ = gatewayWriteDataToWsResp
 }

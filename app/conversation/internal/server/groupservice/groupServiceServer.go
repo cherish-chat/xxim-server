@@ -46,12 +46,6 @@ func (s *GroupServiceServer) GroupSubscribe(ctx context.Context, in *pb.GroupSub
 	return l.GroupSubscribe(in)
 }
 
-// ListJoinedGroups 列出加入的群组
-func (s *GroupServiceServer) ListJoinedGroups(ctx context.Context, in *pb.ListJoinedGroupsReq) (*pb.ListJoinedGroupsResp, error) {
-	l := groupservicelogic.NewListJoinedGroupsLogic(ctx, s.svcCtx)
-	return l.ListJoinedGroups(in)
-}
-
 // ListGroupSubscribers 列出群组订阅者
 func (s *GroupServiceServer) ListGroupSubscribers(ctx context.Context, in *pb.ListGroupSubscribersReq) (*pb.ListGroupSubscribersResp, error) {
 	l := groupservicelogic.NewListGroupSubscribersLogic(ctx, s.svcCtx)
