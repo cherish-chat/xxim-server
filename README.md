@@ -4,7 +4,8 @@
 <img align="center" width="150px" src="https://raw.githubusercontent.com/cherish-chat/xx-doc/master/docs/images/logo.1x.webp">
 </p>
 
-xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是为了让每个人都能使用自己的IM APP，不需要再使用令人不爽的第三方IM APP。xxim-server是一个开源项目，欢迎大家一起来完善它。
+xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是为了让每个人都能使用自己的IM APP，不需要再使用令人不爽的第三方IM
+APP。xxim-server是一个开源项目，欢迎大家一起来完善它。
 
 <div align=center>
 
@@ -18,13 +19,16 @@ xxim-server是一个功能超多的开箱即用的IM服务器。它的诞生是�
 
 </div>
 
-
 ## 🤷‍ xxim 介绍
+
 简体中文 | [English](README-EN.md)
 
 xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-server只是一个简单的im服务器，但它具备了一个IM应有的全部功能。
 
 在线体验：[惺惺](https://xxim.cherish.chat) ｜ [企业](https://enterprise.cherish.chat/)
+
+全平台sdk：[xxim-sdk-rust](https://github.com/cherish-chat/unified-sdk)
+正在开发中，欢迎各原生平台开发者加入。通用sdk选择使用`rust`开发，因为`rust`的性能和安全性都是目前最好的。
 
 #### 包括但不限于：
 
@@ -37,20 +41,19 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/xxim-bot-chatgpt)
 * [ ] 音视频通话、IOS支持`Callkit`
 
-
 ## xxim的背景
 
 2022年初，我们公司的社交产品需要一个IM，但是我们不想使用第三方IM，所以我们自己开发了一个IM，但是我们发现开发一个IM并不容易，所以我们决定开源出来，让更多的人能够使用自己的IM。
 
 * 服务端使用 Go 语言开发
-  * 高性能
-  * 简单语法，易于维护代码
-  * 部署简单
-  * 服务器资源占用少
+    * 高性能
+    * 简单语法，易于维护代码
+    * 部署简单
+    * 服务器资源占用少
 * 客户端使用 flutter 开发
-  * 跨平台、一套代码多端运行
-  * 支持原生系统调用，性能强大
-  * 界面美观、交互流畅
+    * 跨平台、一套代码多端运行
+    * 支持原生系统调用，性能强大
+    * 界面美观、交互流畅
 
 ## xxim的设计原则
 
@@ -62,7 +65,6 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * 消息占用磁盘空间过大
 
 ## xxim-server 架构
-
 
 ## 点点star! ⭐
 
