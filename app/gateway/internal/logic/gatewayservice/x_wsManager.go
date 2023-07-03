@@ -172,7 +172,7 @@ func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCo
 	w.wsConnectionMap.Delete(header.UserId, id)
 	go func() {
 		if ok {
-			_, e := w.svcCtx.CallbackService.UserAfterOffline(connection.Ctx, &pb.UserAfterOfflineReq{Header: header})
+			_, e := w.svcCtx.CallbackService.UserAfterOffline(context.Background(), &pb.UserAfterOfflineReq{Header: header})
 			if e != nil {
 				logx.Errorf("UserAfterOffline error: %s", e.Error())
 			}
@@ -215,7 +215,7 @@ func (w *wsManager) WriteData(id int64, writeData *pb.GatewayWriteDataContent) b
 	} else {
 		data, _ = proto.Marshal(writeData)
 	}
-	err := wsConnection.Connection.Write(wsConnection.Ctx, websocket.MessageText, data)
+	err := wsConnection.Connection.Write(wsConnection.Ctx, websocket.MessageBinary, data)
 	if err != nil {
 		logx.Debugf("WriteData error:%v, %s", wsConnection.Header, err.Error())
 		return false

@@ -1,6 +1,7 @@
 package pb
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -252,6 +253,11 @@ func init() {
 }
 
 func LanguageFromString(s string) I18NLanguage {
+	// 如果能直接转换，就直接转换
+	i, ok := strconv.Atoi(s)
+	if ok == nil {
+		return I18NLanguage(i)
+	}
 	if v, ok := nameLanguageMap[s]; ok {
 		return v
 	}

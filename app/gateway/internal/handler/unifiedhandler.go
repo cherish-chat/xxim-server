@@ -49,7 +49,6 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	} else if strings.Contains(contentType, "application/x-protobuf") {
 		// protobuf
 		body, _ := ctx.GetRawData()
-		apiRequest := &pb.GatewayApiRequest{}
 		err := proto.Unmarshal(body, apiRequest)
 		if err != nil {
 			return request, &pb.GatewayApiResponse{

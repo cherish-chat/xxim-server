@@ -13,7 +13,7 @@ type UserAfterRegisterLogic struct {
 }
 
 func NewUserAfterRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserAfterRegisterLogic {
-	return &UserAfterRegisterLogic{ctx: ctx, svcCtx: svcCtx}
+	return &UserAfterRegisterLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
 // AfterRegister TODO: 补充注册后的逻辑

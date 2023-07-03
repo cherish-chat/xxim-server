@@ -59,7 +59,7 @@ func NewToastHeader(level pb.ToastActionData_Level, message string) *pb.Response
 		Message: message,
 	}
 	return &pb.ResponseHeader{
-		Code:       pb.ResponseCode_SUCCESS,
+		Code:       pb.ResponseCode_INVALID_DATA,
 		ActionType: pb.ResponseActionType_TOAST_ACTION,
 		ActionData: utils.Json.MarshalToString(data),
 		Extra:      "",
