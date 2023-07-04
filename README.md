@@ -44,10 +44,9 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * [x] 按需拉取离线消息，且没有消息数量/天数限制
 * [x] 当用户不在线时，通过厂商推送（极光、腾讯、Mob）将消息推送给用户
 * [x] 群聊20万成员上限
-* [x] 一条长连接通讯、无http
 * [x] 🔐通讯层加密
 * [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/xxim-bot-chatgpt)
-* [x] p2p连接，无公网ip也能搭建属于自己的im服务器
+* [x] p2p连接，无公网ip也能搭建属于自己的im服务器。(也可以使用传统网络方式)
 
 ## xxim的背景
 
