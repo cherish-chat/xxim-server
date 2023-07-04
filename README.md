@@ -47,6 +47,7 @@ xxim-server代码不复杂，im大多逻辑都在于客户端，所以xxim-serve
 * [x] 一条长连接通讯、无http
 * [x] 🔐通讯层加密
 * [x] golang client sdk，可接入[ChatGPT](https://github.com/cherish-chat/xxim-bot-chatgpt)
+* [x] p2p连接，无公网ip也能搭建属于自己的im服务器
 
 ## xxim的背景
 
