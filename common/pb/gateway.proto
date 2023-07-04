@@ -47,6 +47,12 @@ message WsConnection {
   RequestHeader header = 2;
 }
 
+//RtcConnection rtc连接
+message RtcConnection {
+  int64 id = 1;
+  RequestHeader header = 2;
+}
+
 //GatewayGetUserConnectionReq 获取用户的连接
 message GatewayGetUserConnectionReq {
   RequestHeader header = 1;

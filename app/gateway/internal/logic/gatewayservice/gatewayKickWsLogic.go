@@ -2,8 +2,6 @@ package gatewayservicelogic
 
 import (
 	"context"
-	"nhooyr.io/websocket"
-
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
 
@@ -37,7 +35,7 @@ func (l *GatewayKickWsLogic) GatewayKickWs(in *pb.GatewayKickWsReq) (*pb.Gateway
 		return &pb.GatewayKickWsResp{}, err
 	}
 	for _, connection := range gatewayGetConnectionByFilterResp.GetConnections() {
-		WsManager.CloseConnection(connection.Id, websocket.StatusCode(in.CloseCode.Number()), in.CloseReason)
+		WsManager.CloseConnection(connection.Id, in.CloseCode, in.CloseReason)
 	}
 	return &pb.GatewayKickWsResp{}, nil
 }

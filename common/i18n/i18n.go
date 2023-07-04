@@ -45,6 +45,12 @@ func NewInvalidDataError(msg string) *pb.ResponseHeader {
 	}
 }
 
+func NewInvalidMethodError() *pb.ResponseHeader {
+	return &pb.ResponseHeader{
+		Code: pb.ResponseCode_INVALID_METHOD,
+	}
+}
+
 func NewOkHeader() *pb.ResponseHeader {
 	return &pb.ResponseHeader{
 		Code:       pb.ResponseCode_SUCCESS,

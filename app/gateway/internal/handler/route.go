@@ -55,7 +55,7 @@ type Route[REQ ReqInterface, RESP RespInterface] struct {
 //var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error){}
 
 var httpRouteMap = map[string]gin.HandlerFunc{}
-var wsRouteMap = map[string]func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error){}
+var universalRouteMap = map[string]func(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error){}
 
 func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceContext, path string, route Route[REQ, RESP]) {
 	// http
@@ -91,16 +91,16 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 		ctx.Data(200, requestHeader.Encoding.ContentType(), buf)
 		return
 	})
-	// ws
-	AddWsRoute(svcCtx, path, func(ctx context.Context, connection *gatewayservicelogic.WsConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	// universal
+	AddUniversalRoute(svcCtx, path, func(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, apiRequest *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
 		var request REQ
-		requestHeader := connection.Header
-		request, response, err = UnifiedHandleWs(svcCtx, ctx, connection, apiRequest, route)
+		requestHeader := connection.GetHeader()
+		request, response, err = UnifiedHandleUniversal(svcCtx, ctx, connection, apiRequest, route)
 		defer route.RequestPool.PutRequest(request)
 		if err != nil {
-			logx.WithContext(ctx).Errorf("UnifiedHandleWs: %s, error: %v", path, err)
+			logx.WithContext(ctx).Errorf("UnifiedHandleUniversal: %s, error: %v", path, err)
 			if response == nil {
 				response = &pb.GatewayApiResponse{
 					Header: i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
@@ -126,8 +126,8 @@ func AddHttpRoute(path string, handlerFunc gin.HandlerFunc) {
 	httpRouteMap[path] = handlerFunc
 }
 
-func AddWsRoute(svcCtx *svc.ServiceContext, path string, handlerFunc func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
-	wsRouteMap[path] = handlerFunc
+func AddUniversalRoute(svcCtx *svc.ServiceContext, path string, handlerFunc func(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error)) {
+	universalRouteMap[path] = handlerFunc
 }
 
 func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
@@ -169,7 +169,7 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			Do: svcCtx.GatewayService().GatewayKickWs,
 		})
 		// GatewayKeepAliveReq GatewayKeepAliveResp
-		AddWsRoute(svcCtx, "/v1/gateway/white/keepAlive", KeepAliveHandler(svcCtx))
+		AddUniversalRoute(svcCtx, "/v1/gateway/white/keepAlive", KeepAliveHandler(svcCtx))
 	}
 	// user api
 	{

@@ -9,8 +9,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
-	return func(ctx context.Context, connection *gatewayservicelogic.WsConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
+	return func(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, c *pb.GatewayApiRequest) (pb.ResponseCode, []byte, error) {
 		var response *pb.GatewayApiResponse
 		var err error
 		response, err = gatewayservicelogic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive(connection, c)
@@ -18,11 +18,11 @@ func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, conn
 			logx.WithContext(ctx).Errorf("logic.NewGatewayKeepAliveLogic(ctx, svcCtx).KeepAlive: %v", err)
 			if response == nil {
 				response = &pb.GatewayApiResponse{
-					Header: i18n.NewServerError(connection.Header, svcCtx.Config.Mode, err),
+					Header: i18n.NewServerError(connection.GetHeader(), svcCtx.Config.Mode, err),
 					Body:   nil,
 				}
 			}
-			return response.Header.Code, MarshalWriteData(connection.Header, response), nil
+			return response.Header.Code, MarshalWriteData(connection.GetHeader(), response), nil
 		}
 		if response == nil {
 			response = &pb.GatewayApiResponse{
@@ -33,6 +33,6 @@ func KeepAliveHandler(svcCtx *svc.ServiceContext) func(ctx context.Context, conn
 		if response.GetHeader() == nil {
 			response.Header = i18n.NewOkHeader()
 		}
-		return response.Header.Code, MarshalWriteData(connection.Header, response), nil
+		return response.Header.Code, MarshalWriteData(connection.GetHeader(), response), nil
 	}
 }

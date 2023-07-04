@@ -101,7 +101,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	connectionId := utils.Snowflake.Int64()
 	defer func() {
 		logger.Debugf("removing subscriber: %d", connectionId)
-		err := gatewayservicelogic.WsManager.RemoveSubscriber(header, connectionId, websocket.StatusNormalClosure, "finished")
+		err := gatewayservicelogic.WsManager.RemoveSubscriber(header, connectionId, pb.WebsocketCustomCloseCode(websocket.StatusNormalClosure), "finished")
 		if err != nil {
 			logger.Errorf("failed to remove subscriber: %v", err)
 			return
@@ -109,7 +109,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 			logger.Debugf("removed subscriber: %d", connectionId)
 		}
 	}()
-	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, c, connectionId)
+	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, gatewayservicelogic.NewWsForConnection(c), connectionId)
 	if err != nil {
 		logger.Errorf("failed to add subscriber: %v", err)
 		c.Close(websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeServerInternalError), err.Error())
@@ -153,14 +153,14 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	}
 }
 
-func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelogic.WsConnection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
+func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
 	apiRequest := &pb.GatewayApiRequest{}
-	if connection.Header.Encoding == pb.EncodingProto_JSON {
+	if connection.GetHeader().Encoding == pb.EncodingProto_JSON {
 		err := json.Unmarshal(msg, apiRequest)
 		if err != nil {
 			return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
 		}
-	} else if connection.Header.Encoding == pb.EncodingProto_PROTOBUF {
+	} else if connection.GetHeader().Encoding == pb.EncodingProto_PROTOBUF {
 		err := proto.Unmarshal(msg, apiRequest)
 		if err != nil {
 			return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
@@ -168,8 +168,8 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelog
 	} else {
 		return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", "unsupported encoding")
 	}
-	apiRequest.Header = connection.Header
-	route, ok := wsRouteMap[apiRequest.Path]
+	apiRequest.Header = connection.GetHeader()
+	route, ok := universalRouteMap[apiRequest.Path]
 	tracer := otel.Tracer(common.TraceName)
 	propagator := otel.GetTextMapPropagator()
 	spanName := apiRequest.Path
@@ -210,7 +210,7 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelog
 	code, responseBody, err := route(spanCtx, connection, apiRequest)
 	if len(responseBody) > 0 {
 		// 发送消息
-		err := connection.Connection.Write(ctx, websocket.MessageBinary, responseBody)
+		err := connection.Connection.Write(ctx, responseBody)
 		if err != nil {
 			logx.Infof("failed to write message: %v", err)
 		}

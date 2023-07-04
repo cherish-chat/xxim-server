@@ -30,6 +30,7 @@ type (
 	GatewayWriteDataToWsReq           = pb.GatewayWriteDataToWsReq
 	GatewayWriteDataToWsResp          = pb.GatewayWriteDataToWsResp
 	GatewayWriteDataToWsWrapperReq    = pb.GatewayWriteDataToWsWrapperReq
+	RtcConnection                     = pb.RtcConnection
 	WsConnection                      = pb.WsConnection
 
 	GatewayService interface {

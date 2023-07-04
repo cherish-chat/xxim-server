@@ -156,10 +156,10 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	return request, result, err
 }
 
-func UnifiedHandleWs[REQ ReqInterface, RESP RespInterface](
+func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 	svcCtx *svc.ServiceContext,
 	ctx context.Context,
-	connection *gatewayservicelogic.WsConnection,
+	connection *gatewayservicelogic.UniversalConnection,
 	apiRequest *pb.GatewayApiRequest,
 	route Route[REQ, RESP],
 ) (REQ, *pb.GatewayApiResponse, error) {

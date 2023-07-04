@@ -36,6 +36,8 @@ func main() {
 	defer s.Stop()
 	httpServer := server.NewHttpServer(ctx)
 	go httpServer.Start()
+	rtcServer := server.NewRtcServer(ctx)
+	go rtcServer.Start()
 	logx.Infof("rpc server start at %s", c.ListenOn)
 	s.Start()
 }
