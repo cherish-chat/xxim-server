@@ -164,6 +164,7 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 	route Route[REQ, RESP],
 ) (REQ, *pb.GatewayApiResponse, error) {
 	request := route.RequestPool.NewRequest()
+	response := route.ResponsePool.NewResponse()
 	do := route.Do
 	// 请求体中的数据 反序列化到 request 中
 	// 判断是json还是protobuf
@@ -171,34 +172,42 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 	if requestHeader.Encoding == pb.EncodingProto_JSON {
 		err := utils.Json.Unmarshal(apiRequest.Body, request)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Header:    i18n.NewInvalidDataError(err.Error()),
-				Body:      nil,
+				Header:    responseHeader,
+				Body:      utils.Proto.Marshal(response),
 			}, err
 		}
 	} else if requestHeader.Encoding == pb.EncodingProto_PROTOBUF {
 		err := proto.Unmarshal(apiRequest.Body, request)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}, err
 		}
 	} else {
+		responseHeader := i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf")
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
-			Header: i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf"),
-			Body:   nil,
+			Header: responseHeader,
+			Body:   utils.Proto.Marshal(response),
 		}, nil
 	}
 	request.SetHeader(requestHeader)
 	if requestHeader == nil {
+		responseHeader := i18n.NewInvalidDataError("invalid request header")
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
-			Header:    i18n.NewInvalidDataError("invalid request header"),
-			Body:      nil,
+			Header:    responseHeader,
+			Body:      utils.Proto.Marshal(response),
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 		}, nil
@@ -210,11 +219,13 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 		Path:   apiRequest.Path,
 	})
 	if err != nil {
+		responseHeader := i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err)
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
-			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+			Header:    responseHeader,
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
-			Body:      nil,
+			Body:      utils.Proto.Marshal(response),
 		}, err
 	}
 
@@ -231,10 +242,10 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 			}, nil
 		}
 	}
-	response, err := do(ctx, request)
-	body, _ = proto.Marshal(response)
+	resp, err := do(ctx, request)
+	body, _ = proto.Marshal(resp)
 	if len(body) > 0 {
-		responseHeader := response.GetHeader()
+		responseHeader := resp.GetHeader()
 		if responseHeader == nil {
 			responseHeader = i18n.NewOkHeader()
 		}
@@ -242,7 +253,7 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
 			Header:    responseHeader,
-			Body:      MarshalResponse(requestHeader, response),
+			Body:      MarshalResponse(requestHeader, resp),
 		}
 	} else {
 		if err != nil {
@@ -250,18 +261,22 @@ func UnifiedHandleUniversal[REQ ReqInterface, RESP RespInterface](
 			if ok {
 				err = errors.New(statusErr.Message())
 			}
+			responseHeader := i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err)
+			response.SetHeader(responseHeader)
 			result = &pb.GatewayApiResponse{
-				Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}
 		} else {
+			responseHeader := i18n.NewOkHeader()
+			response.SetHeader(responseHeader)
 			result = &pb.GatewayApiResponse{
-				Header:    i18n.NewOkHeader(),
+				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}
 		}
 	}

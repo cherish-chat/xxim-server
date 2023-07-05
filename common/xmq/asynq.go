@@ -21,7 +21,7 @@ type logxLogger struct {
 }
 
 func (l *logxLogger) Debug(args ...interface{}) {
-	logx.Debug(args...)
+	//logx.Debug(args...)
 }
 
 func (l *logxLogger) Info(args ...interface{}) {

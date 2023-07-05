@@ -21,11 +21,17 @@ type ReqInterface interface {
 
 type RespInterface interface {
 	proto.Message
+	SetHeader(*pb.ResponseHeader)
 	GetHeader() *pb.ResponseHeader
 }
 
 // RequestPool 用于复用请求对象 优化GC
 type RequestPool[REQ ReqInterface] struct {
+	*sync.Pool
+}
+
+// ResponsePool 用于复用响应对象 优化GC
+type ResponsePool[RESP RespInterface] struct {
 	*sync.Pool
 }
 
@@ -39,17 +45,36 @@ func NewRequestPool[REQ ReqInterface](newRequest func() REQ) *RequestPool[REQ] {
 	return r
 }
 
+func NewResponsePool[RESP RespInterface](newResponse func() RESP) *ResponsePool[RESP] {
+	r := &ResponsePool[RESP]{}
+	r.Pool = &sync.Pool{
+		New: func() interface{} {
+			return newResponse()
+		},
+	}
+	return r
+}
+
 func (r *RequestPool[REQ]) NewRequest() REQ {
 	return r.Get().(REQ)
+}
+
+func (r *ResponsePool[RESP]) NewResponse() RESP {
+	return r.Get().(RESP)
 }
 
 func (r *RequestPool[REQ]) PutRequest(req REQ) {
 	r.Put(req)
 }
 
+func (r *ResponsePool[RESP]) PutResponse(resp RESP) {
+	r.Put(resp)
+}
+
 type Route[REQ ReqInterface, RESP RespInterface] struct {
-	RequestPool *RequestPool[REQ]
-	Do          func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error)
+	RequestPool  *RequestPool[REQ]
+	ResponsePool *ResponsePool[RESP]
+	Do           func(ctx context.Context, req REQ, opts ...grpc.CallOption) (RESP, error)
 }
 
 //var routeMap = map[string]func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error){}
@@ -138,12 +163,18 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.GatewayGetUserConnectionReq {
 				return &pb.GatewayGetUserConnectionReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.GatewayGetUserConnectionResp {
+				return &pb.GatewayGetUserConnectionResp{}
+			}),
 			Do: svcCtx.GatewayService().GatewayGetUserConnection,
 		})
 		// GatewayBatchGetUserConnectionReq GatewayBatchGetUserConnectionResp
 		AddUnifiedRoute(svcCtx, "/v1/gateway/batchGetUserConnection", Route[*pb.GatewayBatchGetUserConnectionReq, *pb.GatewayBatchGetUserConnectionResp]{
 			RequestPool: NewRequestPool(func() *pb.GatewayBatchGetUserConnectionReq {
 				return &pb.GatewayBatchGetUserConnectionReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.GatewayBatchGetUserConnectionResp {
+				return &pb.GatewayBatchGetUserConnectionResp{}
 			}),
 			Do: svcCtx.GatewayService().GatewayBatchGetUserConnection,
 		})
@@ -152,6 +183,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.GatewayGetConnectionByFilterReq {
 				return &pb.GatewayGetConnectionByFilterReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.GatewayGetConnectionByFilterResp {
+				return &pb.GatewayGetConnectionByFilterResp{}
+			}),
 			Do: svcCtx.GatewayService().GatewayGetConnectionByFilter,
 		})
 		// GatewayWriteDataToWsReq GatewayWriteDataToWsResp
@@ -159,12 +193,18 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.GatewayWriteDataToWsReq {
 				return &pb.GatewayWriteDataToWsReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.GatewayWriteDataToWsResp {
+				return &pb.GatewayWriteDataToWsResp{}
+			}),
 			Do: svcCtx.GatewayService().GatewayWriteDataToWs,
 		})
 		// GatewayKickWsReq GatewayKickWsResp
 		AddUnifiedRoute(svcCtx, "/v1/gateway/kickWs", Route[*pb.GatewayKickWsReq, *pb.GatewayKickWsResp]{
 			RequestPool: NewRequestPool(func() *pb.GatewayKickWsReq {
 				return &pb.GatewayKickWsReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.GatewayKickWsResp {
+				return &pb.GatewayKickWsResp{}
 			}),
 			Do: svcCtx.GatewayService().GatewayKickWs,
 		})
@@ -178,12 +218,18 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.UserRegisterReq {
 				return &pb.UserRegisterReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.UserRegisterResp {
+				return &pb.UserRegisterResp{}
+			}),
 			Do: svcCtx.AccountService.UserRegister,
 		})
 		// UserAccessTokenReq UserAccessTokenResp
 		AddUnifiedRoute(svcCtx, "/v1/user/white/userAccessToken", Route[*pb.UserAccessTokenReq, *pb.UserAccessTokenResp]{
 			RequestPool: NewRequestPool(func() *pb.UserAccessTokenReq {
 				return &pb.UserAccessTokenReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.UserAccessTokenResp {
+				return &pb.UserAccessTokenResp{}
 			}),
 			Do: svcCtx.AccountService.UserAccessToken,
 		})
@@ -192,6 +238,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.CreateRobotReq {
 				return &pb.CreateRobotReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.CreateRobotResp {
+				return &pb.CreateRobotResp{}
+			}),
 			Do: svcCtx.AccountService.CreateRobot,
 		})
 		// RefreshUserAccessTokenReq RefreshUserAccessTokenResp
@@ -199,12 +248,18 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.RefreshUserAccessTokenReq {
 				return &pb.RefreshUserAccessTokenReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.RefreshUserAccessTokenResp {
+				return &pb.RefreshUserAccessTokenResp{}
+			}),
 			Do: svcCtx.AccountService.RefreshUserAccessToken,
 		})
 		// RevokeUserAccessTokenReq RevokeUserAccessTokenResp
 		AddUnifiedRoute(svcCtx, "/v1/user/revokeUserAccessToken", Route[*pb.RevokeUserAccessTokenReq, *pb.RevokeUserAccessTokenResp]{
 			RequestPool: NewRequestPool(func() *pb.RevokeUserAccessTokenReq {
 				return &pb.RevokeUserAccessTokenReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.RevokeUserAccessTokenResp {
+				return &pb.RevokeUserAccessTokenResp{}
 			}),
 			Do: svcCtx.AccountService.RevokeUserAccessToken,
 		})
@@ -216,6 +271,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.FriendApplyReq {
 				return &pb.FriendApplyReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.FriendApplyResp {
+				return &pb.FriendApplyResp{}
+			}),
 			Do: svcCtx.FriendService.FriendApply,
 		})
 		//ListFriendApplyReq ListFriendApplyResp
@@ -223,12 +281,18 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.ListFriendApplyReq {
 				return &pb.ListFriendApplyReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.ListFriendApplyResp {
+				return &pb.ListFriendApplyResp{}
+			}),
 			Do: svcCtx.FriendService.ListFriendApply,
 		})
 		//FriendApplyHandleReq FriendApplyHandleResp
 		AddUnifiedRoute(svcCtx, "/v1/friend/friendApplyHandle", Route[*pb.FriendApplyHandleReq, *pb.FriendApplyHandleResp]{
 			RequestPool: NewRequestPool(func() *pb.FriendApplyHandleReq {
 				return &pb.FriendApplyHandleReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.FriendApplyHandleResp {
+				return &pb.FriendApplyHandleResp{}
 			}),
 			Do: svcCtx.FriendService.FriendApplyHandle,
 		})
@@ -240,6 +304,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.GroupCreateReq {
 				return &pb.GroupCreateReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.GroupCreateResp {
+				return &pb.GroupCreateResp{}
+			}),
 			Do: svcCtx.GroupService.GroupCreate,
 		})
 	}
@@ -250,6 +317,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 			RequestPool: NewRequestPool(func() *pb.ListNoticeReq {
 				return &pb.ListNoticeReq{}
 			}),
+			ResponsePool: NewResponsePool(func() *pb.ListNoticeResp {
+				return &pb.ListNoticeResp{}
+			}),
 			Do: svcCtx.NoticeService.ListNotice,
 		})
 	}
@@ -259,6 +329,9 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 		AddUnifiedRoute(svcCtx, "/v1/message/messageBatchSend", Route[*pb.MessageBatchSendReq, *pb.MessageBatchSendResp]{
 			RequestPool: NewRequestPool(func() *pb.MessageBatchSendReq {
 				return &pb.MessageBatchSendReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *pb.MessageBatchSendResp {
+				return &pb.MessageBatchSendResp{}
 			}),
 			Do: svcCtx.MessageService.MessageBatchSend,
 		})

@@ -101,6 +101,20 @@ func (c *UniversalConnection) ReSetHeader(header *pb.RequestHeader) *pb.RequestH
 		Extra:        header.Extra,
 	}
 	c.Header = copyHeader
+
+	go func() {
+		if header.UserId != "" {
+			_, e := WsManager.svcCtx.CallbackService.UserAfterOnline(c.Ctx, &pb.UserAfterOnlineReq{Header: copyHeader})
+			if e != nil {
+				logx.Errorf("UserAfterOnline error: %s", e.Error())
+			}
+		} else {
+			_, e := WsManager.svcCtx.CallbackService.UserAfterOffline(c.Ctx, &pb.UserAfterOfflineReq{Header: old})
+			if e != nil {
+				logx.Errorf("UserAfterOnline error: %s", e.Error())
+			}
+		}
+	}()
 	return copyHeader
 }
 
@@ -228,9 +242,11 @@ func (w *wsManager) AddSubscriber(ctx context.Context, header *pb.RequestHeader,
 	go w.clearConnectionTimer(wsConnection)
 	w.wsConnectionMap.Set(id, wsConnection)
 	go func() {
-		_, e := w.svcCtx.CallbackService.UserAfterOnline(ctx, &pb.UserAfterOnlineReq{Header: header})
-		if e != nil {
-			logx.Errorf("UserAfterOnline error: %s", e.Error())
+		if header.UserId != "" {
+			_, e := w.svcCtx.CallbackService.UserAfterOnline(ctx, &pb.UserAfterOnlineReq{Header: header})
+			if e != nil {
+				logx.Errorf("UserAfterOnline error: %s", e.Error())
+			}
 		}
 	}()
 	return wsConnection, nil

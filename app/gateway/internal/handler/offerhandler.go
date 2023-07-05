@@ -143,6 +143,7 @@ func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservice
 	apiRequest := &pb.GatewayApiRequest{}
 	err := proto.Unmarshal(msg, apiRequest)
 	if err != nil {
+		logx.Errorf("proto.Unmarshal error: %v", err)
 		data, _ := proto.Marshal(&pb.GatewayWriteDataContent{
 			DataType: pb.GatewayWriteDataType_Response,
 			Response: &pb.GatewayApiResponse{
@@ -165,6 +166,8 @@ func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservice
 			if _, resetHeader := m["resetHeader"]; resetHeader {
 				apiRequest.Header = connection.ReSetHeader(apiRequest.Header)
 			}
+		} else {
+			logx.Errorf("utils.Json.Unmarshal error: %v", err)
 		}
 	}
 	route, ok := universalRouteMap[apiRequest.Path]

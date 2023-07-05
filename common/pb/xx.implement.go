@@ -63,3 +63,67 @@ func (x *MessageBatchSendReq) SetHeader(header *RequestHeader) {
 func (x *GroupCreateReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
+
+func (x *GatewayGetUserConnectionResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GatewayBatchGetUserConnectionResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GatewayGetConnectionByFilterResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GatewayWriteDataToWsResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GatewayKickWsResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *UserRegisterResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *UserAccessTokenResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *CreateRobotResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *RefreshUserAccessTokenResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *RevokeUserAccessTokenResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *FriendApplyResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *ListFriendApplyResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *FriendApplyHandleResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *ListNoticeResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *MessageBatchSendResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GroupCreateResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
