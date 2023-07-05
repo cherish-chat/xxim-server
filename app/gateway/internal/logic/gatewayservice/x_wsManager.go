@@ -82,7 +82,6 @@ func (c *UniversalConnection) ToPb() *pb.WsConnection {
 
 func (c *UniversalConnection) ReSetHeader(header *pb.RequestHeader) *pb.RequestHeader {
 	c.ReSetHeaderLock.Lock()
-	defer c.ReSetHeaderLock.Unlock()
 	old := c.Header
 	copyHeader := &pb.RequestHeader{
 		AppId:        header.AppId,
@@ -101,20 +100,11 @@ func (c *UniversalConnection) ReSetHeader(header *pb.RequestHeader) *pb.RequestH
 		Extra:        header.Extra,
 	}
 	c.Header = copyHeader
-
-	go func() {
-		if header.UserId != "" {
-			_, e := WsManager.svcCtx.CallbackService.UserAfterOnline(c.Ctx, &pb.UserAfterOnlineReq{Header: copyHeader})
-			if e != nil {
-				logx.Errorf("UserAfterOnline error: %s", e.Error())
-			}
-		} else {
-			_, e := WsManager.svcCtx.CallbackService.UserAfterOffline(c.Ctx, &pb.UserAfterOfflineReq{Header: old})
-			if e != nil {
-				logx.Errorf("UserAfterOnline error: %s", e.Error())
-			}
-		}
-	}()
+	c.ReSetHeaderLock.Unlock()
+	if copyHeader.UserToken != old.UserToken {
+		// 更新userIdsMap
+		WsManager.UpdateSubscriber(c)
+	}
 	return copyHeader
 }
 
@@ -200,6 +190,15 @@ func (w *WsConnectionMap) Set(connectionId int64, value *UniversalConnection) {
 	w.idAliveTimeMapLock.Unlock()
 }
 
+func (w *WsConnectionMap) Update(value *UniversalConnection) {
+	userId := value.GetHeader().UserId
+	if userId != "" {
+		w.userIdsMapLock.Lock()
+		w.userIdsMap[userId] = append(w.userIdsMap[userId], value)
+		w.userIdsMapLock.Unlock()
+	}
+}
+
 func (w *WsConnectionMap) Delete(userId string, connectionId int64) {
 	w.idConnectionMapLock.Lock()
 	delete(w.idConnectionMap, connectionId)
@@ -241,15 +240,11 @@ func (w *wsManager) AddSubscriber(ctx context.Context, header *pb.RequestHeader,
 	//启动定时器 定时删掉连接
 	go w.clearConnectionTimer(wsConnection)
 	w.wsConnectionMap.Set(id, wsConnection)
-	go func() {
-		if header.UserId != "" {
-			_, e := w.svcCtx.CallbackService.UserAfterOnline(ctx, &pb.UserAfterOnlineReq{Header: header})
-			if e != nil {
-				logx.Errorf("UserAfterOnline error: %s", e.Error())
-			}
-		}
-	}()
 	return wsConnection, nil
+}
+
+func (w *wsManager) UpdateSubscriber(connection *UniversalConnection) {
+	w.wsConnectionMap.Update(connection)
 }
 
 func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCode pb.WebsocketCustomCloseCode, closeReason string) error {
@@ -260,14 +255,6 @@ func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCo
 	if header.UserId != "" {
 		w.wsConnectionMap.Delete(header.UserId, id)
 	}
-	go func() {
-		if ok {
-			_, e := w.svcCtx.CallbackService.UserAfterOffline(context.Background(), &pb.UserAfterOfflineReq{Header: header})
-			if e != nil {
-				logx.Errorf("UserAfterOffline error: %s", e.Error())
-			}
-		}
-	}()
 	return nil
 }
 
