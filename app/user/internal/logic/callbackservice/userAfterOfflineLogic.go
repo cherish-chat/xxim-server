@@ -25,7 +25,14 @@ func NewUserAfterOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // UserAfterOffline 用户下线回调
 func (l *UserAfterOfflineLogic) UserAfterOffline(in *pb.UserAfterOfflineReq) (*pb.UserAfterOfflineResp, error) {
-	// todo: add your logic here and delete this line
-
+	//1. 订阅号的逻辑
+	{
+		_, err := l.svcCtx.SubscriptionService.SubscriptionAfterOffline(l.ctx, &pb.SubscriptionAfterOfflineReq{
+			UserId: in.UserId,
+		})
+		if err != nil {
+			l.Errorf("subscription after online error: %v", err)
+		}
+	}
 	return &pb.UserAfterOfflineResp{}, nil
 }

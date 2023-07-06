@@ -108,7 +108,7 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 
 		d.OnClose(func() {
 			cancelFunction()
-			_ = gatewayservicelogic.WsManager.RemoveSubscriber(connection.GetHeader(), connectionId, pb.WebsocketCustomCloseCode(1000), "DataChannel Close")
+			gatewayservicelogic.WsManager.RemoveSubscriberId(connectionId, pb.WebsocketCustomCloseCode(1000), "DataChannel Close")
 			logx.Infof("DataChannel '%s'-'%d' closed", d.Label(), id)
 		})
 

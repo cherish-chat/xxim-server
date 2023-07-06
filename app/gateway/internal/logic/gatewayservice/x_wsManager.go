@@ -161,6 +161,16 @@ func (w *WsConnectionMap) GetAll() []*UniversalConnection {
 	return connections
 }
 
+func (w *WsConnectionMap) GetAllUser() map[string][]*UniversalConnection {
+	var userConnectionsMap = make(map[string][]*UniversalConnection)
+	w.userIdsMapLock.RLock()
+	defer w.userIdsMapLock.RUnlock()
+	for uid, v := range w.userIdsMap {
+		userConnectionsMap[uid] = v
+	}
+	return userConnectionsMap
+}
+
 func (w *WsConnectionMap) GetAliveTime(connectionId int64) (time.Time, bool) {
 	// RLock() 读锁
 	w.idAliveTimeMapLock.RLock()
@@ -182,8 +192,23 @@ func (w *WsConnectionMap) Set(connectionId int64, value *UniversalConnection) {
 	userId := value.GetHeader().UserId
 	if userId != "" {
 		w.userIdsMapLock.Lock()
-		w.userIdsMap[userId] = append(w.userIdsMap[userId], value)
+		connections := w.userIdsMap[userId]
+		var newConnections []*UniversalConnection
+		var oldConnection *UniversalConnection
+		// 是否token重复
+		for _, v := range connections {
+			if v.GetHeader().Platform != value.GetHeader().Platform {
+				newConnections = append(newConnections, v)
+			} else {
+				oldConnection = v
+			}
+		}
+		newConnections = append(newConnections, value)
+		w.userIdsMap[userId] = newConnections
 		w.userIdsMapLock.Unlock()
+		if oldConnection != nil {
+			WsManager.RemoveSubscriberConnection(oldConnection, pb.WebsocketCustomCloseCode_CloseCodeDuplicateConnection, "duplicate connection")
+		}
 	}
 	w.idAliveTimeMapLock.Lock()
 	w.idAliveTimeMap[connectionId] = time.Now()
@@ -194,33 +219,45 @@ func (w *WsConnectionMap) Update(value *UniversalConnection) {
 	userId := value.GetHeader().UserId
 	if userId != "" {
 		w.userIdsMapLock.Lock()
-		w.userIdsMap[userId] = append(w.userIdsMap[userId], value)
+		connections := w.userIdsMap[userId]
+		var newConnections []*UniversalConnection
+		var oldConnection *UniversalConnection
+		// 是否token重复
+		for _, v := range connections {
+			if v.GetHeader().Platform != value.GetHeader().Platform {
+				newConnections = append(newConnections, v)
+			} else {
+				oldConnection = v
+			}
+		}
+		newConnections = append(newConnections, value)
+		w.userIdsMap[userId] = newConnections
 		w.userIdsMapLock.Unlock()
+		if oldConnection != nil {
+			WsManager.RemoveSubscriberConnection(oldConnection, pb.WebsocketCustomCloseCode_CloseCodeDuplicateConnection, "duplicate connection")
+		}
 	}
 }
 
-func (w *WsConnectionMap) Delete(userId string, connectionId int64) {
+func (w *WsConnectionMap) DeleteId(connectionId int64) {
 	w.idConnectionMapLock.Lock()
 	delete(w.idConnectionMap, connectionId)
 	w.idConnectionMapLock.Unlock()
-	w.userIdsMapLock.Lock()
-	defer w.userIdsMapLock.Unlock()
-	//获取用户的所有连接
-	connections, ok := w.userIdsMap[userId]
-	if !ok {
-		return
-	}
-	//删除用户的某个连接
-	var newConnections []*UniversalConnection
-	for _, connection := range connections {
-		if connection.Id != connectionId {
-			newConnections = append(newConnections, connection)
-		}
-	}
-	w.userIdsMap[userId] = newConnections
 	w.idAliveTimeMapLock.Lock()
 	delete(w.idAliveTimeMap, connectionId)
 	w.idAliveTimeMapLock.Unlock()
+}
+
+func (w *WsConnectionMap) DeleteUser(userId string) {
+	w.userIdsMapLock.Lock()
+	delete(w.userIdsMap, userId)
+	w.userIdsMapLock.Unlock()
+}
+
+func (w *WsConnectionMap) SetUser(userId string, connections []*UniversalConnection) {
+	w.userIdsMapLock.Lock()
+	w.userIdsMap[userId] = connections
+	w.userIdsMapLock.Unlock()
 }
 
 type wsManager struct {
@@ -247,15 +284,19 @@ func (w *wsManager) UpdateSubscriber(connection *UniversalConnection) {
 	w.wsConnectionMap.Update(connection)
 }
 
-func (w *wsManager) RemoveSubscriber(header *pb.RequestHeader, id int64, closeCode pb.WebsocketCustomCloseCode, closeReason string) error {
+func (w *wsManager) RemoveSubscriberId(id int64, closeCode pb.WebsocketCustomCloseCode, closeReason string) {
 	connection, ok := w.wsConnectionMap.GetByConnectionId(id)
 	if ok {
 		_ = connection.Connection.Close(closeCode, closeReason)
 	}
-	if header.UserId != "" {
-		w.wsConnectionMap.Delete(header.UserId, id)
+	w.wsConnectionMap.DeleteId(id)
+}
+
+func (w *wsManager) RemoveSubscriberConnection(connection *UniversalConnection, closeCode pb.WebsocketCustomCloseCode, closeReason string) {
+	if connection != nil {
+		_ = connection.Connection.Close(closeCode, closeReason)
+		w.wsConnectionMap.DeleteId(connection.Id)
 	}
-	return nil
 }
 
 // clearConnectionTimer 定时器清除连接
@@ -270,7 +311,7 @@ func (w *wsManager) clearConnectionTimer(connection *UniversalConnection) {
 			sub := time.Now().Sub(aliveTime)
 			if !ok || sub > time.Second*time.Duration(w.svcCtx.Config.Websocket.KeepAliveSecond) {
 				// 删除连接
-				w.RemoveSubscriber(connection.GetHeader(), connection.Id, pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout, "heartbeat timeout")
+				w.RemoveSubscriberId(connection.Id, pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout, "heartbeat timeout")
 				return
 			}
 		}
@@ -315,12 +356,29 @@ func (w *wsManager) loopCheck() {
 		for {
 			select {
 			case <-ticker.C:
-				connections := w.wsConnectionMap.GetAll()
-				for _, connection := range connections {
-					_, ok := w.wsConnectionMap.GetAliveTime(connection.Id)
-					if !ok {
-						// 删除连接
-						w.RemoveSubscriber(connection.GetHeader(), connection.Id, pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout, "heartbeat timeout")
+				connections := w.wsConnectionMap.GetAllUser()
+				for userId, connections := range connections {
+					var newConnections []*UniversalConnection
+					for _, connection := range connections {
+						aliveTime, ok := w.wsConnectionMap.GetAliveTime(connection.Id)
+						if !ok {
+							// 删除连接
+							w.RemoveSubscriberConnection(connection, pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout, "heartbeat timeout")
+						} else {
+							// 如果超时
+							sub := time.Now().Sub(aliveTime)
+							if sub > time.Second*time.Duration(w.svcCtx.Config.Websocket.KeepAliveSecond) {
+								// 删除连接
+								w.RemoveSubscriberConnection(connection, pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout, "heartbeat timeout")
+							} else {
+								newConnections = append(newConnections, connection)
+							}
+						}
+					}
+					if len(newConnections) == 0 {
+						w.wsConnectionMap.DeleteUser(userId)
+					} else {
+						w.wsConnectionMap.SetUser(userId, newConnections)
 					}
 				}
 			}

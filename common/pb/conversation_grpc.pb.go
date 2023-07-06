@@ -594,6 +594,8 @@ type SubscriptionServiceClient interface {
 	SubscriptionSubscribe(ctx context.Context, in *SubscriptionSubscribeReq, opts ...grpc.CallOption) (*SubscriptionSubscribeResp, error)
 	//SubscriptionAfterOnline 订阅号在做用户上线后的操作
 	SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error)
+	//SubscriptionAfterOffline 订阅号在做用户下线后的操作
+	SubscriptionAfterOffline(ctx context.Context, in *SubscriptionAfterOfflineReq, opts ...grpc.CallOption) (*SubscriptionAfterOfflineResp, error)
 	//UpsertUserSubscription 更新用户订阅的订阅号
 	UpsertUserSubscription(ctx context.Context, in *UpsertUserSubscriptionReq, opts ...grpc.CallOption) (*UpsertUserSubscriptionResp, error)
 	//DeleteUserSubscription 删除用户订阅的订阅号
@@ -622,6 +624,15 @@ func (c *subscriptionServiceClient) SubscriptionSubscribe(ctx context.Context, i
 func (c *subscriptionServiceClient) SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error) {
 	out := new(SubscriptionAfterOnlineResp)
 	err := c.cc.Invoke(ctx, "/pb.subscriptionService/SubscriptionAfterOnline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *subscriptionServiceClient) SubscriptionAfterOffline(ctx context.Context, in *SubscriptionAfterOfflineReq, opts ...grpc.CallOption) (*SubscriptionAfterOfflineResp, error) {
+	out := new(SubscriptionAfterOfflineResp)
+	err := c.cc.Invoke(ctx, "/pb.subscriptionService/SubscriptionAfterOffline", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -663,6 +674,8 @@ type SubscriptionServiceServer interface {
 	SubscriptionSubscribe(context.Context, *SubscriptionSubscribeReq) (*SubscriptionSubscribeResp, error)
 	//SubscriptionAfterOnline 订阅号在做用户上线后的操作
 	SubscriptionAfterOnline(context.Context, *SubscriptionAfterOnlineReq) (*SubscriptionAfterOnlineResp, error)
+	//SubscriptionAfterOffline 订阅号在做用户下线后的操作
+	SubscriptionAfterOffline(context.Context, *SubscriptionAfterOfflineReq) (*SubscriptionAfterOfflineResp, error)
 	//UpsertUserSubscription 更新用户订阅的订阅号
 	UpsertUserSubscription(context.Context, *UpsertUserSubscriptionReq) (*UpsertUserSubscriptionResp, error)
 	//DeleteUserSubscription 删除用户订阅的订阅号
@@ -681,6 +694,9 @@ func (UnimplementedSubscriptionServiceServer) SubscriptionSubscribe(context.Cont
 }
 func (UnimplementedSubscriptionServiceServer) SubscriptionAfterOnline(context.Context, *SubscriptionAfterOnlineReq) (*SubscriptionAfterOnlineResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionAfterOnline not implemented")
+}
+func (UnimplementedSubscriptionServiceServer) SubscriptionAfterOffline(context.Context, *SubscriptionAfterOfflineReq) (*SubscriptionAfterOfflineResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionAfterOffline not implemented")
 }
 func (UnimplementedSubscriptionServiceServer) UpsertUserSubscription(context.Context, *UpsertUserSubscriptionReq) (*UpsertUserSubscriptionResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpsertUserSubscription not implemented")
@@ -736,6 +752,24 @@ func _SubscriptionService_SubscriptionAfterOnline_Handler(srv interface{}, ctx c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SubscriptionServiceServer).SubscriptionAfterOnline(ctx, req.(*SubscriptionAfterOnlineReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SubscriptionService_SubscriptionAfterOffline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscriptionAfterOfflineReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubscriptionServiceServer).SubscriptionAfterOffline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.subscriptionService/SubscriptionAfterOffline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubscriptionServiceServer).SubscriptionAfterOffline(ctx, req.(*SubscriptionAfterOfflineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -808,6 +842,10 @@ var SubscriptionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubscriptionAfterOnline",
 			Handler:    _SubscriptionService_SubscriptionAfterOnline_Handler,
+		},
+		{
+			MethodName: "SubscriptionAfterOffline",
+			Handler:    _SubscriptionService_SubscriptionAfterOffline_Handler,
 		},
 		{
 			MethodName: "UpsertUserSubscription",

@@ -33,8 +33,9 @@ type Config struct {
 		KeepLiveSeconds int `json:",default=30"`
 	} `json:",optional"`
 	Websocket struct {
-		KeepAliveTickerSecond int `json:",default=30"` // 定时器，每隔n秒检测连接是否存活
-		KeepAliveSecond       int `json:",default=60"` // 检测是否存活时，如果超过n秒没有收到客户端的消息，则关闭连接
+		KeepAliveTickerSecond      int `json:",default=30"`  // 定时器，每隔n秒检测连接是否存活
+		KeepAliveSecond            int `json:",default=60"`  // 检测是否存活时，如果超过n秒没有收到客户端的消息，则关闭连接
+		OfflineDeterminationSecond int `json:",default=180"` // 离线判定时间，如果超过n秒没有收到客户端的消息，则认为客户端离线，会回调离线通知
 	}
 	RpcClientConf struct {
 		Dispatch     zrpc.RpcClientConf

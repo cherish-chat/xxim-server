@@ -101,13 +101,8 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	connectionId := utils.Snowflake.Int64()
 	defer func() {
 		logger.Debugf("removing subscriber: %d", connectionId)
-		err := gatewayservicelogic.WsManager.RemoveSubscriber(header, connectionId, pb.WebsocketCustomCloseCode(websocket.StatusNormalClosure), "finished")
-		if err != nil {
-			logger.Errorf("failed to remove subscriber: %v", err)
-			return
-		} else {
-			logger.Debugf("removed subscriber: %d", connectionId)
-		}
+		gatewayservicelogic.WsManager.RemoveSubscriberId(connectionId, pb.WebsocketCustomCloseCode(websocket.StatusNormalClosure), "finished")
+		logger.Debugf("removed subscriber: %d", connectionId)
 	}()
 	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, gatewayservicelogic.NewWsForConnection(c), connectionId)
 	if err != nil {

@@ -20,6 +20,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 	route Route[REQ, RESP],
 ) (REQ, *pb.GatewayApiResponse, error) {
 	request := route.RequestPool.NewRequest()
+	response := route.ResponsePool.NewResponse()
 	do := route.Do
 	// 请求体中的数据 反序列化到 request 中
 	contentType := ctx.ContentType()
@@ -30,18 +31,22 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		// json
 		err := ctx.ShouldBindJSON(apiRequest)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
-				Header: i18n.NewInvalidDataError(err.Error()),
-				Body:   nil,
+				Header: responseHeader,
+				Body:   utils.Proto.Marshal(response),
 			}, err
 		}
 		err = utils.Json.Unmarshal(apiRequest.Body, request)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}, err
 		}
 		request.SetHeader(apiRequest.Header)
@@ -51,38 +56,46 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		body, _ := ctx.GetRawData()
 		err := proto.Unmarshal(body, apiRequest)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}, err
 		}
 		err = proto.Unmarshal(apiRequest.Body, request)
 		if err != nil {
+			responseHeader := i18n.NewInvalidDataError(err.Error())
+			response.SetHeader(responseHeader)
 			return request, &pb.GatewayApiResponse{
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
 				Header:    i18n.NewInvalidDataError(err.Error()),
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}, err
 		}
 		request.SetHeader(apiRequest.Header)
 	} else {
+		responseHeader := i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf")
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
-			Header:    i18n.NewInvalidDataError("invalid content type, please use application/json or application/x-protobuf"),
-			Body:      nil,
+			Header:    responseHeader,
+			Body:      utils.Proto.Marshal(response),
 		}, nil
 	}
 	requestHeader := request.GetHeader()
 	if requestHeader == nil {
+		responseHeader := i18n.NewInvalidDataError("invalid request header")
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
-			Header:    i18n.NewInvalidDataError("invalid request header"),
-			Body:      nil,
+			Header:    responseHeader,
+			Body:      utils.Proto.Marshal(response),
 		}, nil
 	}
 	requestHeader.ClientIp = utils.Http.GetClientIP(ctx.Request)
@@ -95,11 +108,13 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 		Path:   apiRequest.Path,
 	})
 	if err != nil {
+		responseHeader := i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err)
+		response.SetHeader(responseHeader)
 		return request, &pb.GatewayApiResponse{
-			Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+			Header:    responseHeader,
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
-			Body:      nil,
+			Body:      utils.Proto.Marshal(response),
 		}, err
 	}
 
@@ -119,10 +134,10 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 
 	requestHeader.UserId = userBeforeRequestResp.UserId
 
-	response, err := do(ctx.Request.Context(), request)
-	body, _ = proto.Marshal(response)
+	resp, err := do(ctx.Request.Context(), request)
+	body, _ = proto.Marshal(resp)
 	if len(body) > 0 {
-		responseHeader := response.GetHeader()
+		responseHeader := resp.GetHeader()
 		if responseHeader == nil {
 			responseHeader = i18n.NewOkHeader()
 		}
@@ -130,7 +145,7 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			Header:    responseHeader,
 			RequestId: apiRequest.RequestId,
 			Path:      apiRequest.Path,
-			Body:      MarshalResponse(requestHeader, response),
+			Body:      MarshalResponse(requestHeader, resp),
 		}
 	} else {
 		if err != nil {
@@ -138,18 +153,22 @@ func UnifiedHandleHttp[REQ ReqInterface, RESP RespInterface](
 			if ok {
 				err = errors.New(statusErr.Message())
 			}
+			responseHeader := i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err)
+			response.SetHeader(responseHeader)
 			result = &pb.GatewayApiResponse{
-				Header:    i18n.NewServerError(requestHeader, svcCtx.Config.Mode, err),
+				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}
 		} else {
+			responseHeader := i18n.NewOkHeader()
+			response.SetHeader(responseHeader)
 			result = &pb.GatewayApiResponse{
-				Header:    i18n.NewOkHeader(),
+				Header:    responseHeader,
 				RequestId: apiRequest.RequestId,
 				Path:      apiRequest.Path,
-				Body:      nil,
+				Body:      utils.Proto.Marshal(response),
 			}
 		}
 	}

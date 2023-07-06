@@ -53,6 +53,8 @@ type (
 	ListSubscriptionSubscribersReq_Option                   = pb.ListSubscriptionSubscribersReq_Option
 	ListSubscriptionSubscribersResp                         = pb.ListSubscriptionSubscribersResp
 	ListSubscriptionSubscribersResp_Subscriber              = pb.ListSubscriptionSubscribersResp_Subscriber
+	SubscriptionAfterOfflineReq                             = pb.SubscriptionAfterOfflineReq
+	SubscriptionAfterOfflineResp                            = pb.SubscriptionAfterOfflineResp
 	SubscriptionAfterOnlineReq                              = pb.SubscriptionAfterOnlineReq
 	SubscriptionAfterOnlineResp                             = pb.SubscriptionAfterOnlineResp
 	SubscriptionSubscribeReq                                = pb.SubscriptionSubscribeReq

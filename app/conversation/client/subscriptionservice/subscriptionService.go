@@ -53,6 +53,8 @@ type (
 	ListSubscriptionSubscribersReq_Option                   = pb.ListSubscriptionSubscribersReq_Option
 	ListSubscriptionSubscribersResp                         = pb.ListSubscriptionSubscribersResp
 	ListSubscriptionSubscribersResp_Subscriber              = pb.ListSubscriptionSubscribersResp_Subscriber
+	SubscriptionAfterOfflineReq                             = pb.SubscriptionAfterOfflineReq
+	SubscriptionAfterOfflineResp                            = pb.SubscriptionAfterOfflineResp
 	SubscriptionAfterOnlineReq                              = pb.SubscriptionAfterOnlineReq
 	SubscriptionAfterOnlineResp                             = pb.SubscriptionAfterOnlineResp
 	SubscriptionSubscribeReq                                = pb.SubscriptionSubscribeReq
@@ -66,6 +68,8 @@ type (
 		SubscriptionSubscribe(ctx context.Context, in *SubscriptionSubscribeReq, opts ...grpc.CallOption) (*SubscriptionSubscribeResp, error)
 		// SubscriptionAfterOnline 订阅号在做用户上线后的操作
 		SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error)
+		// SubscriptionAfterOffline 订阅号在做用户下线后的操作
+		SubscriptionAfterOffline(ctx context.Context, in *SubscriptionAfterOfflineReq, opts ...grpc.CallOption) (*SubscriptionAfterOfflineResp, error)
 		// UpsertUserSubscription 更新用户订阅的订阅号
 		UpsertUserSubscription(ctx context.Context, in *UpsertUserSubscriptionReq, opts ...grpc.CallOption) (*UpsertUserSubscriptionResp, error)
 		// DeleteUserSubscription 删除用户订阅的订阅号
@@ -95,6 +99,12 @@ func (m *defaultSubscriptionService) SubscriptionSubscribe(ctx context.Context, 
 func (m *defaultSubscriptionService) SubscriptionAfterOnline(ctx context.Context, in *SubscriptionAfterOnlineReq, opts ...grpc.CallOption) (*SubscriptionAfterOnlineResp, error) {
 	client := pb.NewSubscriptionServiceClient(m.cli.Conn())
 	return client.SubscriptionAfterOnline(ctx, in, opts...)
+}
+
+// SubscriptionAfterOffline 订阅号在做用户下线后的操作
+func (m *defaultSubscriptionService) SubscriptionAfterOffline(ctx context.Context, in *SubscriptionAfterOfflineReq, opts ...grpc.CallOption) (*SubscriptionAfterOfflineResp, error) {
+	client := pb.NewSubscriptionServiceClient(m.cli.Conn())
+	return client.SubscriptionAfterOffline(ctx, in, opts...)
 }
 
 // UpsertUserSubscription 更新用户订阅的订阅号

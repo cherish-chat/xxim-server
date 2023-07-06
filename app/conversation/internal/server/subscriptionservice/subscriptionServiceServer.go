@@ -34,6 +34,12 @@ func (s *SubscriptionServiceServer) SubscriptionAfterOnline(ctx context.Context,
 	return l.SubscriptionAfterOnline(in)
 }
 
+// SubscriptionAfterOffline 订阅号在做用户下线后的操作
+func (s *SubscriptionServiceServer) SubscriptionAfterOffline(ctx context.Context, in *pb.SubscriptionAfterOfflineReq) (*pb.SubscriptionAfterOfflineResp, error) {
+	l := subscriptionservicelogic.NewSubscriptionAfterOfflineLogic(ctx, s.svcCtx)
+	return l.SubscriptionAfterOffline(in)
+}
+
 // UpsertUserSubscription 更新用户订阅的订阅号
 func (s *SubscriptionServiceServer) UpsertUserSubscription(ctx context.Context, in *pb.UpsertUserSubscriptionReq) (*pb.UpsertUserSubscriptionResp, error) {
 	l := subscriptionservicelogic.NewUpsertUserSubscriptionLogic(ctx, s.svcCtx)

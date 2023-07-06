@@ -285,6 +285,16 @@ message SubscriptionAfterOnlineResp {
   ResponseHeader header = 1;
 }
 
+//SubscriptionAfterOffline 订阅号在做用户下线后的操作
+message SubscriptionAfterOfflineReq {
+  RequestHeader header = 1;
+  string userId = 2;
+}
+
+message SubscriptionAfterOfflineResp {
+  ResponseHeader header = 1;
+}
+
 //UserSubscription 用户订阅的订阅号
 message UserSubscription {
   string subscriptionId = 1;
@@ -358,6 +368,8 @@ service subscriptionService {
   rpc SubscriptionSubscribe(SubscriptionSubscribeReq) returns (SubscriptionSubscribeResp) {}
   //SubscriptionAfterOnline 订阅号在做用户上线后的操作
   rpc SubscriptionAfterOnline(SubscriptionAfterOnlineReq) returns (SubscriptionAfterOnlineResp) {}
+  //SubscriptionAfterOffline 订阅号在做用户下线后的操作
+  rpc SubscriptionAfterOffline(SubscriptionAfterOfflineReq) returns (SubscriptionAfterOfflineResp) {}
   //UpsertUserSubscription 更新用户订阅的订阅号
   rpc UpsertUserSubscription(UpsertUserSubscriptionReq) returns (UpsertUserSubscriptionResp) {}
   //DeleteUserSubscription 删除用户订阅的订阅号
