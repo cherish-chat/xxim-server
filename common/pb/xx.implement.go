@@ -1,5 +1,17 @@
 package pb
 
+func (x *AuthenticationConnectionReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+func (x *VerifyConnectionReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+func (x *GatewayKeepAliveReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
 func (x *GatewayGetUserConnectionReq) SetHeader(header *RequestHeader) {
 	x.Header = header
 }
@@ -61,6 +73,20 @@ func (x *MessageBatchSendReq) SetHeader(header *RequestHeader) {
 }
 
 func (x *GroupCreateReq) SetHeader(header *RequestHeader) {
+	x.Header = header
+}
+
+// response
+
+func (x *AuthenticationConnectionResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *VerifyConnectionResp) SetHeader(header *ResponseHeader) {
+	x.Header = header
+}
+
+func (x *GatewayKeepAliveResp) SetHeader(header *ResponseHeader) {
 	x.Header = header
 }
 

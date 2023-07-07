@@ -9,10 +9,10 @@ import (
 	"github.com/cherish-chat/xxim-server/common/i18n"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/pion/sdp/v2"
 	"github.com/pion/webrtc/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
 	oteltrace "go.opentelemetry.io/otel/trace"
@@ -42,7 +42,12 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 		logx.Errorf("webrtc.NewPeerConnection error: %v", err)
 		return nil, err
 	}
-
+	sd := &sdp.SessionDescription{}
+	if err := sd.Unmarshal([]byte(in.SDP)); err != nil {
+		logx.Errorf("sd.Unmarshal error: %v", err)
+		return nil, err
+	}
+	header := &pb.RequestHeader{ClientIp: utils.Sdp.GetClientIp(sd)}
 	// Set the handler for ICE connection state
 	// This will notify you when the peer has connected/disconnected
 	ctx, cancelFunction := context.WithCancel(context.Background())
@@ -54,36 +59,23 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 			logx.Infof("Peer Connection State has changed: %s", connectionState.String())
 		}
 	})
+
+	err = peerConnection.SetRemoteDescription(*in)
+	if err != nil {
+		logx.Errorf("peerConnection.SetRemoteDescription error: %v", err)
+		return nil, err
+	}
+
 	// Register data channel creation handling
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
 		id := d.ID()
-		connectionId := utils.Snowflake.Int64()
 		logx.Infof("New DataChannel %s %d", d.Label(), id)
 
-		now := time.Now()
-		connectTime := &now
-		var connection *gatewayservicelogic.UniversalConnection
+		connection := gatewayservicelogic.NewP2pConnection(ctx, header, d)
 		// Register channel opening handling
 		d.OnOpen(func() {
 			logx.Infof("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds", d.Label(), id)
-			now := time.Now()
-			*connectTime = now
-			connection, _ = gatewayservicelogic.WsManager.AddSubscriber(ctx, &pb.RequestHeader{
-				AppId:        h.svcCtx.Config.Cloudx.AppId,
-				UserId:       "",
-				UserToken:    "",
-				ClientIp:     "",
-				InstallId:    "",
-				Platform:     0,
-				GatewayPodIp: utils.GetPodIp(),
-				DeviceModel:  "",
-				OsVersion:    "",
-				AppVersion:   "",
-				Language:     0,
-				ConnectTime:  (*connectTime).UnixMilli(),
-				Encoding:     pb.EncodingProto_PROTOBUF,
-				Extra:        "",
-			}, gatewayservicelogic.NewRtcForConnection(d), connectionId)
+			gatewayservicelogic.ConnectionLogic.OnConnect(connection)
 		})
 
 		// Register text message handling
@@ -95,7 +87,7 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 				}
 				time.Sleep(time.Millisecond * 10)
 			}
-			code, response, err := h.onRequest(ctx, connection, connectTime, msg.Data)
+			code, response, err := h.onRequest(ctx, connection, msg.Data)
 			if err != nil {
 				logx.Errorf("h.onRequest error: %v", err)
 				h.returnResponse(ctx, connection, code, response, err)
@@ -108,38 +100,73 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 
 		d.OnClose(func() {
 			cancelFunction()
-			gatewayservicelogic.WsManager.RemoveSubscriberId(connectionId, pb.WebsocketCustomCloseCode(1000), "DataChannel Close")
+			gatewayservicelogic.ConnectionLogic.OnDisconnect(connection)
 			logx.Infof("DataChannel '%s'-'%d' closed", d.Label(), id)
 		})
 
 	})
 
-	err = peerConnection.SetRemoteDescription(*in)
-	if err != nil {
-		panic(err)
-	}
-
 	// Create answer
 	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
-		panic(err)
+		logx.Errorf("peerConnection.CreateAnswer error: %v", err)
+		return nil, err
 	}
 
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
 	if err != nil {
-		panic(err)
+		logx.Errorf("peerConnection.SetLocalDescription error: %v", err)
+		return nil, err
 	}
 
 	// 返回answer
 	return &answer, nil
 }
 
-func (h *OfferHandler) returnResponse(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, code pb.ResponseCode, response []byte, err error) {
-	connection.Connection.Write(ctx, response)
+func (h *OfferHandler) returnResponse(ctx context.Context, connection *gatewayservicelogic.Connection, code pb.ResponseCode, response []byte, err error) {
+	connection.SendMessage(ctx, response)
 }
 
-func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, connectTime *time.Time, msg []byte) (pb.ResponseCode, []byte, error) {
+func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservicelogic.Connection, msg []byte) (pb.ResponseCode, []byte, error) {
+	var aesKey []byte
+	var aesIv []byte
+	var isEncrypt bool
+
+	connection.PublicKeyLock.RLock()
+	{
+		if len(connection.SharedSecret) == 0 {
+			// 不加密
+			isEncrypt = false
+		} else {
+			// 加密
+			isEncrypt = true
+			aesKey = connection.SharedSecret[:]
+			aesIv = connection.SharedSecret[8:24]
+		}
+	}
+	connection.PublicKeyLock.RUnlock()
+
+	if isEncrypt {
+		var err error
+		msg, err = utils.Aes.Decrypt(aesKey, aesIv, msg)
+		if err != nil {
+			logx.Errorf("decrypt message error: %v", err)
+			data, _ := proto.Marshal(&pb.GatewayWriteDataContent{
+				DataType: pb.GatewayWriteDataType_Response,
+				Response: &pb.GatewayApiResponse{
+					Header:    i18n.NewInvalidDataError(err.Error()),
+					RequestId: "",
+					Path:      "",
+					Body:      nil,
+				},
+				Message: nil,
+				Notice:  nil,
+			})
+			return pb.ResponseCode_INVALID_DATA, data, fmt.Errorf("handle message error: %v", err)
+		}
+	}
+
 	apiRequest := &pb.GatewayApiRequest{}
 	err := proto.Unmarshal(msg, apiRequest)
 	if err != nil {
@@ -157,48 +184,27 @@ func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservice
 		})
 		return pb.ResponseCode_INVALID_DATA, data, fmt.Errorf("handle message error: %v", err)
 	}
-	if apiRequest.Header == nil || apiRequest.Header.AppId == "" {
-		apiRequest.Header = connection.GetHeader()
-	} else if apiRequest.Header.Extra != "" {
-		m := make(map[string]any)
-		err := utils.Json.Unmarshal([]byte(apiRequest.Header.Extra), &m)
-		if err == nil {
-			if _, resetHeader := m["resetHeader"]; resetHeader {
-				apiRequest.Header = connection.ReSetHeader(apiRequest.Header)
-			}
-		} else {
-			logx.Errorf("utils.Json.Unmarshal error: %v", err)
-		}
-	}
+	apiRequest.Header = connection.GetHeader()
 	route, ok := universalRouteMap[apiRequest.Path]
 	tracer := otel.Tracer(common.TraceName)
 	propagator := otel.GetTextMapPropagator()
 	spanName := apiRequest.Path
 	carrier := propagation.MapCarrier{
-		"appId":  apiRequest.Header.AppId,
-		"userId": apiRequest.Header.UserId,
-		//"clientIp":     apiRequest.Header.ClientIp, // 获取不到
+		"appId":        apiRequest.Header.AppId,
+		"userId":       apiRequest.Header.UserId,
+		"clientIp":     apiRequest.Header.ClientIp,
 		"installId":    apiRequest.Header.InstallId,
 		"platform":     apiRequest.Header.Platform.String(),
 		"gatewayPodIp": utils.GetPodIp(),
 		"deviceModel":  apiRequest.Header.DeviceModel,
 		"osVersion":    apiRequest.Header.OsVersion,
 		"appVersion":   apiRequest.Header.AppVersion,
-		"language":     apiRequest.Header.Language.String(),
-		"connectTime":  utils.Number.Int64ToString((*connectTime).UnixMilli()),
-		//"encoding":     apiRequest.Header.Encoding.ContentType(), // 只能 protobuf
-		"extra": apiRequest.Header.Extra,
+		"connectTime":  connection.ConnectedTime.Format("2006-01-02 15:04:05"),
+		"extra":        apiRequest.Header.Extra,
 	}
 	spanCtx := propagator.Extract(ctx, carrier)
-	kvs := []attribute.KeyValue{attribute.Int64("connection.Id", connection.Id)}
-	for k, v := range carrier {
-		kvs = append(kvs, attribute.String(k, v))
-	}
 	spanCtx, span := tracer.Start(spanCtx, spanName,
 		oteltrace.WithSpanKind(oteltrace.SpanKindServer),
-		oteltrace.WithAttributes(
-			kvs...,
-		),
 	)
 	defer span.End()
 	propagator.Inject(spanCtx, carrier)
@@ -218,42 +224,6 @@ func (h *OfferHandler) onRequest(ctx context.Context, connection *gatewayservice
 			Notice:  nil,
 		})
 		return pb.ResponseCode_INVALID_METHOD, data, fmt.Errorf("handle message error: %v", "path 404 not found")
-	}
-
-	beforeConnectResp, err := h.svcCtx.CallbackService.UserBeforeRequest(ctx, &pb.UserBeforeRequestReq{
-		Header: apiRequest.Header,
-		Path:   apiRequest.Path,
-	})
-	if err != nil {
-		logx.Errorf("beforeConnect error: %v", err)
-		data, _ := proto.Marshal(&pb.GatewayWriteDataContent{
-			DataType: pb.GatewayWriteDataType_Response,
-			Response: &pb.GatewayApiResponse{
-				Header:    i18n.NewAuthError(pb.AuthErrorTypeInvalid, err.Error()),
-				RequestId: apiRequest.RequestId,
-				Path:      apiRequest.Path,
-				Body:      nil,
-			},
-			Message: nil,
-			Notice:  nil,
-		})
-		return pb.ResponseCode_SERVER_ERROR, data, fmt.Errorf("handle message error: %v", err)
-	}
-	if beforeConnectResp.GetHeader().GetCode() != pb.ResponseCode_SUCCESS {
-		data, _ := proto.Marshal(&pb.GatewayWriteDataContent{
-			DataType: pb.GatewayWriteDataType_Response,
-			Response: &pb.GatewayApiResponse{
-				Header:    i18n.NewAuthError(pb.AuthErrorTypeInvalid, beforeConnectResp.Header.Code.String()),
-				RequestId: apiRequest.RequestId,
-				Path:      apiRequest.Path,
-				Body:      nil,
-			},
-			Message: nil,
-			Notice:  nil,
-		})
-		return pb.ResponseCode_UNAUTHORIZED, data, fmt.Errorf("handle message error: %v", "authentication failed")
-	} else {
-		apiRequest.Header.UserId = beforeConnectResp.GetUserId()
 	}
 	return route(ctx, connection, apiRequest)
 }

@@ -1,7 +1,6 @@
-package main
+package gateway
 
 import (
-	"flag"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/server"
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -17,13 +16,9 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/gateway.yaml", "the config file")
-
-func main() {
-	flag.Parse()
-
+func Run(configFile string) {
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	conf.MustLoad(configFile, &c)
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

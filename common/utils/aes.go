@@ -14,9 +14,9 @@ var Aes = &xAes{}
 
 var DecryptError = errors.New("aes decrypt error")
 
-func (x *xAes) Decrypt(key, iv string, data []byte) (decrypted []byte, err error) {
-	aesKey := []byte(Md5(key))
-	aesIv := []byte(Md516(iv))
+func (x *xAes) Decrypt(key, iv []byte, data []byte) (decrypted []byte, err error) {
+	aesKey := key
+	aesIv := iv
 	block, _ := aes.NewCipher(aesKey)
 	blockMode := cipher.NewCBCDecrypter(block, aesIv)
 	decrypted = make([]byte, len(data))
@@ -31,9 +31,9 @@ func (x *xAes) Decrypt(key, iv string, data []byte) (decrypted []byte, err error
 }
 
 // Encrypt aes加密
-func (x *xAes) Encrypt(key string, iv string, data []byte) []byte {
-	aesKey := []byte(Md5(key))
-	aesIv := []byte(Md516(iv))
+func (x *xAes) Encrypt(key, iv []byte, data []byte) []byte {
+	aesKey := key
+	aesIv := iv
 	block, _ := aes.NewCipher(aesKey)
 	blockSize := block.BlockSize()
 	data = x.pkcs7Padding(data, blockSize)

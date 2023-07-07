@@ -26,16 +26,11 @@ func NewGatewayKickWsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gat
 // 二次开发人员可以在此处修改踢出用户连接的逻辑
 // 比如踢出连接之前，先给用户发送一条消息
 func (l *GatewayKickWsLogic) GatewayKickWs(in *pb.GatewayKickWsReq) (*pb.GatewayKickWsResp, error) {
-	gatewayGetConnectionByFilterResp, err := NewGatewayGetConnectionByFilterLogic(l.ctx, l.svcCtx).GatewayGetConnectionByFilter(&pb.GatewayGetConnectionByFilterReq{
-		Header: in.Header,
-		Filter: in.Filter,
-	})
-	if err != nil {
-		l.Errorf("GatewayGetConnectionByFilter error: %v", err)
-		return &pb.GatewayKickWsResp{}, err
-	}
-	for _, connection := range gatewayGetConnectionByFilterResp.GetConnections() {
-		WsManager.CloseConnection(connection.Id, in.CloseCode, in.CloseReason)
+	if len(in.GetFilter().GetUserIds()) > 0 {
+		connections := ConnectionLogic.GetConnectionsByUserIds(in.GetFilter().GetUserIds())
+		for _, connection := range connections {
+			connection.Connection.CloseConnection(in.CloseCode, in.CloseReason)
+		}
 	}
 	return &pb.GatewayKickWsResp{}, nil
 }

@@ -41,16 +41,11 @@ message GatewayWriteDataContent {
   optional Notice notice = 4;
 }
 
-//WsConnection ws连接
-message WsConnection {
-  int64 id = 1;
-  RequestHeader header = 2;
-}
-
-//RtcConnection rtc连接
-message RtcConnection {
-  int64 id = 1;
-  RequestHeader header = 2;
+//LongConnection ws连接
+message LongConnection {
+  RequestHeader header = 1;
+  string podIp = 3;
+  int64 connectTime = 4;
 }
 
 //GatewayGetUserConnectionReq 获取用户的连接
@@ -61,7 +56,7 @@ message GatewayGetUserConnectionReq {
 
 message GatewayGetUserConnectionResp {
   ResponseHeader header = 1;
-  repeated WsConnection connections = 2;
+  repeated LongConnection connections = 2;
 }
 
 //GatewayBatchGetUserConnectionReq 批量获取用户的连接
@@ -72,7 +67,7 @@ message GatewayBatchGetUserConnectionReq {
 
 message GatewayBatchGetUserConnectionResp {
   ResponseHeader header = 1;
-  repeated WsConnection connections = 2;
+  repeated LongConnection connections = 2;
 }
 
 message GatewayGetConnectionFilter {
@@ -87,7 +82,7 @@ message GatewayGetConnectionByFilterReq {
 
 message GatewayGetConnectionByFilterResp {
   ResponseHeader header = 1;
-  repeated WsConnection connections = 2;
+  repeated LongConnection connections = 2;
 }
 
 //GatewayWriteDataToWsReq 写入数据到ws连接
@@ -99,7 +94,7 @@ message GatewayWriteDataToWsReq {
 
 message GatewayWriteDataToWsResp {
   ResponseHeader header = 1;
-  repeated WsConnection successConnections = 2;
+  repeated LongConnection successConnections = 2;
 }
 
 //GatewayWriteDataToWsWrapperReq 写入数据到ws连接
@@ -119,7 +114,7 @@ message GatewayKickWsReq {
 
 message GatewayKickWsResp {
   ResponseHeader header = 1;
-  repeated WsConnection successConnections = 2;
+  repeated LongConnection successConnections = 2;
 }
 
 //GatewayKeepAliveReq 保持连接
@@ -129,6 +124,29 @@ message GatewayKeepAliveReq {
 
 message GatewayKeepAliveResp {
   ResponseHeader header = 1;
+}
+
+//VerifyConnectionReq 验证连接 客户端拿着自己的公钥，请求网关，网关返回自己的公钥
+message VerifyConnectionReq {
+  RequestHeader header = 1;
+  bytes publicKey = 2;
+}
+
+message VerifyConnectionResp {
+  ResponseHeader header = 1;
+  bytes publicKey = 2;
+}
+
+//AuthenticationConnectionReq 验证连接 客户端拿着userId token，鉴权连接
+message AuthenticationConnectionReq {
+  RequestHeader header = 1;
+  string userId = 2;
+  string token = 3;
+}
+
+message AuthenticationConnectionResp {
+  ResponseHeader header = 1;
+  bool success = 2;
 }
 
 service gatewayService {
@@ -155,4 +173,10 @@ service gatewayService {
   // 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
   // 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
   rpc GatewayKeepAlive(GatewayKeepAliveReq) returns (GatewayKeepAliveResp);
+  // VerifyConnection 验证连接
+  // 客户端拿着自己的公钥，请求网关，网关返回自己的公钥
+  rpc VerifyConnection(VerifyConnectionReq) returns (VerifyConnectionResp);
+  // AuthenticationConnection 验证连接
+  // 客户端拿着userId token，鉴权连接
+  rpc AuthenticationConnection(AuthenticationConnectionReq) returns (AuthenticationConnectionResp);
 }

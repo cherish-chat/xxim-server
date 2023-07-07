@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	AuthenticationConnectionReq       = pb.AuthenticationConnectionReq
+	AuthenticationConnectionResp      = pb.AuthenticationConnectionResp
 	GatewayApiRequest                 = pb.GatewayApiRequest
 	GatewayApiResponse                = pb.GatewayApiResponse
 	GatewayBatchGetUserConnectionReq  = pb.GatewayBatchGetUserConnectionReq
@@ -30,8 +32,9 @@ type (
 	GatewayWriteDataToWsReq           = pb.GatewayWriteDataToWsReq
 	GatewayWriteDataToWsResp          = pb.GatewayWriteDataToWsResp
 	GatewayWriteDataToWsWrapperReq    = pb.GatewayWriteDataToWsWrapperReq
-	RtcConnection                     = pb.RtcConnection
-	WsConnection                      = pb.WsConnection
+	LongConnection                    = pb.LongConnection
+	VerifyConnectionReq               = pb.VerifyConnectionReq
+	VerifyConnectionResp              = pb.VerifyConnectionResp
 
 	GatewayService interface {
 		// GatewayGetUserConnection 获取用户的连接
@@ -48,6 +51,10 @@ type (
 		GatewayKickWs(ctx context.Context, in *GatewayKickWsReq, opts ...grpc.CallOption) (*GatewayKickWsResp, error)
 		// KeepAlive 保持连接
 		GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error)
+		// VerifyConnection 验证连接
+		VerifyConnection(ctx context.Context, in *VerifyConnectionReq, opts ...grpc.CallOption) (*VerifyConnectionResp, error)
+		// AuthenticationConnection 验证连接
+		AuthenticationConnection(ctx context.Context, in *AuthenticationConnectionReq, opts ...grpc.CallOption) (*AuthenticationConnectionResp, error)
 	}
 
 	defaultGatewayService struct {
@@ -101,4 +108,16 @@ func (m *defaultGatewayService) GatewayKickWs(ctx context.Context, in *GatewayKi
 func (m *defaultGatewayService) GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error) {
 	client := pb.NewGatewayServiceClient(m.cli.Conn())
 	return client.GatewayKeepAlive(ctx, in, opts...)
+}
+
+// VerifyConnection 验证连接
+func (m *defaultGatewayService) VerifyConnection(ctx context.Context, in *VerifyConnectionReq, opts ...grpc.CallOption) (*VerifyConnectionResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.VerifyConnection(ctx, in, opts...)
+}
+
+// AuthenticationConnection 验证连接
+func (m *defaultGatewayService) AuthenticationConnection(ctx context.Context, in *AuthenticationConnectionReq, opts ...grpc.CallOption) (*AuthenticationConnectionResp, error) {
+	client := pb.NewGatewayServiceClient(m.cli.Conn())
+	return client.AuthenticationConnection(ctx, in, opts...)
 }

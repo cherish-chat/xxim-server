@@ -231,6 +231,8 @@ message UserAfterOfflineResp {
 //UserBeforeConnectReq 服务端连接前的回调
 message UserBeforeConnectReq {
   RequestHeader header = 1;
+  string userId = 2; // 用户id 唯一
+  string token = 3; // 用户token
 }
 
 //UserBeforeConnectResp 服务端连接前的回调

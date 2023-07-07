@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,21 +26,20 @@ func NewGatewayWriteDataToWsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // GatewayWriteDataToWs 向用户的连接写入数据
 // 二次开发人员不建议修改此处逻辑
 func (l *GatewayWriteDataToWsLogic) GatewayWriteDataToWs(in *pb.GatewayWriteDataToWsReq) (*pb.GatewayWriteDataToWsResp, error) {
-	gatewayGetConnectionByFilterResp, err := NewGatewayGetConnectionByFilterLogic(l.ctx, l.svcCtx).GatewayGetConnectionByFilter(&pb.GatewayGetConnectionByFilterReq{
-		Header: in.Header,
-		Filter: in.Filter,
-	})
-	if err != nil {
-		l.Errorf("GatewayGetConnectionByFilter error: %v", err)
-		return &pb.GatewayWriteDataToWsResp{}, err
-	}
-	var resp = &pb.GatewayWriteDataToWsResp{}
-	for _, connection := range gatewayGetConnectionByFilterResp.GetConnections() {
-		success := WsManager.WriteData(connection.Id, in.Data)
-		if success {
-			logx.Debugf("write data to ws success, connection: %v", connection)
-			resp.SuccessConnections = append(resp.SuccessConnections, connection)
+	data, _ := proto.Marshal(in.Data)
+	successConnections := make([]*pb.LongConnection, 0)
+	if len(in.GetFilter().GetUserIds()) > 0 {
+		connections := ConnectionLogic.GetConnectionsByUserIds(in.GetFilter().GetUserIds())
+		for _, connection := range connections {
+			err := connection.SendMessage(l.ctx, data)
+			if err != nil {
+				l.Errorf("GatewayWriteDataToWs error: %v", err)
+			} else {
+				successConnections = append(successConnections, connection.ToPb())
+			}
 		}
 	}
-	return resp, nil
+	return &pb.GatewayWriteDataToWsResp{
+		SuccessConnections: successConnections,
+	}, nil
 }

@@ -45,6 +45,12 @@ type GatewayServiceClient interface {
 	// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
 	// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
 	GatewayKeepAlive(ctx context.Context, in *GatewayKeepAliveReq, opts ...grpc.CallOption) (*GatewayKeepAliveResp, error)
+	// VerifyConnection 验证连接
+	// 客户端拿着自己的公钥，请求网关，网关返回自己的公钥
+	VerifyConnection(ctx context.Context, in *VerifyConnectionReq, opts ...grpc.CallOption) (*VerifyConnectionResp, error)
+	// AuthenticationConnection 验证连接
+	// 客户端拿着userId token，鉴权连接
+	AuthenticationConnection(ctx context.Context, in *AuthenticationConnectionReq, opts ...grpc.CallOption) (*AuthenticationConnectionResp, error)
 }
 
 type gatewayServiceClient struct {
@@ -118,6 +124,24 @@ func (c *gatewayServiceClient) GatewayKeepAlive(ctx context.Context, in *Gateway
 	return out, nil
 }
 
+func (c *gatewayServiceClient) VerifyConnection(ctx context.Context, in *VerifyConnectionReq, opts ...grpc.CallOption) (*VerifyConnectionResp, error) {
+	out := new(VerifyConnectionResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/VerifyConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayServiceClient) AuthenticationConnection(ctx context.Context, in *AuthenticationConnectionReq, opts ...grpc.CallOption) (*AuthenticationConnectionResp, error) {
+	out := new(AuthenticationConnectionResp)
+	err := c.cc.Invoke(ctx, "/pb.gatewayService/AuthenticationConnection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GatewayServiceServer is the server API for GatewayService service.
 // All implementations must embed UnimplementedGatewayServiceServer
 // for forward compatibility
@@ -145,6 +169,12 @@ type GatewayServiceServer interface {
 	// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
 	// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
 	GatewayKeepAlive(context.Context, *GatewayKeepAliveReq) (*GatewayKeepAliveResp, error)
+	// VerifyConnection 验证连接
+	// 客户端拿着自己的公钥，请求网关，网关返回自己的公钥
+	VerifyConnection(context.Context, *VerifyConnectionReq) (*VerifyConnectionResp, error)
+	// AuthenticationConnection 验证连接
+	// 客户端拿着userId token，鉴权连接
+	AuthenticationConnection(context.Context, *AuthenticationConnectionReq) (*AuthenticationConnectionResp, error)
 	mustEmbedUnimplementedGatewayServiceServer()
 }
 
@@ -172,6 +202,12 @@ func (UnimplementedGatewayServiceServer) GatewayKickWs(context.Context, *Gateway
 }
 func (UnimplementedGatewayServiceServer) GatewayKeepAlive(context.Context, *GatewayKeepAliveReq) (*GatewayKeepAliveResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GatewayKeepAlive not implemented")
+}
+func (UnimplementedGatewayServiceServer) VerifyConnection(context.Context, *VerifyConnectionReq) (*VerifyConnectionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyConnection not implemented")
+}
+func (UnimplementedGatewayServiceServer) AuthenticationConnection(context.Context, *AuthenticationConnectionReq) (*AuthenticationConnectionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthenticationConnection not implemented")
 }
 func (UnimplementedGatewayServiceServer) mustEmbedUnimplementedGatewayServiceServer() {}
 
@@ -312,6 +348,42 @@ func _GatewayService_GatewayKeepAlive_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GatewayService_VerifyConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyConnectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).VerifyConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.gatewayService/VerifyConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).VerifyConnection(ctx, req.(*VerifyConnectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GatewayService_AuthenticationConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthenticationConnectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServiceServer).AuthenticationConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.gatewayService/AuthenticationConnection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServiceServer).AuthenticationConnection(ctx, req.(*AuthenticationConnectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GatewayService_ServiceDesc is the grpc.ServiceDesc for GatewayService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -346,6 +418,14 @@ var GatewayService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GatewayKeepAlive",
 			Handler:    _GatewayService_GatewayKeepAlive_Handler,
+		},
+		{
+			MethodName: "VerifyConnection",
+			Handler:    _GatewayService_VerifyConnection_Handler,
+		},
+		{
+			MethodName: "AuthenticationConnection",
+			Handler:    _GatewayService_AuthenticationConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

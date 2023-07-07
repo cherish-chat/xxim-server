@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	gatewayservicelogic "github.com/cherish-chat/xxim-server/app/gateway/internal/logic/gatewayservice"
@@ -45,20 +44,7 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 		}
 	}
 	header := &pb.RequestHeader{
-		AppId:        r.URL.Query().Get("appId"),
-		UserId:       r.URL.Query().Get("userId"),
-		UserToken:    r.URL.Query().Get("userToken"),
-		ClientIp:     utils.Http.GetClientIP(r),
-		InstallId:    r.URL.Query().Get("installId"),
-		Platform:     pb.PlatformFromString(r.URL.Query().Get("platform")),
-		GatewayPodIp: utils.GetPodIp(),
-		DeviceModel:  r.URL.Query().Get("deviceModel"),
-		OsVersion:    r.URL.Query().Get("osVersion"),
-		AppVersion:   r.URL.Query().Get("appVersion"),
-		Language:     pb.LanguageFromString(r.URL.Query().Get("language")),
-		ConnectTime:  utils.Time.Now13(),
-		Encoding:     pb.EncodingFromString(r.URL.Query().Get("encoding")),
-		Extra:        r.URL.Query().Get("extra"),
+		ClientIp: utils.Http.GetClientIP(r),
 	}
 	compressionMode := websocket.CompressionNoContextTakeover
 	// https://github.com/nhooyr/websocket/issues/218
@@ -98,19 +84,10 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	defer c.Close(websocket.StatusInternalError, "")
 
 	ctx, cancelFunc := context.WithCancel(r.Context())
-	connectionId := utils.Snowflake.Int64()
+	connection := gatewayservicelogic.NewWebsocketConnect(ctx, header, c)
 	defer func() {
-		logger.Debugf("removing subscriber: %d", connectionId)
-		gatewayservicelogic.WsManager.RemoveSubscriberId(connectionId, pb.WebsocketCustomCloseCode(websocket.StatusNormalClosure), "finished")
-		logger.Debugf("removed subscriber: %d", connectionId)
+		gatewayservicelogic.ConnectionLogic.OnDisconnect(connection)
 	}()
-	connection, err := gatewayservicelogic.WsManager.AddSubscriber(ctx, header, gatewayservicelogic.NewWsForConnection(c), connectionId)
-	if err != nil {
-		logger.Errorf("failed to add subscriber: %v", err)
-		c.Close(websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeServerInternalError), err.Error())
-		cancelFunc()
-		return
-	}
 	go func() {
 		// 读取消息
 		defer cancelFunc()
@@ -148,20 +125,38 @@ func (h *WsHandler) Upgrade(ginCtx *gin.Context) {
 	}
 }
 
-func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelogic.UniversalConnection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
+func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelogic.Connection, typ websocket.MessageType, msg []byte) (pb.ResponseCode, error) {
+	var aesKey []byte
+	var aesIv []byte
+	var isEncrypt bool
+
+	connection.PublicKeyLock.RLock()
+	{
+		if len(connection.SharedSecret) == 0 {
+			// 不加密
+			isEncrypt = false
+		} else {
+			// 加密
+			isEncrypt = true
+			aesKey = connection.SharedSecret[:]
+			aesIv = connection.SharedSecret[8:24]
+		}
+	}
+	connection.PublicKeyLock.RUnlock()
+
+	if isEncrypt {
+		var err error
+		msg, err = utils.Aes.Decrypt(aesKey, aesIv, msg)
+		if err != nil {
+			logx.Errorf("decrypt message error: %v", err)
+			return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
+		}
+	}
+
 	apiRequest := &pb.GatewayApiRequest{}
-	if connection.GetHeader().Encoding == pb.EncodingProto_JSON {
-		err := json.Unmarshal(msg, apiRequest)
-		if err != nil {
-			return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
-		}
-	} else if connection.GetHeader().Encoding == pb.EncodingProto_PROTOBUF {
-		err := proto.Unmarshal(msg, apiRequest)
-		if err != nil {
-			return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
-		}
-	} else {
-		return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", "unsupported encoding")
+	err := proto.Unmarshal(msg, apiRequest)
+	if err != nil {
+		return pb.ResponseCode_INVALID_DATA, fmt.Errorf("handle message error: %v", err)
 	}
 	apiRequest.Header = connection.GetHeader()
 	route, ok := universalRouteMap[apiRequest.Path]
@@ -169,30 +164,20 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelog
 	propagator := otel.GetTextMapPropagator()
 	spanName := apiRequest.Path
 	carrier := propagation.MapCarrier{
-		"appId":        apiRequest.Header.AppId,
-		"userId":       apiRequest.Header.UserId,
-		"clientIp":     apiRequest.Header.ClientIp,
-		"installId":    apiRequest.Header.InstallId,
-		"platform":     apiRequest.Header.Platform.String(),
-		"gatewayPodIp": apiRequest.Header.GatewayPodIp,
-		"deviceModel":  apiRequest.Header.DeviceModel,
-		"osVersion":    apiRequest.Header.OsVersion,
-		"appVersion":   apiRequest.Header.AppVersion,
-		"language":     apiRequest.Header.Language.String(),
-		"connectTime":  utils.Number.Int64ToString(apiRequest.Header.ConnectTime),
-		"encoding":     apiRequest.Header.Encoding.ContentType(),
-		"extra":        apiRequest.Header.Extra,
+		"appId":       apiRequest.Header.AppId,
+		"userId":      apiRequest.Header.UserId,
+		"clientIp":    apiRequest.Header.ClientIp,
+		"installId":   apiRequest.Header.InstallId,
+		"platform":    apiRequest.Header.Platform.String(),
+		"deviceModel": apiRequest.Header.DeviceModel,
+		"osVersion":   apiRequest.Header.OsVersion,
+		"appVersion":  apiRequest.Header.AppVersion,
+		"connectTime": connection.ConnectedTime.Format("2006-01-02 15:04:05"),
+		"extra":       apiRequest.Header.Extra,
 	}
 	spanCtx := propagator.Extract(ctx, carrier)
-	kvs := []attribute.KeyValue{attribute.Int64("connection.Id", connection.Id)}
-	for k, v := range carrier {
-		kvs = append(kvs, attribute.String(k, v))
-	}
 	spanCtx, span := tracer.Start(spanCtx, spanName,
 		oteltrace.WithSpanKind(oteltrace.SpanKindServer),
-		oteltrace.WithAttributes(
-			kvs...,
-		),
 	)
 	defer span.End()
 	propagator.Inject(spanCtx, carrier)
@@ -205,7 +190,7 @@ func (h *WsHandler) onReceive(ctx context.Context, connection *gatewayservicelog
 	code, responseBody, err := route(spanCtx, connection, apiRequest)
 	if len(responseBody) > 0 {
 		// 发送消息
-		err := connection.Connection.Write(ctx, responseBody)
+		err := connection.SendMessage(ctx, responseBody)
 		if err != nil {
 			logx.Infof("failed to write message: %v", err)
 		}

@@ -4,21 +4,19 @@ import (
 	"encoding/json"
 	"github.com/cherish-chat/xxim-server/common/pb"
 	"github.com/cherish-chat/xxim-server/common/utils"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func Get(lang pb.I18NLanguage, zh string) (result string) {
-	// TODO: 从配置文件中读取
-	return zh
-}
+const (
+	ServerError    = "server_error"
+	ParamError     = "param_error"
+	PublicKeyError = "public_key_error"
+)
 
-func NewServerError(reqHeader *pb.RequestHeader, env string, err error) *pb.ResponseHeader {
-	language := pb.I18NLanguage_Chinese_Simplified
-	if reqHeader != nil {
-		language = reqHeader.GetLanguage()
-	}
+func NewServerError(env string, err error) *pb.ResponseHeader {
 	data := &pb.ToastActionData{
 		Level:   pb.ToastActionData_ERROR,
-		Message: Get(language, "服务繁忙，请稍后再试"),
+		Message: ServerError,
 	}
 	if env != "pro" && err != nil {
 		data = &pb.ToastActionData{
@@ -34,9 +32,10 @@ func NewServerError(reqHeader *pb.RequestHeader, env string, err error) *pb.Resp
 }
 
 func NewInvalidDataError(msg string) *pb.ResponseHeader {
+	logx.Errorf("invalid data error: %s", msg)
 	data := &pb.ToastActionData{
 		Level:   pb.ToastActionData_ERROR,
-		Message: Get(pb.I18NLanguage_Chinese_Simplified, "参数错误: "+msg),
+		Message: ParamError,
 	}
 	return &pb.ResponseHeader{
 		Code:       pb.ResponseCode_INVALID_DATA,

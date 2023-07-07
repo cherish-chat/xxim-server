@@ -2,9 +2,6 @@ package gatewayservicelogic
 
 import (
 	"context"
-	"github.com/cherish-chat/xxim-server/common/i18n"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"sync"
 	"time"
 
@@ -34,37 +31,21 @@ func NewGatewayKeepAliveLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GatewayKeepAliveLogic) GatewayKeepAlive(in *pb.GatewayKeepAliveReq) (*pb.GatewayKeepAliveResp, error) {
-	return &pb.GatewayKeepAliveResp{}, status.Error(codes.Unimplemented, "cannot call method GatewayKeepAlive")
-}
-
-var userKeepAliveMap *sync.Map // key: userId, value: time.Time
-
-// KeepAlive 保持连接
-// 客户端必须每隔 config.Websocket.KeepAliveSecond 秒发送一次心跳包
-// 二次开发人员可以在这里修改逻辑，比如一致性算法安全校验等
-func (l *GatewayKeepAliveLogic) KeepAlive(connection *UniversalConnection, c *pb.GatewayApiRequest) (*pb.GatewayApiResponse, error) {
-	WsManager.KeepAlive(l.ctx, connection)
 	_, err := l.svcCtx.CallbackService.UserAfterKeepAlive(l.ctx, &pb.UserAfterKeepAliveReq{
-		Header: c.Header,
+		Header: in.Header,
 	})
 	if err != nil {
 		l.Errorf("UserAfterKeepAlive error: %v", err)
 	}
-	header := connection.GetHeader()
-	if header.UserId != "" {
-		if _, ok := userKeepAliveMap.Load(header.UserId); !ok {
-			// 用户上线
-			_, _ = l.svcCtx.CallbackService.UserAfterOnline(l.ctx, &pb.UserAfterOnlineReq{Header: header})
-		}
+	if _, ok := userKeepAliveMap.Load(in.Header.UserId); !ok {
+		_, _ = l.svcCtx.CallbackService.UserAfterOnline(l.ctx, &pb.UserAfterOnlineReq{Header: in.Header})
 	}
-	userKeepAliveMap.Store(header.UserId, time.Now())
-	return &pb.GatewayApiResponse{
-		Header:    i18n.NewOkHeader(),
-		RequestId: c.RequestId,
-		Path:      c.Path,
-		Body:      nil,
-	}, nil
+	userKeepAliveMap.Store(in.Header.UserId, time.Now())
+
+	return &pb.GatewayKeepAliveResp{}, nil
 }
+
+var userKeepAliveMap *sync.Map // key: userId, value: time.Time
 
 func (l *GatewayKeepAliveLogic) checkTimer() {
 	ticker := time.NewTicker(time.Second * time.Duration(l.svcCtx.Config.Websocket.OfflineDeterminationSecond))

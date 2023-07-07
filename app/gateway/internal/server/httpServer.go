@@ -31,7 +31,7 @@ func NewHttpServer(svcCtx *svc.ServiceContext) *HttpServer {
 		middleware.ApiLog(svcCtx),  // api 日志
 	)
 	handler.SetupRoutes(s.svcCtx, s.ginEngine)
-	gatewayservicelogic.InitWsManager(s.svcCtx)
+	gatewayservicelogic.InitConnectionLogic(s.svcCtx)
 	if s.svcCtx.Config.Mode != "pro" {
 		gin.SetMode(gin.DebugMode)
 	} else {

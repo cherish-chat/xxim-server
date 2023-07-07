@@ -26,9 +26,8 @@ func NewUserBeforeConnectLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // UserBeforeConnect 用户连接前的回调
 func (l *UserBeforeConnectLogic) UserBeforeConnect(in *pb.UserBeforeConnectReq) (*pb.UserBeforeConnectResp, error) {
-	// todo: add your logic here and delete this line
-	if in.Header.UserToken != "" {
-		tokenObject, verifyTokenErr := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Header.UserToken, in.Header.GetJwtUniqueKey())
+	if in.Token != "" {
+		tokenObject, verifyTokenErr := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Token, in.Header.GetJwtUniqueKey())
 		if verifyTokenErr != nil {
 			l.Errorf("verifyTokenErr: %v", verifyTokenErr)
 			var resp *pb.UserBeforeConnectResp

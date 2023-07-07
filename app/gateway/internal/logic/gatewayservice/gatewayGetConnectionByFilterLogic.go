@@ -27,18 +27,18 @@ func NewGatewayGetConnectionByFilterLogic(ctx context.Context, svcCtx *svc.Servi
 // 二次开发人员可以增加过滤条件
 func (l *GatewayGetConnectionByFilterLogic) GatewayGetConnectionByFilter(in *pb.GatewayGetConnectionByFilterReq) (*pb.GatewayGetConnectionByFilterResp, error) {
 	if len(in.GetFilter().GetUserIds()) > 0 {
-		wsConnections := WsManager.wsConnectionMap.GetByUserIds(in.GetFilter().GetUserIds())
+		connections := ConnectionLogic.GetConnectionsByUserIds(in.GetFilter().GetUserIds())
 		var resp = &pb.GatewayGetConnectionByFilterResp{}
-		for _, wsConnection := range wsConnections {
-			resp.Connections = append(resp.Connections, wsConnection.ToPb())
+		for _, connection := range connections {
+			resp.Connections = append(resp.Connections, connection.ToPb())
 		}
 		return resp, nil
 	} else {
 		// get all
-		wsConnections := WsManager.wsConnectionMap.GetAll()
+		connections := ConnectionLogic.GetAllConnections()
 		var resp = &pb.GatewayGetConnectionByFilterResp{}
-		for _, wsConnection := range wsConnections {
-			resp.Connections = append(resp.Connections, wsConnection.ToPb())
+		for _, connection := range connections {
+			resp.Connections = append(resp.Connections, connection.ToPb())
 		}
 		return resp, nil
 	}

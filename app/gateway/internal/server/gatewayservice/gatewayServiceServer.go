@@ -63,3 +63,15 @@ func (s *GatewayServiceServer) GatewayKeepAlive(ctx context.Context, in *pb.Gate
 	l := gatewayservicelogic.NewGatewayKeepAliveLogic(ctx, s.svcCtx)
 	return l.GatewayKeepAlive(in)
 }
+
+// VerifyConnection 验证连接
+func (s *GatewayServiceServer) VerifyConnection(ctx context.Context, in *pb.VerifyConnectionReq) (*pb.VerifyConnectionResp, error) {
+	l := gatewayservicelogic.NewVerifyConnectionLogic(ctx, s.svcCtx)
+	return l.VerifyConnection(in)
+}
+
+// AuthenticationConnection 验证连接
+func (s *GatewayServiceServer) AuthenticationConnection(ctx context.Context, in *pb.AuthenticationConnectionReq) (*pb.AuthenticationConnectionResp, error) {
+	l := gatewayservicelogic.NewAuthenticationConnectionLogic(ctx, s.svcCtx)
+	return l.AuthenticationConnection(in)
+}
