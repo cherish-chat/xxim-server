@@ -25,16 +25,6 @@ func NewUserAfterOnlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 
 // UserAfterOnline 用户上线回调
 func (l *UserAfterOnlineLogic) UserAfterOnline(in *pb.UserAfterOnlineReq) (*pb.UserAfterOnlineResp, error) {
-	if in.GetHeader().GetUserToken() == "" {
-		return &pb.UserAfterOnlineResp{}, nil
-	}
-	if in.Header.UserToken != "" {
-		tokenObject, verifyTokenErr := l.svcCtx.Jwt.VerifyToken(l.ctx, in.Header.UserToken, in.Header.GetJwtUniqueKey())
-		if verifyTokenErr != nil {
-			return &pb.UserAfterOnlineResp{}, nil
-		}
-		in.Header.UserId = tokenObject.UserId
-	}
 	//1. 订阅号的逻辑
 	{
 		_, err := l.svcCtx.SubscriptionService.SubscriptionAfterOnline(l.ctx, &pb.SubscriptionAfterOnlineReq{

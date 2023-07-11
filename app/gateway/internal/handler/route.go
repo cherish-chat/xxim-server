@@ -335,6 +335,6 @@ func setupGatewayRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	{
 		connectionHandler := connectionhandler.NewConnectionHandler(svcCtx)
 		universalRouteMap["/v1/gateway/white/verifyConnection"] = connectionHandler.VerifyConnection
-		universalRouteMap["/v1/gateway/white/authentication"] = connectionHandler.AuthenticationConnection
+		universalRouteMap["/v1/gateway/white/authenticationConnection"] = connectionHandler.AuthenticationConnection
 	}
 }

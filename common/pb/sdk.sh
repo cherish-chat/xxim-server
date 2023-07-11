@@ -45,11 +45,11 @@ protoc --swift_out=./sdk/swift/pb/ *.proto
 cp ./*.proto sdk/swift/pb/
 
 ## 8.生成ts文件
-rm -rf sdk/ts
-mkdir -p sdk/ts/pb
-npm install -g ts-protoc-gen
-protoc --ts_out=./sdk/ts/pb/ *.proto
-cp ./*.proto sdk/ts/pb/
+#rm -rf sdk/ts
+#mkdir -p sdk/ts/pb
+#npm install -g ts-protoc-gen
+#protoc --ts_out=./sdk/ts/pb/ *.proto
+#cp ./*.proto sdk/ts/pb/
 
 ## 9.生成rust文件
 rm -rf sdk/rust

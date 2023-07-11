@@ -39,12 +39,23 @@ func (l *VerifyConnectionLogic) VerifyConnection_(connection *Connection, in *pb
 	if !ok {
 		return &pb.VerifyConnectionResp{}, errors.New(i18n.PublicKeyError)
 	}
-	// 计算共享密钥
-	secret, _ := ecdh.GenerateSharedSecret(connection.ServerPrivateKey, publicKey)
 	connection.PublicKeyLock.Lock()
 	connection.ClientPublicKey = publicKey
-	connection.SharedSecret = secret
 	connection.PublicKeyLock.Unlock()
+	oldHeader := connection.GetHeader()
+	connection.headerLock.Lock()
+	connection.header = &pb.RequestHeader{
+		AppId:       in.Header.AppId,
+		UserId:      "",
+		ClientIp:    oldHeader.ClientIp,
+		InstallId:   in.Header.InstallId,
+		Platform:    in.Header.Platform,
+		DeviceModel: in.Header.DeviceModel,
+		OsVersion:   in.Header.OsVersion,
+		AppVersion:  in.Header.AppVersion,
+		Extra:       in.Header.Extra,
+	}
+	connection.headerLock.Unlock()
 	return &pb.VerifyConnectionResp{
 		PublicKey: ecdh.Marshal(connection.ServerPublicKey),
 	}, nil

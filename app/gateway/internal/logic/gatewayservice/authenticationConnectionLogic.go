@@ -32,8 +32,34 @@ func (l *AuthenticationConnectionLogic) AuthenticationConnection(in *pb.Authenti
 }
 
 func (l *AuthenticationConnectionLogic) AuthenticationConnection_(connection *Connection, in *pb.AuthenticationConnectionReq) (*pb.AuthenticationConnectionResp, error) {
+	if in.UserId == "" || in.Token == "" {
+		//取消验证
+		oldUserId := connection.GetHeader().UserId
+		connection.headerLock.Lock()
+		connection.header = &pb.RequestHeader{
+			AppId:       connection.header.AppId,
+			UserId:      "",
+			ClientIp:    connection.header.ClientIp,
+			InstallId:   connection.header.InstallId,
+			Platform:    connection.header.Platform,
+			DeviceModel: connection.header.DeviceModel,
+			OsVersion:   connection.header.OsVersion,
+			AppVersion:  connection.header.AppVersion,
+			Extra:       connection.header.Extra,
+		}
+		connection.headerLock.Unlock()
+		if oldUserId != "" {
+			_, _ = l.svcCtx.CallbackService.UserAfterOffline(l.ctx, &pb.UserAfterOfflineReq{
+				UserId: oldUserId,
+			})
+		}
+		return &pb.AuthenticationConnectionResp{
+			Header:  i18n.NewOkHeader(),
+			Success: true,
+		}, nil
+	}
 	userBeforeConnectResp, err := l.svcCtx.CallbackService.UserBeforeConnect(l.ctx, &pb.UserBeforeConnectReq{
-		Header: in.Header,
+		Header: connection.GetHeader(),
 		UserId: in.UserId,
 		Token:  in.Token,
 	})

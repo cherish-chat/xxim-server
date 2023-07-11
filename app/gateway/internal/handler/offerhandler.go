@@ -101,6 +101,7 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 		d.OnClose(func() {
 			cancelFunction()
 			gatewayservicelogic.ConnectionLogic.OnDisconnect(connection)
+			_ = peerConnection.Close()
 			logx.Infof("DataChannel '%s'-'%d' closed", d.Label(), id)
 		})
 

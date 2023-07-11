@@ -9,11 +9,7 @@ var Sdp = &xSdp{}
 
 func (x *xSdp) GetClientIp(sd *sdp.SessionDescription) string {
 	for _, m := range sd.MediaDescriptions {
-		for _, a := range m.Attributes {
-			if a.Key == "candidate" {
-				return a.Value
-			}
-		}
+		return m.ConnectionInformation.Address.Address
 	}
 	return ""
 }

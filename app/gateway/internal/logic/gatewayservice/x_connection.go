@@ -3,6 +3,7 @@ package gatewayservicelogic
 import (
 	"context"
 	"crypto"
+	"crypto/elliptic"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/gateway/internal/types"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -72,6 +73,15 @@ func (c *Connection) SendMessage(ctx context.Context, body []byte) error {
 		if len(c.SharedSecret) == 0 {
 			// 不加密
 			isEncrypt = false
+			if c.ClientPublicKey != nil {
+				// 计算共享密钥
+				secret, _ := utils.NewECDH(elliptic.P256()).GenerateSharedSecret(c.ServerPrivateKey, c.ClientPublicKey)
+				c.PublicKeyLock.RUnlock()
+				c.PublicKeyLock.Lock()
+				c.SharedSecret = secret
+				c.PublicKeyLock.Unlock()
+				c.PublicKeyLock.RLock()
+			}
 		} else {
 			// 加密
 			isEncrypt = true
@@ -178,15 +188,16 @@ func (l *xConnectionLogic) OnLogin(conn *Connection) {
 			l: sync.RWMutex{},
 		}
 		l.userConnectionsMap[header.UserId] = userConnectionMap
-	} else {
-		userConnectionMap.l.Lock()
-		old, exist := userConnectionMap.m[header.InstallId]
-		if exist {
+	}
+	userConnectionMap.l.Lock()
+	old, exist := userConnectionMap.m[header.InstallId]
+	if exist {
+		if old != conn {
 			old.Connection.CloseConnection(pb.WebsocketCustomCloseCode_CloseCodeDuplicateConnection, "duplicate Connection")
 		}
-		userConnectionMap.m[header.InstallId] = conn
-		userConnectionMap.l.Unlock()
 	}
+	userConnectionMap.m[header.InstallId] = conn
+	userConnectionMap.l.Unlock()
 	l.userConnectionsMapLock.Unlock()
 	l.verifiedConnectionsLock.Lock()
 	for i, connection := range l.verifiedConnections {
@@ -196,9 +207,17 @@ func (l *xConnectionLogic) OnLogin(conn *Connection) {
 		}
 	}
 	l.verifiedConnectionsLock.Unlock()
+
+	_, _ = l.svcCtx.CallbackService.UserAfterOnline(conn.ctx, &pb.UserAfterOnlineReq{Header: conn.GetHeader()})
 }
 
 func (l *xConnectionLogic) OnDisconnect(conn *Connection) {
+	header := conn.GetHeader()
+	if header.UserId != "" {
+		_, _ = l.svcCtx.CallbackService.UserAfterOffline(context.Background(), &pb.UserAfterOfflineReq{
+			UserId: header.UserId,
+		})
+	}
 	l.connectionsLock.Lock()
 	for i, connection := range l.connections {
 		if connection == conn {

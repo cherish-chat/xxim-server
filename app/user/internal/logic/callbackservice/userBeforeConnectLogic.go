@@ -44,7 +44,7 @@ func (l *UserBeforeConnectLogic) UserBeforeConnect(in *pb.UserBeforeConnectReq) 
 				}
 			default:
 				resp = &pb.UserBeforeConnectResp{
-					Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, ""),
+					Header: i18n.NewAuthError(pb.AuthErrorTypeInvalid, verifyTokenErr.Error()),
 				}
 			}
 			return resp, nil

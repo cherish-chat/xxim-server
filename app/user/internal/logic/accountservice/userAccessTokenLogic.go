@@ -61,7 +61,7 @@ func (l *UserAccessTokenLogic) UserAccessToken(in *pb.UserAccessTokenReq) (*pb.U
 		}
 		if !captchaVerifyResp.Success {
 			return &pb.UserAccessTokenResp{
-				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "captcha_error")),
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.CaptchaError),
 			}, nil
 		}
 	}
@@ -69,7 +69,7 @@ func (l *UserAccessTokenLogic) UserAccessToken(in *pb.UserAccessTokenReq) (*pb.U
 	//平台
 	if !utils.EnumInSlice[pb.Platform](in.Header.Platform, l.svcCtx.Config.Account.Register.AllowPlatform) {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "platform_not_allow")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PlatformNotAllow),
 		}, nil
 	}
 
@@ -127,14 +127,14 @@ func (l *UserAccessTokenLogic) LoginByPasswordUsername(ctx context.Context, in *
 	if err != nil {
 		l.Errorf("login by password username error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 验证密码
 	ok := utils.Pwd.VerifyPwd(password, user.GetAccountMap().Get(pb.AccountTypePassword), user.GetAccountMap().Get(pb.AccountTypePasswordSalt))
 	if !ok {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 生成token
@@ -150,14 +150,14 @@ func (l *UserAccessTokenLogic) LoginByPasswordPhone(ctx context.Context, in *pb.
 	if err != nil {
 		l.Errorf("login by password phone error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 验证密码
 	ok := utils.Pwd.VerifyPwd(password, user.GetAccountMap().Get(pb.AccountTypePassword), user.GetAccountMap().Get(pb.AccountTypePasswordSalt))
 	if !ok {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 生成token
@@ -173,14 +173,14 @@ func (l *UserAccessTokenLogic) LoginByPasswordEmail(ctx context.Context, in *pb.
 	if err != nil {
 		l.Errorf("login by password email error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 验证密码
 	ok := utils.Pwd.VerifyPwd(password, user.GetAccountMap().Get(pb.AccountTypePassword), user.GetAccountMap().Get(pb.AccountTypePasswordSalt))
 	if !ok {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordInvalid),
 		}, nil
 	}
 	// 生成token
@@ -203,12 +203,12 @@ func (l *UserAccessTokenLogic) LoginBySmsCode(ctx context.Context, in *pb.UserAc
 	if err != nil {
 		l.Errorf("login by sms code error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "sms_code_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.SmsCodeInvalid),
 		}, nil
 	}
 	if !smsCodeVerifyResp.Success {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "sms_code_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.SmsCodeInvalid),
 		}, nil
 	}
 	// 通过手机号获取用户信息
@@ -217,7 +217,7 @@ func (l *UserAccessTokenLogic) LoginBySmsCode(ctx context.Context, in *pb.UserAc
 	if err != nil {
 		l.Errorf("login by sms code error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneInvalid),
 		}, nil
 	}
 	// 生成token
@@ -239,12 +239,12 @@ func (l *UserAccessTokenLogic) LoginByEmailCode(ctx context.Context, in *pb.User
 	if err != nil {
 		l.Errorf("login by email code error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailCodeInvalid),
 		}, nil
 	}
 	if !emailCodeVerifyResp.Success {
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailCodeInvalid),
 		}, nil
 	}
 	// 通过邮箱获取用户信息
@@ -253,7 +253,7 @@ func (l *UserAccessTokenLogic) LoginByEmailCode(ctx context.Context, in *pb.User
 	if err != nil {
 		l.Errorf("login by email code error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_invalid")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailInvalid),
 		}, nil
 	}
 	// 生成token
@@ -286,7 +286,7 @@ func (l *UserAccessTokenLogic) generateToken(in *pb.UserAccessTokenReq, user *us
 	if err != nil {
 		l.Errorf("set token error: %v", err)
 		return &pb.UserAccessTokenResp{
-			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "login_failed")),
+			Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.LoginFailed),
 		}
 	}
 	l.Debugf("set token: %v", tokenObject)

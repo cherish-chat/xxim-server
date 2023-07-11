@@ -54,7 +54,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		//平台
 		if !utils.EnumInSlice[pb.Platform](in.Header.Platform, l.svcCtx.Config.Account.Register.AllowPlatform) {
 			return &pb.UserRegisterResp{
-				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "platform_not_allow")),
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PlatformNotAllow),
 			}, nil
 		}
 
@@ -63,7 +63,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequirePassword {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.UsernameRequired),
 				}, nil
 			}
 		} else {
@@ -71,7 +71,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if l.svcCtx.Config.Account.UserRegex != "" {
 				if !utils.Regex.Match(l.svcCtx.Config.Account.UserRegex, username) {
 					return &pb.UserRegisterResp{
-						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_format_error")),
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.UsernameFormatError),
 					}, nil
 				}
 			}
@@ -81,7 +81,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserUsername(username), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_lock_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.UsernameLockError),
 				}, nil
 			}
 			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserUsername(username))
@@ -100,7 +100,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			} else {
 				// 已存在
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "username_already_exists")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.UsernameAlreadyExists),
 				}, nil
 			}
 		}
@@ -108,7 +108,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequirePassword {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_salt_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordSaltRequired),
 				}, nil
 			}
 		} else {
@@ -118,7 +118,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequirePassword {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "password_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PasswordRequired),
 				}, nil
 			}
 		} else {
@@ -130,7 +130,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindPhone {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneRequired),
 				}, nil
 			}
 		} else {
@@ -140,7 +140,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindPhone {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_code_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneCodeRequired),
 				}, nil
 			}
 		} else {
@@ -150,13 +150,13 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if l.svcCtx.Config.Account.PhoneRegex != "" {
 				if !utils.Regex.Match(l.svcCtx.Config.Account.PhoneRegex, phone) {
 					return &pb.UserRegisterResp{
-						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_format_error")),
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneFormatError),
 					}, nil
 				}
 			}
 			if !utils.AnyInSlice[string](phoneCode, l.svcCtx.Config.Account.PhoneCode) {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_code_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneCodeError),
 				}, nil
 			}
 		}
@@ -164,7 +164,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindPhone {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "sms_code_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.SmsCodeRequired),
 				}, nil
 			}
 		} else {
@@ -180,12 +180,12 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if err != nil {
 				l.Errorf("SmsVerify err: %v", err)
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "sms_code_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.SmsCodeError),
 				}, nil
 			}
 			if !smsVerifyResp.Success {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "sms_code_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.SmsCodeError),
 				}, nil
 			}
 		}
@@ -194,7 +194,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserPhone(phone, phoneCode), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_lock_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneLockError),
 				}, nil
 			}
 			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserPhone(phone, phoneCode))
@@ -214,7 +214,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			} else {
 				// 已存在
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "phone_already_exists")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.PhoneAlreadyExists),
 				}, nil
 			}
 		}
@@ -224,7 +224,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindEmail {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailRequired),
 				}, nil
 			}
 		} else {
@@ -234,14 +234,14 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireBindEmail {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailCodeInvalid),
 				}, nil
 			}
 		} else {
 			if l.svcCtx.Config.Account.EmailRegex != "" {
 				if !utils.Regex.Match(l.svcCtx.Config.Account.EmailRegex, email) {
 					return &pb.UserRegisterResp{
-						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_format_error")),
+						Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailFormatError),
 					}, nil
 				}
 			}
@@ -256,12 +256,12 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if err != nil {
 				l.Errorf("EmailVerify err: %v", err)
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailCodeError),
 				}, nil
 			}
 			if !emailVerifyResp.Success {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_code_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailCodeError),
 				}, nil
 			}
 		}
@@ -270,7 +270,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			ok, err := xcache.Lock.Lock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserEmail(email), 5)
 			if err != nil || !ok {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_lock_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailLockError),
 				}, nil
 			}
 			defer xcache.Lock.Unlock(l.ctx, l.svcCtx.Redis, xcache.RedisVal.LockKeyUserEmail(email))
@@ -289,7 +289,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			} else {
 				// 已存在
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "email_already_exists")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.EmailAlreadyExists),
 				}, nil
 			}
 		}
@@ -298,7 +298,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if in.Nickname == nil || *in.Nickname == "" {
 			if l.svcCtx.Config.Account.Register.RequireNickname {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "nickname_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.NicknameRequired),
 				}, nil
 			} else {
 				switch l.svcCtx.Config.Account.Register.DefaultNicknameRule {
@@ -315,7 +315,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if in.Avatar == nil || *in.Avatar == "" {
 			if l.svcCtx.Config.Account.Register.RequireAvatar {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "avatar_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.AvatarRequired),
 				}, nil
 			} else {
 				switch l.svcCtx.Config.Account.Register.DefaultAvatarRule {
@@ -336,7 +336,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireCaptcha {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "captcha_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.CaptchaRequired),
 				}, nil
 			}
 		}
@@ -344,7 +344,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 		if !ok {
 			if l.svcCtx.Config.Account.Register.RequireCaptcha {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "captcha_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.CaptchaRequired),
 				}, nil
 			}
 		}
@@ -359,12 +359,12 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterReq) (*pb.UserRegist
 			if err != nil {
 				l.Errorf("CaptchaVerify err: %v", err)
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "captcha_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.CaptchaError),
 				}, nil
 			}
 			if !captchaVerifyResp.Success {
 				return &pb.UserRegisterResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "captcha_error")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.CaptchaError),
 				}, nil
 			}
 		}

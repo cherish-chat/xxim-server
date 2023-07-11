@@ -48,14 +48,14 @@ func (l *CreateRobotLogic) CreateRobot(in *pb.CreateRobotReq) (*pb.CreateRobotRe
 	{
 		if !l.svcCtx.Config.Account.Robot.AllowCreate {
 			return &pb.CreateRobotResp{
-				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "robot_not_allow_create")),
+				Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.RobotNotAllowCreate),
 			}, nil
 		}
 		if in.Nickname == nil {
 			// 是否允许空昵称
 			if l.svcCtx.Config.Account.Robot.RequireNickname {
 				return &pb.CreateRobotResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "robot_nickname_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.RobotNicknameRequired),
 				}, nil
 			} else {
 				user.Nickname = l.svcCtx.Config.Account.Robot.DefaultNickname
@@ -67,7 +67,7 @@ func (l *CreateRobotLogic) CreateRobot(in *pb.CreateRobotReq) (*pb.CreateRobotRe
 			// 是否允许空头像
 			if l.svcCtx.Config.Account.Robot.RequireAvatar {
 				return &pb.CreateRobotResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "robot_avatar_required")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.RobotAvatarRequired),
 				}, nil
 			}
 		} else {
@@ -85,7 +85,7 @@ func (l *CreateRobotLogic) CreateRobot(in *pb.CreateRobotReq) (*pb.CreateRobotRe
 			}
 			if count > 0 {
 				return &pb.CreateRobotResp{
-					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.Get(in.Header.Language, "robot_id_exist")),
+					Header: i18n.NewToastHeader(pb.ToastActionData_ERROR, i18n.RobotIdExist),
 				}, nil
 			}
 		}

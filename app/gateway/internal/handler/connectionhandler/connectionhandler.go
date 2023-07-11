@@ -80,6 +80,7 @@ func (h *ConnectionHandler) AuthenticationConnection(ctx context.Context, connec
 			Path:      apiRequest.Path,
 		}), err
 	}
+	gatewayservicelogic.ConnectionLogic.OnLogin(connection)
 	responseHeader := i18n.NewOkHeader()
 	return pb.ResponseCode_SUCCESS, types.MarshalWriteData(&pb.GatewayApiResponse{
 		Header:    responseHeader,
