@@ -2,7 +2,6 @@ package utils
 
 import (
 	"github.com/avast/retry-go"
-	_ "github.com/avast/retry-go"
 )
 
 type xRetry struct {
