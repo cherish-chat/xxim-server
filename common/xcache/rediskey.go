@@ -23,7 +23,7 @@ func (x *xRedisVal) LockKeyUserPhone(phone string, phoneCode string) string {
 }
 
 func (x *xRedisVal) LockKeyUserEmail(email string) string {
-	return fmt.Sprintf("user:l:email:%s:%s", email)
+	return fmt.Sprintf("user:l:email:%s", email)
 }
 
 func (x *xRedisVal) HashKeyConvKv(convId string, convTyp int32) string {
