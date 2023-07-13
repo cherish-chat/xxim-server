@@ -22,8 +22,14 @@ func NewConnectionServiceServer(svcCtx *svc.ServiceContext) *ConnectionServiceSe
 	}
 }
 
-// WriteData 向用户推送数据
-func (s *ConnectionServiceServer) WriteData(ctx context.Context, in *peerpb.GatewayWriteDataContent) (*peerpb.GatewayWriteDataContent, error) {
-	l := connectionservicelogic.NewWriteDataLogic(ctx, s.svcCtx)
-	return l.WriteData(in)
+// ListLongConnection 获取长连接列表
+func (s *ConnectionServiceServer) ListLongConnection(ctx context.Context, in *peerpb.ListLongConnectionReq) (*peerpb.ListLongConnectionResp, error) {
+	l := connectionservicelogic.NewListLongConnectionLogic(ctx, s.svcCtx)
+	return l.ListLongConnection(in)
+}
+
+// GatewayKickLongConnection 踢掉连接
+func (s *ConnectionServiceServer) GatewayKickLongConnection(ctx context.Context, in *peerpb.GatewayKickLongConnectionReq) (*peerpb.GatewayKickLongConnectionResp, error) {
+	l := connectionservicelogic.NewGatewayKickLongConnectionLogic(ctx, s.svcCtx)
+	return l.GatewayKickLongConnection(in)
 }

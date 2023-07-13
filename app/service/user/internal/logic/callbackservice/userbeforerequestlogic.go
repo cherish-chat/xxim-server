@@ -24,7 +24,7 @@ func NewUserBeforeRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *UserBeforeRequestLogic) UserBeforeRequest(in *peerpb.UserBeforeRequestReq) (*peerpb.UserBeforeRequestResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &peerpb.UserBeforeRequestResp{}, nil
+	return &peerpb.UserBeforeRequestResp{
+		Header: peerpb.NewOkHeader(),
+	}, nil
 }

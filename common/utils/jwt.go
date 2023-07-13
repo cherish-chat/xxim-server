@@ -3,8 +3,8 @@ package utils
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"math"
 	"time"
 )
@@ -17,13 +17,13 @@ type JwtConfig struct {
 }
 
 type Jwt struct {
-	rc     *redis.Redis
+	rc     redis.UniversalClient
 	Config JwtConfig
 }
 
 func NewJwt(
 	config JwtConfig,
-	rc *redis.Redis,
+	rc redis.UniversalClient,
 ) *Jwt {
 	return &Jwt{
 		rc:     rc,
@@ -93,7 +93,7 @@ func (x *Jwt) SetToken(
 ) error {
 	key := fmt.Sprintf("token:%s:%s", x.Config.Scene, tokenObject.UserId) // redis key
 	// key 上锁
-	ok, err := x.rc.SetnxExCtx(ctx, "lock:"+key, "1", 5)
+	ok, err := x.rc.SetNX(ctx, "lock:"+key, "1", time.Second*5).Result()
 	if err != nil {
 		return err
 	}
@@ -102,10 +102,10 @@ func (x *Jwt) SetToken(
 		return SetTokenLockError
 	}
 	// 解锁
-	defer x.rc.DelCtx(ctx, "lock:"+key)
+	defer x.rc.Del(ctx, "lock:"+key)
 	hkey := tokenObject.UniqueKey // redis hkey
 	// 获取所有的token hgetall
-	hgetall, err := x.rc.HgetallCtx(ctx, key)
+	hgetall, err := x.rc.HGetAll(ctx, key).Result()
 	if err != nil {
 		if err != redis.Nil {
 			return err
@@ -124,7 +124,7 @@ func (x *Jwt) SetToken(
 				err := Json.Unmarshal([]byte(v), to)
 				if err != nil {
 					// 删除
-					x.rc.HdelCtx(ctx, key, k)
+					x.rc.HDel(ctx, key, k)
 					continue
 				}
 				if to.AliveTime < minAliveTime {
@@ -133,12 +133,12 @@ func (x *Jwt) SetToken(
 				}
 			}
 			// 删除
-			x.rc.HdelCtx(ctx, key, minAliveTimeHkey)
+			x.rc.HDel(ctx, key, minAliveTimeHkey)
 			delete(hgetall, minAliveTimeHkey)
 		}
 	}
 	hvalue := tokenObject.Marshal() // tokenObject序列化
-	err = x.rc.HsetCtx(ctx, key, hkey, hvalue)
+	err = x.rc.HSet(ctx, key, hkey, hvalue).Err()
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ func (x *Jwt) VerifyToken(
 			userId := claims.ID
 			key := fmt.Sprintf("token:%s:%s", x.Config.Scene, userId) // redis key
 			hkey := uniqueKey                                         // redis hkey
-			hget, err := x.rc.HgetCtx(ctx, key, hkey)
+			hget, err := x.rc.HGet(ctx, key, hkey).Result()
 			if err != nil {
 				return nil, TokenInvalidError
 			}
@@ -193,7 +193,7 @@ func (x *Jwt) RevokeToken(
 ) error {
 	key := fmt.Sprintf("token:%s:%s", x.Config.Scene, userId) // redis key
 	hkey := uniqueKey                                         // redis hkey
-	_, err := x.rc.HdelCtx(ctx, key, hkey)
+	_, err := x.rc.HDel(ctx, key, hkey).Result()
 	if err != nil {
 		return err
 	}

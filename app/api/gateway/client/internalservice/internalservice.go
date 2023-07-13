@@ -13,14 +13,25 @@ import (
 )
 
 type (
-	GatewayWriteDataContent      = peerpb.GatewayWriteDataContent
-	ListLongConnectionReq        = peerpb.ListLongConnectionReq
-	ListLongConnectionReq_Filter = peerpb.ListLongConnectionReq_Filter
-	ListLongConnectionResp       = peerpb.ListLongConnectionResp
+	AuthConnectionReq                   = peerpb.AuthConnectionReq
+	AuthConnectionResp                  = peerpb.AuthConnectionResp
+	GatewayKeepAliveReq                 = peerpb.GatewayKeepAliveReq
+	GatewayKeepAliveResp                = peerpb.GatewayKeepAliveResp
+	GatewayKickLongConnectionReq        = peerpb.GatewayKickLongConnectionReq
+	GatewayKickLongConnectionReq_Filter = peerpb.GatewayKickLongConnectionReq_Filter
+	GatewayKickLongConnectionResp       = peerpb.GatewayKickLongConnectionResp
+	GatewayWriteDataReq                 = peerpb.GatewayWriteDataReq
+	GatewayWriteDataReq_Filter          = peerpb.GatewayWriteDataReq_Filter
+	GatewayWriteDataResp                = peerpb.GatewayWriteDataResp
+	ListLongConnectionReq               = peerpb.ListLongConnectionReq
+	ListLongConnectionReq_Filter        = peerpb.ListLongConnectionReq_Filter
+	ListLongConnectionResp              = peerpb.ListLongConnectionResp
+	VerifyConnectionReq                 = peerpb.VerifyConnectionReq
+	VerifyConnectionResp                = peerpb.VerifyConnectionResp
 
 	InternalService interface {
-		// ListLongConnection 获取长连接列表
-		ListLongConnection(ctx context.Context, in *ListLongConnectionReq, opts ...grpc.CallOption) (*ListLongConnectionResp, error)
+		// GatewayWriteData 向用户推送数据
+		GatewayWriteData(ctx context.Context, in *GatewayWriteDataReq, opts ...grpc.CallOption) (*GatewayWriteDataResp, error)
 	}
 
 	defaultInternalService struct {
@@ -34,8 +45,8 @@ func NewInternalService(cli zrpc.Client) InternalService {
 	}
 }
 
-// ListLongConnection 获取长连接列表
-func (m *defaultInternalService) ListLongConnection(ctx context.Context, in *ListLongConnectionReq, opts ...grpc.CallOption) (*ListLongConnectionResp, error) {
+// GatewayWriteData 向用户推送数据
+func (m *defaultInternalService) GatewayWriteData(ctx context.Context, in *GatewayWriteDataReq, opts ...grpc.CallOption) (*GatewayWriteDataResp, error) {
 	client := peerpb.NewInternalServiceClient(m.cli.Conn())
-	return client.ListLongConnection(ctx, in, opts...)
+	return client.GatewayWriteData(ctx, in, opts...)
 }

@@ -13,20 +13,39 @@ import (
 )
 
 type (
-	UserAfterOfflineReq   = peerpb.UserAfterOfflineReq
-	UserAfterOfflineResp  = peerpb.UserAfterOfflineResp
-	UserAfterOnlineReq    = peerpb.UserAfterOnlineReq
-	UserAfterOnlineResp   = peerpb.UserAfterOnlineResp
-	UserBeforeConnectReq  = peerpb.UserBeforeConnectReq
-	UserBeforeConnectResp = peerpb.UserBeforeConnectResp
-	UserBeforeRequestReq  = peerpb.UserBeforeRequestReq
-	UserBeforeRequestResp = peerpb.UserBeforeRequestResp
+	CreateRobotReq           = peerpb.CreateRobotReq
+	CreateRobotResp          = peerpb.CreateRobotResp
+	RefreshUserTokenReq      = peerpb.RefreshUserTokenReq
+	RefreshUserTokenResp     = peerpb.RefreshUserTokenResp
+	ResetUserAccountMapReq   = peerpb.ResetUserAccountMapReq
+	ResetUserAccountMapResp  = peerpb.ResetUserAccountMapResp
+	RevokeUserTokenReq       = peerpb.RevokeUserTokenReq
+	RevokeUserTokenResp      = peerpb.RevokeUserTokenResp
+	UpdateUserAccountMapReq  = peerpb.UpdateUserAccountMapReq
+	UpdateUserAccountMapResp = peerpb.UpdateUserAccountMapResp
+	UserAfterKeepAliveReq    = peerpb.UserAfterKeepAliveReq
+	UserAfterKeepAliveResp   = peerpb.UserAfterKeepAliveResp
+	UserAfterOfflineReq      = peerpb.UserAfterOfflineReq
+	UserAfterOfflineResp     = peerpb.UserAfterOfflineResp
+	UserAfterOnlineReq       = peerpb.UserAfterOnlineReq
+	UserAfterOnlineResp      = peerpb.UserAfterOnlineResp
+	UserBeforeConnectReq     = peerpb.UserBeforeConnectReq
+	UserBeforeConnectResp    = peerpb.UserBeforeConnectResp
+	UserBeforeRequestReq     = peerpb.UserBeforeRequestReq
+	UserBeforeRequestResp    = peerpb.UserBeforeRequestResp
+	UserDestroyReq           = peerpb.UserDestroyReq
+	UserDestroyResp          = peerpb.UserDestroyResp
+	UserRegisterReq          = peerpb.UserRegisterReq
+	UserRegisterResp         = peerpb.UserRegisterResp
+	UserTokenReq             = peerpb.UserTokenReq
+	UserTokenResp            = peerpb.UserTokenResp
 
 	CallbackService interface {
 		UserAfterOnline(ctx context.Context, in *UserAfterOnlineReq, opts ...grpc.CallOption) (*UserAfterOnlineResp, error)
 		UserAfterOffline(ctx context.Context, in *UserAfterOfflineReq, opts ...grpc.CallOption) (*UserAfterOfflineResp, error)
 		UserBeforeConnect(ctx context.Context, in *UserBeforeConnectReq, opts ...grpc.CallOption) (*UserBeforeConnectResp, error)
 		UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error)
+		UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error)
 	}
 
 	defaultCallbackService struct {
@@ -58,4 +77,9 @@ func (m *defaultCallbackService) UserBeforeConnect(ctx context.Context, in *User
 func (m *defaultCallbackService) UserBeforeRequest(ctx context.Context, in *UserBeforeRequestReq, opts ...grpc.CallOption) (*UserBeforeRequestResp, error) {
 	client := peerpb.NewCallbackServiceClient(m.cli.Conn())
 	return client.UserBeforeRequest(ctx, in, opts...)
+}
+
+func (m *defaultCallbackService) UserAfterKeepAlive(ctx context.Context, in *UserAfterKeepAliveReq, opts ...grpc.CallOption) (*UserAfterKeepAliveResp, error) {
+	client := peerpb.NewCallbackServiceClient(m.cli.Conn())
+	return client.UserAfterKeepAlive(ctx, in, opts...)
 }

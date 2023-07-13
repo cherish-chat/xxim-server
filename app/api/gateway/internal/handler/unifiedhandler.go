@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/cherish-chat/xxim-proto/peerpb"
-	internalservicelogic "github.com/cherish-chat/xxim-server/app/api/gateway/internal/logic/internalservice"
+	internalservicelogic "github.com/cherish-chat/xxim-server/app/api/gateway/internal/logic/connectionmanager"
 	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/types"
 	"github.com/cherish-chat/xxim-server/common/utils"

@@ -24,7 +24,14 @@ func NewUserAfterOfflineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UserAfterOfflineLogic) UserAfterOffline(in *peerpb.UserAfterOfflineReq) (*peerpb.UserAfterOfflineResp, error) {
-	// todo: add your logic here and delete this line
-
+	//1. 订阅号的逻辑
+	{
+		_, err := l.svcCtx.ChannelService.ChannelAfterOffline(context.Background(), &peerpb.ChannelAfterOfflineReq{
+			UserId: in.UserId,
+		})
+		if err != nil {
+			l.Errorf("channel after online error: %v", err)
+		}
+	}
 	return &peerpb.UserAfterOfflineResp{}, nil
 }

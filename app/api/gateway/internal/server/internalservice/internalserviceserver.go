@@ -22,8 +22,8 @@ func NewInternalServiceServer(svcCtx *svc.ServiceContext) *InternalServiceServer
 	}
 }
 
-// ListLongConnection 获取长连接列表
-func (s *InternalServiceServer) ListLongConnection(ctx context.Context, in *peerpb.ListLongConnectionReq) (*peerpb.ListLongConnectionResp, error) {
-	l := internalservicelogic.NewListLongConnectionLogic(ctx, s.svcCtx)
-	return l.ListLongConnection(in)
+// GatewayWriteData 向用户推送数据
+func (s *InternalServiceServer) GatewayWriteData(ctx context.Context, in *peerpb.GatewayWriteDataReq) (*peerpb.GatewayWriteDataResp, error) {
+	l := internalservicelogic.NewGatewayWriteDataLogic(ctx, s.svcCtx)
+	return l.GatewayWriteData(in)
 }

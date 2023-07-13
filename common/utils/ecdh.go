@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"io"
 	"math/big"
 )
@@ -16,8 +17,12 @@ type ECDH interface {
 	GenerateKey(io.Reader) (crypto.PrivateKey, crypto.PublicKey, error)
 	// Marshal 将公钥转换为字节
 	Marshal(crypto.PublicKey) []byte
+	// MarshalHex 将公钥转换为hex
+	MarshalHex(crypto.PublicKey) string
 	// Unmarshal 将字节转换为公钥
 	Unmarshal([]byte) (crypto.PublicKey, bool)
+	// UnmarshalHex 将hex转换为公钥
+	UnmarshalHex(hex string) (crypto.PublicKey, bool)
 	// GenerateSharedSecret 生成共享密钥
 	GenerateSharedSecret(crypto.PrivateKey, crypto.PublicKey) ([]byte, error)
 	// HexEncodePublicKeyToString 将公钥钥转换为hex字符串
@@ -81,6 +86,11 @@ func (e *ecdh) Marshal(publicKey crypto.PublicKey) []byte {
 	return elliptic.Marshal(e.curve, key.X, key.Y)
 }
 
+// MarshalHex converts a public key to bytes.
+func (e *ecdh) MarshalHex(publicKey crypto.PublicKey) string {
+	return hex.EncodeToString(e.Marshal(publicKey))
+}
+
 // Unmarshal converts bytes to a public key.
 func (e *ecdh) Unmarshal(data []byte) (crypto.PublicKey, bool) {
 	var key *ecdhPublicKey
@@ -96,6 +106,16 @@ func (e *ecdh) Unmarshal(data []byte) (crypto.PublicKey, bool) {
 		Y:     y,
 	}
 	return key, true
+}
+
+// UnmarshalHex converts hex to a public key.
+func (e *ecdh) UnmarshalHex(h string) (crypto.PublicKey, bool) {
+	bytes, err := hex.DecodeString(h)
+	if err != nil {
+		logx.Errorf("UnmarshalHex error: %v", err)
+		return nil, false
+	}
+	return e.Unmarshal(bytes)
 }
 
 // GenerateSharedSecret takes in a public key and a private key

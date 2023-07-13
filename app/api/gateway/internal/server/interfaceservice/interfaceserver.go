@@ -5,25 +5,28 @@ import (
 	"fmt"
 	"github.com/cherish-chat/cherish-cloud-proto/signalingpb"
 	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/handler"
+	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/logic/connectionmanager"
 	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/svc"
 	"github.com/gin-gonic/gin"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/pion/webrtc/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 	"nhooyr.io/websocket"
 	"time"
 )
 
-type InterfaceServiceServer struct {
+type CustomInterfaceServiceServer struct {
 	svcCtx *svc.ServiceContext
 	engine *gin.Engine
 }
 
-func NewInterfaceServiceServer(svcCtx *svc.ServiceContext) *InterfaceServiceServer {
-	return &InterfaceServiceServer{svcCtx: svcCtx, engine: gin.Default()}
+func NewCustomInterfaceServiceServer(svcCtx *svc.ServiceContext) *CustomInterfaceServiceServer {
+	s := &CustomInterfaceServiceServer{svcCtx: svcCtx, engine: gin.Default()}
+	connectionmanager.InitConnectionLogic(svcCtx)
+	return s
 }
 
-func (s *InterfaceServiceServer) Start() {
+func (s *CustomInterfaceServiceServer) Start() {
 	handler.SetupRoutes(s.svcCtx, s.engine)
 
 	if s.svcCtx.Config.Gateway.Mode == "tcp" {
@@ -91,7 +94,7 @@ func (s *InterfaceServiceServer) Start() {
 	}
 }
 
-func (s *InterfaceServiceServer) onReceive(conn *websocket.Conn, typ websocket.MessageType, data []byte) {
+func (s *CustomInterfaceServiceServer) onReceive(conn *websocket.Conn, typ websocket.MessageType, data []byte) {
 	switch typ {
 	case websocket.MessageText:
 	case websocket.MessageBinary:

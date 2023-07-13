@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cherish-chat/xxim-proto/peerpb"
-	internalservicelogic "github.com/cherish-chat/xxim-server/app/api/gateway/internal/logic/internalservice"
+	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/logic/connectionmanager"
 	"github.com/cherish-chat/xxim-server/app/api/gateway/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/pion/sdp/v2"
@@ -69,11 +69,11 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 		id := d.ID()
 		logx.Infof("New DataChannel %s %d", d.Label(), id)
 
-		connection := internalservicelogic.NewP2pConnection(ctx, header, d)
+		connection := connectionmanager.NewP2pConnection(ctx, header, d)
 		// Register channel opening handling
 		d.OnOpen(func() {
-			logx.Infof("Data channel '%s'-'%d' open. Random messages will now be sent to any connected DataChannels every 5 seconds", d.Label(), id)
-			internalservicelogic.ConnectionLogic.OnConnect(connection)
+			logx.Infof("Data channel '%s'-'%d' open.", d.Label(), id)
+			connectionmanager.ConnectionLogic.OnConnect(connection)
 		})
 
 		// Register text message handling
@@ -98,7 +98,7 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 
 		d.OnClose(func() {
 			cancelFunction()
-			internalservicelogic.ConnectionLogic.OnDisconnect(connection)
+			connectionmanager.ConnectionLogic.OnDisconnect(connection)
 			_ = peerConnection.Close()
 			logx.Infof("DataChannel '%s'-'%d' closed", d.Label(), id)
 		})
@@ -123,11 +123,11 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 	return &answer, nil
 }
 
-func (h *OfferHandler) returnResponse(ctx context.Context, connection *internalservicelogic.Connection, code peerpb.ResponseCode, response []byte, err error) {
+func (h *OfferHandler) returnResponse(ctx context.Context, connection *connectionmanager.Connection, code peerpb.ResponseCode, response []byte, err error) {
 	connection.SendMessage(ctx, response)
 }
 
-func (h *OfferHandler) onRequest(ctx context.Context, connection *internalservicelogic.Connection, msg []byte) (peerpb.ResponseCode, []byte, error) {
+func (h *OfferHandler) onRequest(ctx context.Context, connection *connectionmanager.Connection, msg []byte) (peerpb.ResponseCode, []byte, error) {
 	var aesKey []byte
 	var aesIv []byte
 	var isEncrypt bool

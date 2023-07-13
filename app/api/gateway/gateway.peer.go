@@ -24,6 +24,7 @@ func Run(cfg config.Config) {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		peerpb.RegisterConnectionServiceServer(grpcServer, connectionserviceServer.NewConnectionServiceServer(ctx))
 		peerpb.RegisterInternalServiceServer(grpcServer, internalserviceServer.NewInternalServiceServer(ctx))
+		peerpb.RegisterInterfaceServiceServer(grpcServer, interfaceserviceServer.NewInterfaceServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
@@ -31,7 +32,7 @@ func Run(cfg config.Config) {
 	})
 	defer s.Stop()
 
-	go interfaceserviceServer.NewInterfaceServiceServer(ctx).Start()
+	go interfaceserviceServer.NewCustomInterfaceServiceServer(ctx).Start()
 
 	logx.Infof("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

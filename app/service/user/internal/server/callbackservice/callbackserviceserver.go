@@ -41,3 +41,8 @@ func (s *CallbackServiceServer) UserBeforeRequest(ctx context.Context, in *peerp
 	l := callbackservicelogic.NewUserBeforeRequestLogic(ctx, s.svcCtx)
 	return l.UserBeforeRequest(in)
 }
+
+func (s *CallbackServiceServer) UserAfterKeepAlive(ctx context.Context, in *peerpb.UserAfterKeepAliveReq) (*peerpb.UserAfterKeepAliveResp, error) {
+	l := callbackservicelogic.NewUserAfterKeepAliveLogic(ctx, s.svcCtx)
+	return l.UserAfterKeepAlive(in)
+}

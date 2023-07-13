@@ -13,14 +13,27 @@ import (
 )
 
 type (
-	GatewayWriteDataContent      = peerpb.GatewayWriteDataContent
-	ListLongConnectionReq        = peerpb.ListLongConnectionReq
-	ListLongConnectionReq_Filter = peerpb.ListLongConnectionReq_Filter
-	ListLongConnectionResp       = peerpb.ListLongConnectionResp
+	AuthConnectionReq                   = peerpb.AuthConnectionReq
+	AuthConnectionResp                  = peerpb.AuthConnectionResp
+	GatewayKeepAliveReq                 = peerpb.GatewayKeepAliveReq
+	GatewayKeepAliveResp                = peerpb.GatewayKeepAliveResp
+	GatewayKickLongConnectionReq        = peerpb.GatewayKickLongConnectionReq
+	GatewayKickLongConnectionReq_Filter = peerpb.GatewayKickLongConnectionReq_Filter
+	GatewayKickLongConnectionResp       = peerpb.GatewayKickLongConnectionResp
+	GatewayWriteDataReq                 = peerpb.GatewayWriteDataReq
+	GatewayWriteDataReq_Filter          = peerpb.GatewayWriteDataReq_Filter
+	GatewayWriteDataResp                = peerpb.GatewayWriteDataResp
+	ListLongConnectionReq               = peerpb.ListLongConnectionReq
+	ListLongConnectionReq_Filter        = peerpb.ListLongConnectionReq_Filter
+	ListLongConnectionResp              = peerpb.ListLongConnectionResp
+	VerifyConnectionReq                 = peerpb.VerifyConnectionReq
+	VerifyConnectionResp                = peerpb.VerifyConnectionResp
 
 	ConnectionService interface {
-		// WriteData 向用户推送数据
-		WriteData(ctx context.Context, in *GatewayWriteDataContent, opts ...grpc.CallOption) (*GatewayWriteDataContent, error)
+		// ListLongConnection 获取长连接列表
+		ListLongConnection(ctx context.Context, in *ListLongConnectionReq, opts ...grpc.CallOption) (*ListLongConnectionResp, error)
+		// GatewayKickLongConnection 踢掉连接
+		GatewayKickLongConnection(ctx context.Context, in *GatewayKickLongConnectionReq, opts ...grpc.CallOption) (*GatewayKickLongConnectionResp, error)
 	}
 
 	defaultConnectionService struct {
@@ -34,8 +47,14 @@ func NewConnectionService(cli zrpc.Client) ConnectionService {
 	}
 }
 
-// WriteData 向用户推送数据
-func (m *defaultConnectionService) WriteData(ctx context.Context, in *GatewayWriteDataContent, opts ...grpc.CallOption) (*GatewayWriteDataContent, error) {
+// ListLongConnection 获取长连接列表
+func (m *defaultConnectionService) ListLongConnection(ctx context.Context, in *ListLongConnectionReq, opts ...grpc.CallOption) (*ListLongConnectionResp, error) {
 	client := peerpb.NewConnectionServiceClient(m.cli.Conn())
-	return client.WriteData(ctx, in, opts...)
+	return client.ListLongConnection(ctx, in, opts...)
+}
+
+// GatewayKickLongConnection 踢掉连接
+func (m *defaultConnectionService) GatewayKickLongConnection(ctx context.Context, in *GatewayKickLongConnectionReq, opts ...grpc.CallOption) (*GatewayKickLongConnectionResp, error) {
+	client := peerpb.NewConnectionServiceClient(m.cli.Conn())
+	return client.GatewayKickLongConnection(ctx, in, opts...)
 }
