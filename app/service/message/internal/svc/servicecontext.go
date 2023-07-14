@@ -50,7 +50,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 		InternalService: internalservice.NewInternalService(gatewayClient),
 	}
-
+	messagemodel.InitRedisSeq(c.GetRedis(3))
 	s.MQ = xmq.NewAsynq(c.GetZeroRedisConf(), 3, s.Config.Log.Level)
 	return s
 }

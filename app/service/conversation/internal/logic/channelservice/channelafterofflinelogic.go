@@ -28,12 +28,14 @@ func (l *ChannelAfterOfflineLogic) ChannelAfterOffline(in *peerpb.ChannelAfterOf
 	//1. 使用订阅号发一条通知，告诉他的订阅者，他离线了
 	{
 		_, err := l.svcCtx.NoticeService.NoticeSend(context.Background(), &peerpb.NoticeSendReq{
-			Header: in.Header,
+			Header: &peerpb.RequestHeader{
+				UserId: in.UserId,
+			},
 			Notices: []*peerpb.Message{&peerpb.Message{
 				MessageId:        utils.Snowflake.String(),
-				ConversationId:   channelmodel.UserDefaultChannelId(in.Header.UserId),
+				ConversationId:   channelmodel.UserDefaultChannelId(in.UserId),
 				ConversationType: peerpb.ConversationType_Channel,
-				Content:          utils.Json.MarshalToBytes(&peerpb.NoticeContentOnlineStatus{UserId: in.Header.UserId, Online: false}),
+				Content:          utils.Proto.Marshal(&peerpb.NoticeContentOnlineStatus{UserId: in.UserId, Online: false}),
 				ContentType:      peerpb.MessageContentType_OnlineStatus,
 				Option: &peerpb.Message_Option{
 					StorageForServer: false,
@@ -41,7 +43,7 @@ func (l *ChannelAfterOfflineLogic) ChannelAfterOffline(in *peerpb.ChannelAfterOf
 					CountUnread:      false,
 				},
 				Sender: &peerpb.Message_Sender{
-					Id:         channelmodel.UserDefaultChannelId(in.Header.UserId),
+					Id:         channelmodel.UserDefaultChannelId(in.UserId),
 					SenderType: peerpb.SenderType_ChannelSender,
 				},
 			}},

@@ -83,26 +83,26 @@ func (m *User) GetAccountMap() utils.SSM {
 
 type UserCountMap struct {
 	// FriendCount 好友数量
-	FriendCount int64
+	FriendCount uint32
 	// JoinGroupCount 加入群组数量
-	JoinGroupCount int64
+	JoinGroupCount uint32
 	// CreateGroupCount 创建群组数量
-	CreateGroupCount int64
+	CreateGroupCount uint32
 }
 
 func (m *User) GetCountMap() UserCountMap {
 	countMap := UserCountMap{}
 	c, ok := m.CountMap[peerpb.UpdateUserCountMapReq_friendCount.String()]
 	if ok {
-		countMap.FriendCount = utils.Number.Any2Int64(c)
+		countMap.FriendCount = uint32(utils.Number.Any2Int64(c))
 	}
 	c, ok = m.CountMap[peerpb.UpdateUserCountMapReq_joinGroupCount.String()]
 	if ok {
-		countMap.JoinGroupCount = utils.Number.Any2Int64(c)
+		countMap.JoinGroupCount = uint32(utils.Number.Any2Int64(c))
 	}
 	c, ok = m.CountMap[peerpb.UpdateUserCountMapReq_createGroupCount.String()]
 	if ok {
-		countMap.CreateGroupCount = utils.Number.Any2Int64(c)
+		countMap.CreateGroupCount = uint32(utils.Number.Any2Int64(c))
 	}
 	return countMap
 }

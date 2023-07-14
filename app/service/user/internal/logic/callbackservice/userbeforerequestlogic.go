@@ -2,6 +2,7 @@ package callbackservicelogic
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cherish-chat/xxim-proto/peerpb"
 	"github.com/cherish-chat/xxim-server/app/service/user/internal/svc"
@@ -24,6 +25,13 @@ func NewUserBeforeRequestLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *UserBeforeRequestLogic) UserBeforeRequest(in *peerpb.UserBeforeRequestReq) (*peerpb.UserBeforeRequestResp, error) {
+	if in.GetHeader().GetUserId() == "" {
+		if !strings.Contains(in.Path, "white") {
+			return &peerpb.UserBeforeRequestResp{
+				Header: peerpb.NewAuthError(peerpb.AuthErrorTypeExpired, peerpb.AuthFailed),
+			}, nil
+		}
+	}
 	return &peerpb.UserBeforeRequestResp{
 		Header: peerpb.NewOkHeader(),
 	}, nil

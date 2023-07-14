@@ -223,7 +223,7 @@ func (l *GroupCreateLogic) GroupCreate(in *peerpb.GroupCreateReq) (*peerpb.Group
 					Avatar: owner.Avatar,
 					Extra:  "",
 				},
-				Content: utils.Json.MarshalToBytes(&peerpb.MessageContentText{
+				Content: utils.Proto.Marshal(&peerpb.MessageContentText{
 					Items: []*peerpb.MessageContentText_Item{{
 						Type:  peerpb.MessageContentText_Item_TEXT,
 						Text:  l.svcCtx.Config.Group.DefaultWelcomeMessage,
@@ -257,7 +257,7 @@ func (l *GroupCreateLogic) GroupCreate(in *peerpb.GroupCreateReq) (*peerpb.Group
 				MessageId:        utils.Snowflake.String(),
 				ConversationId:   peerpb.GetSingleChatConversationId(channelmodel.ConversationIdGroupHelper, userId),
 				ConversationType: peerpb.ConversationType_Single,
-				Content: utils.Json.MarshalToBytes(&peerpb.NoticeContentJoinNewGroup{
+				Content: utils.Proto.Marshal(&peerpb.NoticeContentJoinNewGroup{
 					GroupId: group.GroupIdString(),
 				}),
 				ContentType: peerpb.MessageContentType_JoinNewGroup,

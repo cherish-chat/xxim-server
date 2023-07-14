@@ -27,5 +27,5 @@ func NewCaptchaVerifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cap
 func (l *CaptchaVerifyLogic) CaptchaVerify(in *peerpb.CaptchaVerifyReq) (*peerpb.CaptchaVerifyResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &peerpb.CaptchaVerifyResp{}, nil
+	return &peerpb.CaptchaVerifyResp{Success: true}, nil
 }

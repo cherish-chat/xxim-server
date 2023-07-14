@@ -59,7 +59,7 @@ type Message struct {
 	// InsertTime 插入时间 由服务端生成
 	InsertTime primitive.DateTime `bson:"insertTime" json:"insertTime"`
 	// Seq 在会话中的消息顺序
-	Seq int64 `bson:"seq" json:"seq"`
+	Seq uint32 `bson:"seq" json:"seq"`
 	// Option 选项
 	Option MessageOptions `bson:"option" json:"option"`
 	// ExtraMap example: {"platformSource": "windows"}
@@ -78,6 +78,8 @@ func MessageFromPb(in *peerpb.Message) *Message {
 	for k, v := range in.GetExtraMap() {
 		extraMap[k] = v
 	}
+	sendTime := int64(in.SendTime) * 1000
+	insertTime := int64(in.InsertTime) * 1000
 	return &Message{
 		MessageId:        in.GetMessageId(),
 		Uuid:             in.GetUuid(),
@@ -92,9 +94,9 @@ func MessageFromPb(in *peerpb.Message) *Message {
 		},
 		Content:     in.Content,
 		ContentType: in.ContentType,
-		SendTime:    primitive.DateTime(in.SendTime),
-		InsertTime:  primitive.DateTime(in.InsertTime),
-		Seq:         int64(in.Seq),
+		SendTime:    primitive.DateTime(sendTime),
+		InsertTime:  primitive.DateTime(insertTime),
+		Seq:         uint32(in.Seq),
 		Option: MessageOptions{
 			StorageForServer: in.GetOption().GetStorageForServer(),
 			StorageForClient: in.GetOption().GetStorageForClient(),
@@ -124,8 +126,8 @@ func (m *Message) ToPb() *peerpb.Message {
 		},
 		Content:     m.Content,
 		ContentType: m.ContentType,
-		SendTime:    uint32(m.SendTime),
-		InsertTime:  uint32(m.InsertTime),
+		SendTime:    uint32(m.SendTime / 1000),
+		InsertTime:  uint32(m.InsertTime / 1000),
 		Seq:         uint32(m.Seq),
 		Option: &peerpb.Message_Option{
 			StorageForServer: m.Option.StorageForServer,
@@ -140,6 +142,9 @@ func (m *Message) ToPb() *peerpb.Message {
 
 func (m *Message) GenerateMessageId() {
 	if m.MessageId == "" {
-		m.MessageId = fmt.Sprintf("%s@%d:%d", m.ConversationId, m.ConversationType, m.Seq)
+		m.MessageId = GenerateMessageId(m.ConversationId, m.ConversationType, m.Seq)
 	}
+}
+func GenerateMessageId(convId string, convType ConversationType, seq uint32) string {
+	return fmt.Sprintf("%s#%d:%d", convId, convType, seq)
 }

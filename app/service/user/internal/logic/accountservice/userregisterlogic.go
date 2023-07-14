@@ -60,7 +60,7 @@ func (l *UserRegisterLogic) UserRegister(in *peerpb.UserRegisterReq) (*peerpb.Us
 		//是否必填password
 		username, ok := in.AccountMap[peerpb.AccountType_Username.String()]
 		if !ok {
-			if l.svcCtx.Config.Account.Register.RequirePassword {
+			if l.svcCtx.Config.Account.Register.RequireUsername {
 				return &peerpb.UserRegisterResp{
 					Header: peerpb.NewToastHeader(peerpb.ToastActionData_ERROR, peerpb.UsernameRequired),
 				}, nil

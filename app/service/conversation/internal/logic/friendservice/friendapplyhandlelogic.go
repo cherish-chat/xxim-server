@@ -210,7 +210,7 @@ func (l *FriendApplyHandleLogic) AddFriend(fromUserId string, toUser *usermodel.
 					Avatar: toUser.Avatar,
 					Extra:  "",
 				},
-				Content: utils.Json.MarshalToBytes(&peerpb.MessageContentText{
+				Content: utils.Proto.Marshal(&peerpb.MessageContentText{
 					Items: []*peerpb.MessageContentText_Item{{
 						Type:  peerpb.MessageContentText_Item_TEXT,
 						Text:  l.svcCtx.Config.Friend.DefaultSayHello,

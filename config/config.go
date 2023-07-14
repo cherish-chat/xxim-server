@@ -74,6 +74,8 @@ type Config struct {
 			FixedNickname string `json:",default=用户"` // 固定昵称 只有DefaultNicknameRule=fixed时有效
 			//RandomNicknamePrefix 随机昵称前缀
 			RandomNicknamePrefix string `json:",default=用户"` // 随机昵称前缀 只有DefaultNicknameRule=random时有效
+			//RequireUsername 是否必填username
+			RequireUsername bool `json:",optional"`
 			//UsernameRegex 用户名正则
 			UsernameRegex string `json:",optional"`
 			//UsernameUnique 用户名是否唯一

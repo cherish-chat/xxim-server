@@ -39,3 +39,15 @@ func (s *MessageServiceServer) MessagePush(ctx context.Context, in *peerpb.Messa
 	l := messageservicelogic.NewMessagePushLogic(ctx, s.svcCtx)
 	return l.MessagePush(in)
 }
+
+// GetConvMessageSeq 获取会话消息序列号
+func (s *MessageServiceServer) GetConvMessageSeq(ctx context.Context, in *peerpb.GetConvMessageSeqReq) (*peerpb.GetConvMessageSeqResp, error) {
+	l := messageservicelogic.NewGetConvMessageSeqLogic(ctx, s.svcCtx)
+	return l.GetConvMessageSeq(in)
+}
+
+// SyncMessage 同步消息
+func (s *MessageServiceServer) SyncMessage(ctx context.Context, in *peerpb.SyncMessageReq) (*peerpb.SyncMessageResp, error) {
+	l := messageservicelogic.NewSyncMessageLogic(ctx, s.svcCtx)
+	return l.SyncMessage(in)
+}

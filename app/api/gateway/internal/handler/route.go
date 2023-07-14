@@ -116,10 +116,46 @@ func AddUnifiedRoute[REQ ReqInterface, RESP RespInterface](svcCtx *svc.ServiceCo
 func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	setupGatewayRoutes(svcCtx, engine)
 	setupAccountRoutes(svcCtx, engine)
-	//setupFriendRoutes(svcCtx, engine)
+	setupFriendRoutes(svcCtx, engine)
 	//setupGroupRoutes(svcCtx, engine)
 	//setupNoticeRoutes(svcCtx, engine)
-	//setupMessageRoutes(svcCtx, engine)
+	setupMessageRoutes(svcCtx, engine)
+}
+
+func setupMessageRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
+	// message api
+	{
+		//MessageSendReq MessageSendResp
+		AddUnifiedRoute(svcCtx, "/v1/message/messageSend", Route[*peerpb.MessageSendReq, *peerpb.MessageSendResp]{
+			RequestPool: NewRequestPool(func() *peerpb.MessageSendReq {
+				return &peerpb.MessageSendReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.MessageSendResp {
+				return &peerpb.MessageSendResp{}
+			}),
+			Do: svcCtx.MessageService.MessageSend,
+		})
+		//GetConvMessageSeqReq GetConvMessageSeqResp
+		AddUnifiedRoute(svcCtx, "/v1/message/getConvMessageSeq", Route[*peerpb.GetConvMessageSeqReq, *peerpb.GetConvMessageSeqResp]{
+			RequestPool: NewRequestPool(func() *peerpb.GetConvMessageSeqReq {
+				return &peerpb.GetConvMessageSeqReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.GetConvMessageSeqResp {
+				return &peerpb.GetConvMessageSeqResp{}
+			}),
+			Do: svcCtx.MessageService.GetConvMessageSeq,
+		})
+		//SyncMessageReq SyncMessageResp
+		AddUnifiedRoute(svcCtx, "/v1/message/syncMessage", Route[*peerpb.SyncMessageReq, *peerpb.SyncMessageResp]{
+			RequestPool: NewRequestPool(func() *peerpb.SyncMessageReq {
+				return &peerpb.SyncMessageReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.SyncMessageResp {
+				return &peerpb.SyncMessageResp{}
+			}),
+			Do: svcCtx.MessageService.SyncMessage,
+		})
+	}
 }
 
 /*
@@ -171,43 +207,45 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 		}
 	}
 
-	func setupFriendRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
-		// friend api
-		{
-			//FriendApplyReq FriendApplyResp
-			AddUnifiedRoute(svcCtx, "/v1/friend/friendApply", Route[*peerpb.FriendApplyReq, *peerpb.FriendApplyResp]{
-				RequestPool: NewRequestPool(func() *peerpb.FriendApplyReq {
-					return &peerpb.FriendApplyReq{}
-				}),
-				ResponsePool: NewResponsePool(func() *peerpb.FriendApplyResp {
-					return &peerpb.FriendApplyResp{}
-				}),
-				Do: svcCtx.FriendService.FriendApply,
-			})
-			//ListFriendApplyReq ListFriendApplyResp
-			AddUnifiedRoute(svcCtx, "/v1/friend/listFriendApply", Route[*peerpb.ListFriendApplyReq, *peerpb.ListFriendApplyResp]{
-				RequestPool: NewRequestPool(func() *peerpb.ListFriendApplyReq {
-					return &peerpb.ListFriendApplyReq{}
-				}),
-				ResponsePool: NewResponsePool(func() *peerpb.ListFriendApplyResp {
-					return &peerpb.ListFriendApplyResp{}
-				}),
-				Do: svcCtx.FriendService.ListFriendApply,
-			})
-			//FriendApplyHandleReq FriendApplyHandleResp
-			AddUnifiedRoute(svcCtx, "/v1/friend/friendApplyHandle", Route[*peerpb.FriendApplyHandleReq, *peerpb.FriendApplyHandleResp]{
-				RequestPool: NewRequestPool(func() *peerpb.FriendApplyHandleReq {
-					return &peerpb.FriendApplyHandleReq{}
-				}),
-				ResponsePool: NewResponsePool(func() *peerpb.FriendApplyHandleResp {
-					return &peerpb.FriendApplyHandleResp{}
-				}),
-				Do: svcCtx.FriendService.FriendApplyHandle,
-			})
-		}
-	}
+
 
 */
+
+func setupFriendRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
+	// friend api
+	{
+		//FriendApplyReq FriendApplyResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/friendApply", Route[*peerpb.FriendApplyReq, *peerpb.FriendApplyResp]{
+			RequestPool: NewRequestPool(func() *peerpb.FriendApplyReq {
+				return &peerpb.FriendApplyReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.FriendApplyResp {
+				return &peerpb.FriendApplyResp{}
+			}),
+			Do: svcCtx.FriendService.FriendApply,
+		})
+		//ListFriendApplyReq ListFriendApplyResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/listFriendApply", Route[*peerpb.ListFriendApplyReq, *peerpb.ListFriendApplyResp]{
+			RequestPool: NewRequestPool(func() *peerpb.ListFriendApplyReq {
+				return &peerpb.ListFriendApplyReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.ListFriendApplyResp {
+				return &peerpb.ListFriendApplyResp{}
+			}),
+			Do: svcCtx.FriendService.ListFriendApply,
+		})
+		//FriendApplyHandleReq FriendApplyHandleResp
+		AddUnifiedRoute(svcCtx, "/v1/friend/friendApplyHandle", Route[*peerpb.FriendApplyHandleReq, *peerpb.FriendApplyHandleResp]{
+			RequestPool: NewRequestPool(func() *peerpb.FriendApplyHandleReq {
+				return &peerpb.FriendApplyHandleReq{}
+			}),
+			ResponsePool: NewResponsePool(func() *peerpb.FriendApplyHandleResp {
+				return &peerpb.FriendApplyHandleResp{}
+			}),
+			Do: svcCtx.FriendService.FriendApplyHandle,
+		})
+	}
+}
 
 func setupAccountRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	// user api
@@ -293,6 +331,6 @@ func setupGatewayRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	{
 		connectionHandler := connectionhandler.NewConnectionHandler(svcCtx)
 		universalRouteMap["/v1/gateway/white/verifyConnection"] = connectionHandler.VerifyConnection
-		universalRouteMap["/v1/gateway/white/authenticationConnection"] = connectionHandler.AuthenticationConnection
+		universalRouteMap["/v1/gateway/white/authConnection"] = connectionHandler.AuthenticationConnection
 	}
 }

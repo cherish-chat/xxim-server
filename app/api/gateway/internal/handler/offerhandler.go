@@ -78,7 +78,7 @@ func (h *OfferHandler) Offer(in *webrtc.SessionDescription) (*webrtc.SessionDesc
 
 		// Register text message handling
 		d.OnMessage(func(msg webrtc.DataChannelMessage) {
-			logx.Infof("Message from DataChannel '%s': '%s'", d.Label(), string(msg.Data))
+			logx.Debugf("Message from DataChannel '%s': '%s'", d.Label(), string(msg.Data))
 			for {
 				if connection != nil {
 					break

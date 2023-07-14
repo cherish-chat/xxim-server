@@ -41,7 +41,7 @@ func (l *MessageSendLogic) MessageSend(in *peerpb.MessageSendReq) (*peerpb.Messa
 		}
 	}
 	if !in.DisableQueue {
-		err := l.svcCtx.MQ.Produce(context.Background(), xmq.TopicMessageInsert, utils.Json.MarshalToBytes(&peerpb.MessageInsertReq{
+		err := l.svcCtx.MQ.Produce(context.Background(), xmq.TopicMessageInsert, utils.Proto.Marshal(&peerpb.MessageInsertReq{
 			Header:   in.Header,
 			Messages: []*peerpb.Message{in.Message},
 		}))
@@ -61,5 +61,7 @@ func (l *MessageSendLogic) MessageSend(in *peerpb.MessageSendReq) (*peerpb.Messa
 
 func (l *MessageSendLogic) validate(in *peerpb.MessageSendReq) (*peerpb.MessageSendResp, error) {
 	// TODO: add your logic here and delete this line
-	return &peerpb.MessageSendResp{}, nil
+	return &peerpb.MessageSendResp{
+		Success: true,
+	}, nil
 }

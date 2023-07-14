@@ -111,7 +111,7 @@ func insertMsgList(svcCtx *svc.ServiceContext, in *peerpb.NoticeSendReq) (*peerp
 				logx.Errorf("NoticeInsert RedisSeq.IncrConvNoticeMaxSeq error: %v", err)
 				return nil, err
 			}
-			messageFromPb.Seq = int64(seq)
+			messageFromPb.Seq = uint32(seq)
 			//messageId
 			messageFromPb.GenerateMessageId()
 
@@ -156,7 +156,7 @@ func (l *NoticeInsertLogic) NoticeInsert(in *peerpb.NoticeSendReq) (*peerpb.Noti
 // ConsumeNotice 消费消息
 func (l *NoticeInsertLogic) ConsumeNotice(topic string, msg []byte) error {
 	in := &peerpb.NoticeSendReq{}
-	err := utils.Json.Unmarshal(msg, in)
+	err := utils.Proto.Unmarshal(msg, in)
 	if err != nil {
 		l.Errorf("ConsumeNotice json.Unmarshal error: %v", err)
 		return nil

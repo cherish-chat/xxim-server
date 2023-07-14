@@ -5,6 +5,7 @@ import (
 	"github.com/cherish-chat/xxim-server/config"
 
 	"github.com/cherish-chat/xxim-proto/peerpb"
+	consumeserviceServer "github.com/cherish-chat/xxim-server/app/service/message/internal/server/consumeservice"
 	messageserviceServer "github.com/cherish-chat/xxim-server/app/service/message/internal/server/messageservice"
 	noticeserviceServer "github.com/cherish-chat/xxim-server/app/service/message/internal/server/noticeservice"
 	"github.com/cherish-chat/xxim-server/app/service/message/internal/svc"
@@ -18,7 +19,7 @@ import (
 func Run(cfg config.Config) {
 	ctx := svc.NewServiceContext(cfg)
 
-	c := cfg.GetUserConfig()
+	c := cfg.GetMessageConfig()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		peerpb.RegisterMessageServiceServer(grpcServer, messageserviceServer.NewMessageServiceServer(ctx))
@@ -29,6 +30,8 @@ func Run(cfg config.Config) {
 		}
 	})
 	defer s.Stop()
+
+	go consumeserviceServer.NewConsumerServer(ctx).Start()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	GetConvMessageSeqReq          = peerpb.GetConvMessageSeqReq
+	GetConvMessageSeqResp         = peerpb.GetConvMessageSeqResp
 	MessageContentText            = peerpb.MessageContentText
 	MessageContentText_Item       = peerpb.MessageContentText_Item
 	MessageContentText_Item_At    = peerpb.MessageContentText_Item_At
@@ -28,6 +30,8 @@ type (
 	NoticeContentOnlineStatus     = peerpb.NoticeContentOnlineStatus
 	NoticeSendReq                 = peerpb.NoticeSendReq
 	NoticeSendResp                = peerpb.NoticeSendResp
+	SyncMessageReq                = peerpb.SyncMessageReq
+	SyncMessageResp               = peerpb.SyncMessageResp
 
 	MessageService interface {
 		// MessageInsert 插入消息
@@ -36,6 +40,10 @@ type (
 		MessageSend(ctx context.Context, in *MessageSendReq, opts ...grpc.CallOption) (*MessageSendResp, error)
 		// MessagePush 推送消息
 		MessagePush(ctx context.Context, in *MessagePushReq, opts ...grpc.CallOption) (*MessagePushResp, error)
+		// GetConvMessageSeq 获取会话消息序列号
+		GetConvMessageSeq(ctx context.Context, in *GetConvMessageSeqReq, opts ...grpc.CallOption) (*GetConvMessageSeqResp, error)
+		// SyncMessage 同步消息
+		SyncMessage(ctx context.Context, in *SyncMessageReq, opts ...grpc.CallOption) (*SyncMessageResp, error)
 	}
 
 	defaultMessageService struct {
@@ -65,4 +73,16 @@ func (m *defaultMessageService) MessageSend(ctx context.Context, in *MessageSend
 func (m *defaultMessageService) MessagePush(ctx context.Context, in *MessagePushReq, opts ...grpc.CallOption) (*MessagePushResp, error) {
 	client := peerpb.NewMessageServiceClient(m.cli.Conn())
 	return client.MessagePush(ctx, in, opts...)
+}
+
+// GetConvMessageSeq 获取会话消息序列号
+func (m *defaultMessageService) GetConvMessageSeq(ctx context.Context, in *GetConvMessageSeqReq, opts ...grpc.CallOption) (*GetConvMessageSeqResp, error) {
+	client := peerpb.NewMessageServiceClient(m.cli.Conn())
+	return client.GetConvMessageSeq(ctx, in, opts...)
+}
+
+// SyncMessage 同步消息
+func (m *defaultMessageService) SyncMessage(ctx context.Context, in *SyncMessageReq, opts ...grpc.CallOption) (*SyncMessageResp, error) {
+	client := peerpb.NewMessageServiceClient(m.cli.Conn())
+	return client.SyncMessage(ctx, in, opts...)
 }

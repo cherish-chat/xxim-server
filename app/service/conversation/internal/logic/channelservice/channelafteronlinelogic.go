@@ -34,7 +34,7 @@ func (l *ChannelAfterOnlineLogic) ChannelAfterOnline(in *peerpb.ChannelAfterOnli
 				MessageId:        utils.Snowflake.String(),
 				ConversationId:   channelmodel.UserDefaultChannelId(in.Header.UserId),
 				ConversationType: peerpb.ConversationType_Channel,
-				Content:          utils.Json.MarshalToBytes(&peerpb.NoticeContentOnlineStatus{UserId: in.Header.UserId, Online: true}),
+				Content:          utils.Proto.Marshal(&peerpb.NoticeContentOnlineStatus{UserId: in.Header.UserId, Online: true}),
 				ContentType:      peerpb.MessageContentType_OnlineStatus,
 				Option: &peerpb.Message_Option{
 					StorageForServer: false,

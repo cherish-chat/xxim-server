@@ -81,7 +81,7 @@ return result
 
 var getConvMaxSeqSha string
 
-func (x *xRedisSeq) GetConvMaxSeq(ctx context.Context, userId string, convId string, convTyp peerpb.ConversationType) (*ConvSeq, error) {
+func (x *xRedisSeq) GetConvMaxSeq(ctx context.Context, convId string, convTyp peerpb.ConversationType) (*ConvSeq, error) {
 	rc := x.rc
 	if getConvMaxSeqSha == "" {
 		var err error
@@ -117,7 +117,7 @@ return result
 
 var batchGetConvMaxSeqSha string
 
-func (x *xRedisSeq) BatchGetConvMaxSeq(ctx context.Context, userId string, convIdTypes ...*ConvInfo) (map[*ConvInfo]*ConvSeq, error) {
+func (x *xRedisSeq) BatchGetConvMaxSeq(ctx context.Context, convIdTypes ...*ConvInfo) (map[*ConvInfo]*ConvSeq, error) {
 	m := make(map[*ConvInfo]*ConvSeq, 0)
 	if len(convIdTypes) == 0 {
 		return m, nil
@@ -151,4 +151,46 @@ func (x *xRedisSeq) BatchGetConvMaxSeq(ctx context.Context, userId string, convI
 		}
 	}
 	return m, nil
+}
+
+// SetConvMessageMinSeq 设置会话消息最小seq
+func (x *xRedisSeq) SetConvMessageMinSeq(ctx context.Context, convId string, userId string, convTyp peerpb.ConversationType, seq int) error {
+	key := xcache.RedisVal.HashKeyConvMessageMinSeq(convId, userId, int32(convTyp))
+	hkey := userId
+	return x.rc.HSet(ctx, key, hkey, seq).Err()
+}
+
+// SetConvNoticeMinSeq 设置会话通知最小seq
+func (x *xRedisSeq) SetConvNoticeMinSeq(ctx context.Context, convId string, userId string, convTyp peerpb.ConversationType, seq int) error {
+	key := xcache.RedisVal.HashKeyConvNoticeMinSeq(convId, userId, int32(convTyp))
+	hkey := userId
+	return x.rc.HSet(ctx, key, hkey, seq).Err()
+}
+
+// GetConvMessageMinSeq 获取会话消息最小seq
+func (x *xRedisSeq) GetConvMessageMinSeq(ctx context.Context, convId string, userId string, convTyp peerpb.ConversationType) (int, error) {
+	key := xcache.RedisVal.HashKeyConvMessageMinSeq(convId, userId, int32(convTyp))
+	hkey := userId
+	result, err := x.rc.HGet(ctx, key, hkey).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return int(utils.Number.Any2Int64(result)), nil
+}
+
+// GetConvNoticeMinSeq 获取会话通知最小seq
+func (x *xRedisSeq) GetConvNoticeMinSeq(ctx context.Context, convId string, userId string, convTyp peerpb.ConversationType) (int, error) {
+	key := xcache.RedisVal.HashKeyConvNoticeMinSeq(convId, userId, int32(convTyp))
+	hkey := userId
+	result, err := x.rc.HGet(ctx, key, hkey).Result()
+	if err != nil {
+		if err == redis.Nil {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return int(utils.Number.Any2Int64(result)), nil
 }

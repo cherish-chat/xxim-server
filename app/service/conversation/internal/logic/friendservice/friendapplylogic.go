@@ -364,7 +364,7 @@ func (l *FriendApplyLogic) sendNotice_(in *peerpb.FriendApplyReq, fromUser *user
 				MessageId:        utils.Snowflake.String(),
 				ConversationId:   peerpb.GetSingleChatConversationId(channelmodel.ConversationIdFriendHelper, toUser.UserId),
 				ConversationType: peerpb.ConversationType_Single,
-				Content:          utils.Json.MarshalToBytes(&peerpb.NoticeContentNewFriendRequest{}),
+				Content:          utils.Proto.Marshal(&peerpb.NoticeContentNewFriendRequest{}),
 				ContentType:      peerpb.MessageContentType_NewFriendRequest,
 				Option: &peerpb.Message_Option{
 					StorageForServer: true,
