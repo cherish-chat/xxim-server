@@ -40,6 +40,8 @@ type GroupServiceClient interface {
 	GetGroupMemberInfo(ctx context.Context, in *GetGroupMemberInfoReq, opts ...grpc.CallOption) (*GetGroupMemberInfoResp, error)
 	// MapGroupMemberInfoByIds 批量获取群成员信息
 	MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error)
+	//MapGroupMemberInfoByGroupIdsReq 批量获取群成员信息
+	MapGroupMemberInfoByGroupIds(ctx context.Context, in *MapGroupMemberInfoByGroupIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(ctx context.Context, in *EditGroupInfoReq, opts ...grpc.CallOption) (*EditGroupInfoResp, error)
 	//TransferGroupOwner 转让群主
@@ -167,6 +169,15 @@ func (c *groupServiceClient) GetGroupMemberInfo(ctx context.Context, in *GetGrou
 func (c *groupServiceClient) MapGroupMemberInfoByIds(ctx context.Context, in *MapGroupMemberInfoByIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error) {
 	out := new(MapGroupMemberInfoByIdsResp)
 	err := c.cc.Invoke(ctx, "/pb.groupService/MapGroupMemberInfoByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *groupServiceClient) MapGroupMemberInfoByGroupIds(ctx context.Context, in *MapGroupMemberInfoByGroupIdsReq, opts ...grpc.CallOption) (*MapGroupMemberInfoByIdsResp, error) {
+	out := new(MapGroupMemberInfoByIdsResp)
+	err := c.cc.Invoke(ctx, "/pb.groupService/MapGroupMemberInfoByGroupIds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -384,6 +395,8 @@ type GroupServiceServer interface {
 	GetGroupMemberInfo(context.Context, *GetGroupMemberInfoReq) (*GetGroupMemberInfoResp, error)
 	// MapGroupMemberInfoByIds 批量获取群成员信息
 	MapGroupMemberInfoByIds(context.Context, *MapGroupMemberInfoByIdsReq) (*MapGroupMemberInfoByIdsResp, error)
+	//MapGroupMemberInfoByGroupIdsReq 批量获取群成员信息
+	MapGroupMemberInfoByGroupIds(context.Context, *MapGroupMemberInfoByGroupIdsReq) (*MapGroupMemberInfoByIdsResp, error)
 	//EditGroupInfo 编辑群信息
 	EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error)
 	//TransferGroupOwner 转让群主
@@ -459,6 +472,9 @@ func (UnimplementedGroupServiceServer) GetGroupMemberInfo(context.Context, *GetG
 }
 func (UnimplementedGroupServiceServer) MapGroupMemberInfoByIds(context.Context, *MapGroupMemberInfoByIdsReq) (*MapGroupMemberInfoByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MapGroupMemberInfoByIds not implemented")
+}
+func (UnimplementedGroupServiceServer) MapGroupMemberInfoByGroupIds(context.Context, *MapGroupMemberInfoByGroupIdsReq) (*MapGroupMemberInfoByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MapGroupMemberInfoByGroupIds not implemented")
 }
 func (UnimplementedGroupServiceServer) EditGroupInfo(context.Context, *EditGroupInfoReq) (*EditGroupInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditGroupInfo not implemented")
@@ -694,6 +710,24 @@ func _GroupService_MapGroupMemberInfoByIds_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GroupServiceServer).MapGroupMemberInfoByIds(ctx, req.(*MapGroupMemberInfoByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GroupService_MapGroupMemberInfoByGroupIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MapGroupMemberInfoByGroupIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GroupServiceServer).MapGroupMemberInfoByGroupIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.groupService/MapGroupMemberInfoByGroupIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GroupServiceServer).MapGroupMemberInfoByGroupIds(ctx, req.(*MapGroupMemberInfoByGroupIdsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1118,6 +1152,10 @@ var GroupService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MapGroupMemberInfoByIds",
 			Handler:    _GroupService_MapGroupMemberInfoByIds_Handler,
+		},
+		{
+			MethodName: "MapGroupMemberInfoByGroupIds",
+			Handler:    _GroupService_MapGroupMemberInfoByGroupIds_Handler,
 		},
 		{
 			MethodName: "EditGroupInfo",

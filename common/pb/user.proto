@@ -164,6 +164,8 @@ message GetUserHomeResp {
   LevelInfo levelInfo = 9;
   // 角色
   int32 role = 10; // 0:普通用户 1:客服/管理员 2:游客
+  // 备注
+  string remark = 11;
 }
 
 // ************ userSettings ************ //

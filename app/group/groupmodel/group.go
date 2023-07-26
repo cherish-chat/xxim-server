@@ -29,7 +29,7 @@ type (
 		// 解散时间
 		DismissTime int64 `bson:"dismissTime" json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;index"`
 		// 群描述
-		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(255);not null;default:''"`
+		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(1023);not null;default:''"`
 		// 群成员人数
 		MemberCount int `bson:"memberCount" json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;index"`
 
@@ -45,6 +45,8 @@ type (
 		// 成员权限选项
 		// 群成员是否可以发起临时会话
 		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat" gorm:"column:memberCanStartTempChat;type:tinyint(1);not null;default:0;"`
+		// 群成员是否可以加其他成员为好友
+		MemberCanAddFriend bool `bson:"memberCanAddFriend" json:"memberCanAddFriend" gorm:"column:memberCanAddFriend;type:tinyint(1);not null;default:0;"`
 		// 群成员是否可以邀请好友加入群
 		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend" gorm:"column:memberCanInviteFriend;type:tinyint(1);not null;default:0;"`
 		// 新成员可见的历史消息条数
@@ -70,11 +72,14 @@ func (m *Group) TableName() string {
 
 func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {
 	return &pb.GroupBaseInfo{
-		Id:          m.Id,
-		Name:        m.Name,
-		Avatar:      m.Avatar,
-		Owner:       m.Owner,
-		DismissTime: m.DismissTime,
+		Id:                 m.Id,
+		Name:               m.Name,
+		Avatar:             m.Avatar,
+		Owner:              m.Owner,
+		DismissTime:        m.DismissTime,
+		AllMute:            m.AllMute,
+		MemberCanAddFriend: m.MemberCanAddFriend,
+		MyMemberInfo:       nil,
 	}
 }
 

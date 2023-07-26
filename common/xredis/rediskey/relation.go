@@ -12,3 +12,7 @@ func FriendList(userId string) string {
 func BlacklistList(userId string) string {
 	return "h:model:blacklist:" + userId
 }
+
+func UserRemarkHashKey(userId string) string {
+	return "h:model:user_remark:" + userId
+}

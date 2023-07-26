@@ -64,6 +64,12 @@ message GetGroupHomeResp {
   // 群主id
   string owner = 8;
   int64 dismissTime = 9; // 解散时间 如果为0表示未解散 否则进入会话详情应该提示群已解散
+
+  // 群禁言
+  bool allMute = 11;
+  // 群禁止加好友
+  bool memberCanAddFriend = 12;
+
   // 成员统计
   message MemberStatistics {
     // 统计标题
@@ -225,6 +231,21 @@ message MapGroupMemberInfoByIdsReq {
   Opt opt = 4;
 }
 
+//MapGroupMemberInfoByGroupIdsReq 批量获取群成员信息
+message MapGroupMemberInfoByGroupIdsReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  repeated string groupIds = 2;
+  // 群成员ID
+  string memberId = 3;
+  // Opt
+  message Opt {
+    // 是否获取用户基本信息
+    bool userBaseInfo = 1;
+  }
+  Opt opt = 4;
+}
+
 //MapGroupMemberInfoByIdsResp 批量获取群成员信息
 message MapGroupMemberInfoByIdsResp {
   CommonResp commonResp = 1;
@@ -250,6 +271,10 @@ message EditGroupInfoReq {
   optional string avatar = 4;
   // 群介绍
   optional string introduction = 5;
+  // 群禁言
+  optional bool allMute = 11;
+  // 群禁止加好友
+  optional bool memberCanAddFriend = 12;
 }
 
 //EditGroupInfoResp 编辑群资料
@@ -351,6 +376,8 @@ message GetMyGroupListReq {
     DEFAULT = 0;
     // 只获取id
     ONLY_ID = 1;
+    // ID+自己成员信息
+    WITH_MY_MEMBER_INFO = 2;
   }
   // 获取选项
   Opt opt = 10;
@@ -363,6 +390,11 @@ message GroupBaseInfo {
   string owner = 4;
 
   int64 dismissTime = 5; // 解散时间 如果为0表示未解散 否则进入会话详情应该提示群已解散
+
+  bool allMute = 11; // 是否全员禁言
+  bool memberCanAddFriend = 12; // 群成员是否可以加好友
+
+  optional GroupMemberInfo myMemberInfo = 31; // 自己在群里的信息
 }
 
 //GetMyGroupListResp 获取我的群聊列表
@@ -511,54 +543,6 @@ message GetGroupListByUserIdResp {
   int64 total = 3;
 }
 
-/*
-type (
-	Group struct {
-		// 群id 从10001开始 redis incr
-		Id     string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);not null"`
-		Name   string `bson:"name" json:"name" gorm:"column:name;type:varchar(32);not null;index;default:''"`
-		Avatar string `bson:"avatar" json:"avatar"` // 群头像
-		// 群主
-		Owner string `bson:"owner" json:"owner" gorm:"column:owner;type:char(32);not null;index"`
-		// 所有管理员
-		Managers xorm.SliceString `bson:"managers" json:"managers" gorm:"column:managers;type:json;"`
-		// 创建时间
-		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint;not null;index"`
-		// 解散时间
-		DismissTime int64 `bson:"dismissTime" json:"dismissTime" gorm:"column:dismissTime;type:bigint;not null;index"`
-		// 群描述
-		Description string `bson:"description" json:"description" gorm:"column:description;type:varchar(255);not null;default:''"`
-		// 群成员人数
-		MemberCount int `bson:"memberCount" json:"memberCount" gorm:"column:memberCount;type:int;not null;default:0;index"`
-
-		// GroupSetting
-		// 全体禁言开关
-		AllMute bool `bson:"allMute" json:"allMute" gorm:"column:allMute;type:tinyint(1);not null;default:0;index"`
-		// 发言频率限制
-		SpeakLimit int32 `bson:"speakLimit,omitempty" json:"speakLimit" gorm:"column:speakLimit;type:int;not null;default:0;"`
-		// 群成员人数上限
-		MaxMember int32 `bson:"maxMember,omitempty" json:"maxMember" gorm:"column:maxMember;type:int;not null;default:0;"`
-		// 成员权限选项
-		// 群成员是否可以发起临时会话
-		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat" gorm:"column:memberCanStartTempChat;type:tinyint(1);not null;default:0;"`
-		// 群成员是否可以邀请好友加入群
-		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend" gorm:"column:memberCanInviteFriend;type:tinyint(1);not null;default:0;"`
-		// 新成员可见的历史消息条数
-		NewMemberHistoryMsgCount int32 `bson:"newMemberHistoryMsgCount,omitempty" json:"newMemberHistoryMsgCount" gorm:"column:newMemberHistoryMsgCount;type:int;not null;default:0;"`
-		// 是否开启匿名聊天
-		AnonymousChat   bool            `bson:"anonymousChat" json:"anonymousChat" gorm:"column:anonymousChat;type:tinyint(1);not null;default:0;"`
-		JoinGroupOption JoinGroupOption `bson:"joinGroupOption" json:"joinGroupOption" gorm:"column:joinGroupOption;type:json;"`
-	}
-	JoinGroupOption struct {
-		Type int `bson:"type" json:"type"`
-		// 验证信息
-		// 问题
-		Question string `bson:"question" json:"question"`
-		// 答案
-		Answer string `bson:"answer" json:"answer"`
-	}
-)
- */
 enum AllMuterType {
   // 0:禁言所有人 1:只禁言普通用户
   ALL = 0;
@@ -743,6 +727,8 @@ service groupService {
   rpc GetGroupMemberInfo(GetGroupMemberInfoReq) returns (GetGroupMemberInfoResp) {}
   // MapGroupMemberInfoByIds 批量获取群成员信息
   rpc MapGroupMemberInfoByIds(MapGroupMemberInfoByIdsReq) returns (MapGroupMemberInfoByIdsResp) {}
+  //MapGroupMemberInfoByGroupIdsReq 批量获取群成员信息
+  rpc MapGroupMemberInfoByGroupIds(MapGroupMemberInfoByGroupIdsReq) returns (MapGroupMemberInfoByIdsResp) {}
   //EditGroupInfo 编辑群信息
   rpc EditGroupInfo(EditGroupInfoReq) returns (EditGroupInfoResp) {}
   //TransferGroupOwner 转让群主

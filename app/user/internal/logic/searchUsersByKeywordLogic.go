@@ -34,7 +34,7 @@ func (l *SearchUsersByKeywordLogic) SearchUsersByKeyword(in *pb.SearchUsersByKey
 		_ = xorm.DetailByWhere(l.svcCtx.Mysql(), found, xorm.Where("id = ?", in.Keyword))
 	} else {
 		// 使用昵称查询
-		_ = xorm.DetailByWhere(l.svcCtx.Mysql(), found, xorm.Where("nickname = ?", in.Keyword+"%"))
+		_ = xorm.DetailByWhere(l.svcCtx.Mysql(), found, xorm.Where("nickname LIKE ?", in.Keyword+"%"))
 	}
 	if found.Id == "" {
 		// 没有找到

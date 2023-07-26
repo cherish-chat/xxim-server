@@ -79,5 +79,15 @@ func RegisterRelation(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/relation/deleteBlockUser", route)
 		}
+		//UpdateUserRemarkReq UpdateUserRemarkResp
+		{
+			route := conngateway.Route[*pb.UpdateUserRemarkReq, *pb.UpdateUserRemarkResp]{
+				NewRequest: func() *pb.UpdateUserRemarkReq {
+					return &pb.UpdateUserRemarkReq{}
+				},
+				Do: svcCtx.RelationService().UpdateUserRemark,
+			}
+			conngateway.AddRoute("/v1/relation/updateUserRemark", route)
+		}
 	}
 }

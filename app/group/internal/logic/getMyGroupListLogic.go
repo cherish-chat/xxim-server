@@ -30,6 +30,12 @@ func (l *GetMyGroupListLogic) GetMyGroupList(in *pb.GetMyGroupListReq) (*pb.GetM
 		return l.getMyGroupListDefault(in)
 	} else if in.Opt == pb.GetMyGroupListReq_ONLY_ID {
 		return l.getMyGroupListOnlyId(in)
+	} else if in.Opt == pb.GetMyGroupListReq_WITH_MY_MEMBER_INFO {
+		getMyGroupListResp, err := l.getMyGroupListDefault(in)
+		if err != nil {
+			return &pb.GetMyGroupListResp{}, err
+		}
+		return l.getMyGroupListWithMyMemberInfo(in, getMyGroupListResp)
 	}
 	return &pb.GetMyGroupListResp{}, nil
 }
@@ -92,4 +98,32 @@ func (l *GetMyGroupListLogic) getMyGroupListOnlyId(in *pb.GetMyGroupListReq) (*p
 	return &pb.GetMyGroupListResp{
 		Ids: validGroupIds,
 	}, nil
+}
+
+func (l *GetMyGroupListLogic) getMyGroupListWithMyMemberInfo(in *pb.GetMyGroupListReq, getMyGroupListResp *pb.GetMyGroupListResp) (*pb.GetMyGroupListResp, error) {
+	var groupIds []string
+	var mapGruopMemberInfoByIdsResp *pb.MapGroupMemberInfoByIdsResp
+	var err error
+	for _, info := range getMyGroupListResp.GroupMap {
+		groupIds = append(groupIds, info.Id)
+	}
+	xtrace.StartFuncSpan(l.ctx, "MapGruopMemberInfoByIds", func(ctx context.Context) {
+		mapGruopMemberInfoByIdsResp, err = NewMapGroupMemberInfoByGroupIdsLogic(ctx, l.svcCtx).MapGroupMemberInfoByGroupIds(&pb.MapGroupMemberInfoByGroupIdsReq{
+			CommonReq: &pb.CommonReq{},
+			GroupIds:  groupIds,
+			MemberId:  in.GetCommonReq().GetUserId(),
+			Opt:       nil,
+		})
+	})
+	if err != nil {
+		l.Errorf("get group list error: %v", err)
+		return &pb.GetMyGroupListResp{}, err
+	}
+	for _, info := range getMyGroupListResp.GroupMap {
+		memberInfo, ok := mapGruopMemberInfoByIdsResp.GroupMemberInfoMap[info.Id]
+		if ok {
+			info.MyMemberInfo = memberInfo
+		}
+	}
+	return getMyGroupListResp, nil
 }

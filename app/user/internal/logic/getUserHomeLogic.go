@@ -35,6 +35,10 @@ func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeRe
 		return &pb.GetUserHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "用户已注销"))}, nil
 	}
 	user := users[0]
+	mapUserRemarkResp, err := l.svcCtx.RelationService().MapUserRemark(l.ctx, &pb.MapUserRemarkReq{
+		CommonReq: in.CommonReq,
+		TargetIds: []string{in.Id},
+	})
 	resp := &pb.GetUserHomeResp{
 		Id:        user.Id,
 		Nickname:  user.Nickname,
@@ -45,6 +49,10 @@ func (l *GetUserHomeLogic) GetUserHome(in *pb.GetUserHomeReq) (*pb.GetUserHomeRe
 		Signature: user.InfoMap.Get("signature", l.svcCtx.ConfigMgr.SignatureIfNotSet(l.ctx)),
 		LevelInfo: user.LevelInfo.Pb(),
 		Role:      int32(user.Role),
+		Remark:    "",
+	}
+	if err == nil {
+		resp.Remark, _ = mapUserRemarkResp.RemarkMap[user.Id]
 	}
 	latestConn, err := l.svcCtx.ImService().GetUserLatestConn(l.ctx, &pb.GetUserLatestConnReq{UserId: user.Id})
 	if err != nil {

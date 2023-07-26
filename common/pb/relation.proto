@@ -131,6 +131,7 @@ message GetFriendListReq {
   enum Opt {
     WithBaseInfo = 0; // 带用户的基本信息
     OnlyId = 1; // 只有用户id
+    WithBaseInfoAndRemark = 2; // 带用户的基本信息和备注
   }
   Opt opt = 10;
 }
@@ -139,6 +140,29 @@ message GetFriendListResp {
   CommonResp commonResp = 1;
   repeated string ids = 2;
   map<string, UserBaseInfo> userMap = 3;
+  map<string, string> remarkMap = 4; // key: targetId(userId) value: remark
+}
+
+//UpdateUserRemarkReq 更新好友备注
+message UpdateUserRemarkReq {
+  CommonReq commonReq = 1;
+  string targetId = 2;
+  string remark = 3;
+}
+
+message UpdateUserRemarkResp {
+  CommonResp commonResp = 1;
+}
+
+//MapUserRemarkReq 批量获取好友备注
+message MapUserRemarkReq {
+  CommonReq commonReq = 1;
+  repeated string targetIds = 2;
+}
+
+message MapUserRemarkResp {
+  CommonResp commonResp = 1;
+  map<string, string> remarkMap = 2; // key: targetId(userId) value: remark
 }
 
 // 获取我的好友通知列表
@@ -220,6 +244,8 @@ service relationService {
   rpc DeleteBlockUser(DeleteBlockUserReq) returns (DeleteBlockUserResp) {}
   rpc DeleteFriend(DeleteFriendReq) returns (DeleteFriendResp) {}
   rpc GetFriendList(GetFriendListReq) returns (GetFriendListResp) {}
+  rpc MapUserRemark(MapUserRemarkReq) returns (MapUserRemarkResp) {}
+  rpc UpdateUserRemark(UpdateUserRemarkReq) returns (UpdateUserRemarkResp) {}
   rpc GetMyFriendEventList(GetMyFriendEventListReq) returns (GetMyFriendEventListResp) {}
 
   rpc GetFriendListByUserId(GetFriendListByUserIdReq) returns (GetFriendListByUserIdResp) {}

@@ -43,7 +43,7 @@ var httpRouteMap = map[string]gin.HandlerFunc{}
 
 func AddRoute[REQ IReq, RESP IResp](method string, route Route[REQ, RESP]) {
 	routeMap[method] = func(ctx context.Context, c *types.UserConn, body IBody) (*pb.ResponseBody, error) {
-		return OnReceiveCustom(ctx, method, c, body, route.NewRequest(), route.Do, route.Callback)
+		return OnReceiveCustom(ctx, method, c, body, route.NewRequest, route.Do, route.Callback)
 	}
 	httpRouteMap[method] = func(ctx *gin.Context) {
 		commonResp, err := OnHttpReceiveCustom(ctx, route.NewRequest(), route.Do)

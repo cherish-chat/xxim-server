@@ -265,3 +265,7 @@ func (x *SendSmsReq) SetCommonReq(r *CommonReq) {
 func (x *VerifySmsReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *UpdateUserRemarkReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}

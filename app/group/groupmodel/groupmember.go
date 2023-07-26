@@ -178,6 +178,34 @@ func ListGroupMemberFromMysql(ctx context.Context, tx *gorm.DB, rc *redis.Redis,
 	return groupMembers, nil
 }
 
+func ListGroupMemberFromMysqlByGroupIds(ctx context.Context, tx *gorm.DB, rc *redis.Redis, memberId string, groupIds []string) ([]*GroupMember, error) {
+	var groupMembers []*GroupMember
+	err := tx.WithContext(ctx).Model(&GroupMember{}).Where("groupId in (?) and userId = ?", groupIds, memberId).
+		Find(&groupMembers).Error
+	if err != nil {
+		return nil, err
+	}
+	// 放到redis string中
+	foundMap := make(map[string]bool)
+	for _, groupMember := range groupMembers {
+		err = rc.SetexCtx(ctx, rediskey.GroupMemberKey(groupMember.GroupId, memberId), string(groupMember.Bytes()), rediskey.GroupMemberExpire())
+		if err != nil {
+			logx.Errorf("set group member error: %v", err)
+		}
+		foundMap[groupMember.UserId] = true
+	}
+	// 未找到的放到redis中
+	for _, groupId := range groupIds {
+		if _, found := foundMap[groupId]; !found {
+			err = rc.SetexCtx(ctx, rediskey.GroupMemberKey(groupId, memberId), xredis.NotFound, rediskey.GroupMemberExpire())
+			if err != nil {
+				logx.Errorf("set group member error: %v", err)
+			}
+		}
+	}
+	return groupMembers, nil
+}
+
 func ListGroupMemberFromRedis(ctx context.Context, tx *gorm.DB, rc *redis.Redis, groupId string, ids []string) ([]*GroupMember, error) {
 	if len(ids) == 0 {
 		return nil, nil
@@ -220,6 +248,59 @@ func ListGroupMemberFromRedis(ctx context.Context, tx *gorm.DB, rc *redis.Redis,
 	// 从mysql中查询
 	if len(notFoundIds) > 0 {
 		mysqlGroups, err := ListGroupMemberFromMysql(ctx, tx, rc, groupId, notFoundIds)
+		if err != nil {
+			return nil, err
+		}
+		for _, group := range mysqlGroups {
+			models = append(models, group)
+		}
+	}
+	// 返回
+	return models, nil
+}
+
+func ListGroupMemberFromRedisByGroupIds(ctx context.Context, tx *gorm.DB, rc *redis.Redis, memberId string, groupIds []string) ([]*GroupMember, error) {
+	if len(groupIds) == 0 {
+		return nil, nil
+	}
+	// mget
+	models := make([]*GroupMember, 0)
+	keys := make([]string, 0)
+	for _, groupId := range groupIds {
+		keys = append(keys, rediskey.GroupMemberKey(groupId, memberId))
+	}
+	val, err := rc.MgetCtx(ctx, keys...)
+	if err != nil {
+		return nil, err
+	}
+	foundMap := make(map[string]bool)
+	realNotFoundMap := make(map[string]bool)
+	for _, v := range val {
+		// 是否为占位符
+		if v == xredis.NotFound {
+			// 真的不存在
+			realNotFoundMap[v] = true
+			continue
+		}
+		if v == "" {
+			continue
+		}
+		// 反序列化
+		model := GroupMemberFromBytes([]byte(v))
+		models = append(models, model)
+		foundMap[model.UserId] = true
+	}
+	var notFoundIds []string
+	for _, id := range groupIds {
+		if _, found := foundMap[id]; !found {
+			if _, realNotFound := realNotFoundMap[id]; !realNotFound {
+				notFoundIds = append(notFoundIds, id)
+			}
+		}
+	}
+	// 从mysql中查询
+	if len(notFoundIds) > 0 {
+		mysqlGroups, err := ListGroupMemberFromMysqlByGroupIds(ctx, tx, rc, memberId, notFoundIds)
 		if err != nil {
 			return nil, err
 		}

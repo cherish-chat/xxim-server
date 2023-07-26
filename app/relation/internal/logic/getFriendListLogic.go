@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/cherish-chat/xxim-server/app/relation/relationmodel"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 
 	"github.com/cherish-chat/xxim-server/app/relation/internal/svc"
 	"github.com/cherish-chat/xxim-server/common/pb"
@@ -29,7 +30,14 @@ func (l *GetFriendListLogic) GetFriendList(in *pb.GetFriendListReq) (*pb.GetFrie
 		return l.getFriendListWithBaseInfo(in)
 	} else if in.Opt == pb.GetFriendListReq_OnlyId {
 		return l.getFriendListOnlyId(in)
+	} else if in.Opt == pb.GetFriendListReq_WithBaseInfoAndRemark {
+		getFriendListResp, err := l.getFriendListWithBaseInfo(in)
+		if err != nil {
+			return getFriendListResp, err
+		}
+		return l.getFriendListWithRemark(in, getFriendListResp)
 	}
+	logx.Errorf("get friend list error: opt is not support: %v", in.Opt)
 	return &pb.GetFriendListResp{}, nil
 }
 
@@ -62,4 +70,25 @@ func (l *GetFriendListLogic) getFriendListOnlyId(in *pb.GetFriendListReq) (*pb.G
 	}
 	myFriendList = append(myFriendList, in.CommonReq.UserId)
 	return &pb.GetFriendListResp{CommonResp: pb.NewSuccessResp(), Ids: myFriendList}, nil
+}
+
+func (l *GetFriendListLogic) getFriendListWithRemark(in *pb.GetFriendListReq, getFriendListResp *pb.GetFriendListResp) (*pb.GetFriendListResp, error) {
+	var targetIds []string
+	for _, user := range getFriendListResp.UserMap {
+		targetIds = append(targetIds, user.Id)
+	}
+	var mapUserRemarkResp *pb.MapUserRemarkResp
+	var err error
+	xtrace.StartFuncSpan(l.ctx, "MapUserRemark", func(ctx context.Context) {
+		mapUserRemarkResp, err = NewMapUserRemarkLogic(ctx, l.svcCtx).MapUserRemark(&pb.MapUserRemarkReq{
+			CommonReq: in.CommonReq,
+			TargetIds: targetIds,
+		})
+	})
+	if err != nil {
+		l.Errorf("get friend list error: %v", err)
+		return &pb.GetFriendListResp{CommonResp: pb.NewRetryErrorResp()}, err
+	}
+	getFriendListResp.RemarkMap = mapUserRemarkResp.RemarkMap
+	return getFriendListResp, nil
 }

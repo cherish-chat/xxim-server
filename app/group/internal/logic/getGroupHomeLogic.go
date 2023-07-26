@@ -47,14 +47,17 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 	}
 	group := groupmodel.GroupFromBytes(bytes)
 	return &pb.GetGroupHomeResp{
-		GroupId:          group.Id,
-		Name:             group.Name,
-		Avatar:           group.Avatar,
-		CreatedAt:        utils.TimeFormat(group.CreateTime),
-		MemberCount:      int32(group.MemberCount),
-		Introduction:     group.Description,
-		Owner:            group.Owner,
-		MemberStatistics: nil,
-		DismissTime:      group.DismissTime,
+		CommonResp:         pb.NewSuccessResp(),
+		GroupId:            group.Id,
+		Name:               group.Name,
+		Avatar:             group.Avatar,
+		CreatedAt:          utils.TimeFormat(group.CreateTime),
+		MemberCount:        int32(group.MemberCount),
+		Introduction:       group.Description,
+		Owner:              group.Owner,
+		DismissTime:        group.DismissTime,
+		AllMute:            group.AllMute,
+		MemberCanAddFriend: group.MemberCanAddFriend,
+		MemberStatistics:   nil,
 	}, nil
 }

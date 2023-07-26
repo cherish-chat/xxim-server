@@ -47,6 +47,13 @@ func (l *EditGroupInfoLogic) EditGroupInfo(in *pb.EditGroupInfoReq) (*pb.EditGro
 	if in.Introduction != nil {
 		updateMap["description"] = *in.Introduction
 	}
+	if in.AllMute != nil {
+		updateMap["allMute"] = *in.AllMute
+		updateMap["allMuterType"] = pb.AllMuterType_NORMAL
+	}
+	if in.MemberCanAddFriend != nil {
+		updateMap["memberCanAddFriend"] = *in.MemberCanAddFriend
+	}
 	if len(updateMap) == 0 {
 		return &pb.EditGroupInfoResp{CommonResp: pb.NewSuccessResp()}, nil
 	}

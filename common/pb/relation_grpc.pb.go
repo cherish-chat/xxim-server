@@ -32,6 +32,8 @@ type RelationServiceClient interface {
 	DeleteBlockUser(ctx context.Context, in *DeleteBlockUserReq, opts ...grpc.CallOption) (*DeleteBlockUserResp, error)
 	DeleteFriend(ctx context.Context, in *DeleteFriendReq, opts ...grpc.CallOption) (*DeleteFriendResp, error)
 	GetFriendList(ctx context.Context, in *GetFriendListReq, opts ...grpc.CallOption) (*GetFriendListResp, error)
+	MapUserRemark(ctx context.Context, in *MapUserRemarkReq, opts ...grpc.CallOption) (*MapUserRemarkResp, error)
+	UpdateUserRemark(ctx context.Context, in *UpdateUserRemarkReq, opts ...grpc.CallOption) (*UpdateUserRemarkResp, error)
 	GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(ctx context.Context, in *GetFriendListByUserIdReq, opts ...grpc.CallOption) (*GetFriendListByUserIdResp, error)
 	BatchMakeFriend(ctx context.Context, in *BatchMakeFriendReq, opts ...grpc.CallOption) (*BatchMakeFriendResp, error)
@@ -135,6 +137,24 @@ func (c *relationServiceClient) GetFriendList(ctx context.Context, in *GetFriend
 	return out, nil
 }
 
+func (c *relationServiceClient) MapUserRemark(ctx context.Context, in *MapUserRemarkReq, opts ...grpc.CallOption) (*MapUserRemarkResp, error) {
+	out := new(MapUserRemarkResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/MapUserRemark", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *relationServiceClient) UpdateUserRemark(ctx context.Context, in *UpdateUserRemarkReq, opts ...grpc.CallOption) (*UpdateUserRemarkResp, error) {
+	out := new(UpdateUserRemarkResp)
+	err := c.cc.Invoke(ctx, "/pb.relationService/UpdateUserRemark", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *relationServiceClient) GetMyFriendEventList(ctx context.Context, in *GetMyFriendEventListReq, opts ...grpc.CallOption) (*GetMyFriendEventListResp, error) {
 	out := new(GetMyFriendEventListResp)
 	err := c.cc.Invoke(ctx, "/pb.relationService/GetMyFriendEventList", in, out, opts...)
@@ -176,6 +196,8 @@ type RelationServiceServer interface {
 	DeleteBlockUser(context.Context, *DeleteBlockUserReq) (*DeleteBlockUserResp, error)
 	DeleteFriend(context.Context, *DeleteFriendReq) (*DeleteFriendResp, error)
 	GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error)
+	MapUserRemark(context.Context, *MapUserRemarkReq) (*MapUserRemarkResp, error)
+	UpdateUserRemark(context.Context, *UpdateUserRemarkReq) (*UpdateUserRemarkResp, error)
 	GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error)
 	GetFriendListByUserId(context.Context, *GetFriendListByUserIdReq) (*GetFriendListByUserIdResp, error)
 	BatchMakeFriend(context.Context, *BatchMakeFriendReq) (*BatchMakeFriendResp, error)
@@ -215,6 +237,12 @@ func (UnimplementedRelationServiceServer) DeleteFriend(context.Context, *DeleteF
 }
 func (UnimplementedRelationServiceServer) GetFriendList(context.Context, *GetFriendListReq) (*GetFriendListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendList not implemented")
+}
+func (UnimplementedRelationServiceServer) MapUserRemark(context.Context, *MapUserRemarkReq) (*MapUserRemarkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MapUserRemark not implemented")
+}
+func (UnimplementedRelationServiceServer) UpdateUserRemark(context.Context, *UpdateUserRemarkReq) (*UpdateUserRemarkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserRemark not implemented")
 }
 func (UnimplementedRelationServiceServer) GetMyFriendEventList(context.Context, *GetMyFriendEventListReq) (*GetMyFriendEventListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyFriendEventList not implemented")
@@ -418,6 +446,42 @@ func _RelationService_GetFriendList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RelationService_MapUserRemark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MapUserRemarkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).MapUserRemark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/MapUserRemark",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).MapUserRemark(ctx, req.(*MapUserRemarkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RelationService_UpdateUserRemark_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRemarkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RelationServiceServer).UpdateUserRemark(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.relationService/UpdateUserRemark",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RelationServiceServer).UpdateUserRemark(ctx, req.(*UpdateUserRemarkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RelationService_GetMyFriendEventList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyFriendEventListReq)
 	if err := dec(in); err != nil {
@@ -518,6 +582,14 @@ var RelationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendList",
 			Handler:    _RelationService_GetFriendList_Handler,
+		},
+		{
+			MethodName: "MapUserRemark",
+			Handler:    _RelationService_MapUserRemark_Handler,
+		},
+		{
+			MethodName: "UpdateUserRemark",
+			Handler:    _RelationService_UpdateUserRemark_Handler,
 		},
 		{
 			MethodName: "GetMyFriendEventList",
