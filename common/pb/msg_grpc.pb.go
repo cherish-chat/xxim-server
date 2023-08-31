@@ -54,6 +54,12 @@ type MsgServiceClient interface {
 	EditMsg(ctx context.Context, in *EditMsgReq, opts ...grpc.CallOption) (*EditMsgResp, error)
 	//FlushShieldWordTireTree 刷新屏蔽词
 	FlushShieldWordTireTree(ctx context.Context, in *FlushShieldWordTireTreeReq, opts ...grpc.CallOption) (*FlushShieldWordTireTreeResp, error)
+	//SendRedPacket 发红包
+	SendRedPacket(ctx context.Context, in *SendRedPacketReq, opts ...grpc.CallOption) (*SendRedPacketResp, error)
+	//ReceiveRedPacket 领取红包
+	ReceiveRedPacket(ctx context.Context, in *ReceiveRedPacketReq, opts ...grpc.CallOption) (*ReceiveRedPacketResp, error)
+	//GetRedPacketDetail 获取红包详情
+	GetRedPacketDetail(ctx context.Context, in *GetRedPacketDetailReq, opts ...grpc.CallOption) (*GetRedPacketDetailResp, error)
 }
 
 type msgServiceClient struct {
@@ -235,6 +241,33 @@ func (c *msgServiceClient) FlushShieldWordTireTree(ctx context.Context, in *Flus
 	return out, nil
 }
 
+func (c *msgServiceClient) SendRedPacket(ctx context.Context, in *SendRedPacketReq, opts ...grpc.CallOption) (*SendRedPacketResp, error) {
+	out := new(SendRedPacketResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/SendRedPacket", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) ReceiveRedPacket(ctx context.Context, in *ReceiveRedPacketReq, opts ...grpc.CallOption) (*ReceiveRedPacketResp, error) {
+	out := new(ReceiveRedPacketResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/ReceiveRedPacket", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgServiceClient) GetRedPacketDetail(ctx context.Context, in *GetRedPacketDetailReq, opts ...grpc.CallOption) (*GetRedPacketDetailResp, error) {
+	out := new(GetRedPacketDetailResp)
+	err := c.cc.Invoke(ctx, "/pb.msgService/GetRedPacketDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServiceServer is the server API for MsgService service.
 // All implementations must embed UnimplementedMsgServiceServer
 // for forward compatibility
@@ -271,6 +304,12 @@ type MsgServiceServer interface {
 	EditMsg(context.Context, *EditMsgReq) (*EditMsgResp, error)
 	//FlushShieldWordTireTree 刷新屏蔽词
 	FlushShieldWordTireTree(context.Context, *FlushShieldWordTireTreeReq) (*FlushShieldWordTireTreeResp, error)
+	//SendRedPacket 发红包
+	SendRedPacket(context.Context, *SendRedPacketReq) (*SendRedPacketResp, error)
+	//ReceiveRedPacket 领取红包
+	ReceiveRedPacket(context.Context, *ReceiveRedPacketReq) (*ReceiveRedPacketResp, error)
+	//GetRedPacketDetail 获取红包详情
+	GetRedPacketDetail(context.Context, *GetRedPacketDetailReq) (*GetRedPacketDetailResp, error)
 	mustEmbedUnimplementedMsgServiceServer()
 }
 
@@ -334,6 +373,15 @@ func (UnimplementedMsgServiceServer) EditMsg(context.Context, *EditMsgReq) (*Edi
 }
 func (UnimplementedMsgServiceServer) FlushShieldWordTireTree(context.Context, *FlushShieldWordTireTreeReq) (*FlushShieldWordTireTreeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FlushShieldWordTireTree not implemented")
+}
+func (UnimplementedMsgServiceServer) SendRedPacket(context.Context, *SendRedPacketReq) (*SendRedPacketResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendRedPacket not implemented")
+}
+func (UnimplementedMsgServiceServer) ReceiveRedPacket(context.Context, *ReceiveRedPacketReq) (*ReceiveRedPacketResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReceiveRedPacket not implemented")
+}
+func (UnimplementedMsgServiceServer) GetRedPacketDetail(context.Context, *GetRedPacketDetailReq) (*GetRedPacketDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRedPacketDetail not implemented")
 }
 func (UnimplementedMsgServiceServer) mustEmbedUnimplementedMsgServiceServer() {}
 
@@ -690,6 +738,60 @@ func _MsgService_FlushShieldWordTireTree_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MsgService_SendRedPacket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendRedPacketReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).SendRedPacket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/SendRedPacket",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).SendRedPacket(ctx, req.(*SendRedPacketReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_ReceiveRedPacket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReceiveRedPacketReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).ReceiveRedPacket(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/ReceiveRedPacket",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).ReceiveRedPacket(ctx, req.(*ReceiveRedPacketReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MsgService_GetRedPacketDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRedPacketDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServiceServer).GetRedPacketDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.msgService/GetRedPacketDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServiceServer).GetRedPacketDetail(ctx, req.(*GetRedPacketDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MsgService_ServiceDesc is the grpc.ServiceDesc for MsgService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -772,6 +874,18 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FlushShieldWordTireTree",
 			Handler:    _MsgService_FlushShieldWordTireTree_Handler,
+		},
+		{
+			MethodName: "SendRedPacket",
+			Handler:    _MsgService_SendRedPacket_Handler,
+		},
+		{
+			MethodName: "ReceiveRedPacket",
+			Handler:    _MsgService_ReceiveRedPacket_Handler,
+		},
+		{
+			MethodName: "GetRedPacketDetail",
+			Handler:    _MsgService_GetRedPacketDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -182,5 +182,15 @@ func RegisterUser(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/user/white/recoverAccount", route)
 		}
+		//GetUserWalletReq GetUserWalletResp
+		{
+			route := conngateway.Route[*pb.GetUserWalletReq, *pb.GetUserWalletResp]{
+				NewRequest: func() *pb.GetUserWalletReq {
+					return &pb.GetUserWalletReq{}
+				},
+				Do: svcCtx.UserService().GetUserWallet,
+			}
+			conngateway.AddRoute("/v1/user/getUserWallet", route)
+		}
 	}
 }

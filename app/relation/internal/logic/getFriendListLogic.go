@@ -27,15 +27,39 @@ func NewGetFriendListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetFriendListLogic) GetFriendList(in *pb.GetFriendListReq) (*pb.GetFriendListResp, error) {
 	if in.Opt == pb.GetFriendListReq_WithBaseInfo {
-		return l.getFriendListWithBaseInfo(in)
+		resp, err := l.getFriendListWithBaseInfo(in)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		} else {
+			return resp, err
+		}
 	} else if in.Opt == pb.GetFriendListReq_OnlyId {
-		return l.getFriendListOnlyId(in)
+		resp, err := l.getFriendListOnlyId(in)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		} else {
+			return resp, err
+		}
 	} else if in.Opt == pb.GetFriendListReq_WithBaseInfoAndRemark {
 		getFriendListResp, err := l.getFriendListWithBaseInfo(in)
 		if err != nil {
 			return getFriendListResp, err
 		}
-		return l.getFriendListWithRemark(in, getFriendListResp)
+		resp, err := l.getFriendListWithRemark(in, getFriendListResp)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		} else {
+			return resp, err
+		}
 	}
 	logx.Errorf("get friend list error: opt is not support: %v", in.Opt)
 	return &pb.GetFriendListResp{}, nil
@@ -91,4 +115,31 @@ func (l *GetFriendListLogic) getFriendListWithRemark(in *pb.GetFriendListReq, ge
 	}
 	getFriendListResp.RemarkMap = mapUserRemarkResp.RemarkMap
 	return getFriendListResp, nil
+}
+
+func (l *GetFriendListLogic) withConvSetting(in *pb.GetFriendListReq, resp *pb.GetFriendListResp) (*pb.GetFriendListResp, error) {
+	convIds := make([]string, 0)
+	for _, userId := range resp.Ids {
+		convIds = append(convIds, pb.SingleConvId(userId, in.GetCommonReq().GetUserId()))
+	}
+	resp.ConvSettingMap = make(map[string]*pb.ConvSetting)
+	resp.ConvSetting2Map = make(map[string]*pb.ConvSettingProto2)
+	if len(convIds) == 0 {
+		return resp, nil
+	}
+	getConvSettingResp, err := l.svcCtx.ImService().GetConvSetting(l.ctx, &pb.GetConvSettingReq{
+		CommonReq: in.GetCommonReq(),
+		ConvIds:   convIds,
+	})
+	if err != nil {
+		l.Errorf("GetConvSetting err: %v", err)
+		return resp, err
+	}
+	for _, setting := range getConvSettingResp.ConvSettings {
+		resp.ConvSettingMap[setting.ConvId] = setting
+	}
+	for _, setting := range getConvSettingResp.ConvSetting2S {
+		resp.ConvSetting2Map[setting.ConvId] = setting
+	}
+	return resp, nil
 }

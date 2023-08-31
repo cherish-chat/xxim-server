@@ -74,18 +74,22 @@ func (l *GetConvSettingLogic) GetConvSetting(in *pb.GetConvSettingReq) (*pb.GetC
 		foundModels = append(foundModels, models...)
 	}
 	var resp []*pb.ConvSetting
+	var resp2 []*pb.ConvSettingProto2
 	var respMap = make(map[string]*pb.ConvSetting)
 	for _, model := range foundModels {
 		resp = append(resp, model.ToProto())
+		resp2 = append(resp2, model.ToProto2())
 		respMap[model.ConvId] = model.ToProto()
 	}
 	for _, convId := range in.ConvIds {
 		if _, ok := respMap[convId]; !ok {
 			resp = append(resp, immodel.DefaultConvSetting(in.CommonReq.UserId, convId).ToProto())
+			resp2 = append(resp2, immodel.DefaultConvSetting(in.CommonReq.UserId, convId).ToProto2())
 		}
 	}
 	return &pb.GetConvSettingResp{
-		ConvSettings: resp,
+		ConvSettings:  resp,
+		ConvSetting2S: resp2,
 	}, nil
 }
 

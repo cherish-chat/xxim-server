@@ -29,6 +29,9 @@ func NewSendMsgListAsyncLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *SendMsgListAsyncLogic) check(in *pb.SendMsgListReq) (*pb.SendMsgListResp, error) {
+	if in.GetCommonReq().GetPlatform() == "system" {
+		return &pb.SendMsgListResp{CommonResp: pb.NewSuccessResp()}, nil
+	}
 	for _, msgData := range in.MsgDataList {
 		// 检查消息类型
 		switch pb.ContentType(msgData.ContentType) {

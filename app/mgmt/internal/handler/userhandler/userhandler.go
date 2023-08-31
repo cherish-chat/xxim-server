@@ -85,6 +85,12 @@ func (r *UserHandler) Register(g *gin.RouterGroup) {
 		group.POST("/batch/create/zombie", r.batchCreateZombie)
 	}
 	{
+		// Wallet 钱包
+		group.POST("/get/wallet/detail", r.getWalletDetail)
+		// 充值
+		group.POST("/recharge/wallet", r.rechargeWallet)
+	}
+	{
 		// LoginRecord 登录记录
 		// 列表
 		group.POST("/get/loginrecord/list/all", r.getAllLoginRecord)

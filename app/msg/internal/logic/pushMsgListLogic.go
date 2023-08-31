@@ -127,7 +127,7 @@ func (l *PushMsgListLogic) batchFindAndPushMsgList(listMap map[string]*pb.MsgDat
 			for uid := range successUserIdMap {
 				successUserIds = append(successUserIds, uid)
 			}
-			l.Debugf("SendMsg successUserIds: %v", successUserIds)
+			l.Debugf("SendMsg toUserIds: %v; successUserIds: %v", userIds, successUserIds)
 			l.offlinePushMsgListSingle(msgDataList, successUserIds)
 		}
 	}

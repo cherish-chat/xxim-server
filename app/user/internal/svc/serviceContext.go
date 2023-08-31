@@ -51,6 +51,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		&usermodel.UserRecycleBin{},
 		&usermodel.StatusRecord{},
 		&usermodel.ReportRecord{},
+		&usermodel.UserWallet{},
+		&usermodel.WalletTransaction{},
 	)
 	return s
 }

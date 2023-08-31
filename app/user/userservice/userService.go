@@ -73,6 +73,8 @@ type (
 	GetUserModelDetailResp                = pb.GetUserModelDetailResp
 	GetUserSettingsReq                    = pb.GetUserSettingsReq
 	GetUserSettingsResp                   = pb.GetUserSettingsResp
+	GetUserWalletReq                      = pb.GetUserWalletReq
+	GetUserWalletResp                     = pb.GetUserWalletResp
 	LevelInfo                             = pb.LevelInfo
 	LoginRecord                           = pb.LoginRecord
 	LoginReq                              = pb.LoginReq
@@ -119,10 +121,13 @@ type (
 	UserLoginRecord                       = pb.UserLoginRecord
 	UserModel                             = pb.UserModel
 	UserSetting                           = pb.UserSetting
+	UserWallet                            = pb.UserWallet
 	VerifyCaptchaCodeReq                  = pb.VerifyCaptchaCodeReq
 	VerifyCaptchaCodeResp                 = pb.VerifyCaptchaCodeResp
 	VerifySmsReq                          = pb.VerifySmsReq
 	VerifySmsResp                         = pb.VerifySmsResp
+	WalletTransactionReq                  = pb.WalletTransactionReq
+	WalletTransactionResp                 = pb.WalletTransactionResp
 
 	UserService interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -177,6 +182,8 @@ type (
 		BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 		DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
 		RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error)
+		GetUserWallet(ctx context.Context, in *GetUserWalletReq, opts ...grpc.CallOption) (*GetUserWalletResp, error)
+		WalletTransaction(ctx context.Context, in *WalletTransactionReq, opts ...grpc.CallOption) (*WalletTransactionResp, error)
 	}
 
 	defaultUserService struct {
@@ -440,4 +447,14 @@ func (m *defaultUserService) DestroyAccount(ctx context.Context, in *DestroyAcco
 func (m *defaultUserService) RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error) {
 	client := pb.NewUserServiceClient(m.cli.Conn())
 	return client.RecoverAccount(ctx, in, opts...)
+}
+
+func (m *defaultUserService) GetUserWallet(ctx context.Context, in *GetUserWalletReq, opts ...grpc.CallOption) (*GetUserWalletResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.GetUserWallet(ctx, in, opts...)
+}
+
+func (m *defaultUserService) WalletTransaction(ctx context.Context, in *WalletTransactionReq, opts ...grpc.CallOption) (*WalletTransactionResp, error) {
+	client := pb.NewUserServiceClient(m.cli.Conn())
+	return client.WalletTransaction(ctx, in, opts...)
 }

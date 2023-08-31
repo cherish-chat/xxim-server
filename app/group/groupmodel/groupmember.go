@@ -321,6 +321,7 @@ func FlushGroupMemberCache(ctx context.Context, rc *redis.Redis, groupId string,
 		keys = append(keys, rediskey.GroupMemberKey(groupId, userId))
 	}
 	_, err := rc.DelCtx(ctx, keys...)
+	_ = FlushGroupMemberListCache(ctx, rc, groupId)
 	return err
 }
 

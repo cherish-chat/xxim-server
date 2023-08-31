@@ -14,4 +14,7 @@ func (s *MsgServiceServer) Start() {
 		l := logic.NewHttpLogic(s.svcCtx)
 		go l.Start()
 	}
+	{
+		go logic.NewTimerRedPacketLogic(s.svcCtx).Start()
+	}
 }

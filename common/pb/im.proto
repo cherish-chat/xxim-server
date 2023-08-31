@@ -103,10 +103,33 @@ message ConvSetting {
   optional string chatBg = 10;
 }
 
+message ConvSettingProto2 {
+  string userId = 1;
+  string convId = 2;
+  // 置顶
+  int32 isTop = 3; // 0 未设置 1 true 2 false
+  // 设为免打扰
+  int32 isDisturb = 4;
+  // 消息通知设置 （当免打扰时，此设置无效）
+  // 通知显示消息预览
+  int32 notifyPreview = 5;
+  // 通知声音
+  int32 notifySound = 6;
+  // 通知自定义声音
+  string notifyCustomSound = 7;
+  // 通知震动
+  int32 notifyVibrate = 8;
+  // 屏蔽消息
+  int32 isShield = 9;
+  // 聊天背景
+  string chatBg = 10;
+}
+
 //UpdateConvSettingReq 更新会话设置
 message UpdateConvSettingReq {
   CommonReq commonReq = 1;
   ConvSetting convSetting = 2;
+  ConvSettingProto2 convSetting2 = 3;
 }
 
 //UpdateConvSettingResp 更新会话设置
@@ -124,6 +147,7 @@ message GetConvSettingReq {
 message GetConvSettingResp {
   CommonResp commonResp = 1;
   repeated ConvSetting convSettings = 2;
+  repeated ConvSettingProto2 convSetting2s = 3;
 }
 
 // TranslateTextReq 翻译文本

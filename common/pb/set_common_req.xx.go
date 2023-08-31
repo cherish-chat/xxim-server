@@ -269,3 +269,41 @@ func (x *VerifySmsReq) SetCommonReq(r *CommonReq) {
 func (x *UpdateUserRemarkReq) SetCommonReq(r *CommonReq) {
 	x.CommonReq = r
 }
+
+func (x *ResetGroupInfoReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetUserWalletReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *SendRedPacketReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *ReceiveRedPacketReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *GetRedPacketDetailReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *BanGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *UnbanGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *SearchGroupMemberReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+func (x *SetGroupMemberRoleReq) SetCommonReq(r *CommonReq) {
+	x.CommonReq = r
+}
+
+type ResetGroupInfoResp = EditGroupInfoResp

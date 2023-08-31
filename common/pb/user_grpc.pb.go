@@ -74,6 +74,8 @@ type UserServiceClient interface {
 	BatchCreateZombieUser(ctx context.Context, in *BatchCreateZombieUserReq, opts ...grpc.CallOption) (*BatchCreateZombieUserResp, error)
 	DestroyAccount(ctx context.Context, in *DestroyAccountReq, opts ...grpc.CallOption) (*DestroyAccountResp, error)
 	RecoverAccount(ctx context.Context, in *RecoverAccountReq, opts ...grpc.CallOption) (*RecoverAccountResp, error)
+	GetUserWallet(ctx context.Context, in *GetUserWalletReq, opts ...grpc.CallOption) (*GetUserWalletResp, error)
+	WalletTransaction(ctx context.Context, in *WalletTransactionReq, opts ...grpc.CallOption) (*WalletTransactionResp, error)
 }
 
 type userServiceClient struct {
@@ -534,6 +536,24 @@ func (c *userServiceClient) RecoverAccount(ctx context.Context, in *RecoverAccou
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserWallet(ctx context.Context, in *GetUserWalletReq, opts ...grpc.CallOption) (*GetUserWalletResp, error) {
+	out := new(GetUserWalletResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/GetUserWallet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) WalletTransaction(ctx context.Context, in *WalletTransactionReq, opts ...grpc.CallOption) (*WalletTransactionResp, error) {
+	out := new(WalletTransactionResp)
+	err := c.cc.Invoke(ctx, "/pb.userService/WalletTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -590,6 +610,8 @@ type UserServiceServer interface {
 	BatchCreateZombieUser(context.Context, *BatchCreateZombieUserReq) (*BatchCreateZombieUserResp, error)
 	DestroyAccount(context.Context, *DestroyAccountReq) (*DestroyAccountResp, error)
 	RecoverAccount(context.Context, *RecoverAccountReq) (*RecoverAccountResp, error)
+	GetUserWallet(context.Context, *GetUserWalletReq) (*GetUserWalletResp, error)
+	WalletTransaction(context.Context, *WalletTransactionReq) (*WalletTransactionResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -746,6 +768,12 @@ func (UnimplementedUserServiceServer) DestroyAccount(context.Context, *DestroyAc
 }
 func (UnimplementedUserServiceServer) RecoverAccount(context.Context, *RecoverAccountReq) (*RecoverAccountResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RecoverAccount not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserWallet(context.Context, *GetUserWalletReq) (*GetUserWalletResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserWallet not implemented")
+}
+func (UnimplementedUserServiceServer) WalletTransaction(context.Context, *WalletTransactionReq) (*WalletTransactionResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WalletTransaction not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -1660,6 +1688,42 @@ func _UserService_RecoverAccount_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserWalletReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/GetUserWallet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserWallet(ctx, req.(*GetUserWalletReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_WalletTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WalletTransactionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).WalletTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.userService/WalletTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).WalletTransaction(ctx, req.(*WalletTransactionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1866,6 +1930,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RecoverAccount",
 			Handler:    _UserService_RecoverAccount_Handler,
+		},
+		{
+			MethodName: "GetUserWallet",
+			Handler:    _UserService_GetUserWallet_Handler,
+		},
+		{
+			MethodName: "WalletTransaction",
+			Handler:    _UserService_WalletTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

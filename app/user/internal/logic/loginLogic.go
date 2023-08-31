@@ -9,7 +9,6 @@ import (
 	"github.com/cherish-chat/xxim-server/common/xjwt"
 	"github.com/cherish-chat/xxim-server/common/xorm"
 	"github.com/cherish-chat/xxim-server/common/xpwd"
-	"github.com/cherish-chat/xxim-server/common/xredis/rediskey"
 	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"go.opentelemetry.io/otel/propagation"
 	"regexp"
@@ -64,14 +63,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	// 用户密码输入错误次数是否超过限制
 	// 获取用户密码输入错误次数
-	val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
-	if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx, in.CommonReq.UserId) {
-		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户名未注册或密码错误"))}, nil
-	}
+	//val, _ := l.svcCtx.Redis().GetCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id))
+	//if utils.AnyToInt64(val) > l.svcCtx.ConfigMgr.UserPasswordErrorMaxCount(l.ctx, in.CommonReq.UserId) {
+	//	return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户名未注册或密码错误"))}, nil
+	//}
 	// 用户存在 判断密码是否正确
 	if !xpwd.VerifyPwd(in.Password, user.Password, user.PasswordSalt) {
 		// 记录用户密码输入错误次数
-		_, _ = l.svcCtx.Redis().IncrbyCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id), 1)
+		//_, _ = l.svcCtx.Redis().IncrbyCtx(l.ctx, rediskey.UserPasswordErrorCountKey(in.Id), 1)
 		return &pb.LoginResp{CommonResp: pb.NewAlertErrorResp(l.svcCtx.T(in.CommonReq.Language, "登录失败"), l.svcCtx.T(in.CommonReq.Language, "用户名未注册或密码错误"))}, nil
 	}
 	// LoginMustCaptchaCode 是否必须要图形验证码

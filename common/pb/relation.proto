@@ -133,6 +133,7 @@ message GetFriendListReq {
     OnlyId = 1; // 只有用户id
     WithBaseInfoAndRemark = 2; // 带用户的基本信息和备注
   }
+  bool withConvSetting = 3;
   Opt opt = 10;
 }
 
@@ -141,6 +142,8 @@ message GetFriendListResp {
   repeated string ids = 2;
   map<string, UserBaseInfo> userMap = 3;
   map<string, string> remarkMap = 4; // key: targetId(userId) value: remark
+  map<string, ConvSetting> convSettingMap = 5; // key: convId
+  map<string, ConvSettingProto2> convSetting2Map = 6; // key: convId
 }
 
 //UpdateUserRemarkReq 更新好友备注

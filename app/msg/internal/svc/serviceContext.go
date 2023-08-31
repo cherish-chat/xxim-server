@@ -45,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	s.I18N = i18n.NewI18N(s.Mysql())
 	s.Mysql().AutoMigrate(
 		msgmodel.Msg{},
+		msgmodel.RedPacket{},
 		xorm.HashKv{},
 	)
 	s.MobPush = mobpush.NewPusher(c.MobPush)

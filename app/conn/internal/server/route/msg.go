@@ -67,4 +67,34 @@ func RegisterMsg(svcCtx *svc.ServiceContext) {
 		}
 		conngateway.AddRoute("/v1/msg/sendEditMsg", route)
 	}
+	//SendRedPacketReq SendRedPacketResp
+	{
+		route := conngateway.Route[*pb.SendRedPacketReq, *pb.SendRedPacketResp]{
+			NewRequest: func() *pb.SendRedPacketReq {
+				return &pb.SendRedPacketReq{}
+			},
+			Do: svcCtx.MsgService().SendRedPacket,
+		}
+		conngateway.AddRoute("/v1/msg/sendRedPacket", route)
+	}
+	//ReceiveRedPacketReq ReceiveRedPacketResp
+	{
+		route := conngateway.Route[*pb.ReceiveRedPacketReq, *pb.ReceiveRedPacketResp]{
+			NewRequest: func() *pb.ReceiveRedPacketReq {
+				return &pb.ReceiveRedPacketReq{}
+			},
+			Do: svcCtx.MsgService().ReceiveRedPacket,
+		}
+		conngateway.AddRoute("/v1/msg/receiveRedPacket", route)
+	}
+	//GetRedPacketDetailReq GetRedPacketDetailResp
+	{
+		route := conngateway.Route[*pb.GetRedPacketDetailReq, *pb.GetRedPacketDetailResp]{
+			NewRequest: func() *pb.GetRedPacketDetailReq {
+				return &pb.GetRedPacketDetailReq{}
+			},
+			Do: svcCtx.MsgService().GetRedPacketDetail,
+		}
+		conngateway.AddRoute("/v1/msg/getRedPacketDetail", route)
+	}
 }

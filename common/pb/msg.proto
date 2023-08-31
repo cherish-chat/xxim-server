@@ -230,6 +230,89 @@ message FlushShieldWordTireTreeResp {
   CommonResp commonResp = 1;
 }
 
+enum RedPacketType {
+  //普通红包 平均分配
+  Normal_RedPacket = 0;
+  //拼手气红包
+  Random_RedPacket = 1;
+}
+
+enum RedPacketStatus {
+  //未领取
+  Not_Received = 0;
+  //已领取部分
+  Received_Part = 1;
+  //已领取完
+  Received_All = 2;
+  //已过期
+  Expired = 3;
+}
+
+message RedPacket {
+  string redPacketId = 1;
+  string convId = 2;
+  string title = 3;
+  //红包类型
+  RedPacketType redPacketType = 4;
+  //红包个数
+  int32 count = 5;
+  //红包总金额 单位分 只有RedPacketType=Random_RedPacket时才有用
+  int64 totalAmount = 6;
+  //单个红包金额 单位分 只有RedPacketType=Normal_RedPacket时才有用
+  int64 singleAmount = 7;
+  //红包封面
+  string cover = 8;
+  //红包领取状态
+  RedPacketStatus redPacketStatus = 9;
+  //红包领取者
+  message Receiver {
+    string userId = 1;
+    int64 amount = 2;
+    int64 receiveTime = 3;
+    string avatar = 4;
+    string nickName = 5;
+  }
+  repeated Receiver receiverList = 10;
+  //红包发送时间
+  int64 sendTime = 11;
+  //红包过期时间
+  int64 expireTime = 12;
+}
+
+//SendRedPacketReq 发红包
+message SendRedPacketReq {
+  CommonReq commonReq = 1;
+  RedPacket redPacket = 2;
+}
+
+message SendRedPacketResp {
+  CommonResp commonResp = 1;
+}
+
+//ReceiveRedPacketReq 领取红包
+message ReceiveRedPacketReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  string redPacketId = 3;
+  string serverMsgId = 4;
+}
+
+message ReceiveRedPacketResp {
+  CommonResp commonResp = 1;
+}
+
+//GetRedPacketDetailReq 获取红包详情
+message GetRedPacketDetailReq {
+  CommonReq commonReq = 1;
+  string convId = 2;
+  string redPacketId = 3;
+}
+
+message GetRedPacketDetailResp {
+  CommonResp commonResp = 1;
+  RedPacket redPacket = 2;
+}
+
 service msgService {
   rpc InsertMsgDataList(MsgDataList) returns (MsgDataList) {}
   rpc SendMsgListSync(SendMsgListReq) returns (SendMsgListResp) {} // 同步发送消息 成功后立刻能拉取到消息
@@ -265,4 +348,11 @@ service msgService {
 
   //FlushShieldWordTireTree 刷新屏蔽词
   rpc FlushShieldWordTireTree(FlushShieldWordTireTreeReq) returns (FlushShieldWordTireTreeResp) {}
+
+  //SendRedPacket 发红包
+  rpc SendRedPacket(SendRedPacketReq) returns (SendRedPacketResp) {}
+  //ReceiveRedPacket 领取红包
+  rpc ReceiveRedPacket(ReceiveRedPacketReq) returns (ReceiveRedPacketResp) {}
+  //GetRedPacketDetail 获取红包详情
+  rpc GetRedPacketDetail(GetRedPacketDetailReq) returns (GetRedPacketDetailResp) {}
 }

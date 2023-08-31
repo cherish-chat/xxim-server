@@ -32,7 +32,7 @@ func (l *GetMsgByIdLogic) GetMsgById(in *pb.GetMsgByIdReq) (*pb.GetMsgByIdResp, 
 	if in.ServerMsgId != nil {
 		serverMsgId = *in.ServerMsgId
 		dest := &msgmodel.Msg{}
-		err := l.svcCtx.Mysql().Model(dest).Where("id = ?", serverMsgId).First(dest).Error
+		err := l.svcCtx.Mysql().Model(dest).Table(msgmodel.GetMsgTableNameById(serverMsgId)).Where("id = ?", serverMsgId).First(dest).Error
 		if err != nil {
 			if xorm.RecordNotFound(err) {
 				return &pb.GetMsgByIdResp{}, nil

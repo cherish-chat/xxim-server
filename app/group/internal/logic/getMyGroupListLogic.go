@@ -27,15 +27,36 @@ func NewGetMyGroupListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 // GetMyGroupList 获取我的群聊列表
 func (l *GetMyGroupListLogic) GetMyGroupList(in *pb.GetMyGroupListReq) (*pb.GetMyGroupListResp, error) {
 	if in.Opt == pb.GetMyGroupListReq_DEFAULT {
-		return l.getMyGroupListDefault(in)
+		resp, err := l.getMyGroupListDefault(in)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		}
+		return resp, err
 	} else if in.Opt == pb.GetMyGroupListReq_ONLY_ID {
-		return l.getMyGroupListOnlyId(in)
+		resp, err := l.getMyGroupListOnlyId(in)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		}
+		return resp, err
 	} else if in.Opt == pb.GetMyGroupListReq_WITH_MY_MEMBER_INFO {
 		getMyGroupListResp, err := l.getMyGroupListDefault(in)
 		if err != nil {
 			return &pb.GetMyGroupListResp{}, err
 		}
-		return l.getMyGroupListWithMyMemberInfo(in, getMyGroupListResp)
+		resp, err := l.getMyGroupListWithMyMemberInfo(in, getMyGroupListResp)
+		if err != nil {
+			return resp, err
+		}
+		if in.WithConvSetting {
+			return l.withConvSetting(in, resp)
+		}
+		return resp, err
 	}
 	return &pb.GetMyGroupListResp{}, nil
 }
@@ -126,4 +147,31 @@ func (l *GetMyGroupListLogic) getMyGroupListWithMyMemberInfo(in *pb.GetMyGroupLi
 		}
 	}
 	return getMyGroupListResp, nil
+}
+
+func (l *GetMyGroupListLogic) withConvSetting(in *pb.GetMyGroupListReq, resp *pb.GetMyGroupListResp) (*pb.GetMyGroupListResp, error) {
+	convIds := make([]string, 0)
+	for _, groupId := range resp.Ids {
+		convIds = append(convIds, pb.GroupConvId(groupId))
+	}
+	resp.ConvSettingMap = make(map[string]*pb.ConvSetting)
+	resp.ConvSetting2Map = make(map[string]*pb.ConvSettingProto2)
+	if len(convIds) == 0 {
+		return resp, nil
+	}
+	getConvSettingResp, err := l.svcCtx.ImService().GetConvSetting(l.ctx, &pb.GetConvSettingReq{
+		CommonReq: in.GetCommonReq(),
+		ConvIds:   convIds,
+	})
+	if err != nil {
+		l.Errorf("GetConvSetting err: %v", err)
+		return resp, err
+	}
+	for _, setting := range getConvSettingResp.ConvSettings {
+		resp.ConvSettingMap[setting.ConvId] = setting
+	}
+	for _, setting := range getConvSettingResp.ConvSetting2S {
+		resp.ConvSetting2Map[setting.ConvId] = setting
+	}
+	return resp, nil
 }

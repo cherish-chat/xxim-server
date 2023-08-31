@@ -19,6 +19,7 @@ enum MsgContentType {
   command = 20; // 命令
   richText = 21; // 富文本
   markdown = 22; // markdown
+  redPacket = 23; // 红包
 
   custom = 100; // 自定义消息
 }

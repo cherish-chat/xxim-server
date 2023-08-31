@@ -82,6 +82,7 @@ enum ContentType {
   COMMAND = 20; // 命令
   RICH_TEXT = 21; // 富文本
   MARKDOWN = 22; // markdown
+  RED_PACKET = 23; // 红包
 
   CUSTOM = 100; // 自定义消息
 }
@@ -92,6 +93,8 @@ enum NoticeType {
   READ = 1;
   // 编辑
   EDIT = 2;
+  // 艾特
+  AT = 3;
 }
 
 message IpRegion {

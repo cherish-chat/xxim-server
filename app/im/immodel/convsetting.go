@@ -77,6 +77,21 @@ func (m *ConvSetting) ToProto() *pb.ConvSetting {
 	}
 }
 
+func (m *ConvSetting) ToProto2() *pb.ConvSettingProto2 {
+	return &pb.ConvSettingProto2{
+		ConvId:            m.ConvId,
+		UserId:            m.UserId,
+		IsTop:             int32(utils.If(m.IsTop, 1, 2)),
+		IsDisturb:         int32(utils.If(m.IsDisturb, 1, 2)),
+		NotifyPreview:     int32(utils.If(m.NotifyPreview, 1, 2)),
+		NotifySound:       int32(utils.If(m.NotifySound, 1, 2)),
+		NotifyCustomSound: m.NotifyCustomSound,
+		NotifyVibrate:     int32(utils.If(m.NotifyVibrate, 1, 2)),
+		IsShield:          int32(utils.If(m.IsShield, 1, 2)),
+		ChatBg:            m.ChatBg,
+	}
+}
+
 func (m *ConvSetting) ExpireSeconds() int {
 	return xredis.ExpireMinutes(5)
 }

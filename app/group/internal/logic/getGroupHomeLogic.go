@@ -46,6 +46,38 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 		return &pb.GetGroupHomeResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "群聊不存在"))}, nil
 	}
 	group := groupmodel.GroupFromBytes(bytes)
+	logx.Infof("group: %+v", group)
+	getGroupMemberListResp, err := NewGetGroupMemberListLogic(l.ctx, l.svcCtx).GetGroupMemberList(&pb.GetGroupMemberListReq{
+		CommonReq: in.CommonReq,
+		GroupId:   in.GroupId,
+		Page: &pb.Page{
+			Page: 1,
+			Size: 100,
+		},
+		Filter: &pb.GetGroupMemberListReq_GetGroupMemberListFilter{
+			NoDisturb:  nil,
+			OnlyOwner:  utils.AnyPtr(true),
+			OnlyAdmin:  utils.AnyPtr(true),
+			OnlyMember: nil,
+		},
+		Opt: &pb.GetGroupMemberListReq_GetGroupMemberListOpt{},
+	})
+	if err != nil {
+		l.Errorf("GetGroupMemberList error: %v", err)
+		return nil, err
+	}
+	var admins []*pb.UserBaseInfo
+	for _, info := range getGroupMemberListResp.GetGroupMemberList() {
+		if info.Role == pb.GroupRole_OWNER {
+			admins = append(admins, info.UserBaseInfo)
+		}
+	}
+	for _, info := range getGroupMemberListResp.GetGroupMemberList() {
+		if info.Role == pb.GroupRole_OWNER {
+			continue
+		}
+		admins = append(admins, info.UserBaseInfo)
+	}
 	return &pb.GetGroupHomeResp{
 		CommonResp:         pb.NewSuccessResp(),
 		GroupId:            group.Id,
@@ -59,5 +91,7 @@ func (l *GetGroupHomeLogic) GetGroupHome(in *pb.GetGroupHomeReq) (*pb.GetGroupHo
 		AllMute:            group.AllMute,
 		MemberCanAddFriend: group.MemberCanAddFriend,
 		MemberStatistics:   nil,
+		Admins:             admins,
+		CanAddMember:       group.CanAddMember,
 	}, nil
 }

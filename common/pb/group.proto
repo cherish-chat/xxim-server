@@ -64,11 +64,15 @@ message GetGroupHomeResp {
   // 群主id
   string owner = 8;
   int64 dismissTime = 9; // 解散时间 如果为0表示未解散 否则进入会话详情应该提示群已解散
+  // 群管理信息
+  repeated UserBaseInfo admins = 10;
 
   // 群禁言
   bool allMute = 11;
   // 群禁止加好友
   bool memberCanAddFriend = 12;
+  // 群禁止再加入新成员
+  bool canAddMember = 13;
 
   // 成员统计
   message MemberStatistics {
@@ -192,6 +196,68 @@ message SetGroupMemberInfoResp {
   CommonResp commonResp = 1;
 }
 
+//BanGroupMemberReq 禁言群成员
+message BanGroupMemberReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+  // 解除禁言时间
+  int64 unbanTime = 4;
+}
+
+//BanGroupMemberResp 禁言群成员
+message BanGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//UnbanGroupMemberReq 解除禁言群成员
+message UnbanGroupMemberReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+}
+
+//UnbanGroupMemberResp 解除禁言群成员
+message UnbanGroupMemberResp {
+  CommonResp commonResp = 1;
+}
+
+//SetGroupMemberRoleReq 设置群成员角色
+message SetGroupMemberRoleReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+  // 群角色
+  GroupRole role = 4;
+}
+
+//SetGroupMemberRoleResp 设置群成员角色
+message SetGroupMemberRoleResp {
+  CommonResp commonResp = 1;
+}
+
+//CanEditGroupMemberMsgReq 是否可以编辑群成员消息
+message CanEditGroupMemberMsgReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群成员ID
+  string memberId = 3;
+}
+
+//CanEditGroupMemberMsgResp 是否可以编辑群成员消息
+message CanEditGroupMemberMsgResp {
+  CommonResp commonResp = 1;
+  // 是否可以编辑群成员消息
+  bool canEditGroupMemberMsg = 2;
+}
+
 //GetGroupMemberInfoReq 获取群成员信息
 message GetGroupMemberInfoReq {
   CommonReq commonReq = 1;
@@ -275,6 +341,27 @@ message EditGroupInfoReq {
   optional bool allMute = 11;
   // 群禁止加好友
   optional bool memberCanAddFriend = 12;
+  // 群禁止再加入新成员
+  optional bool canAddMember = 13;
+}
+
+//ResetGroupInfoReq 编辑群资料
+message ResetGroupInfoReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 群名称
+  string name = 3;
+  // 群头像
+  string avatar = 4;
+  // 群介绍
+  string introduction = 5;
+  // 群禁言
+  bool allMute = 11;
+  // 群禁止加好友
+  bool memberCanAddFriend = 12;
+  // 群禁止再加入新成员
+  bool canAddMember = 13;
 }
 
 //EditGroupInfoResp 编辑群资料
@@ -357,6 +444,28 @@ message GetGroupMemberListResp {
   repeated GroupMemberInfo groupMemberList = 2;
 }
 
+//SearchGroupMemberReq 搜索群成员
+message SearchGroupMemberReq {
+  CommonReq commonReq = 1;
+  // 群ID
+  string groupId = 2;
+  // 关键词
+  string keyword = 3;
+  // 或在userIds中搜索
+  repeated string orInUserIds = 4;
+  // 必须是哪些角色
+  repeated GroupRole mustRoles = 6;
+  // 分页
+  Page page = 5;
+}
+
+//SearchGroupMemberResp 搜索群成员
+message SearchGroupMemberResp {
+  CommonResp commonResp = 1;
+  // 群成员列表
+  repeated GroupMemberInfo groupMemberList = 2;
+}
+
 //GetMyGroupListReq 获取我的群聊列表
 message GetMyGroupListReq {
   CommonReq commonReq = 1;
@@ -379,6 +488,7 @@ message GetMyGroupListReq {
     // ID+自己成员信息
     WITH_MY_MEMBER_INFO = 2;
   }
+  bool withConvSetting = 4;
   // 获取选项
   Opt opt = 10;
 }
@@ -393,6 +503,7 @@ message GroupBaseInfo {
 
   bool allMute = 11; // 是否全员禁言
   bool memberCanAddFriend = 12; // 群成员是否可以加好友
+  bool canAddMember = 13; // 是否可以再加入新成员
 
   optional GroupMemberInfo myMemberInfo = 31; // 自己在群里的信息
 }
@@ -404,6 +515,8 @@ message GetMyGroupListResp {
   map<string, GroupBaseInfo> groupMap = 2;
   // ids
   repeated string ids = 3;
+  map<string, ConvSetting> convSettingMap = 5; // key: convId
+  map<string, ConvSettingProto2> convSetting2Map = 6; // key: convId
 }
 
 //mapGroupByIds 获取群聊信息
@@ -723,6 +836,14 @@ service groupService {
   rpc GetGroupNoticeList(GetGroupNoticeListReq) returns (GetGroupNoticeListResp) {}
   //SetGroupMemberInfo 设置群成员信息
   rpc SetGroupMemberInfo(SetGroupMemberInfoReq) returns (SetGroupMemberInfoResp) {}
+  //BanGroupMember 禁言群成员
+  rpc BanGroupMember(BanGroupMemberReq) returns (BanGroupMemberResp) {}
+  //UnbanGroupMember 解除禁言群成员
+  rpc UnbanGroupMember(UnbanGroupMemberReq) returns (UnbanGroupMemberResp) {}
+  //SetGroupMemberRole 设置群成员角色
+  rpc SetGroupMemberRole(SetGroupMemberRoleReq) returns (SetGroupMemberRoleResp) {}
+  //CanEditGroupMemberMsg 是否可以编辑群成员信息
+  rpc CanEditGroupMemberMsg(CanEditGroupMemberMsgReq) returns (CanEditGroupMemberMsgResp) {}
   //GetGroupMemberInfo 获取群成员信息
   rpc GetGroupMemberInfo(GetGroupMemberInfoReq) returns (GetGroupMemberInfoResp) {}
   // MapGroupMemberInfoByIds 批量获取群成员信息
@@ -731,6 +852,8 @@ service groupService {
   rpc MapGroupMemberInfoByGroupIds(MapGroupMemberInfoByGroupIdsReq) returns (MapGroupMemberInfoByIdsResp) {}
   //EditGroupInfo 编辑群信息
   rpc EditGroupInfo(EditGroupInfoReq) returns (EditGroupInfoResp) {}
+  //ResetGroupInfoReq 重设群信息
+  rpc ResetGroupInfo(ResetGroupInfoReq) returns (EditGroupInfoResp) {}
   //TransferGroupOwner 转让群主
   rpc TransferGroupOwner(TransferGroupOwnerReq) returns (TransferGroupOwnerResp) {}
   //KickGroupMember 踢出群成员
@@ -739,6 +862,8 @@ service groupService {
   rpc BatchKickGroupMember(BatchKickGroupMemberReq) returns (BatchKickGroupMemberResp) {}
   //GetGroupMemberList 获取群成员列表
   rpc GetGroupMemberList(GetGroupMemberListReq) returns (GetGroupMemberListResp) {}
+  //SearchGroupMember 搜索群成员
+  rpc SearchGroupMember(SearchGroupMemberReq) returns (SearchGroupMemberResp) {}
   //GetMyGroupList 获取我的群聊列表
   rpc GetMyGroupList(GetMyGroupListReq) returns (GetMyGroupListResp) {}
   //MapGroupByIds 获取群聊信息

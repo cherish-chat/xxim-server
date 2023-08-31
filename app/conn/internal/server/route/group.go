@@ -159,5 +159,55 @@ func RegisterGroup(svcCtx *svc.ServiceContext) {
 			}
 			conngateway.AddRoute("/v1/group/inviteFriendToGroup", route)
 		}
+		// /v1/group/resetGroupInfo ResetGroupInfoReq
+		{
+			route := conngateway.Route[*pb.ResetGroupInfoReq, *pb.ResetGroupInfoResp]{
+				NewRequest: func() *pb.ResetGroupInfoReq {
+					return &pb.ResetGroupInfoReq{}
+				},
+				Do: svcCtx.GroupService().ResetGroupInfo,
+			}
+			conngateway.AddRoute("/v1/group/resetGroupInfo", route)
+		}
+		// /v1/group/banGroupMember BanGroupMemberReq
+		{
+			route := conngateway.Route[*pb.BanGroupMemberReq, *pb.BanGroupMemberResp]{
+				NewRequest: func() *pb.BanGroupMemberReq {
+					return &pb.BanGroupMemberReq{}
+				},
+				Do: svcCtx.GroupService().BanGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/banGroupMember", route)
+		}
+		// /v1/group/unbanGroupMember UnbanGroupMemberReq
+		{
+			route := conngateway.Route[*pb.UnbanGroupMemberReq, *pb.UnbanGroupMemberResp]{
+				NewRequest: func() *pb.UnbanGroupMemberReq {
+					return &pb.UnbanGroupMemberReq{}
+				},
+				Do: svcCtx.GroupService().UnbanGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/unbanGroupMember", route)
+		}
+		// /v1/group/searchGroupMember SearchGroupMemberReq
+		{
+			route := conngateway.Route[*pb.SearchGroupMemberReq, *pb.SearchGroupMemberResp]{
+				NewRequest: func() *pb.SearchGroupMemberReq {
+					return &pb.SearchGroupMemberReq{}
+				},
+				Do: svcCtx.GroupService().SearchGroupMember,
+			}
+			conngateway.AddRoute("/v1/group/searchGroupMember", route)
+		}
+		// /v1/group/setGroupMemberRole SetGroupMemberRoleReq
+		{
+			route := conngateway.Route[*pb.SetGroupMemberRoleReq, *pb.SetGroupMemberRoleResp]{
+				NewRequest: func() *pb.SetGroupMemberRoleReq {
+					return &pb.SetGroupMemberRoleReq{}
+				},
+				Do: svcCtx.GroupService().SetGroupMemberRole,
+			}
+			conngateway.AddRoute("/v1/group/setGroupMemberRole", route)
+		}
 	}
 }

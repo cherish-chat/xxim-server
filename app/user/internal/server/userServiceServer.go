@@ -273,3 +273,13 @@ func (s *UserServiceServer) RecoverAccount(ctx context.Context, in *pb.RecoverAc
 	l := logic.NewRecoverAccountLogic(ctx, s.svcCtx)
 	return l.RecoverAccount(in)
 }
+
+func (s *UserServiceServer) GetUserWallet(ctx context.Context, in *pb.GetUserWalletReq) (*pb.GetUserWalletResp, error) {
+	l := logic.NewGetUserWalletLogic(ctx, s.svcCtx)
+	return l.GetUserWallet(in)
+}
+
+func (s *UserServiceServer) WalletTransaction(ctx context.Context, in *pb.WalletTransactionReq) (*pb.WalletTransactionResp, error) {
+	l := logic.NewWalletTransactionLogic(ctx, s.svcCtx)
+	return l.WalletTransaction(in)
+}

@@ -348,18 +348,6 @@ message DeleteUserInvitationCodeResp {
   CommonResp commonResp = 1;
 }
 
-/*
-type IpList struct {
-	Id         string `gorm:"column:id;type:varchar(32);primary_key;not null" json:"id"`
-	Platform   string `gorm:"column:platform;type:varchar(32);not null;default:'';" json:"platform"` // 针对平台
-	StartIp    string `gorm:"column:startIp;not null;default:'';comment:'起始IP';"`
-	EndIp      string `gorm:"column:endIp;not null;default:'';comment:'结束IP';"`
-	Remark     string `gorm:"column:remark;not null;default:'';comment:'备注';"`
-	UserId     string `gorm:"column:userId;not null;default:'';comment:'用户ID';"` // 如果为空，则表示针对所有用户
-	IsEnable   bool   `gorm:"column:isEnable;not null;default:0;comment:'是否启用';index;"`
-	CreateTime int64  `gorm:"column:createTime;not null;default:0;comment:'创建时间';index;"`
-}
- */
 //UserIpList 用户IP名单
 message UserIpList {
   string id = 1;
@@ -577,80 +565,6 @@ message DeleteUserDefaultConvResp {
   CommonResp commonResp = 1;
 }
 
-/*
-const (
-	RoleUser    Role = 0 // 普通用户
-	RoleService Role = 1 //客服
-	RoleGuest   Role = 3 // 游客
-)
-
-type (
-	Role int32 // 角色
-	User struct {
-		// 账号信息
-		Id           string `bson:"_id" json:"id" gorm:"column:id;primary_key;type:char(32);"`
-		Password     string `bson:"password" json:"password" gorm:"column:password;type:char(64);"`
-		PasswordSalt string `bson:"passwordSalt" json:"passwordSalt" gorm:"column:passwordSalt;type:char(64);"`
-		// 邀请码
-		InvitationCode string `bson:"invitationCode" json:"invitationCode" gorm:"column:invitationCode;type:char(32);index;"`
-		// 手机号
-		Mobile string `bson:"mobile" json:"mobile" gorm:"column:mobile;type:char(11);default:'';index;"`
-		// 手机号国家码
-		MobileCountryCode string `bson:"mobileCountryCode" json:"mobileCountryCode" gorm:"column:mobileCountryCode;type:char(4);default:'';"`
-
-		// 基本信息
-		Nickname string `bson:"nickname" json:"nickname" gorm:"column:nickname;type:varchar(64);index;"`
-		Avatar   string `bson:"avatar" json:"avatar" gorm:"column:avatar;type:varchar(255);"`
-		// 注册信息
-		RegInfo  *LoginInfo       `bson:"regInfo" json:"regInfo" gorm:"column:regInfo;type:json;"`
-		Xb       pb.XB            `bson:"xb" json:"xb" gorm:"column:xb;type:tinyint(1);index;"`
-		Birthday *pb.BirthdayInfo `bson:"birthday,omitempty" json:"birthday,omitempty" gorm:"column:birthday;type:json;"`
-		// 其他信息
-		InfoMap   xorm.M    `bson:"infoMap" json:"infoMap" gorm:"column:infoMap;type:json;"`
-		LevelInfo LevelInfo `bson:"levelInfo" json:"levelInfo" gorm:"column:levelInfo;type:json;"`
-
-		// 角色 角色有: 0.用户 1.客服 2.游客
-		Role Role `bson:"role" json:"role" gorm:"column:role;type:tinyint(1);index;"`
-
-		// 解封时间
-		UnblockTime int64 `bson:"unblockTime" json:"unblockTime" gorm:"column:unblockTime;type:bigint(20);index;default:0;"`
-		// 封禁记录id
-		BlockRecordId string `bson:"blockRecordId" json:"blockRecordId" gorm:"column:blockRecordId;type:char(32);index;default:'';"`
-
-		CreateTime int64 `bson:"createTime" json:"createTime" gorm:"column:createTime;type:bigint(13);index;"`
-	}
-	LoginInfo struct {
-		// 13位时间戳
-		Time int64  `bson:"time" json:"time" gorm:"column:time;type:bigint(13);index;"`
-		Ip   string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
-		// 中国
-		IpCountry string `bson:"ipCountry" json:"ipCountry" gorm:"column:ipCountry;type:varchar(64);"`
-		// 北京市
-		IpProvince string `bson:"ipProvince" json:"ipProvince" gorm:"column:ipProvince;type:varchar(64);"`
-		// 北京市
-		IpCity string `bson:"ipCity" json:"ipCity" gorm:"column:ipCity;type:varchar(64);"`
-		// 电信
-		IpISP string `bson:"ipService" json:"ipService" gorm:"column:ipService;type:varchar(64);"`
-		// 1.0.0
-		AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
-		// user-agent
-		UserAgent string `bson:"userAgent" json:"userAgent" gorm:"column:userAgent;type:varchar(255);"`
-		// 10.0.0
-		OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
-		// iphone/ipad/android/pc/mac/linux/windows
-		Platform string `bson:"platform" json:"platform" gorm:"column:platform;type:varchar(64);"`
-		// 设备id
-		DeviceId string `bson:"deviceId" json:"deviceId" gorm:"column:deviceId;type:varchar(64);"`
-		// 设备型号
-		DeviceModel string `bson:"deviceModel" json:"deviceModel" gorm:"column:deviceModel;type:varchar(64);"`
-	}
-	LevelInfo struct {
-		Level        int32 `bson:"level" json:"level"`
-		Exp          int32 `bson:"exp" json:"exp"`
-		NextLevelExp int32 `bson:"nextLevelExp" json:"nextLevelExp"`
-	}
-)
- */
 enum UserRole {
   User = 0;
   Service = 1;
@@ -791,35 +705,6 @@ message SwitchUserModelResp {
   CommonResp commonResp = 1;
 }
 
-/*
-type LoginRecord struct {
-	Id     string `bson:"_id" json:"id" gorm:"column:id;type:char(32);primary_key"`
-	UserId string `bson:"userId" json:"userId" gorm:"column:userId;type:char(32);index"`
-  // 13位时间戳
-  Time int64  `bson:"time" json:"time" gorm:"column:time;type:bigint(13);index;"`
-  Ip   string `bson:"ip" json:"ip" gorm:"column:ip;type:varchar(64);"`
-  // 中国
-  IpCountry string `bson:"ipCountry" json:"ipCountry" gorm:"column:ipCountry;type:varchar(64);"`
-  // 北京市
-  IpProvince string `bson:"ipProvince" json:"ipProvince" gorm:"column:ipProvince;type:varchar(64);"`
-  // 北京市
-  IpCity string `bson:"ipCity" json:"ipCity" gorm:"column:ipCity;type:varchar(64);"`
-  // 电信
-  IpISP string `bson:"ipService" json:"ipService" gorm:"column:ipService;type:varchar(64);"`
-  // 1.0.0
-  AppVersion string `bson:"appVersion" json:"appVersion" gorm:"column:appVersion;type:varchar(64);"`
-  // user-agent
-  UserAgent string `bson:"userAgent" json:"userAgent" gorm:"column:userAgent;type:varchar(255);"`
-  // 10.0.0
-  OsVersion string `bson:"osVersion" json:"osVersion" gorm:"column:osVersion;type:varchar(64);"`
-  // iphone/ipad/android/pc/mac/linux/windows
-  Platform string `bson:"platform" json:"platform" gorm:"column:platform;type:varchar(64);"`
-  // 设备id
-  DeviceId string `bson:"deviceId" json:"deviceId" gorm:"column:deviceId;type:varchar(64);"`
-  // 设备型号
-  DeviceModel string `bson:"deviceModel" json:"deviceModel" gorm:"column:deviceModel;type:varchar(64);"`
-}
- */
 //LoginRecord 用户登录记录
 message LoginRecord {
   string id = 1;
@@ -967,6 +852,59 @@ message RecoverAccountReq {
 message RecoverAccountResp {
   CommonResp commonResp = 1;
 }
+
+
+message UserWallet {
+  string userId = 1;
+  int64 balance = 2;
+  int64 freezeBalance = 3;
+}
+
+//GetUserWalletResp 获取用户钱包响应
+message GetUserWalletResp {
+  CommonResp commonResp = 1;
+  UserWallet userWallet = 2;
+}
+
+//GetUserWalletReq 获取用户钱包请求
+message GetUserWalletReq {
+  CommonReq commonReq = 1;
+  string userId = 2;
+}
+
+enum WalletTransactionType {
+  //后台管理员充值
+  ADMIN_RECHARGE = 0;
+  //发红包
+  SEND_RED_PACKET = 1;
+  //抢红包
+  GRAB_RED_PACKET = 2;
+  //红包退款
+  RED_PACKET_REFUND = 3;
+}
+
+//WalletTransactionResp 钱包交易响应
+message WalletTransactionResp {
+  CommonResp commonResp = 1;
+  string transactionId = 2;
+}
+
+//WalletTransactionReq 钱包交易
+message WalletTransactionReq {
+  CommonReq commonReq = 1;
+  string fromUserId = 2;
+  string toUserId = 3;
+  int64 fromUserBalanceChange = 4;
+  int64 toUserBalanceChange = 5;
+  int64 fromUserFreezeBalanceChange = 6;
+  int64 toUserFreezeBalanceChange = 7;
+  WalletTransactionType type = 8;
+  string title = 9;
+  string description = 10;
+  string extra = 11;
+}
+
+
 service userService {
   rpc Login(LoginReq) returns (LoginResp) {}
   rpc ConfirmRegister(ConfirmRegisterReq) returns (ConfirmRegisterResp) {}
@@ -1031,4 +969,7 @@ service userService {
 
   rpc DestroyAccount(DestroyAccountReq) returns (DestroyAccountResp) {}
   rpc RecoverAccount(RecoverAccountReq) returns (RecoverAccountResp) {}
+
+  rpc GetUserWallet(GetUserWalletReq) returns (GetUserWalletResp) {}
+  rpc WalletTransaction(WalletTransactionReq) returns (WalletTransactionResp) {}
 }

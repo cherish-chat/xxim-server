@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/cherish-chat/xxim-server/app/group/groupmodel"
+	"github.com/cherish-chat/xxim-server/app/msg/msgmodel"
 	"github.com/cherish-chat/xxim-server/app/notice/noticemodel"
+	"github.com/cherish-chat/xxim-server/app/user/usermodel"
 	"github.com/cherish-chat/xxim-server/common/utils"
 	"github.com/cherish-chat/xxim-server/common/xorm"
+	"github.com/cherish-chat/xxim-server/common/xtrace"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -72,6 +75,33 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 	if !isManager {
 		return l.inviteFriendToGroup(in)
 	} else {
+		// 查询谁已经在群里了
+		var foundMemberIds []string
+		err = l.svcCtx.Mysql().Model(&groupmodel.GroupMember{}).
+			Where("groupId = ?", in.GroupId).
+			Where("userId in ?", in.FriendIds).Pluck("userId", &foundMemberIds).Error
+		if err != nil {
+			l.Errorf("InviteFriendToGroup error: %v", err)
+			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
+		}
+		// 过滤掉已经在群里的
+		var tmp []string
+		for _, id := range in.FriendIds {
+			exist := false
+			for _, foundId := range foundMemberIds {
+				if id == foundId {
+					exist = true
+					break
+				}
+			}
+			if !exist {
+				tmp = append(tmp, id)
+			}
+		}
+		in.FriendIds = tmp
+		if len(in.FriendIds) == 0 {
+			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewToastErrorResp(l.svcCtx.T(in.CommonReq.Language, "已经在群里了"))}, nil
+		}
 		// 直接进
 		err = xorm.Transaction(l.svcCtx.Mysql(), func(tx *gorm.DB) error {
 			var members []*groupmodel.GroupMember
@@ -86,7 +116,8 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 				})
 			}
 			// 忽略唯一索引冲突
-			err := tx.Clauses(clause.Insert{Modifier: "IGNORE"}).CreateInBatches(members, 100).Error
+			orm := tx.Clauses(clause.Insert{Modifier: "IGNORE"}).CreateInBatches(members, 100)
+			err := orm.Error
 			if err != nil {
 				l.Errorf("RandInsertZombieMember error: %v", err)
 				return err
@@ -127,6 +158,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 			l.Errorf("RandInsertZombieMember error: %v", err)
 			return &pb.InviteFriendToGroupResp{CommonResp: pb.NewRetryErrorResp()}, err
 		}
+		// 新人发送入群消息
 		utils.RetryProxy(context.Background(), 12, 1*time.Second, func() error {
 			// 删除缓存
 			{
@@ -158,6 +190,7 @@ func (l *InviteFriendToGroupLogic) InviteFriendToGroup(in *pb.InviteFriendToGrou
 			}
 			return nil
 		})
+		go newMemberSayHello(l.svcCtx, in.GetCommonReq(), in.GetGroupId(), in.GetFriendIds())
 		return &pb.InviteFriendToGroupResp{}, nil
 	}
 }
@@ -194,4 +227,76 @@ func (l *InviteFriendToGroupLogic) inviteFriendToGroup(in *pb.InviteFriendToGrou
 		}
 	}
 	return &pb.InviteFriendToGroupResp{}, nil
+}
+
+func newMemberSayHello(svcCtx *svc.ServiceContext, commonReq *pb.CommonReq, groupId string, userIds []string) {
+	ctx := context.Background()
+	var group *groupmodel.Group
+	{
+		var resp *pb.MapGroupByIdsResp
+		var err error
+		xtrace.StartFuncSpan(ctx, "mapGroupByIds", func(ctx context.Context) {
+			resp, err = NewMapGroupByIdsLogic(ctx, svcCtx).MapGroupByIds(&pb.MapGroupByIdsReq{
+				CommonReq: commonReq,
+				Ids:       []string{groupId},
+			})
+		})
+		if err != nil {
+			logx.Errorf("getGroupMemberInfoLogic err: %v", err)
+			return
+		}
+		value, ok := resp.GroupMap[groupId]
+		if !ok {
+			return
+		}
+		group = groupmodel.GroupFromBytes(value)
+	}
+	userMapResp, err := svcCtx.UserService().MapUserByIds(ctx, &pb.MapUserByIdsReq{
+		CommonReq: commonReq,
+		Ids:       userIds,
+	})
+	if err != nil {
+		logx.Errorf("InviteFriendToGroup MapUserByIds error: %v", err)
+		return
+	}
+	for _, bytes := range userMapResp.GetUsers() {
+		user := usermodel.UserFromBytes(bytes)
+		if user == nil {
+			continue
+		}
+		msg := msgmodel.CreateTextMsgToGroup(
+			&pb.UserBaseInfo{
+				Id:       user.Id,
+				Nickname: user.Nickname,
+				Avatar:   user.Avatar,
+				Xb:       user.Xb,
+				Birthday: user.Birthday,
+				Role:     int32(user.Role),
+			},
+			groupId,
+			svcCtx.T(commonReq.Language, "大家好，我是"+user.Nickname+"。"),
+			msgmodel.MsgOptions{
+				OfflinePush:       true,
+				StorageForServer:  true,
+				StorageForClient:  true,
+				UpdateUnreadCount: false,
+				NeedDecrypt:       false,
+				UpdateConvMsg:     true,
+			},
+			&msgmodel.MsgOfflinePush{
+				Title:   group.Name,
+				Content: "欢迎加入群聊",
+				Payload: "",
+			},
+			nil,
+		).ToMsgData()
+		svcCtx.MsgService().SendMsgListAsync(ctx, &pb.SendMsgListReq{
+			MsgDataList:  []*pb.MsgData{msg},
+			DeliverAfter: nil,
+			CommonReq: &pb.CommonReq{
+				UserId:   user.Id,
+				Platform: "system",
+			},
+		})
+	}
 }

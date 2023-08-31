@@ -47,6 +47,8 @@ type (
 		MemberCanStartTempChat bool `bson:"memberCanStartTempChat" json:"memberCanStartTempChat" gorm:"column:memberCanStartTempChat;type:tinyint(1);not null;default:0;"`
 		// 群成员是否可以加其他成员为好友
 		MemberCanAddFriend bool `bson:"memberCanAddFriend" json:"memberCanAddFriend" gorm:"column:memberCanAddFriend;type:tinyint(1);not null;default:0;"`
+		// CanAddMember 是否允许再加入新成员
+		CanAddMember bool `bson:"canAddMember" json:"canAddMember" gorm:"column:canAddMember;type:tinyint(1);not null;default:0;"`
 		// 群成员是否可以邀请好友加入群
 		MemberCanInviteFriend bool `bson:"memberCanInviteFriend" json:"memberCanInviteFriend" gorm:"column:memberCanInviteFriend;type:tinyint(1);not null;default:0;"`
 		// 新成员可见的历史消息条数
@@ -80,6 +82,7 @@ func (m *Group) GroupBaseInfo() *pb.GroupBaseInfo {
 		AllMute:            m.AllMute,
 		MemberCanAddFriend: m.MemberCanAddFriend,
 		MyMemberInfo:       nil,
+		CanAddMember:       m.CanAddMember,
 	}
 }
 

@@ -64,6 +64,30 @@ func (s *GroupServiceServer) SetGroupMemberInfo(ctx context.Context, in *pb.SetG
 	return l.SetGroupMemberInfo(in)
 }
 
+// BanGroupMember 禁言群成员
+func (s *GroupServiceServer) BanGroupMember(ctx context.Context, in *pb.BanGroupMemberReq) (*pb.BanGroupMemberResp, error) {
+	l := logic.NewBanGroupMemberLogic(ctx, s.svcCtx)
+	return l.BanGroupMember(in)
+}
+
+// UnbanGroupMember 解除禁言群成员
+func (s *GroupServiceServer) UnbanGroupMember(ctx context.Context, in *pb.UnbanGroupMemberReq) (*pb.UnbanGroupMemberResp, error) {
+	l := logic.NewUnbanGroupMemberLogic(ctx, s.svcCtx)
+	return l.UnbanGroupMember(in)
+}
+
+// SetGroupMemberRole 设置群成员角色
+func (s *GroupServiceServer) SetGroupMemberRole(ctx context.Context, in *pb.SetGroupMemberRoleReq) (*pb.SetGroupMemberRoleResp, error) {
+	l := logic.NewSetGroupMemberRoleLogic(ctx, s.svcCtx)
+	return l.SetGroupMemberRole(in)
+}
+
+// CanEditGroupMemberMsg 是否可以编辑群成员信息
+func (s *GroupServiceServer) CanEditGroupMemberMsg(ctx context.Context, in *pb.CanEditGroupMemberMsgReq) (*pb.CanEditGroupMemberMsgResp, error) {
+	l := logic.NewCanEditGroupMemberMsgLogic(ctx, s.svcCtx)
+	return l.CanEditGroupMemberMsg(in)
+}
+
 // GetGroupMemberInfo 获取群成员信息
 func (s *GroupServiceServer) GetGroupMemberInfo(ctx context.Context, in *pb.GetGroupMemberInfoReq) (*pb.GetGroupMemberInfoResp, error) {
 	l := logic.NewGetGroupMemberInfoLogic(ctx, s.svcCtx)
@@ -88,6 +112,12 @@ func (s *GroupServiceServer) EditGroupInfo(ctx context.Context, in *pb.EditGroup
 	return l.EditGroupInfo(in)
 }
 
+// ResetGroupInfoReq 重设群信息
+func (s *GroupServiceServer) ResetGroupInfo(ctx context.Context, in *pb.ResetGroupInfoReq) (*pb.EditGroupInfoResp, error) {
+	l := logic.NewResetGroupInfoLogic(ctx, s.svcCtx)
+	return l.ResetGroupInfo(in)
+}
+
 // TransferGroupOwner 转让群主
 func (s *GroupServiceServer) TransferGroupOwner(ctx context.Context, in *pb.TransferGroupOwnerReq) (*pb.TransferGroupOwnerResp, error) {
 	l := logic.NewTransferGroupOwnerLogic(ctx, s.svcCtx)
@@ -110,6 +140,12 @@ func (s *GroupServiceServer) BatchKickGroupMember(ctx context.Context, in *pb.Ba
 func (s *GroupServiceServer) GetGroupMemberList(ctx context.Context, in *pb.GetGroupMemberListReq) (*pb.GetGroupMemberListResp, error) {
 	l := logic.NewGetGroupMemberListLogic(ctx, s.svcCtx)
 	return l.GetGroupMemberList(in)
+}
+
+// SearchGroupMember 搜索群成员
+func (s *GroupServiceServer) SearchGroupMember(ctx context.Context, in *pb.SearchGroupMemberReq) (*pb.SearchGroupMemberResp, error) {
+	l := logic.NewSearchGroupMemberLogic(ctx, s.svcCtx)
+	return l.SearchGroupMember(in)
 }
 
 // GetMyGroupList 获取我的群聊列表

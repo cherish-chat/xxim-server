@@ -15,22 +15,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type EditGroupInfoLogic struct {
+type ResetGroupInfoLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewEditGroupInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EditGroupInfoLogic {
-	return &EditGroupInfoLogic{
+func NewResetGroupInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetGroupInfoLogic {
+	return &ResetGroupInfoLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// EditGroupInfo 编辑群信息
-func (l *EditGroupInfoLogic) EditGroupInfo(in *pb.EditGroupInfoReq) (*pb.EditGroupInfoResp, error) {
+// ResetGroupInfoReq 重设群信息
+func (l *ResetGroupInfoLogic) ResetGroupInfo(in *pb.ResetGroupInfoReq) (*pb.EditGroupInfoResp, error) {
 	err := groupmodel.CleanGroupCache(l.ctx, l.svcCtx.Redis(), in.GroupId)
 	if err != nil {
 		l.Errorf("flush group cache failed, err: %v", err)
@@ -38,25 +38,19 @@ func (l *EditGroupInfoLogic) EditGroupInfo(in *pb.EditGroupInfoReq) (*pb.EditGro
 	}
 	// 更新用户信息
 	updateMap := map[string]interface{}{}
-	if in.Name != nil {
-		updateMap["name"] = *in.Name
+	if in.Name != "" {
+		updateMap["name"] = in.Name
 	}
-	if in.Avatar != nil {
-		updateMap["avatar"] = *in.Avatar
+	if in.Avatar != "" {
+		updateMap["avatar"] = in.Avatar
 	}
-	if in.Introduction != nil {
-		updateMap["description"] = *in.Introduction
+	if in.Introduction != "" {
+		updateMap["description"] = in.Introduction
 	}
-	if in.AllMute != nil {
-		updateMap["allMute"] = *in.AllMute
-		updateMap["allMuterType"] = pb.AllMuterType_NORMAL
-	}
-	if in.MemberCanAddFriend != nil {
-		updateMap["memberCanAddFriend"] = *in.MemberCanAddFriend
-	}
-	if in.CanAddMember != nil {
-		updateMap["canAddMember"] = *in.CanAddMember
-	}
+	updateMap["allMute"] = in.AllMute
+	updateMap["allMuterType"] = pb.AllMuterType_NORMAL
+	updateMap["memberCanAddFriend"] = in.MemberCanAddFriend
+	updateMap["canAddMember"] = in.CanAddMember
 	if len(updateMap) == 0 {
 		return &pb.EditGroupInfoResp{CommonResp: pb.NewSuccessResp()}, nil
 	}

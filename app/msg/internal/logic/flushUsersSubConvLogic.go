@@ -41,6 +41,7 @@ func (l *FlushUsersSubConvLogic) FlushUsersSubConv(in *pb.FlushUsersSubConvReq) 
 }
 
 func (l *FlushUsersSubConvLogic) SetUserSubscriptions(userId string, compareConvIds []string) error {
+	l.ctx = context.Background()
 	var convIds []string
 	convIdOfUser, err := l.svcCtx.ImService().GetAllConvIdOfUser(l.ctx, &pb.GetAllConvIdOfUserReq{
 		UserId: userId,
